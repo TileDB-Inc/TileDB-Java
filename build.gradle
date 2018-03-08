@@ -40,13 +40,13 @@ task makeTask(type: Exec) {
 
 task installTask(type: Copy) {
     from buildDir
-    into "/Users/npapa/Library/Java/Extensions/"
+    into "~/Library/Java/Extensions/"
     include "libtiledb.jnilib"
 }
 
 makeTask.dependsOn(cmakeTask)
-installTask.dependsOn(makeTask)
-assemble.dependsOn(installTask)
+//installTask.dependsOn(makeTask)
+assemble.dependsOn(makeTask)
 
 test {
     testLogging {
