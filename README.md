@@ -1,7 +1,12 @@
 # tiledb-jni
 
+## Dependencies
+
+To build this you should first install or build from source tiledb(https://github.com/TileDB-Inc/TileDB).
+
 ## Build
 
+If tiledb is not installed in /usr/lib, /usr/include please specify the env variable TILEDB_HOME.
 To build the jni library run:
 
 `./gradlew assemble`
