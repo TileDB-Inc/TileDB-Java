@@ -2,18 +2,28 @@
 
 ## Dependencies
 
-To build this you should first install or build from source tiledb(https://github.com/TileDB-Inc/TileDB).
+It is required to first install or build from source TileDB.
+
+* [Install Instructions](https://docs.tiledb.io/en/latest/installation.html)
+* [TileDB Repo](https://github.com/TileDB-Inc/TileDB)
+
+To build the JNI extension you need to install:
+
+* Cmake (>=3.2)
+* Gradle
 
 ## Build
 
-If tiledb is not installed in /usr/lib, /usr/include please specify the env variable TILEDB_HOME.
-To build the jni library run:
+If TileDB is not installed in global system path, the ENV variable `TILEDB_HOME` must be defined.
+
+To build the JNI library run:
 
 `./gradlew assemble`
 
-This will create the tiledb JNI library in build/libtiledb.jnilib.
+This will create the TileDB JNI library in build/libtiledb.jnilib.
 
-Before running the JAVA code you should copy this file in your machine library path. Alternatively you can add the build folder in your LD_LIBRARY_PATH env variable.
+Before running the Java code you should copy this file in your system library path. 
+Alternatively you can add the build folder in your `LD_LIBRARY_PATH` ENV variable.
 
 ## Tests
 
