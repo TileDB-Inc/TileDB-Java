@@ -45,9 +45,11 @@ if(NOT LIBTILEDB_FOUND)
         list(APPEND POSSILE_PATHS
              "${TILEDB_HOME}/lib"
              "/usr/lib"
+	     "/usr/local/lib"
              "${TILEDB_HOME}/include"
              "${TILEDB_HOME}/include/tiledb"
-             "/usr/include")
+             "/usr/include"
+	     "/usr/local/include")
     endif()
 
     find_path(LIBTILEDB_INCLUDE_DIR NAMES tiledb.h PATHS ${POSSILE_PATHS} NO_DEFAULT_PATH)
