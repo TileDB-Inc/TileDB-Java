@@ -29,8 +29,8 @@
 project(TileDB_JNI)
 cmake_minimum_required(VERSION 2.8)
 
-# Set the cmake Module path
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+# Add project cmake modules to CMake module path
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 # Default user definitions
 set(TILEDB_VERBOSE False CACHE BOOL "Prints TileDB errors with verbosity")
@@ -46,7 +46,6 @@ endif()
 set(TILEDB_JNI_LIB_DEPENDENCIES)
 
 # Find required library dependencies
-
 find_package(LIBJVM REQUIRED)
 include_directories(${LIBJVM_INCLUDE_DIRS})
 set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${LIBJVM_LIBRARIES})
@@ -54,7 +53,6 @@ set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${LIBJVM_LIBRARIE
 find_package(TILEDB REQUIRED)
 include_directories(${LIBTILEDB_INCLUDE_DIR})
 set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${LIBTILEDB_LIBRARY})
-
 
 include_directories(swig)
 
@@ -68,8 +66,7 @@ endif()
 # Set C++ 2011 flag
 include(CheckCXXCompilerFlag)
 
-# Set support for C++ 2011. MSVC does not allow you to enforce a
-# standard pre-C++14.
+# Set support for C++ 2011. MSVC does not allow you to enforce a standard pre-C++14.
 if (NOT WIN32)
   CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
   if(COMPILER_SUPPORTS_CXX11)
@@ -119,9 +116,9 @@ endif()
 # Enable testing
 #enable_testing()
 
-
 add_executable(libtiledb.jnilib
     src/main/c/generated/tiledb_wrap.cxx
-    src/main/c/custom/tiledb_wrap_custom.cxx
-)
-target_link_libraries(libtiledb.jnilib ${TILEDB_JNI_LIB_DEPENDENCIES})
+    src/main/c/custom/tiledb_wrap_custom.cxx)
+
+target_link_libraries(libtiledb.jnilib
+    ${TILEDB_JNI_LIB_DEPENDENCIES})
