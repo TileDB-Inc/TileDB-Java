@@ -10,7 +10,6 @@ It is required to first install or build from source TileDB.
 To build the JNI extension you need to install:
 
 * Cmake (>=3.2)
-* Gradle
 
 ## Build
 
@@ -38,3 +37,8 @@ You can run the examples located in `src/main/java/examples` using you IDE or fr
 To run an example from the terminal use:
 
 `java -cp build/libs/tiledb-jni-1.0-SNAPSHOT.jar examples.TiledbArraySchema`
+
+You may need to explitly define the java library path:
+
+`java -Djava.library.path=".:<path/to/TileDB-Java/build>" -cp build/libs/tiledb-jni-1.0-SNAPSHOT.jar examples.TiledbArraySchema`
+
