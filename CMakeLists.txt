@@ -47,12 +47,12 @@ set(TILEDB_JNI_LIB_DEPENDENCIES)
 
 # Find required library dependencies
 find_package(JNI REQUIRED)
-include_directories(${JAVA_INCLUDE_DIRS})
-set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${JNI_LIBRARIES})
-
-#find_package(LIBJVM REQUIRED)
-#include_directories(${LIBJVM_INCLUDE_DIRS})
-#set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${LIBJVM_LIBRARIES})
+if (JNI_FOUND)
+    message(STATUS "Found JNI header file: ${JNI_INCLUDE_PATH}")
+    message(STATUS "Found JNI library: ${JAVA_JVM_LIBRARY}")
+endif()
+include_directories(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
+set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${JAVA_JVM_LIBRARY})
 
 find_package(TILEDB REQUIRED)
 include_directories(${LIBTILEDB_INCLUDE_DIR})
