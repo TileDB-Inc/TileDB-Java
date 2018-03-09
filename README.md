@@ -1,4 +1,4 @@
-# tiledb-jni
+# TileDB-Java
 
 ## Dependencies
 
