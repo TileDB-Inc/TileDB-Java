@@ -49,6 +49,7 @@ makeTask.dependsOn(cmakeTask)
 assemble.dependsOn(makeTask)
 
 test {
+    systemProperty "java.library.path", buildDir
     testLogging {
         showStandardStreams = true
     }
