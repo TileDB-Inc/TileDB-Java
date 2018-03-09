@@ -20,7 +20,7 @@ To build the JNI library run:
 
 `./gradlew assemble`
 
-This will create the TileDB JNI library in build/libtiledb.jnilib.
+This will create the TileDB JNI library in `build/libtiledb.jnilib`.
 
 Before running the Java code you should copy this file in your system library path. 
 Alternatively you can add the build folder in your `LD_LIBRARY_PATH` ENV variable.
@@ -33,7 +33,7 @@ To run the tests use:
 
 ## Examples
 
-You can run the examples located in src/main/java/examples using you IDE or from a terminal.
+You can run the examples located in `src/main/java/examples` using you IDE or from a terminal.
 
 To run an example from the terminal use:
 
