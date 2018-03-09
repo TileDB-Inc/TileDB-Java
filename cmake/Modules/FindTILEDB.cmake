@@ -33,26 +33,26 @@
 
 if(NOT LIBTILEDB_FOUND)
     message(STATUS "Searching for libtiledb")
+    set(POSSIBLE_PATHS)
     if(NOT DEFINED ${TILEDB_HOME})
         if (DEFINED ENV{TILEDB_HOME})
             set(TILEDB_HOME "$ENV{TILEDB_HOME}")
 	endif()
     endif()
-    if( "${TILEDB_HOME}" STREQUAL "" )
-	message(STATUS "TILEDB_HOME not specified")
-    else()
+    if(NOT ${TILEDB_HOME} STREQUAL "")
 	message(STATUS "TILEDB_HOME is set to ${TILEDB_HOME}")
-        list(APPEND POSSILE_PATHS
+	list(APPEND POSSIBLE_PATHS
              "${TILEDB_HOME}/lib"
-             "/usr/lib"
-	     "/usr/local/lib"
-             "${TILEDB_HOME}/include"
-             "${TILEDB_HOME}/include/tiledb"
-             "/usr/include"
-	     "/usr/local/include")
-    endif()
+             "${TILEDB_HOME}/include")
+     endif()
+     # Append system paths
+     list(APPEND POSSILE_PATHS
+         "/usr/lib"
+         "/usr/local/lib"
+         "/usr/include"
+         "/usr/local/include")
 
-    find_path(LIBTILEDB_INCLUDE_DIR NAMES tiledb.h PATHS ${POSSILE_PATHS} NO_DEFAULT_PATH)
+    find_path(LIBTILEDB_INCLUDE_DIR NAMES "tiledb/tiledb.h" PATHS ${POSSILE_PATHS} NO_DEFAULT_PATH)
 
     find_library(LIBTILEDB_LIBRARY NAMES
         libtiledb${CMAKE_SHARED_LIBRARY_SUFFIX}
