@@ -40,10 +40,10 @@ if(NOT LIBTILEDB_FOUND)
 	endif()
     endif()
     if(NOT ${TILEDB_HOME} STREQUAL "")
-	message(STATUS "TILEDB_HOME is set to ${TILEDB_HOME}")
-	list(APPEND POSSIBLE_PATHS
-             "${TILEDB_HOME}/lib"
-             "${TILEDB_HOME}/include")
+	    message(STATUS "TILEDB_HOME is set to ${TILEDB_HOME}")
+        list(APPEND POSSILE_PATHS
+         "${TILEDB_HOME}/lib"
+         "${TILEDB_HOME}/include")
      endif()
      # Append system paths
      list(APPEND POSSILE_PATHS
@@ -61,7 +61,7 @@ if(NOT LIBTILEDB_FOUND)
         NO_DEFAULT_PATH)
 
     if(LIBTILEDB_INCLUDE_DIR)
-	message(STATUS "Found tiledb.h header file: ${LIBTILEDB_INCLUDE_DIR}")
+	    message(STATUS "Found tiledb.h header file: ${LIBTILEDB_INCLUDE_DIR}")
     else()
         message(STATUS "tiledb.h header file not found")
     endif()
@@ -72,7 +72,7 @@ if(NOT LIBTILEDB_FOUND)
         message(STATUS "libtiledb library not found")
     endif()
 
-    if(JAVA_JVM_LIBRARY AND LIBTILEDB_LIBRARY AND LIBTILEDB_INCLUDE_DIR)
+    if(LIBTILEDB_LIBRARY AND LIBTILEDB_INCLUDE_DIR)
         set(LIBTILEDB_FOUND TRUE)
     else()
 	set(LIBTILEDB_FOUND FALSE)
