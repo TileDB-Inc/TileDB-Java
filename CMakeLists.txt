@@ -27,7 +27,7 @@
 #
 
 project(TileDB_JNI)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.2)
 
 # Add project cmake modules to CMake module path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -46,9 +46,13 @@ endif()
 set(TILEDB_JNI_LIB_DEPENDENCIES)
 
 # Find required library dependencies
-find_package(LIBJVM REQUIRED)
-include_directories(${LIBJVM_INCLUDE_DIRS})
-set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${LIBJVM_LIBRARIES})
+find_package(JNI REQUIRED)
+if (JNI_FOUND)
+    message(STATUS "Found JNI header file: ${JNI_INCLUDE_PATH}")
+    message(STATUS "Found JNI library: ${JAVA_JVM_LIBRARY}")
+endif()
+include_directories(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
+set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${JAVA_JVM_LIBRARY})
 
 find_package(TILEDB REQUIRED)
 include_directories(${LIBTILEDB_INCLUDE_DIR})
@@ -73,7 +77,8 @@ if (NOT WIN32)
     message(STATUS "Compiler supports C++ 2011.")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   else()
-    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+    message(FATAL_ERROR
+        "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
   endif()
 endif()
 
@@ -100,9 +105,7 @@ else()
   set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -O0 -g3 -ggdb3 -gdwarf-3 -fvisibility=hidden")
   set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -fvisibility=hidden")
   set(CMAKE_CXX_FLAGS_COVERAGE "-DDEBUG -g3 -gdwarf-3 --coverage")
-
   set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -dynamiclib" )
-
   if(NOT APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-literal-suffix")
   endif()
