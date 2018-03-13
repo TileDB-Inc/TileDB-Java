@@ -41,23 +41,23 @@ if(NOT LIBTILEDB_FOUND)
     endif()
     if(NOT ${TILEDB_HOME} STREQUAL "")
 	    message(STATUS "TILEDB_HOME is set to ${TILEDB_HOME}")
-        list(APPEND POSSILE_PATHS
+        list(APPEND POSSIBLE_PATHS
          "${TILEDB_HOME}/lib"
          "${TILEDB_HOME}/include")
      endif()
      # Append system paths
-     list(APPEND POSSILE_PATHS
+     list(APPEND POSSIBLE_PATHS
          "/usr/lib"
          "/usr/local/lib"
          "/usr/include"
          "/usr/local/include")
 
-    find_path(LIBTILEDB_INCLUDE_DIR NAMES "tiledb/tiledb.h" PATHS ${POSSILE_PATHS} NO_DEFAULT_PATH)
+    find_path(LIBTILEDB_INCLUDE_DIR NAMES "tiledb/tiledb.h" PATHS ${POSSIBLE_PATHS} NO_DEFAULT_PATH)
 
     find_library(LIBTILEDB_LIBRARY NAMES
         libtiledb${CMAKE_SHARED_LIBRARY_SUFFIX}
 	libtiledb${CMAKE_STATIC_LIBRARY_SUFFIX}
-	PATHS ${POSSILE_PATHS}
+	PATHS ${POSSIBLE_PATHS}
         NO_DEFAULT_PATH)
 
     if(LIBTILEDB_INCLUDE_DIR)
