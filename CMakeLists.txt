@@ -46,9 +46,16 @@ endif()
 set(TILEDB_JNI_LIB_DEPENDENCIES)
 
 # Find required library dependencies
-find_package(LIBJVM REQUIRED)
-include_directories(${LIBJVM_INCLUDE_DIRS})
-set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${LIBJVM_LIBRARIES})
+find_package(JNI)
+
+if (JNI_FOUND)
+    message (STATUS "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
+    message (STATUS "JNI_LIBRARIES=${JNI_LIBRARIES}")
+endif()
+
+include_directories(${JNI_INCLUDE_DIRS})
+set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${JNI_LIBRARIES})
+
 
 find_package(TILEDB REQUIRED)
 include_directories(${LIBTILEDB_INCLUDE_DIR})
