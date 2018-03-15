@@ -9,6 +9,23 @@ repositories {
     mavenCentral()
 }
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.ysb33r.gradle:doxygen:0.3.2'
+    }
+}
+
+apply plugin : 'org.ysb33r.doxygen'
+
+doxygen {
+    generate_html true
+
+    source new File(projectDir,'src/main/java/io/tiledb/java')
+}
+
 sourceSets {
     main {
         java {
