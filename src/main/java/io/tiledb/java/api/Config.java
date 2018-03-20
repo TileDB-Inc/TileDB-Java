@@ -23,7 +23,7 @@
  *
  * @section DESCRIPTION
  *
- * This file defines the C++ API for the TileDB Config object.
+ * This file defines the JAVA API for the TileDB Config object.
  */
 
 package io.tiledb.java.api;
@@ -210,6 +210,22 @@ public class Config {
 
   private void setConfig(SWIGTYPE_p_p_tiledb_config_t config) {
     this.configpp = config;
+  }
+
+  protected SWIGTYPE_p_p_tiledb_config_t getConfigpp() {
+    return configpp;
+  }
+
+  protected void setConfigpp(SWIGTYPE_p_p_tiledb_config_t configpp) {
+    this.configpp = configpp;
+  }
+
+  protected SWIGTYPE_p_tiledb_config_t getConfigp() {
+    return configp;
+  }
+
+  protected void setConfigp(SWIGTYPE_p_tiledb_config_t configp) {
+    this.configp = configp;
   }
 
   @Override
