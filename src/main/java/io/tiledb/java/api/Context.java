@@ -53,9 +53,9 @@ public class Context {
   }
 
   /**
-   * Sets the error handler callback. If none is set, the
-   * `default_error_handler` is used. The callback accepts an error
-   * message.
+   * Sets the error handler using a subclass of ContextCallback. If none is set,
+   * `ContextCallback` is used. The callback accepts an error
+   *  message.
    */
   public void set_error_handler(ContextCallback error_handler) {
     this.error_handler = error_handler;
@@ -109,7 +109,8 @@ public class Context {
    * Delete the native object.
    */
   public void free() throws Throwable {
-    config.free();
+    if(config!=null)
+      config.free();
     int rc = tiledb.tiledb_ctx_free(ctxpp);
     handle_error(rc);
   }
@@ -118,6 +119,8 @@ public class Context {
     ctxpp = Utils.new_tiledb_ctx_tpp();
     if (tiledb.tiledb_ctx_create(ctxpp, config.getConfigp()) != tiledb.TILEDB_OK)
       throw new TileDBError("[TileDB::JavaAPI] Error: Failed to create context");
+    ctxp = Utils.tiledb_ctx_tpp_value(ctxpp);
+    this.config=config;
     error_handler = new ContextCallback();
   }
 

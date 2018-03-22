@@ -24,8 +24,21 @@
 
 package io.tiledb.java.api;
 
-public class TileDBError extends Exception {
-  public TileDBError(String s) {
-    super(s);
+import io.tiledb.api.SWIGTYPE_p_p_tiledb_domain_t;
+import io.tiledb.api.SWIGTYPE_p_tiledb_domain_t;
+
+public class Domain {
+  private SWIGTYPE_p_p_tiledb_domain_t domainpp;
+  private SWIGTYPE_p_tiledb_domain_t domainp;
+
+  public Domain(Context ctx, SWIGTYPE_p_p_tiledb_domain_t domainpp) {
+  }
+
+  public SWIGTYPE_p_p_tiledb_domain_t getDomainpp() {
+    return domainpp;
+  }
+
+  public SWIGTYPE_p_tiledb_domain_t getDomainp() {
+    return domainp;
   }
 }

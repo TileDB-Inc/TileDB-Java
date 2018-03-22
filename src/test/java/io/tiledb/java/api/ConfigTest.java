@@ -42,6 +42,5 @@ public class ConfigTest {
     Assert.assertTrue(params.get("key").equals("value1"));
     conf.saveToFile("testConf");
     conf.free();
-    conf.finalize();
   }
 }

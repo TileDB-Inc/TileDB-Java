@@ -24,8 +24,16 @@
 
 package io.tiledb.java.api;
 
-public class TileDBError extends Exception {
-  public TileDBError(String s) {
-    super(s);
+import io.tiledb.api.tiledb_array_type_t;
+import org.junit.Test;
+
+public class AttributeTest {
+
+  @Test
+  public void testArraySchema() throws Throwable {
+    Context ctx = new Context();
+    Attribute<Integer> a = new Attribute<Integer>(ctx,"a1", Integer.class);
+
+
   }
 }

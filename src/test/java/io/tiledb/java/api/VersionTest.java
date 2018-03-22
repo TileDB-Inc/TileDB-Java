@@ -32,6 +32,5 @@ public class VersionTest {
   public void testVersion() {
     Version version = new Version();
     System.out.println(version);
-
   }
 }

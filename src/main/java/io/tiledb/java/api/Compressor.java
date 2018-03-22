@@ -24,8 +24,30 @@
 
 package io.tiledb.java.api;
 
-public class TileDBError extends Exception {
-  public TileDBError(String s) {
-    super(s);
+import io.tiledb.api.tiledb_compressor_t;
+
+public class Compressor {
+  private tiledb_compressor_t compressor;
+  private int level;
+
+  public Compressor(tiledb_compressor_t compressor, int level) {
+    this.compressor = compressor;
+    this.level = level;
+  }
+
+  public tiledb_compressor_t getCompressor() {
+    return compressor;
+  }
+
+  public void setCompressor(tiledb_compressor_t compressor) {
+    this.compressor = compressor;
+  }
+
+  public int getLevel() {
+    return level;
+  }
+
+  public void setLevel(int level) {
+    this.level = level;
   }
 }

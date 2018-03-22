@@ -24,8 +24,20 @@
 
 package io.tiledb.java.api;
 
-public class TileDBError extends Exception {
-  public TileDBError(String s) {
-    super(s);
+import io.tiledb.api.tiledb_array_type_t;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.HashMap;
+
+public class ArraySchemaTest {
+
+  @Test
+  public void testArraySchema() throws Throwable {
+    Context ctx = new Context();
+    ArraySchema arraySchema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_DENSE);
+
+    System.out.println(arraySchema.getArrayType());
+    arraySchema.free();
   }
 }
