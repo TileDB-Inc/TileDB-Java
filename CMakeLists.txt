@@ -119,9 +119,17 @@ endif()
 # Enable testing
 #enable_testing()
 
-add_executable(libtiledb.jnilib
+if (WIN32)
+  set(LIB_EXTENSION dll)
+elseif(APPLE)
+  set(LIB_EXTENSION jnilib)
+else()
+  set(LIB_EXTENSION so)
+endif()
+
+add_executable(libtiledb.${LIB_EXTENSION}
     src/main/c/generated/tiledb_wrap.cxx
     src/main/c/custom/tiledb_wrap_custom.cxx)
 
-target_link_libraries(libtiledb.jnilib
+target_link_libraries(libtiledb.${LIB_EXTENSION}
     ${TILEDB_JNI_LIB_DEPENDENCIES})
