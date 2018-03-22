@@ -48,7 +48,7 @@ set(TILEDB_JNI_LIB_DEPENDENCIES)
 # Find required library dependencies
 find_package(JNI REQUIRED)
 if (JNI_FOUND)
-    message(STATUS "Found JNI header file: ${JNI_INCLUDE_PATH}")
+    message(STATUS "Found JNI header file: ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2}")
     message(STATUS "Found JNI library: ${JAVA_JVM_LIBRARY}")
 endif()
 include_directories(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
@@ -102,10 +102,10 @@ if (WIN32)
   # Add /MPn flag from CMake invocation (if defined).
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MSVC_MP_FLAG}")
 else()
-  set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -O0 -g3 -ggdb3 -gdwarf-3 -fvisibility=hidden")
-  set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -fvisibility=hidden")
-  set(CMAKE_CXX_FLAGS_COVERAGE "-DDEBUG -g3 -gdwarf-3 --coverage")
-  set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -dynamiclib" )
+  set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -O0 -g3 -ggdb3 -gdwarf-3 -fvisibility=hidden -fPIC")
+  set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -fvisibility=hidden -fPIC")
+  set(CMAKE_CXX_FLAGS_COVERAGE "-DDEBUG -g3 -gdwarf-3 --coverage -fPIC")
+  set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -shared" )
   if(NOT APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-literal-suffix")
   endif()
@@ -119,9 +119,17 @@ endif()
 # Enable testing
 #enable_testing()
 
-add_executable(libtiledb.jnilib
+if (WIN32)
+  set(LIB_EXTENSION dll)
+elseif(APPLE)
+  set(LIB_EXTENSION jnilib)
+else()
+  set(LIB_EXTENSION so)
+endif()
+
+add_executable(libtiledb.${LIB_EXTENSION}
     src/main/c/generated/tiledb_wrap.cxx
     src/main/c/custom/tiledb_wrap_custom.cxx)
 
-target_link_libraries(libtiledb.jnilib
+target_link_libraries(libtiledb.${LIB_EXTENSION}
     ${TILEDB_JNI_LIB_DEPENDENCIES})
