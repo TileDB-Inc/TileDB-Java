@@ -48,7 +48,7 @@ set(TILEDB_JNI_LIB_DEPENDENCIES)
 # Find required library dependencies
 find_package(JNI REQUIRED)
 if (JNI_FOUND)
-    message(STATUS "Found JNI header file: ${JNI_INCLUDE_PATH}")
+    message(STATUS "Found JNI header file: ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2}")
     message(STATUS "Found JNI library: ${JAVA_JVM_LIBRARY}")
 endif()
 include_directories(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
