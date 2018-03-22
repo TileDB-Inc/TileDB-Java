@@ -1311,7 +1311,7 @@ JNIEXPORT jlongArray JNICALL Java_io_tiledb_api_UtilsJNI_int64ArrayGet(JNIEnv *j
   jlongArray jresult = jenv->NewLongArray(sz);
   if (!jresult)
     return NULL;
-  jenv->ReleaseLongArrayElements(jresult, arr, 0);
+  jenv->ReleaseLongArrayElements(jresult, (jlong*) arr, 0);
   return jresult;
 }
 
