@@ -1,0 +1,31 @@
+dist: trusty
+sudo: required
+
+language: java
+jdk:
+  - oraclejdk8   
+
+notifications:
+  email: false
+
+install:
+  # Install TileDB in the Python repo's build directory
+  - mkdir build
+  - pushd ./build # . -> ./build
+  - git clone https://github.com/TileDB-Inc/TileDB
+  - pushd TileDB # ./build -> ./build/TileDB
+  - git checkout 1.2.1
+  - scripts/install-deps.sh
+  - mkdir build
+  - pushd ./build  # ./build/TileDB/build
+  - ../bootstrap
+  - make install
+  - popd # ./build/TileDB/build -> ./build/TileDB
+  - export TILEDB_HOME=$PWD/dist
+  - popd # ./build/TileDB -> ./build
+  - popd # ./build -> .
+  # Build and install extension module
+  - ./gradlew assemble
+
+script:
+  - ./gradlew test
