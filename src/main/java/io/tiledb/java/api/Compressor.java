@@ -30,6 +30,14 @@ public class Compressor {
   private tiledb_compressor_t compressor;
   private int level;
 
+  @Override
+  public String toString() {
+    return "Compressor{" +
+        "compressor=" + compressor +
+        ", level=" + level +
+        '}';
+  }
+
   public Compressor(tiledb_compressor_t compressor, int level) {
     this.compressor = compressor;
     this.level = level;

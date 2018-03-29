@@ -67,50 +67,104 @@ public class Attribute<T> {
   private boolean isArray;
   private Context ctx;
   private String name;
+  private tiledb_datatype_t type;
 
   /* Constructor from native object */
-  public Attribute(Context ctx, SWIGTYPE_p_p_tiledb_attribute_t attributepp) {
+  public Attribute(Context ctx, SWIGTYPE_p_p_tiledb_attribute_t attributepp) throws TileDBError {
     this.ctx =ctx;
     this.attributepp = attributepp;
     this.attributep = Utils.tiledb_attribute_tpp_value(attributepp);
+    getName();
   }
 
   /* Constructor from native object */
   public Attribute(Context ctx, String name, Class<T> atrrType) throws TileDBError {
     this.ctx =ctx;
+    this.name = name;
     this.attributepp = Utils.new_tiledb_attribute_tpp();
-    tiledb_datatype_t type =  getNativeType(atrrType);
+    type =  Types.getNativeType(atrrType);
     ctx.handle_error(tiledb.tiledb_attribute_create(ctx.getCtxp(), attributepp, name, type));
-  }
-
-  private tiledb_datatype_t getNativeType(Class<T> atrrType) throws TileDBError {
-    if(atrrType.equals(Integer.class)) {
-      return tiledb_datatype_t.TILEDB_INT32;
-    } else if(atrrType.equals(Long.class)) {
-      return tiledb_datatype_t.TILEDB_INT64;
-    } else if(atrrType.equals(Character.class)) {
-      return tiledb_datatype_t.TILEDB_CHAR;
-    } else if(atrrType.equals(Float.class)) {
-      return tiledb_datatype_t.TILEDB_FLOAT32;
-    } else if(atrrType.equals(Double.class)) {
-      return tiledb_datatype_t.TILEDB_FLOAT64;
-    } else if(atrrType.equals(Byte.class)) {
-      return tiledb_datatype_t.TILEDB_INT8;
-    } else if(atrrType.equals(Short.class)) {
-      return tiledb_datatype_t.TILEDB_INT16;
-    } else if(atrrType.equals(BigInteger.class)) {
-      return tiledb_datatype_t.TILEDB_UINT64;
-    } else {
-      throw new TileDBError("Not supported type: "+atrrType);
-    }
+    this.attributep = Utils.tiledb_attribute_tpp_value(attributepp);
   }
 
   public SWIGTYPE_p_tiledb_attribute_t getAttributep() {
     return attributep;
   }
-  
-  public String getName() {
-    return "";
+
+  /** Returns the name of the attribute. */
+  public String getName() throws TileDBError {
+    if(name==null){
+      SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
+      ctx.handle_error(tiledb.tiledb_attribute_get_name(ctx.getCtxp(), attributep, namepp));
+      name = tiledb.charpp_value(namepp);
+      tiledb.delete_charpp(namepp);
+    }
+    return name;
   }
 
+  /** Returns the attribute datatype. */
+  public tiledb_datatype_t getType() throws TileDBError {
+    if(type==null){
+      SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
+      ctx.handle_error(tiledb.tiledb_attribute_get_type(ctx.getCtxp(), attributep, typep));
+      type = tiledb.tiledb_datatype_tp_value(typep);
+      tiledb.delete_tiledb_datatype_tp(typep);
+    }
+    return type;
+  }
+
+  /** Returns the size (in bytes) of one cell on this attribute. */
+  public long getCellSize() throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long sizep = tiledb.new_ullp();
+    ctx.handle_error(tiledb.tiledb_attribute_get_cell_size(ctx.getCtxp(), attributep, sizep));
+    long size = tiledb.ullp_value(sizep).longValue();
+    tiledb.delete_ullp(sizep);
+    return size;
+  }
+
+  /**
+   * Returns the number of values stored in each cell.
+   * This is equal to the size of the attribute * sizeof(attr_type).
+   * For variable size attributes this is TILEDB_VAR_NUM.
+   */
+  public long getCellValNum() throws TileDBError {
+    SWIGTYPE_p_unsigned_int sizep = tiledb.new_uintp();
+    ctx.handle_error(tiledb.tiledb_attribute_get_cell_val_num(ctx.getCtxp(), attributep, sizep));
+    long size = tiledb.uintp_value(sizep);
+    tiledb.delete_uintp(sizep);
+    return size;
+  }
+
+  /** Sets the number of attribute values per cell. */
+  public void setCellValNum(long size) throws TileDBError {
+    ctx.handle_error(tiledb.tiledb_attribute_set_cell_val_num(ctx.getCtxp(), attributep, size));
+  }
+
+  /** Returns the attribute compressor. */
+  public Compressor getCompressor() throws TileDBError {
+    SWIGTYPE_p_tiledb_compressor_t compressor = tiledb.new_tiledb_compressor_tp();
+    SWIGTYPE_p_int level = tiledb.new_intp();
+    ctx.handle_error(
+        tiledb.tiledb_attribute_get_compressor(ctx.getCtxp(), attributep, compressor, level));
+    Compressor cmp = new Compressor(tiledb.tiledb_compressor_tp_value(compressor), tiledb.intp_value(level));
+    tiledb.delete_intp(level);
+    tiledb.delete_tiledb_compressor_tp(compressor);
+    return cmp;
+  }
+
+  /** Sets the attribute compressor. */
+  public void setCompressor(Compressor c) throws TileDBError {
+    ctx.handle_error(tiledb.tiledb_attribute_set_compressor(
+        ctx.getCtxp(), attributep, c.getCompressor(), c.getLevel()));
+  }
+
+  @Override
+  public String toString() {
+    try {
+      return "Attr<" + getName() + ',' + getType() + ',' + ((getCellValNum() == tiledb.tiledb_var_num()) ? "VAR" : getCellValNum()) + '>';
+    } catch (TileDBError tileDBError) {
+      tileDBError.printStackTrace();
+    }
+    return "";
+  }
 }

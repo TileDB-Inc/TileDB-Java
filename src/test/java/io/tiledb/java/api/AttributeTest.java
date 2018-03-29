@@ -24,7 +24,9 @@
 
 package io.tiledb.java.api;
 
+import io.tiledb.api.tiledb;
 import io.tiledb.api.tiledb_array_type_t;
+import io.tiledb.api.tiledb_compressor_t;
 import org.junit.Test;
 
 public class AttributeTest {
@@ -32,8 +34,16 @@ public class AttributeTest {
   @Test
   public void testArraySchema() throws Throwable {
     Context ctx = new Context();
-    Attribute<Integer> a = new Attribute<Integer>(ctx,"a1", Integer.class);
+    Attribute<long[]> a = new Attribute<long[]>(ctx,"a1", long[].class);
+    System.out.println(a.getName());
+    System.out.println(a.getType());
+    a.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, 1));
 
+    a.setCellValNum(tiledb.tiledb_var_num());
+    System.out.println(a.getCellValNum());
+    System.out.println(a.getCellSize());
 
+    System.out.println(a.getCompressor());
+    System.out.println(a);
   }
 }
