@@ -53,9 +53,15 @@ public class Context {
   }
 
   /**
+<<<<<<< HEAD
    * Sets the error handler using a subclass of ContextCallback. If none is set,
    * `ContextCallback` is used. The callback accepts an error
    *  message.
+=======
+   * Sets the error handler callback. If none is set, the
+   * `default_error_handler` is used. The callback accepts an error
+   * message.
+>>>>>>> 05a2946d55a5fca3ec7bf18b2c5a62364c899109
    */
   public void set_error_handler(ContextCallback error_handler) {
     this.error_handler = error_handler;
