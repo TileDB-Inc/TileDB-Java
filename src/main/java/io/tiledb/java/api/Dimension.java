@@ -60,7 +60,7 @@ public class Dimension<T> {
     this.name =name;
     this.domain = domain;
     SWIGTYPE_p_void domainp = Types.createNativeArrayPair(this.type, domain);
-    SWIGTYPE_p_void tile_extent = Types.createNativeArray(this.type, extent);
+    SWIGTYPE_p_void tile_extent = Types.createNativeArrayExtent(this.type, extent);
     ctx.handle_error(tiledb.tiledb_dimension_create(
         ctx.getCtxp(), dimensionpp, name, this.type, domainp, tile_extent));
     this.dimensionp = Utils.tiledb_dimension_tpp_value(dimensionpp);
@@ -97,9 +97,10 @@ public class Dimension<T> {
   /** Returns the domain of the dimension. **/
   Pair<T, T> domain() throws TileDBError {
     if(domain==null){
-//      SWIGTYPE_p_p_void domainpp = tiledb.new_voidpArray(1);
-//      ctx.handle_error(tiledb.tiledb_dimension_get_domain(ctx.getCtxp(), dimensionp, domainpp));
-//      tiledb.tiledb.voidpArray_getitem(domainpp,0);
+      getType();
+      SWIGTYPE_p_p_void domainpp = tiledb.new_voidpArray(1);
+      ctx.handle_error(tiledb.tiledb_dimension_get_domain(ctx.getCtxp(), dimensionp, domainpp));
+      domain = Types.getPairFromNativeArray(type, domainpp);
 //      tiledb.delete_charpp(namepp);
 
     }

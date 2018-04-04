@@ -71,6 +71,7 @@ public class ArraySchema {
   private SWIGTYPE_p_p_tiledb_array_schema_t schemapp;
   private SWIGTYPE_p_tiledb_array_schema_t schemap;
   private Context ctx;
+  private HashMap<String,Attribute> attributes;
 
   /**
    * Creates a new array schema.
@@ -261,19 +262,21 @@ public class ArraySchema {
    * Gets all attributes in the array.
    */
   HashMap<String, Attribute> attributes() throws TileDBError {
-    SWIGTYPE_p_p_tiledb_attribute_t attrpp = Utils.new_tiledb_attribute_tpp();
-    HashMap<String,Attribute> result = new HashMap<String, Attribute>();
-    SWIGTYPE_p_unsigned_int nattrp = tiledb.new_uintp();
-    ctx.handle_error(
-        tiledb.tiledb_array_schema_get_attribute_num(ctx.getCtxp(), schemap, nattrp));
-    long nattr = tiledb.uintp_value(nattrp);
-    for (long i = 0; i < nattr; ++i) {
-      ctx.handle_error(tiledb.tiledb_array_schema_get_attribute_from_index(
-          ctx.getCtxp(), schemap, i, attrpp));
-      Attribute attr = new Attribute(ctx, attrpp);
-      result.put(attr.getName(), attr);
+    if(attributes == null) {
+      attributes = new HashMap<String, Attribute>();
+      SWIGTYPE_p_p_tiledb_attribute_t attrpp = Utils.new_tiledb_attribute_tpp();
+      SWIGTYPE_p_unsigned_int nattrp = tiledb.new_uintp();
+      ctx.handle_error(
+          tiledb.tiledb_array_schema_get_attribute_num(ctx.getCtxp(), schemap, nattrp));
+      long nattr = tiledb.uintp_value(nattrp);
+      for (long i = 0; i < nattr; ++i) {
+        ctx.handle_error(tiledb.tiledb_array_schema_get_attribute_from_index(
+            ctx.getCtxp(), schemap, i, attrpp));
+        Attribute attr = new Attribute(ctx, attrpp);
+        attributes.put(attr.getName(), attr);
+      }
     }
-    return result;
+    return attributes;
   }
 
   /**

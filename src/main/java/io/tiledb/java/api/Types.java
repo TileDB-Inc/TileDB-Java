@@ -73,6 +73,89 @@ public class Types {
     }
   }
 
+  public static Class getJavaType(tiledb_datatype_t type) throws TileDBError {
+    switch(type) {
+      case TILEDB_FLOAT32: {
+        return Float.class;
+      }
+      case TILEDB_FLOAT64: {
+        return Double.class;
+      }
+      case TILEDB_INT8: {
+        return Byte.class;
+      }
+      case TILEDB_INT16: {
+        return Short.class;
+      }
+      case TILEDB_INT32: {
+        return Integer.class;
+      }
+      case TILEDB_INT64: {
+        return Long.class;
+      }
+      case TILEDB_UINT8: {
+        return Short.class;
+      }
+      case TILEDB_UINT16: {
+        return Integer.class;
+      }
+      case TILEDB_UINT32: {
+        return Long.class;
+      }
+      case TILEDB_UINT64: {
+        return Long.class;
+      }
+      case TILEDB_CHAR: {
+        return Character.class;
+      }
+      default: {
+        throw new TileDBError("Not supported domain type " + type);
+      }
+    }
+  }
+
+
+  public static Class getJavaPrimitiveArrayType(tiledb_datatype_t type) throws TileDBError {
+    switch(type) {
+      case TILEDB_FLOAT32: {
+        return float[].class;
+      }
+      case TILEDB_FLOAT64: {
+        return double[].class;
+      }
+      case TILEDB_INT8: {
+        return byte[].class;
+      }
+      case TILEDB_INT16: {
+        return short[].class;
+      }
+      case TILEDB_INT32: {
+        return int[].class;
+      }
+      case TILEDB_INT64: {
+        return long[].class;
+      }
+      case TILEDB_UINT8: {
+        return short[].class;
+      }
+      case TILEDB_UINT16: {
+        return int[].class;
+      }
+      case TILEDB_UINT32: {
+        return long[].class;
+      }
+      case TILEDB_UINT64: {
+        return long[].class;
+      }
+      case TILEDB_CHAR: {
+        return String.class;
+      }
+      default: {
+        throw new TileDBError("Not supported domain type " + type);
+      }
+    }
+  }
+
   public static SWIGTYPE_p_void createEmptyNativeArray(tiledb_datatype_t type, int size) throws TileDBError {
     switch(type){
       case TILEDB_FLOAT32:{
@@ -172,7 +255,100 @@ public class Types {
     }
   }
 
-  public static SWIGTYPE_p_void createNativeArray(tiledb_datatype_t type, Object extent) throws TileDBError {
+  public static Object createNativeArrayObject(tiledb_datatype_t type, Object primitiveTypeArray) throws TileDBError {
+    switch(type){
+      case TILEDB_FLOAT32:{
+        return Utils.newFloatArray((float[])primitiveTypeArray);
+      }
+      case TILEDB_FLOAT64:{
+        return Utils.newDoubleArray((double[])primitiveTypeArray);
+      }
+      case TILEDB_INT8:{
+        return Utils.newInt8_tArray((byte[])primitiveTypeArray);
+      }
+      case TILEDB_INT16:{
+        return Utils.newInt16_tArray((short[])primitiveTypeArray);
+      }
+      case TILEDB_INT32:{
+        return Utils.newInt32_tArray((int[])primitiveTypeArray);
+      }
+      case TILEDB_INT64:{
+        return Utils.newInt64_tArray((long[])primitiveTypeArray);
+      }
+      case TILEDB_UINT8:{
+        return Utils.newUint8_tArray((short[])primitiveTypeArray);
+      }
+      case TILEDB_UINT16:{
+        return Utils.newUint16_tArray((int[])primitiveTypeArray);
+      }
+      case TILEDB_UINT32: {
+        return Utils.newUint32_tArray((long[])primitiveTypeArray);
+      }
+      case TILEDB_UINT64: {
+        return Utils.newUint64Array((long[])primitiveTypeArray);
+      }
+      case TILEDB_CHAR: {
+        return Utils.newCharArray((String) primitiveTypeArray);
+      }
+      default:{
+        throw new TileDBError("Not supported domain type "+type);
+      }
+    }
+  }
+
+  public static SWIGTYPE_p_void createNativeArray(tiledb_datatype_t type, Object primitiveTypeArray) throws TileDBError {
+    switch(type){
+      case TILEDB_FLOAT32:{
+        floatArray domain = Utils.newFloatArray((float[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_FLOAT64:{
+        doubleArray domain = Utils.newDoubleArray((double[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_INT8:{
+        int8_tArray domain = Utils.newInt8_tArray((byte[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_INT16:{
+        int16_tArray domain = Utils.newInt16_tArray((short[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_INT32:{
+        int32_tArray domain = Utils.newInt32_tArray((int[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_INT64:{
+        int64_tArray domain = Utils.newInt64_tArray((long[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_UINT8:{
+        uint8_tArray domain = Utils.newUint8_tArray((short[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_UINT16:{
+        uint16_tArray domain = Utils.newUint16_tArray((int[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_UINT32: {
+        uint32_tArray domain = Utils.newUint32_tArray((long[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_UINT64: {
+        uint64_tArray domain = Utils.newUint64Array((long[])primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      case TILEDB_CHAR: {
+        charArray domain = Utils.newCharArray((String) primitiveTypeArray);
+        return PointerUtils.toVoid(domain);
+      }
+      default:{
+        throw new TileDBError("Not supported domain type "+type);
+      }
+    }
+  }
+
+  public static SWIGTYPE_p_void createNativeArrayExtent(tiledb_datatype_t type, Object extent) throws TileDBError {
     switch(type){
       case TILEDB_FLOAT32:{
         float[] domain_ = {(Float) extent};
@@ -229,4 +405,85 @@ public class Types {
       }
     }
   }
+
+  public static Pair getPairFromNativeArray(tiledb_datatype_t type, SWIGTYPE_p_p_void nativeArray) throws TileDBError {
+    switch (type) {
+      case TILEDB_FLOAT32: {
+        floatArray array = PointerUtils.floatArrayFromVoid(nativeArray);
+        Pair ret = new Pair<Float, Float>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      case TILEDB_FLOAT64: {
+        doubleArray array = PointerUtils.doubleArrayFromVoid(nativeArray);
+        Pair ret = new Pair<Double, Double>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      case TILEDB_INT8: {
+        int8_tArray array = PointerUtils.int8_tArrayFromVoid(nativeArray);
+        Pair ret = new Pair<Byte, Byte>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      case TILEDB_INT16: {
+        int16_tArray array = PointerUtils.int16_tArrayFromVoid(nativeArray);
+        Pair ret = new Pair<Short, Short>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      case TILEDB_INT32: {
+        int32_tArray array = PointerUtils.int32_tArrayFromVoid(nativeArray);
+        Pair ret = new Pair<Integer, Integer>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      case TILEDB_INT64: {
+        int64_tArray array = PointerUtils.int64_tArrayFromVoid(nativeArray);
+        Pair ret = new Pair<Long, Long>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      case TILEDB_UINT8: {
+        uint8_tArray array = PointerUtils.uint8_tArrayFromVoid(nativeArray);
+        Pair ret = new Pair<Short, Short>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      case TILEDB_UINT16: {
+        uint16_tArray array = PointerUtils.uint16_tArrayFromVoid(nativeArray);
+        Pair ret = new Pair<Integer, Integer>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      case TILEDB_UINT32: {
+        uint32_tArray array = PointerUtils.uint32_tArrayFromVoid(nativeArray);
+        Pair ret = new Pair<Long, Long>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      case TILEDB_UINT64: {
+        uint64_tArray array = PointerUtils.uint64_tArrayFromVoid(nativeArray);
+        Pair ret = new Pair<BigInteger, BigInteger>(array.getitem(0), array.getitem(1));
+        return ret;
+      }
+      default: {
+        throw new TileDBError("Not supported domain type " + type);
+      }
+    }
+  }
+
+  public static boolean typeCheck(Object obj, tiledb_datatype_t type) throws TileDBError {
+    if(getJavaType(type).equals(obj.getClass())){
+      return true;
+    }
+    else {
+      throw new TileDBError("Type " + obj.getClass() +" is not equal to the default type: "+getJavaType(type) +" for "+type);
+    }
+  }
+
+  public static boolean typeCheckArray(Object array, tiledb_datatype_t type) throws TileDBError {
+    if(getJavaPrimitiveArrayType(type).equals(array.getClass())){
+      return true;
+    }
+    else {
+      throw new TileDBError("Type " + array.getClass() +" is not equal to the default type: "+getJavaPrimitiveArrayType(type) +" for " +type);
+    }
+  }
+
+  public static int getArraySize(Object buf) {
+    return ((Object[]) buf).length;
+  }
+
 }
