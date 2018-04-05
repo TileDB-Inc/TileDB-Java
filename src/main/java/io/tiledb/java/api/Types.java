@@ -148,7 +148,7 @@ public class Types {
         return long[].class;
       }
       case TILEDB_CHAR: {
-        return String.class;
+        return byte[].class;
       }
       default: {
         throw new TileDBError("Not supported domain type " + type);
@@ -189,7 +189,7 @@ public class Types {
         return PointerUtils.toVoid(new uint64_tArray(size));
       }
       case TILEDB_CHAR: {
-        return PointerUtils.toVoid(new charArray(size));
+        return PointerUtils.toVoid(new uint8_tArray(size));
       }
       default:{
         throw new TileDBError("Not supported domain type "+type);
@@ -288,7 +288,7 @@ public class Types {
         return Utils.newUint64Array((long[])primitiveTypeArray);
       }
       case TILEDB_CHAR: {
-        return Utils.newCharArray((String) primitiveTypeArray);
+        return Utils.newInt8_tArray((byte[]) primitiveTypeArray);
       }
       default:{
         throw new TileDBError("Not supported domain type "+type);
@@ -339,7 +339,7 @@ public class Types {
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_CHAR: {
-        charArray domain = Utils.newCharArray((String) primitiveTypeArray);
+        int8_tArray domain = Utils.newInt8_tArray((byte[]) primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       default:{
@@ -457,6 +457,34 @@ public class Types {
         uint64_tArray array = PointerUtils.uint64_tArrayFromVoid(nativeArray);
         Pair ret = new Pair<BigInteger, BigInteger>(array.getitem(0), array.getitem(1));
         return ret;
+      }
+      default: {
+        throw new TileDBError("Not supported domain type " + type);
+      }
+    }
+  }
+
+  public static Object toJavaArray(SWIGTYPE_p_void pointer, tiledb_datatype_t type, int size) throws TileDBError {
+    switch (type) {
+      case TILEDB_FLOAT32: {
+        floatArray array = new floatArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.floatArrayGet(array,size);
+      }
+      case TILEDB_INT32: {
+        int32_tArray array = new int32_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.int32ArrayGet(array,size);
+      }
+      case TILEDB_UINT32: {
+        uint32_tArray array = new uint32_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.uint32ArrayGet(array,size);
+      }
+      case TILEDB_UINT64: {
+        uint64_tArray array = new uint64_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.uint64ArrayGet(array,size);
+      }
+      case TILEDB_CHAR: {
+        int8_tArray array = new int8_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.int8ArrayGet(array,size);
       }
       default: {
         throw new TileDBError("Not supported domain type " + type);

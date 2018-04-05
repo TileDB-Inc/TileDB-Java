@@ -28,14 +28,16 @@ import io.tiledb.api.*;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("ALL")
 public class ArraySchemaTest {
 
   @Test
   public void testArraySchema() throws Throwable {
-//    testArraySchemaCreate();
+    testArraySchemaCreate();
     testArraySchemaRead();
   }
 
@@ -56,7 +58,7 @@ public class ArraySchemaTest {
     Attribute<Character> a2 = new Attribute<Character>(ctx,"a2",Character.class);
     a2.setCellValNum(tiledb.tiledb_var_num());
     Attribute<Float> a3 = new Attribute<Float>(ctx,"a3",Float.class);
-//    a3.setCellValNum(2);
+    a3.setCellValNum(2);
     a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
     a2.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
     a3.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_ZSTD, -1));
@@ -91,12 +93,15 @@ public class ArraySchemaTest {
     String buffer_var_a2 = "abbcccdddd" + "effggghhhh" + "ijjkkkllll"
         + "mnnooopppp";
 
-    float buffer_a3[] = {0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
-        4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f};
+    float buffer_a3[] = {
+        0.1f,  0.2f,  1.1f,  1.2f,  2.1f,  2.2f,  3.1f,  3.2f,
+        4.1f,  4.2f,  5.1f,  5.2f,  6.1f,  6.2f,  7.1f,  7.2f,
+        8.1f,  8.2f,  9.1f,  9.2f,  10.1f, 10.2f, 11.1f, 11.2f,
+        12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f};
 
     query.set_layout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
     query.set_buffer("a1", a1_data, a1_data.length);
-    query.set_buffer("a2", a2_offsets, buffer_var_a2, buffer_var_a2.length());
+    query.set_buffer("a2", a2_offsets, buffer_var_a2.getBytes(), buffer_var_a2.length());
     query.set_buffer("a3", buffer_a3, buffer_a3.length);
 
     // Submit query
@@ -119,6 +124,33 @@ public class ArraySchemaTest {
 
     for (Map.Entry<String, Pair<Long,Long>> e : max_sizes.entrySet()){
       System.out.println(e.getKey() + " ["+e.getValue().getFirst()+","+e.getValue().getSecond()+"]");
+    }
+
+    int[] a1_buff = new int[max_sizes.get("a1").getSecond().intValue()];
+    long[] a2_offsets = new long[max_sizes.get("a2").getFirst().intValue()];
+    byte[] a2_data = new byte[max_sizes.get("a2").getSecond().intValue()];
+    float[] a3_buff = new float[max_sizes.get("a3").getSecond().intValue()];
+    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
+    query.set_layout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    query.set_subarray(subarray);
+    query.set_buffer("a1", a1_buff,a1_buff.length);
+    query.set_buffer("a2", a2_offsets, a2_data,a2_data.length);
+    query.set_buffer("a3", a3_buff,a3_buff.length);
+
+    System.out.println("Query submitted: " + query.submit() );
+    HashMap<String, Pair<Long, Long>> result_el = query.result_buffer_elements();
+    for (Map.Entry<String, Pair<Long,Long>> e : result_el.entrySet()){
+      System.out.println(e.getKey() + " elements ["+e.getValue().getFirst()+","+e.getValue().getSecond()+"]");
+    }
+
+    a1_buff = (int[]) query.get_buffer("a1");
+    a2_offsets = (long[]) query.get_var_buffer("a2");
+    a2_data = (byte[]) query.get_buffer("a2");
+    a3_buff = (float[]) query.get_buffer("a3");
+    for (int i =0; i< a1_buff.length; i++){
+      int end = (i==a1_buff.length-1)? a2_data.length : (int) a2_offsets[i+1];
+      System.out.println(a1_buff[i] +", "+
+          new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end))+", ["+a3_buff[2*i]+","+a3_buff[2*i+1]+"]");
     }
 
   }

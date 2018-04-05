@@ -36,7 +36,7 @@ public class floatArray {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
 
-  protected floatArray(long cPtr, boolean cMemoryOwn) {
+  public floatArray(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
