@@ -28,7 +28,7 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.*;
+import io.tiledb.libtiledb.*;
 
 
 public class Context {

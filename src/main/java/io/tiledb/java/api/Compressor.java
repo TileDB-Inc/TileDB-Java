@@ -24,7 +24,7 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.tiledb_compressor_t;
+import io.tiledb.libtiledb.tiledb_compressor_t;
 
 public class Compressor {
   private tiledb_compressor_t compressor;

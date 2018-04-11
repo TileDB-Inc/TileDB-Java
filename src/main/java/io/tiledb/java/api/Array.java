@@ -24,7 +24,7 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.*;
+import io.tiledb.libtiledb.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -103,7 +103,7 @@ public class Array {
    *     (0 for fixed-sized attributes and coordinates),
    *     and the second is the maximum number of elements of the value buffer.
    */
-  public HashMap<String,Pair<Long,Long>> max_buffer_elements(Object subarray) throws TileDBError {
+  public HashMap<String,Pair<Long,Long>> max_buffer_elements(Object subarray, int subarraySize) throws TileDBError {
     HashMap<String, Pair<Long,Long>> ret = new HashMap<String, Pair<Long,Long>>();
 //    TODO check type
 //    System.out.println("subarray class: "+subarray.getClass());
@@ -120,7 +120,7 @@ public class Array {
       tiledb.charpArray_setitem(names, attr_num, tiledb.tiledb_coords());
     }
     uint64_tArray sizes = new uint64_tArray(nbuffs);
-    SWIGTYPE_p_void nativeSubarray = Types.createNativeArray(schema.domain().type(), subarray);
+    SWIGTYPE_p_void nativeSubarray = Types.createNativeArray(schema.domain().type(), subarray, subarraySize);
 
     ctx.handle_error(tiledb.tiledb_array_compute_max_read_buffer_sizes(
         ctx.getCtxp(),

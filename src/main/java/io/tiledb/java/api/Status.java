@@ -24,9 +24,9 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.SWIGTYPE_p_tiledb_query_status_t;
-import io.tiledb.api.tiledb;
-import io.tiledb.api.tiledb_query_status_t;
+import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_query_status_t;
+import io.tiledb.libtiledb.tiledb;
+import io.tiledb.libtiledb.tiledb_query_status_t;
 
 public enum Status {
   FAILED, COMPLETE, INPROGRESS, INCOMPLETE, UNDEF;

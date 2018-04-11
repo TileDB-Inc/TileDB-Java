@@ -24,11 +24,8 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.tiledb_filesystem_t;
-import org.junit.Assert;
+import io.tiledb.libtiledb.tiledb_filesystem_t;
 import org.junit.Test;
-
-import java.util.HashMap;
 
 public class ContextTest {
 

@@ -24,7 +24,7 @@
 
 package examples;
 
-import io.tiledb.api.*;
+import io.tiledb.libtiledb.*;
 
 public class TiledbGroupCreate {
 

@@ -24,7 +24,7 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.*;
+import io.tiledb.libtiledb.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

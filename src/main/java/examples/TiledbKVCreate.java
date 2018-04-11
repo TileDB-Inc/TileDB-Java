@@ -24,9 +24,7 @@
 
 package examples;
 
-import java.math.BigInteger;
-
-import io.tiledb.api.*;
+import io.tiledb.libtiledb.*;
 
 public class TiledbKVCreate {
 

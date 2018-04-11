@@ -24,9 +24,7 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.*;
-
-import java.math.BigInteger;
+import io.tiledb.libtiledb.*;
 
 /**
  * Describes an attribute of an Array cell.

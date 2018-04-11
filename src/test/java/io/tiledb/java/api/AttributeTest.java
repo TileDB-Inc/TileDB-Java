@@ -24,9 +24,8 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.tiledb;
-import io.tiledb.api.tiledb_array_type_t;
-import io.tiledb.api.tiledb_compressor_t;
+import io.tiledb.libtiledb.tiledb;
+import io.tiledb.libtiledb.tiledb_compressor_t;
 import org.junit.Test;
 
 public class AttributeTest {

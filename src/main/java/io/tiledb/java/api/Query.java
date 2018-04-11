@@ -24,7 +24,7 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.*;
+import io.tiledb.libtiledb.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -159,9 +159,7 @@ public class Query {
     if(result_buffer_elements==null) {
       result_buffer_elements = new HashMap<String, Pair<Long, Long>>();
       int bid = 0;
-      System.out.println(sub_tsize_);
       for (Attribute attr : array.getSchema().attributes().values()) {
-        System.out.println(bid + " " + attr.getName());
         boolean var =
             (!attr.getName().equals(tiledb.tiledb_coords()) &&
                 attr.getCellValNum() == tiledb.tiledb_var_num());
@@ -187,7 +185,7 @@ public class Query {
    */
   public void set_subarray(Object pairs) throws TileDBError {
     Types.typeCheckArray(pairs, array.getSchema().domain().type());
-    SWIGTYPE_p_void subarray = Types.createNativeArray(array.getSchema().domain().type(), pairs);
+    SWIGTYPE_p_void subarray = Types.createNativeArray(array.getSchema().domain().type(), pairs, 2);
     ctx.handle_error(
         tiledb.tiledb_query_set_subarray(ctx.getCtxp(), queryp, subarray));
   }
@@ -211,13 +209,11 @@ public class Query {
     } else {
       throw new TileDBError("Attribute does not exist: " + attr);
     }
-
-    System.out.println(attr+" size: "+size+" type_size: "+tiledb.tiledb_datatype_size(attribute_t).intValue());
     attr_buffs_.put(attr,
         new Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>(
             size,  // num elements
             new Pair<Integer, SWIGTYPE_p_void> ( tiledb.tiledb_datatype_size(attribute_t).intValue(),
-                Types.createNativeArray(attribute_t, buf))));
+                Types.createNativeArray(attribute_t, buf, size))));
   }
 
   /**
@@ -228,7 +224,7 @@ public class Query {
    * @param offsets Offsets where a new element begins in the data buffer.
    * @param data Buffer vector with elements of the attribute type.
    **/
-  public void set_buffer(String attr, long[] offsets, Object data, int size) throws TileDBError {
+  public void set_buffer(String attr, long[] offsets, int offsetsSize, Object data, int size) throws TileDBError {
     if (attr.equals(tiledb.tiledb_coords())) {
       throw new TileDBError("Cannot set coordinate buffer as variable sized.");
     }
@@ -236,10 +232,12 @@ public class Query {
 
     var_offsets_.put(attr,
         new Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>(
-            offsets.length,
+            offsetsSize,
             new Pair<Integer, SWIGTYPE_p_void>(tiledb.tiledb_datatype_size(tiledb_datatype_t.TILEDB_UINT64).intValue(),
                 PointerUtils.toVoid(
-                    Utils.newUint64Array(offsets)))));
+                    (offsets==null)? new uint64_tArray(offsetsSize) :
+                    Utils.newUint64Array(offsets)
+                ))));
   }
 
   /** Set the coordinate buffer for sparse arrays **/
@@ -277,19 +275,16 @@ public class Query {
 
     int bufferId=0, attrId=0;
     for (String a : attr_buffs_.keySet()) {
-      System.out.println("attr: "+a + " attrId: "+attrId);
       if (var_offsets_.containsKey(a)) {
         Pair<Integer, Pair<Integer, SWIGTYPE_p_void>> p = var_offsets_.get(a);
         tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond());
         buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
-        System.out.println("var bufferId: "+bufferId+" bufferSize: "+buffer_sizes[bufferId]);
         sub_tsize_.add(p.getSecond().getFirst());
         bufferId++;
       }
       Pair<Integer, Pair<Integer, SWIGTYPE_p_void>> p = attr_buffs_.get(a);
       tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond());
       buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
-      System.out.println("bufferId: "+bufferId+" bufferSize: "+buffer_sizes[bufferId]);
       tiledb.charpArray_setitem(attributeNames_, attrId, a);
       sub_tsize_.add(p.getSecond().getFirst());
       bufferId++;

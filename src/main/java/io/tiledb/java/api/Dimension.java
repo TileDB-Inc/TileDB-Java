@@ -24,7 +24,7 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.*;
+import io.tiledb.libtiledb.*;
 
 public class Dimension<T> {
   private SWIGTYPE_p_p_tiledb_dimension_t dimensionpp;

@@ -24,7 +24,7 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.api.*;
+import io.tiledb.libtiledb.*;
 
 import java.math.BigInteger;
 
@@ -296,50 +296,94 @@ public class Types {
     }
   }
 
-  public static SWIGTYPE_p_void createNativeArray(tiledb_datatype_t type, Object primitiveTypeArray) throws TileDBError {
+  public static SWIGTYPE_p_void createNativeArray(tiledb_datatype_t type, Object primitiveTypeArray, int size) throws TileDBError {
     switch(type){
       case TILEDB_FLOAT32:{
-        floatArray domain = Utils.newFloatArray((float[])primitiveTypeArray);
+        floatArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new floatArray(size);
+        else
+          domain = Utils.newFloatArray((float[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_FLOAT64:{
-        doubleArray domain = Utils.newDoubleArray((double[])primitiveTypeArray);
+        doubleArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new doubleArray(size);
+        else
+          domain = Utils.newDoubleArray((double[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_INT8:{
-        int8_tArray domain = Utils.newInt8_tArray((byte[])primitiveTypeArray);
+        int8_tArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new int8_tArray(size);
+        else
+          domain = Utils.newInt8_tArray((byte[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_INT16:{
-        int16_tArray domain = Utils.newInt16_tArray((short[])primitiveTypeArray);
+        int16_tArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new int16_tArray(size);
+        else
+          domain = Utils.newInt16_tArray((short[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_INT32:{
-        int32_tArray domain = Utils.newInt32_tArray((int[])primitiveTypeArray);
+        int32_tArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new int32_tArray(size);
+        else
+          domain = Utils.newInt32_tArray((int[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_INT64:{
-        int64_tArray domain = Utils.newInt64_tArray((long[])primitiveTypeArray);
+        int64_tArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new int64_tArray(size);
+        else
+          domain = Utils.newInt64_tArray((long[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_UINT8:{
-        uint8_tArray domain = Utils.newUint8_tArray((short[])primitiveTypeArray);
+        uint8_tArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new uint8_tArray(size);
+        else
+          domain = Utils.newUint8_tArray((short[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_UINT16:{
-        uint16_tArray domain = Utils.newUint16_tArray((int[])primitiveTypeArray);
+        uint16_tArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new uint16_tArray(size);
+        else
+          domain = Utils.newUint16_tArray((int[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_UINT32: {
-        uint32_tArray domain = Utils.newUint32_tArray((long[])primitiveTypeArray);
+        uint32_tArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new uint32_tArray(size);
+        else
+          domain = Utils.newUint32_tArray((long[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_UINT64: {
-        uint64_tArray domain = Utils.newUint64Array((long[])primitiveTypeArray);
+        uint64_tArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new uint64_tArray(size);
+        else
+          domain = Utils.newUint64Array((long[])primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       case TILEDB_CHAR: {
-        int8_tArray domain = Utils.newInt8_tArray((byte[]) primitiveTypeArray);
+        int8_tArray domain = null;
+        if(primitiveTypeArray==null)
+          domain = new int8_tArray(size);
+        else
+          domain = Utils.newInt8_tArray((byte[]) primitiveTypeArray);
         return PointerUtils.toVoid(domain);
       }
       default:{
@@ -502,6 +546,8 @@ public class Types {
   }
 
   public static boolean typeCheckArray(Object array, tiledb_datatype_t type) throws TileDBError {
+    if(array==null)
+      return true;
     if(getJavaPrimitiveArrayType(type).equals(array.getClass())){
       return true;
     }
