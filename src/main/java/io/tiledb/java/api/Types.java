@@ -514,9 +514,33 @@ public class Types {
         floatArray array = new floatArray(SWIGTYPE_p_void.getCPtr(pointer), true);
         return Utils.floatArrayGet(array,size);
       }
+      case TILEDB_FLOAT64: {
+        doubleArray array = new doubleArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.doubleArrayGet(array,size);
+      }
+      case TILEDB_INT8: {
+        int8_tArray array = new int8_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.int8ArrayGet(array,size);
+      }
+      case TILEDB_INT16: {
+        int16_tArray array = new int16_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.int16ArrayGet(array,size);
+      }
       case TILEDB_INT32: {
         int32_tArray array = new int32_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
         return Utils.int32ArrayGet(array,size);
+      }
+      case TILEDB_INT64: {
+        int64_tArray array = new int64_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.int64ArrayGet(array,size);
+      }
+      case TILEDB_UINT8: {
+        uint8_tArray array = new uint8_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.uint8ArrayGet(array,size);
+      }
+      case TILEDB_UINT16: {
+        uint16_tArray array = new uint16_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);
+        return Utils.uint16ArrayGet(array,size);
       }
       case TILEDB_UINT32: {
         uint32_tArray array = new uint32_tArray(SWIGTYPE_p_void.getCPtr(pointer), true);

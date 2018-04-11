@@ -36,7 +36,7 @@ public class doubleArray {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
 
-  protected doubleArray(long cPtr, boolean cMemoryOwn) {
+  public doubleArray(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }

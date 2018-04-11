@@ -36,7 +36,7 @@ public class uint8_tArray {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
 
-  protected uint8_tArray(long cPtr, boolean cMemoryOwn) {
+  public uint8_tArray(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
