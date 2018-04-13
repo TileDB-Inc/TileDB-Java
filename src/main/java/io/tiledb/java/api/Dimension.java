@@ -101,8 +101,6 @@ public class Dimension<T> {
       SWIGTYPE_p_p_void domainpp = tiledb.new_voidpArray(1);
       ctx.handle_error(tiledb.tiledb_dimension_get_domain(ctx.getCtxp(), dimensionp, domainpp));
       domain = Types.getPairFromNativeArray(type, domainpp);
-//      tiledb.delete_charpp(namepp);
-
     }
     return domain;
   }
@@ -123,5 +121,14 @@ public class Dimension<T> {
     return "";
   }
 
+  public String getName() throws TileDBError {
+    if(name==null){
+      SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
+      ctx.handle_error(tiledb.tiledb_dimension_get_name(ctx.getCtxp(), dimensionp, namepp));
+      name = tiledb.charpp_value(namepp);
+      tiledb.delete_charpp(namepp);
+    }
+    return name;
+  }
 
 }

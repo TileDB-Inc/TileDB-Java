@@ -52,8 +52,8 @@ public class Array {
   }
 
   /** Consolidates the fragments of an array. **/
-  public void consolidate(Context ctx, String uri){
-
+  public void consolidate() throws TileDBError {
+    ctx.handle_error(tiledb.tiledb_array_consolidate(ctx.getCtxp(), uri));
   }
 
   /** Creates an array on persistent storage from a schema definition. **/

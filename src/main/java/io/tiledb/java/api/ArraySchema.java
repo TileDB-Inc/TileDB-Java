@@ -186,7 +186,7 @@ public class ArraySchema {
   /**
    * Returns the compressor of the coordinates.
    */
-  Compressor coords_compressor() throws TileDBError {
+  public Compressor coords_compressor() throws TileDBError {
     SWIGTYPE_p_tiledb_compressor_t compressorp = tiledb.new_tiledb_compressor_tp();
     SWIGTYPE_p_int levelp = tiledb.new_intp();
     ctx.handle_error(tiledb.tiledb_array_schema_get_coords_compressor(
@@ -208,7 +208,7 @@ public class ArraySchema {
   /**
    * Returns the compressor of the offsets.
    */
-  Compressor offsets_compressor() throws TileDBError {
+  public Compressor offsets_compressor() throws TileDBError {
     SWIGTYPE_p_tiledb_compressor_t compressorp = tiledb.new_tiledb_compressor_tp();
     SWIGTYPE_p_int levelp = tiledb.new_intp();
     ctx.handle_error(tiledb.tiledb_array_schema_get_offsets_compressor(
@@ -230,7 +230,7 @@ public class ArraySchema {
   /**
    * Retruns the array domain of array.
    */
-  Domain domain() throws TileDBError {
+  public Domain domain() throws TileDBError {
     SWIGTYPE_p_p_tiledb_domain_t domainpp = Utils.new_tiledb_domain_tpp();
     ctx.handle_error(tiledb.tiledb_array_schema_get_domain(ctx.getCtxp(), schemap, domainpp));
     return new Domain(ctx, domainpp);
@@ -261,7 +261,7 @@ public class ArraySchema {
   /**
    * Gets all attributes in the array.
    */
-  HashMap<String, Attribute> attributes() throws TileDBError {
+  public HashMap<String, Attribute> attributes() throws TileDBError {
     if(attributes == null) {
       attributes = new HashMap<String, Attribute>();
       SWIGTYPE_p_p_tiledb_attribute_t attrpp = Utils.new_tiledb_attribute_tpp();
