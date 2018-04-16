@@ -66,7 +66,7 @@ import java.util.Map;
  * ArraySchema s = ArraySchema(ctx, "my_array"); // Load schema from array
  * @endcode
  */
-public class ArraySchema {
+public class ArraySchema implements Finalizable {
 
   private SWIGTYPE_p_p_tiledb_array_schema_t schemapp;
   private SWIGTYPE_p_tiledb_array_schema_t schemap;
@@ -77,6 +77,7 @@ public class ArraySchema {
    * Creates a new array schema.
    */
   public ArraySchema(Context ctx, tiledb_array_type_t type) throws TileDBError {
+    ctx.deleterAdd(this);
     this.ctx = ctx;
     schemapp = Utils.new_tiledb_array_schema_tpp();
     ctx.handle_error(tiledb.tiledb_array_schema_create(ctx.getCtxp(), schemapp, type));
@@ -87,6 +88,7 @@ public class ArraySchema {
    * Loads the schema of an existing array with the input URI.
    */
   public ArraySchema(Context ctx, String uri) throws TileDBError {
+    ctx.deleterAdd(this);
     this.ctx = ctx;
     schemapp = Utils.new_tiledb_array_schema_tpp();
     ctx.handle_error(tiledb.tiledb_array_schema_load(ctx.getCtxp(), schemapp, uri));

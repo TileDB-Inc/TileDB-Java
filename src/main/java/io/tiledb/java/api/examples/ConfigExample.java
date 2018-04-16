@@ -56,10 +56,10 @@ public class ConfigExample {
     for ( Map.Entry<String, String> p : config.parameters("vfs.s3").entrySet()) {
       System.out.println( "\"" + p.getKey() + "\" : \"" + p.getValue() + "\"");
     }
-//
-//    // Assign a config object to a context and VFS
-//    tiledb::Context ctx(config);
-//    tiledb::VFS vfs(ctx, config);
+
+    // Assign a config object to a context and VFS
+    Context ctx =new Context(config);
+//    VFS vfs = new VFS(config);
 
   }
 }

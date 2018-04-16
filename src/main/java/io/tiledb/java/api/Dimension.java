@@ -26,7 +26,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
-public class Dimension<T> {
+public class Dimension<T> implements Finalizable {
   private SWIGTYPE_p_p_tiledb_dimension_t dimensionpp;
   private SWIGTYPE_p_tiledb_dimension_t dimensionp;
   private Context ctx;
@@ -35,6 +35,7 @@ public class Dimension<T> {
   private Pair<T,T> domain;
 
   public Dimension(Context ctx, SWIGTYPE_p_p_tiledb_dimension_t dimensionpp) {
+    ctx.deleterAdd(this);
     this.ctx = ctx;
     this.dimensionpp = dimensionpp;
     this.dimensionp = Utils.tiledb_dimension_tpp_value(dimensionpp);
@@ -131,4 +132,7 @@ public class Dimension<T> {
     return name;
   }
 
+  public void free() {
+
+  }
 }

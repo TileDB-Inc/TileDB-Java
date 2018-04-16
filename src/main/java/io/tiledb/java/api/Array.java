@@ -33,12 +33,13 @@ import java.util.Map;
 /**
  * TileDB array class.
  */
-public class Array {
+public class Array implements Finalizable {
   private Context ctx;
   private String uri;
   private ArraySchema schema;
 
   public Array(Context ctx, String uri, ArraySchema schema) throws TileDBError {
+    ctx.deleterAdd(this);
     create(uri, schema);
     this.ctx = ctx;
     this.uri = uri;
@@ -46,6 +47,7 @@ public class Array {
   }
 
   public Array(Context ctx, String uri) throws TileDBError {
+    ctx.deleterAdd(this);
     schema = new ArraySchema(ctx, uri);
     this.ctx = ctx;
     this.uri = uri;
@@ -159,5 +161,9 @@ public class Array {
 
   public ArraySchema getSchema() {
     return schema;
+  }
+
+  public void free() {
+
   }
 }

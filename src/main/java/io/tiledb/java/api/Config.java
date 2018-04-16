@@ -32,7 +32,7 @@ import io.tiledb.libtiledb.*;
 
 import java.util.HashMap;
 
-public class Config {
+public class Config implements Finalizable {
   private SWIGTYPE_p_p_tiledb_config_t configpp;
   private SWIGTYPE_p_tiledb_config_t configp;
 
@@ -67,7 +67,7 @@ public class Config {
   /**
    * Delete the native config object.
    */
-  public void free() throws Throwable {
+  public void free() throws TileDBError {
     tiledb.tiledb_config_free(configpp);
   }
 

@@ -24,42 +24,5 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.tiledb_compressor_t;
-
-public class Compressor {
-  private tiledb_compressor_t compressor;
-  private int level;
-
-  @Override
-  public String toString() {
-    return "Compressor{" +
-        "compressor=" + compressor +
-        ", level=" + level +
-        '}';
-  }
-
-  public Compressor(tiledb_compressor_t compressor, int level) {
-    this.compressor = compressor;
-    this.level = level;
-  }
-
-  public tiledb_compressor_t getCompressor() {
-    return compressor;
-  }
-
-  public void setCompressor(tiledb_compressor_t compressor) {
-    this.compressor = compressor;
-  }
-
-  public int getLevel() {
-    return level;
-  }
-
-  public void setLevel(int level) {
-    this.level = level;
-  }
-
-  public void free() {
-
-  }
+public class VFS {
 }

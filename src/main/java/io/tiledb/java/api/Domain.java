@@ -66,19 +66,21 @@ import java.util.List;
  * @endcode
  *
  **/
-public class Domain<T> {
+public class Domain<T> implements Finalizable {
   private SWIGTYPE_p_p_tiledb_domain_t domainpp;
   private SWIGTYPE_p_tiledb_domain_t domainp;
   private Context ctx;
   private List<Dimension> dimensions;
 
   public Domain(Context ctx, SWIGTYPE_p_p_tiledb_domain_t domainpp) {
+    ctx.deleterAdd(this);
     this.ctx = ctx;
     this.domainpp = domainpp;
     this.domainp = Utils.tiledb_domain_tpp_value(domainpp);
   }
 
   public Domain(Context ctx) throws TileDBError {
+    ctx.deleterAdd(this);
     this.ctx = ctx;
     domainpp = Utils.new_tiledb_domain_tpp();
     ctx.handle_error(tiledb.tiledb_domain_create(ctx.getCtxp(), domainpp));
@@ -163,4 +165,7 @@ public class Domain<T> {
   }
 
 
+  public void free() {
+
+  }
 }

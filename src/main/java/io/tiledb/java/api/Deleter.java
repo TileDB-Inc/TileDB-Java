@@ -24,42 +24,28 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.tiledb_compressor_t;
+import java.util.Stack;
 
-public class Compressor {
-  private tiledb_compressor_t compressor;
-  private int level;
+public class Deleter extends Thread {
+  private final Stack<Finalizable> deleteStack;
+
+  public Deleter(){
+    deleteStack = new Stack<Finalizable>();
+  }
 
   @Override
-  public String toString() {
-    return "Compressor{" +
-        "compressor=" + compressor +
-        ", level=" + level +
-        '}';
+  public void run() {
+    while(!deleteStack.isEmpty()){
+      Finalizable object = deleteStack.pop();
+      try {
+        object.free();
+      } catch (TileDBError tileDBError) {
+        tileDBError.printStackTrace();
+      }
+    }
   }
 
-  public Compressor(tiledb_compressor_t compressor, int level) {
-    this.compressor = compressor;
-    this.level = level;
-  }
-
-  public tiledb_compressor_t getCompressor() {
-    return compressor;
-  }
-
-  public void setCompressor(tiledb_compressor_t compressor) {
-    this.compressor = compressor;
-  }
-
-  public int getLevel() {
-    return level;
-  }
-
-  public void setLevel(int level) {
-    this.level = level;
-  }
-
-  public void free() {
-
+  public void add(Finalizable object) {
+    deleteStack.push(object);
   }
 }

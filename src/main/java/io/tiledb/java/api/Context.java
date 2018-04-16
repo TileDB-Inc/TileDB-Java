@@ -30,6 +30,9 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
+import java.util.Queue;
+import java.util.Stack;
+
 
 public class Context {
 
@@ -37,6 +40,8 @@ public class Context {
   private Config config;
   private SWIGTYPE_p_p_tiledb_ctx_t ctxpp;
   private SWIGTYPE_p_tiledb_ctx_t ctxp;
+
+  private Deleter deleter;
 
   /**
    * Constructor.
@@ -109,6 +114,7 @@ public class Context {
    * Delete the native object.
    */
   public void free() throws Throwable {
+    deleter.run();
     if(config!=null)
       config.free();
     int rc = tiledb.tiledb_ctx_free(ctxpp);
@@ -120,8 +126,10 @@ public class Context {
     if (tiledb.tiledb_ctx_create(ctxpp, config.getConfigp()) != tiledb.TILEDB_OK)
       throw new TileDBError("[TileDB::JavaAPI] Error: Failed to create context");
     ctxp = Utils.tiledb_ctx_tpp_value(ctxpp);
-    this.config=config;
+    this.config = config;
     error_handler = new ContextCallback();
+    deleter = new Deleter();
+    Runtime.getRuntime().addShutdownHook(deleter);
   }
 
   protected SWIGTYPE_p_p_tiledb_ctx_t getCtxpp() {
@@ -154,4 +162,7 @@ public class Context {
     super.finalize();
   }
 
+  public void deleterAdd(Finalizable object) {
+    deleter.add(object);
+  }
 }

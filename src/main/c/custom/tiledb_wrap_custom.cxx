@@ -1395,7 +1395,7 @@ JNIEXPORT jintArray JNICALL Java_io_tiledb_libtiledb_UtilsJNI_intArrayGet(JNIEnv
   jintArray jresult = jenv->NewIntArray(sz);
   if (!jresult)
     return NULL;
-  jenv->ReleaseIntArrayElements(jresult, arr, 0);
+  jenv->SetIntArrayRegion(jresult, 0, sz, arr);
   return jresult;
 }
 
@@ -1418,7 +1418,7 @@ JNIEXPORT jintArray JNICALL Java_io_tiledb_libtiledb_UtilsJNI_int32ArrayGet(JNIE
   jintArray jresult = jenv->NewIntArray(sz);
   if (!jresult)
     return NULL;
-  jenv->ReleaseIntArrayElements(jresult, arr, 0);
+  jenv->SetIntArrayRegion(jresult, 0, sz, arr);
   return jresult;
 }
 
@@ -1441,7 +1441,7 @@ JNIEXPORT jlongArray JNICALL Java_io_tiledb_libtiledb_UtilsJNI_int64ArrayGet(JNI
   jlongArray jresult = jenv->NewLongArray(sz);
   if (!jresult)
     return NULL;
-  jenv->ReleaseLongArrayElements(jresult, arr, 0);
+  jenv->SetLongArrayRegion(jresult, 0, sz, arr);
   return jresult;
 }
 
@@ -1490,7 +1490,7 @@ JNIEXPORT jfloatArray JNICALL Java_io_tiledb_libtiledb_UtilsJNI_floatArrayGet(JN
   jfloatArray jresult = jenv->NewFloatArray(sz);
   if (!jresult)
     return NULL;
-  jenv->ReleaseFloatArrayElements(jresult, arr, 0);
+  jenv->SetFloatArrayRegion(jresult, 0, sz, arr);
   return jresult;
 }
 
@@ -1513,7 +1513,7 @@ JNIEXPORT jdoubleArray JNICALL Java_io_tiledb_libtiledb_UtilsJNI_doubleArrayGet(
   jdoubleArray jresult = jenv->NewDoubleArray(sz);
   if (!jresult)
     return NULL;
-  jenv->ReleaseDoubleArrayElements(jresult, arr, 0);
+  jenv->SetDoubleArrayRegion(jresult, 0, sz, arr);
   return jresult;
 }
 
@@ -1536,7 +1536,7 @@ JNIEXPORT jbyteArray JNICALL Java_io_tiledb_libtiledb_UtilsJNI_int8ArrayGet(JNIE
   jbyteArray jresult = jenv->NewByteArray(sz);
   if (!jresult)
     return NULL;
-  jenv->ReleaseByteArrayElements(jresult, arr, 0);
+  jenv->SetByteArrayRegion(jresult, 0, sz, arr);
   return jresult;
 }
 
@@ -1584,7 +1584,7 @@ JNIEXPORT jshortArray JNICALL Java_io_tiledb_libtiledb_UtilsJNI_int16ArrayGet(JN
   jshortArray jresult = jenv->NewShortArray(sz);
   if (!jresult)
     return NULL;
-  jenv->ReleaseShortArrayElements(jresult, arr, 0);
+  jenv->SetShortArrayRegion(jresult, 0, sz, arr);
   return jresult;
 }
 

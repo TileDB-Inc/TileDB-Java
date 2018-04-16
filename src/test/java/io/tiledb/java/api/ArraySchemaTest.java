@@ -36,7 +36,7 @@ public class ArraySchemaTest {
 
   @Test
   public void testArraySchema() throws Throwable {
-//    testArraySchemaCreate();
+    testArraySchemaCreate();
     testArraySchemaRead();
   }
 
@@ -78,9 +78,9 @@ public class ArraySchemaTest {
     // Print array schema contents
     schema.dump();
 
-    Array my_dense_array = new Array(ctx, "my_dense_array", schema);
+//    Array my_dense_array = new Array(ctx, "my_dense_array", schema);
 
-//    Array my_dense_array = new Array(ctx,"my_dense_array");
+    Array my_dense_array = new Array(ctx,"my_dense_array");
     Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_WRITE);
 
 

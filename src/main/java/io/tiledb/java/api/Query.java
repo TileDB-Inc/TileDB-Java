@@ -46,7 +46,7 @@ import java.util.List;
  * query.submit();
  * @endcode
  */
-public class Query {
+public class Query implements Finalizable {
   private tiledb_query_type_t type;
   private Array array;
   private Context ctx;
@@ -88,16 +88,19 @@ public class Query {
    */
   HashMap<String, Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>> attr_buffs_;
   private HashMap<String, Pair<Long, Long>> result_buffer_elements;
+  private boolean executed;
 
   public Query(Array array, tiledb_query_type_t type) throws TileDBError {
     this.type =type;
     this.array=array;
     ctx = array.getCtx();
+    ctx.deleterAdd(this);
     querypp = Utils.new_tiledb_query_tpp();
     ctx.handle_error(tiledb.tiledb_query_create(ctx.getCtxp(), querypp, array.getUri(), type));
     queryp = Utils.tiledb_query_tpp_value(querypp);
     var_offsets_ = new HashMap<String, Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>>();
     attr_buffs_ = new HashMap<String, Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>>();
+    executed = false;
   }
 
   /** Sets the data layout of the buffers.  */
@@ -127,6 +130,7 @@ public class Query {
   public Status submit() throws TileDBError {
     prepare_submission();
     ctx.handle_error(tiledb.tiledb_query_submit(ctx.getCtxp(), queryp));
+    executed = true;
     return query_status();
   }
 
@@ -145,6 +149,7 @@ public class Query {
     prepare_submission();
     ctx.handle_error(Utils.tiledb_query_submit_async(
         ctx.getCtxp(), queryp, callback));
+    executed = true;
   }
 
   /**
@@ -155,11 +160,12 @@ public class Query {
    * is number of elements in the data buffer. For fixed sized attributes
    * (and coordinates), the first is always 0.
    */
-  HashMap<String, Pair<Long, Long>> result_buffer_elements() throws TileDBError {
+  public HashMap<String, Pair<Long, Long>> result_buffer_elements() throws TileDBError {
     if(result_buffer_elements==null) {
       result_buffer_elements = new HashMap<String, Pair<Long, Long>>();
       int bid = 0;
-      for (Attribute attr : array.getSchema().attributes().values()) {
+      for (String attrName : attr_buffs_.keySet()) {
+        Attribute attr = array.getSchema().attributes().get(attrName);
         boolean var =
             (!attr.getName().equals(tiledb.tiledb_coords()) &&
                 attr.getCellValNum() == tiledb.tiledb_var_num());
@@ -242,8 +248,8 @@ public class Query {
 
   /** Set the coordinate buffer for sparse arrays **/
   public void set_coordinates(Object buf, int size) throws TileDBError {
-    if (array.getSchema().getArrayType() != tiledb_array_type_t.TILEDB_SPARSE)
-      throw new TileDBError("Cannot set coordinates for a dense array query");
+//    if (array.getSchema().getArrayType() != tiledb_array_type_t.TILEDB_SPARSE)
+//      throw new TileDBError("Cannot set coordinates for a dense array query");
     set_buffer(tiledb.tiledb_coords(), buf, size);
   }
 
@@ -252,53 +258,50 @@ public class Query {
   public void reset_buffers(){
     attr_buffs_.clear();
     var_offsets_.clear();
-    if(sub_tsize_!=null) {
+    executed=false;
+//    if(executed) {
       buffer_sizes_.delete();
       tiledb.delete_charpArray(attributeNames_);
       tiledb.delete_voidpArray(buffers_);
-    }
+//    }
     sub_tsize_= new ArrayList<Integer>();
   }
 
   private void prepare_submission() throws TileDBError {
-    if(sub_tsize_!=null) {
-      buffer_sizes_.delete();
-      tiledb.delete_charpArray(attributeNames_);
-      tiledb.delete_voidpArray(buffers_);
-    }
-    sub_tsize_= new ArrayList<Integer>();
-    int numBuffers = attr_buffs_.size()+var_offsets_.size();
-    buffers_ = tiledb.new_voidpArray(numBuffers);
-    attributeNames_ = tiledb.new_charpArray(numBuffers);
+    if(!executed) {
+      int numBuffers = attr_buffs_.size()+var_offsets_.size();
+      buffers_ = tiledb.new_voidpArray(numBuffers);
+      attributeNames_ = tiledb.new_charpArray(numBuffers);
 
-    long buffer_sizes[] = new long[numBuffers];
-
-    int bufferId=0, attrId=0;
-    for (String a : attr_buffs_.keySet()) {
-      if (var_offsets_.containsKey(a)) {
-        Pair<Integer, Pair<Integer, SWIGTYPE_p_void>> p = var_offsets_.get(a);
+      sub_tsize_= new ArrayList<Integer>();
+      long buffer_sizes[] = new long[numBuffers];
+      int bufferId=0, attrId=0;
+      for (String a : attr_buffs_.keySet()) {
+        if (var_offsets_.containsKey(a)) {
+          Pair<Integer, Pair<Integer, SWIGTYPE_p_void>> p = var_offsets_.get(a);
+          tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond());
+          buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
+          sub_tsize_.add(p.getSecond().getFirst());
+          bufferId++;
+        }
+        Pair<Integer, Pair<Integer, SWIGTYPE_p_void>> p = attr_buffs_.get(a);
         tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond());
         buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
+        tiledb.charpArray_setitem(attributeNames_, attrId, a);
         sub_tsize_.add(p.getSecond().getFirst());
         bufferId++;
-      }
-      Pair<Integer, Pair<Integer, SWIGTYPE_p_void>> p = attr_buffs_.get(a);
-      tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond());
-      buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
-      tiledb.charpArray_setitem(attributeNames_, attrId, a);
-      sub_tsize_.add(p.getSecond().getFirst());
-      bufferId++;
-      attrId++;
-    }
-    buffer_sizes_ = Utils.newUint64Array(buffer_sizes);
-    ctx.handle_error(tiledb.tiledb_query_set_buffers(
-        ctx.getCtxp(),
-        queryp,
-        attributeNames_,
-        attrId,
-        buffers_,
-        buffer_sizes_.cast()));
+        attrId++;
 
+        buffer_sizes_ = Utils.newUint64Array(buffer_sizes);
+        ctx.handle_error(tiledb.tiledb_query_set_buffers(
+            ctx.getCtxp(),
+            queryp,
+            attributeNames_,
+            attrId,
+            buffers_,
+            buffer_sizes_.cast()));
+      }
+    }
   }
 
   public void free() throws TileDBError {
@@ -307,6 +310,7 @@ public class Query {
   }
 
   public Object get_buffer(String attr) throws TileDBError {
+    result_buffer_elements();
     return Types.toJavaArray(
         attr_buffs_.get(attr).getSecond().getSecond(),
         array.getSchema().attributes().get(attr).getType(),
@@ -314,6 +318,7 @@ public class Query {
   }
 
   public Object get_var_buffer(String attr) throws TileDBError {
+    result_buffer_elements();
     return Types.toJavaArray(
         var_offsets_.get(attr).getSecond().getSecond(),
         tiledb_datatype_t.TILEDB_UINT64,
@@ -334,5 +339,11 @@ public class Query {
         return "WRITE";
     }
     return "";  // silence error
+  }
+
+  @Override
+  protected void finalize() throws Throwable {
+    free();
+    super.finalize();
   }
 }

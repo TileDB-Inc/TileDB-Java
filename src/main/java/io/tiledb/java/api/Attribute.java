@@ -57,7 +57,7 @@ import io.tiledb.libtiledb.*;
  * schema.add_attributes(a1, a2, a3);
  * @endcode
  */
-public class Attribute<T> {
+public class Attribute<T> implements Finalizable {
 
   private SWIGTYPE_p_tiledb_attribute_t attributep;
   private SWIGTYPE_p_p_tiledb_attribute_t attributepp;
@@ -69,6 +69,7 @@ public class Attribute<T> {
 
   /* Constructor from native object */
   public Attribute(Context ctx, SWIGTYPE_p_p_tiledb_attribute_t attributepp) throws TileDBError {
+    ctx.deleterAdd(this);
     this.ctx =ctx;
     this.attributepp = attributepp;
     this.attributep = Utils.tiledb_attribute_tpp_value(attributepp);
@@ -77,6 +78,7 @@ public class Attribute<T> {
 
   /* Constructor from native object */
   public Attribute(Context ctx, String name, Class<T> atrrType) throws TileDBError {
+    ctx.deleterAdd(this);
     this.ctx =ctx;
     this.name = name;
     this.attributepp = Utils.new_tiledb_attribute_tpp();
@@ -164,5 +166,9 @@ public class Attribute<T> {
       tileDBError.printStackTrace();
     }
     return "";
+  }
+
+  public void free() {
+
   }
 }
