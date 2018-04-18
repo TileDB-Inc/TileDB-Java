@@ -70,8 +70,8 @@ public class Types {
     } else if(atrrType.equals(BigInteger.class)) {
       return tiledb_datatype_t.TILEDB_UINT64;
     } else {
-      return tiledb_datatype_t.TILEDB_INT8;
-//      throw new TileDBError("Not supported getType: "+atrrType);
+//      return tiledb_datatype_t.TILEDB_INT8;
+      throw new TileDBError("Not supported getType: "+atrrType);
     }
   }
 

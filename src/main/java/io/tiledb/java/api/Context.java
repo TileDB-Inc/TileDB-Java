@@ -33,7 +33,7 @@ import io.tiledb.libtiledb.*;
 
 public class Context implements AutoCloseable {
 
-  private ContextCallback error_handler;
+  private ContextCallback errorHandler;
   private Config config;
   private SWIGTYPE_p_p_tiledb_ctx_t ctxpp;
   private SWIGTYPE_p_tiledb_ctx_t ctxp;
@@ -48,7 +48,7 @@ public class Context implements AutoCloseable {
   }
 
   /**
-   * Constructor with config parameters.
+   * Constructor with config parameter.
    */
   public Context(Config config) throws TileDBError {
     createContext(config);
@@ -59,8 +59,8 @@ public class Context implements AutoCloseable {
    * `ContextCallback` is used. The callback accepts an error
    *  message.
    */
-  public void setErrorHandler(ContextCallback error_handler) {
-    this.error_handler = error_handler;
+  public void setErrorHandler(ContextCallback errorHandler) {
+    this.errorHandler = errorHandler;
   }
 
   /**
@@ -79,7 +79,7 @@ public class Context implements AutoCloseable {
     rc = tiledb.tiledb_ctx_get_last_error(ctxp, errorpp);
     if (rc != tiledb.TILEDB_OK) {
       tiledb.tiledb_error_free(errorpp);
-      error_handler.call("[TileDB::JavaAPI] Error: Non-retrievable error occurred");
+      errorHandler.call("[TileDB::JavaAPI] Error: Non-retrievable error occurred");
     }
 
     // Get error message
@@ -88,14 +88,14 @@ public class Context implements AutoCloseable {
     String msg = tiledb.charpp_value(msgpp);
     if (rc != tiledb.TILEDB_OK) {
       tiledb.tiledb_error_free(errorpp);
-      error_handler.call("[TileDB::JavaAPI] Error: Non-retrievable error occurred");
+      errorHandler.call("[TileDB::JavaAPI] Error: Non-retrievable error occurred");
     }
 
     // Clean up
     tiledb.tiledb_error_free(errorpp);
 
     // Throw exception
-    error_handler.call(msg);
+    errorHandler.call(msg);
   }
 
   /**
@@ -114,7 +114,7 @@ public class Context implements AutoCloseable {
       throw new TileDBError("[TileDB::JavaAPI] Error: Failed to create context");
     ctxp = Utils.tiledb_ctx_tpp_value(ctxpp);
     this.config = config;
-    error_handler = new ContextCallback();
+    errorHandler = new ContextCallback();
     deleter = new Deleter();
     Runtime.getRuntime().addShutdownHook(deleter);
   }
@@ -161,5 +161,12 @@ public class Context implements AutoCloseable {
   protected void finalize() throws Throwable {
     close();
     super.finalize();
+  }
+
+  public class ContextCallback {
+    /** The default error handler callback. */
+    public void call(String msg) throws TileDBError {
+      throw new TileDBError(msg);
+    }
   }
 }

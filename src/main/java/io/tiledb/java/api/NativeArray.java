@@ -53,6 +53,13 @@ public class NativeArray implements AutoCloseable {
   private int size;
 //  private charArray charArray;
 
+  /**
+   * Creates an empty native array using a native datatype and a provided size
+   * @param ctx
+   * @param size
+   * @param nativeType
+   * @throws TileDBError
+   */
   public NativeArray(Context ctx, int size, tiledb_datatype_t nativeType) throws TileDBError {
     ctx.deleterAdd(this);
     this.size = size;
@@ -61,6 +68,13 @@ public class NativeArray implements AutoCloseable {
     allocateEmptyArray();
   }
 
+  /**
+   * Creates an empty native array using a java datatype and a provided size
+   * @param ctx
+   * @param size
+   * @param javaType
+   * @throws TileDBError
+   */
   public NativeArray(Context ctx, int size, Class javaType) throws TileDBError {
     ctx.deleterAdd(this);
     this.size = size;
@@ -69,6 +83,15 @@ public class NativeArray implements AutoCloseable {
     allocateEmptyArray();
   }
 
+  /**
+   * Creates a native array using a java datatype. It takes as input a Java buffer (i.e long[], int[]) and
+   * copies its values to the C native array.
+   * @param ctx
+   * @param buffer
+   * @param javaType
+   * @throws TileDBError
+   * @throws UnsupportedEncodingException
+   */
   public NativeArray(Context ctx, Object buffer, Class javaType) throws TileDBError, UnsupportedEncodingException {
     ctx.deleterAdd(this);
     this.javaType = javaType;
@@ -77,6 +100,15 @@ public class NativeArray implements AutoCloseable {
     createNativeArrayFromBuffer(buffer);
   }
 
+  /**
+   * Creates a native array using a native datatype. It takes as input a Java buffer (i.e long[], int[]) and
+   * copies its values to the C native array.
+   * @param ctx
+   * @param buffer
+   * @param nativeType
+   * @throws TileDBError
+   * @throws UnsupportedEncodingException
+   */
   public NativeArray(Context ctx, Object buffer, tiledb_datatype_t nativeType) throws TileDBError, UnsupportedEncodingException {
     ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
@@ -85,7 +117,7 @@ public class NativeArray implements AutoCloseable {
     createNativeArrayFromBuffer(buffer);
   }
 
-  public NativeArray(Context ctx, tiledb_datatype_t nativeType, SWIGTYPE_p_p_void pointer) throws TileDBError {
+  protected NativeArray(Context ctx, tiledb_datatype_t nativeType, SWIGTYPE_p_p_void pointer) throws TileDBError {
     ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
@@ -249,6 +281,12 @@ public class NativeArray implements AutoCloseable {
     }
   }
 
+  /**
+   * Returns the item on index position of the native array.
+   * @param index
+   * @return
+   * @throws TileDBError
+   */
   public Object getItem(int index) throws TileDBError {
     switch (nativeType) {
       case TILEDB_FLOAT32: {
@@ -290,6 +328,12 @@ public class NativeArray implements AutoCloseable {
     }
   }
 
+  /**
+   * Sets the item on index position of the native array.
+   * @param index
+   * @param value
+   * @throws Exception
+   */
   public void setItem(int index, Object value) throws Exception {
     switch (nativeType) {
       case TILEDB_FLOAT32: {
@@ -345,7 +389,7 @@ public class NativeArray implements AutoCloseable {
     }
   }
 
-  public SWIGTYPE_p_void toVoidPointer() throws TileDBError {
+  protected SWIGTYPE_p_void toVoidPointer() throws TileDBError {
     switch (nativeType) {
       case TILEDB_FLOAT32: {
         return PointerUtils.toVoid(floatArray);
@@ -386,7 +430,12 @@ public class NativeArray implements AutoCloseable {
     }
   }
 
-
+  /**
+   * Return a Java array (i.e. int[], long[]) that is a copy of the native array values with the given size.
+   * @param elements
+   * @return
+   * @throws TileDBError
+   */
   public Object toJavaArray(int elements) throws TileDBError {
     switch (nativeType) {
       case TILEDB_FLOAT32: {
@@ -427,7 +476,6 @@ public class NativeArray implements AutoCloseable {
       }
     }
   }
-
 
   private void createNativeArrayFromVoidPointer(SWIGTYPE_p_p_void pointer) throws TileDBError {
     switch (nativeType) {
@@ -481,7 +529,7 @@ public class NativeArray implements AutoCloseable {
     return ((String) buffer).getBytes("UTF-8");
   }
 
-  public tiledb_datatype_t getNativeType() {
+  protected tiledb_datatype_t getNativeType() {
     return nativeType;
   }
 

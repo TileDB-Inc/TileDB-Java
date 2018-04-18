@@ -94,6 +94,5 @@ public class DenseWriteAsync {
       // Wait till query is done
       status = query.getQueryStatus();
     } while (status == Status.INPROGRESS);
-    query.free();
   }
 }

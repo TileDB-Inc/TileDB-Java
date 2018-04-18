@@ -55,7 +55,7 @@ public class ArraySchemaExample {
     Dimension<Integer> d2 = new Dimension<Integer>(ctx, "d2", Integer.class, new Pair<Integer, Integer>(101, 10000), 100);
 
     // Create and set getDomain
-    Domain<Integer> domain = new Domain<Integer>(ctx);
+    Domain domain = new Domain(ctx);
     domain.addDimension(d1);
     domain.addDimension(d2);
     schema.setDomain(domain);
@@ -104,8 +104,6 @@ public class ArraySchemaExample {
     for (Dimension d: (List<Dimension>) schema.getDomain().getDimensions()) {
       System.out.println("* " + d.getName() + " domain: " +d.domainToStr() +" extent: " + d.tileExtentToStr());
     }
-
-//    System.out.println(schema.getDomain().getCellNum());
 
   }
 }

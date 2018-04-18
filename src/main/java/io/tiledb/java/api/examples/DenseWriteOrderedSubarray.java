@@ -80,6 +80,5 @@ public class DenseWriteOrderedSubarray {
 
     // Submit query
     query.submit();
-    query.free();
   }
 }

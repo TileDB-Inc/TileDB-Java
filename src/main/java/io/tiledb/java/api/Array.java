@@ -71,9 +71,8 @@ public class Array implements AutoCloseable {
    * Get the non-empty getDomain of an array. This returns the bounding
    * coordinates for each dimension.
    *
-   * @tparam T Domain datatype
-   * @return Vector of dim names with a {lower, upper} pair. Inclusive.
-   *         Empty vector if the array has no data.
+   * @return HashMap of dim names with a {lower, upper} pair. Inclusive.
+   *         Empty HashMap if the array has no data.
    */
   public HashMap<String, Pair> nonEmptyDomain() throws TileDBError {
     HashMap<String, Pair> ret = new HashMap<String, Pair>();
@@ -98,7 +97,6 @@ public class Array implements AutoCloseable {
   /**
    * Compute an upper bound on the buffer elements needed to read a subarray.
    *
-   * @tparam T The getDomain datatype
    * @param subarray Targeted subarray.
    * @return The maximum number of elements for each array getAttribute (plus
    *     coordinates for sparse arrays).

@@ -80,6 +80,5 @@ public class DenseWriteUnordered {
 
     // Submit query
     query.submit();
-    query.free();
   }
 }

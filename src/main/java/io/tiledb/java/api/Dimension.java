@@ -34,7 +34,8 @@ public class Dimension<T> implements AutoCloseable {
   private String name;
   private Pair<T,T> domain;
 
-  public Dimension(Context ctx, SWIGTYPE_p_p_tiledb_dimension_t dimensionpp) {
+  /** Constructor from native object **/
+  protected Dimension(Context ctx, SWIGTYPE_p_p_tiledb_dimension_t dimensionpp) {
     ctx.deleterAdd(this);
     this.ctx = ctx;
     this.dimensionpp = dimensionpp;
@@ -45,10 +46,9 @@ public class Dimension<T> implements AutoCloseable {
    * Constructor for creating a new dimension with datatype
    *
    * @param ctx The TileDB context.
-   * @param name The dimension getName.
-   * @param domain The dimension getDomain.
+   * @param name The dimension name.
+   * @param domain The dimension domain.
    * @param extent The tile extent on the dimension.
-   * @return A new `Dimension` object.
    */
   public Dimension( Context ctx, String name, Class<T> type, Pair<T,T> domain, T extent) throws Exception {
     createImpl(ctx, name, type,domain,extent);
@@ -72,7 +72,7 @@ public class Dimension<T> implements AutoCloseable {
   }
 
 
-  public SWIGTYPE_p_tiledb_dimension_t getDimensionp() {
+  protected SWIGTYPE_p_tiledb_dimension_t getDimensionp() {
     return dimensionp;
   }
 
@@ -98,7 +98,7 @@ public class Dimension<T> implements AutoCloseable {
     return type;
   }
 
-  /** Returns the getDomain of the dimension. **/
+  /** Returns the domain of the dimension. **/
   public Pair<T, T> getDomain() throws TileDBError {
     if(domain==null){
       getType();
@@ -110,7 +110,7 @@ public class Dimension<T> implements AutoCloseable {
     return domain;
   }
 
-  /** Returns a string representation of the getDomain. */
+  /** Returns a string representation of the domain. */
   public String domainToStr() throws TileDBError {
     Pair<T, T> d = getDomain();
     return "("+d.getFirst()+ ", "+d.getSecond()+")";

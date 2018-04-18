@@ -75,6 +75,5 @@ public class DenseWriteSubarray {
 
     // Submit query
     query.submit();
-    query.free();
   }
 }

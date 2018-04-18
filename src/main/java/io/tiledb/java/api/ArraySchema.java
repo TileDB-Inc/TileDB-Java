@@ -36,7 +36,7 @@ import java.util.Map;
  *
  * @details The schema is an independent description of an array. A schema can be
  * used to create multiple array's, and stores information about its
- * getDomain, cell types, and compression details. An array schema is composed of:
+ * domain, cell types, and compression details. An array schema is composed of:
  * <p>
  * - A Domain
  * - A set of Attributes
@@ -45,24 +45,24 @@ import java.util.Map;
  * <p>
  * **Example:**
  * @code{.java} Context ctx = new Context();
- * ArraySchema schema = new ArraySchema(ctx, tiledb.TILEDB_SPARSE); // Or TILEDB_DENSE
+ * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
  * <p>
  * // Create a Domain
- * Domain getDomain = new Domain(...);
+ * Domain<Integer> domain = new Domain<Integer>(ctx);
  * <p>
- * // Create Attributes
- * Attribute a1 = Attribute.create(...);
+ * // Create Attribute
+ * Attribute<Integer> a1 = new Attribute<Integer>(ctx, "a1", Integer.class);
  * <p>
- * schema.setDomain(getDomain);
+ * schema.setDomain(domain);
  * schema.addAttribute(a1);
  * <p>
  * // Specify tile memory layout
- * schema.setTileOrder(tiledb.TILEDB_GLOBAL_ORDER);
+ * schema.setTileOrder(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
  * // Specify cell memory layout within each tile
- * schema.setCellOrder(tiledb.TILEDB_GLOBAL_ORDER);
+ * schema.setCellOrder(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
  * schema.setCapacity(10); // For sparse, set capacity of each tile
  * <p>
- * Array.create(schema, "my_array"); // Make array with schema
+ * Array my_dense_array = new Array(ctx, "my_array", schema); // Make array with schema
  * ArraySchema s = ArraySchema(ctx, "my_array"); // Load schema from array
  * @endcode
  */
@@ -313,11 +313,11 @@ public class ArraySchema implements AutoCloseable {
     return new Attribute(ctx, attrpp);
   }
 
-  public SWIGTYPE_p_p_tiledb_array_schema_t getSchemapp() {
+  protected SWIGTYPE_p_p_tiledb_array_schema_t getSchemapp() {
     return schemapp;
   }
 
-  public SWIGTYPE_p_tiledb_array_schema_t getSchemap() {
+  protected SWIGTYPE_p_tiledb_array_schema_t getSchemap() {
     return schemap;
   }
 
@@ -367,8 +367,10 @@ public class ArraySchema implements AutoCloseable {
    */
   public void close() throws TileDBError {
     ctx.handleError(tiledb.tiledb_array_schema_free(ctx.getCtxp(), schemapp));
-    for(Map.Entry<String,Attribute> e : getAttributes().entrySet()){
-      e.getValue().close();
+    if(attributes!=null) {
+      for (Map.Entry<String, Attribute> e : attributes.entrySet()) {
+        e.getValue().close();
+      }
     }
   }
 

@@ -45,14 +45,14 @@ public class DenseCreate {
     Dimension<Long> d2 = new Dimension<Long>(ctx,"d2",Long.class, new Pair<Long, Long>(1l,4l),2l);
 
     // Create getDomain
-    Domain<Integer> domain = new Domain<Integer>(ctx);
+    Domain domain = new Domain(ctx);
     domain.addDimension(d1);
     domain.addDimension(d2);
 
 
     // Create and add getAttributes
     Attribute<Integer> a1 = new Attribute<Integer>(ctx,"a1",Integer.class);
-    Attribute<Character> a2 = new Attribute<Character>(ctx,"a2",Character.class);
+    Attribute<String> a2 = new Attribute<String>(ctx,"a2",String.class);
     a2.setCellValNum(tiledb.tiledb_var_num());
     Attribute<Float> a3 = new Attribute<Float>(ctx,"a3",Float.class);
     a3.setCellValNum(2);

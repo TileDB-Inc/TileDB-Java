@@ -110,6 +110,5 @@ public class DenseWriteGlobal2 {
 
     // Submit query - #2
     query.submit();
-    query.free();
   }
 }

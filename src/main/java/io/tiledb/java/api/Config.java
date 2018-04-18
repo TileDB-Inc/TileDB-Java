@@ -37,7 +37,7 @@ public class Config implements AutoCloseable {
   private SWIGTYPE_p_tiledb_config_t configp;
 
   /**
-   * Constructor that creates a new C config object.
+   * Constructor that creates a new config object.
    */
   public Config() throws TileDBError {
     createConfig();
@@ -156,7 +156,7 @@ public class Config implements AutoCloseable {
   /**
    * Saves config parameters to a specified file
    *
-   * @param filename The getName of the file where the parameters will be written.
+   * @param filename The name of the file where the parameters will be written.
    */
   public void saveToFile(String filename) throws TileDBError {
     SWIGTYPE_p_p_tiledb_error_t errorpp = Utils.new_tiledb_error_tpp();
