@@ -38,12 +38,13 @@ import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DenseReadGlobal {
-  public static void main(String[] args) throws TileDBError {
+  public static void main(String[] args) throws TileDBError, UnsupportedEncodingException {
     // Create TileDB context
     Context ctx = new Context();
 
@@ -64,12 +65,13 @@ public class DenseReadGlobal {
     // Create query
     Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
     query.set_layout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
-    query.set_subarray(subarray);
-    query.set_buffer("a1", null,max_sizes.get("a1").getSecond().intValue());
+    query.set_subarray(new NativeArray(ctx, subarray, Long.class));
+    query.set_buffer("a1",
+        new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));
     query.set_buffer("a2",
-        null, max_sizes.get("a2").getFirst().intValue(),
-        null,max_sizes.get("a2").getSecond().intValue());
-    query.set_buffer("a3", null,max_sizes.get("a3").getSecond().intValue());
+        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
+        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
+    query.set_buffer("a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
 
     // Submit query
     System.out.println("Query submitted: " + query.submit() );

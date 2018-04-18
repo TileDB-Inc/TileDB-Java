@@ -26,7 +26,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
-public class Dimension<T> implements Finalizable {
+public class Dimension<T> implements AutoCloseable {
   private SWIGTYPE_p_p_tiledb_dimension_t dimensionpp;
   private SWIGTYPE_p_tiledb_dimension_t dimensionp;
   private Context ctx;
@@ -132,7 +132,16 @@ public class Dimension<T> implements Finalizable {
     return name;
   }
 
-  public void free() {
+  /**
+   * Delete the native object.
+   */
+  public void close() throws TileDBError {
+    ctx.handle_error(tiledb.tiledb_dimension_free(ctx.getCtxp(), dimensionpp));
+  }
 
+  @Override
+  protected void finalize() throws Throwable {
+    close();
+    super.finalize();
   }
 }

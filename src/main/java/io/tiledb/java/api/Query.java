@@ -29,6 +29,7 @@ import io.tiledb.libtiledb.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Construct and execute read/write queries on a tiledb::Array.
@@ -46,7 +47,7 @@ import java.util.List;
  * query.submit();
  * @endcode
  */
-public class Query implements Finalizable {
+public class Query implements AutoCloseable {
   private tiledb_query_type_t type;
   private Array array;
   private Context ctx;
@@ -78,7 +79,7 @@ public class Query implements Finalizable {
    * Format:
    * Size of the vector, size of vector::value_type, vector.data()
    */
-   HashMap<String, Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>> var_offsets_;
+   HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>> var_offsets_;
 
   /**
    * Keeps track the data buffer for an attribute.
@@ -86,7 +87,7 @@ public class Query implements Finalizable {
    * Format:
    * Size of the vector, size of vector::value_type, vector.data()
    */
-  HashMap<String, Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>> attr_buffs_;
+  HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>> attr_buffs_;
   private HashMap<String, Pair<Long, Long>> result_buffer_elements;
   private boolean executed;
 
@@ -98,8 +99,8 @@ public class Query implements Finalizable {
     querypp = Utils.new_tiledb_query_tpp();
     ctx.handle_error(tiledb.tiledb_query_create(ctx.getCtxp(), querypp, array.getUri(), type));
     queryp = Utils.tiledb_query_tpp_value(querypp);
-    var_offsets_ = new HashMap<String, Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>>();
-    attr_buffs_ = new HashMap<String, Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>>();
+    var_offsets_ = new HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>>();
+    attr_buffs_ = new HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>>();
     executed = false;
   }
 
@@ -189,11 +190,10 @@ public class Query implements Finalizable {
    * @tparam T Array domain datatype
    * @param pairs The subarray defined as pairs of [start, stop] per dimension.
    */
-  public void set_subarray(Object pairs) throws TileDBError {
-    Types.typeCheckArray(pairs, array.getSchema().domain().type());
-    SWIGTYPE_p_void subarray = Types.createNativeArray(array.getSchema().domain().type(), pairs, 2);
+  public void set_subarray(NativeArray pairs) throws TileDBError {
+    Types.typeCheckArray(pairs.getNativeType(), array.getSchema().domain().type());
     ctx.handle_error(
-        tiledb.tiledb_query_set_subarray(ctx.getCtxp(), queryp, subarray));
+        tiledb.tiledb_query_set_subarray(ctx.getCtxp(), queryp, pairs.toVoidPointer()));
   }
 
   /**
@@ -201,25 +201,25 @@ public class Query implements Finalizable {
    *
    * @tparam Vec buffer type. Should always be a vector of the attribute type.
    * @param attr Attribute name
-   * @param buf Buffer vector with elements of the attribute type.
+   * @param buffer Buffer vector with elements of the attribute type.
    **/
-  public void set_buffer(String attr, Object buf, int size) throws TileDBError {
+  public void set_buffer(String attr, NativeArray buffer) throws TileDBError {
     HashMap<String, Attribute> schemaAttributes = array.getSchema().attributes();
     tiledb_datatype_t attribute_t;
     if(schemaAttributes.containsKey(attr)){
       attribute_t = schemaAttributes.get(attr).getType();
-      Types.typeCheckArray(buf, attribute_t);
+      Types.typeCheckArray(buffer.getNativeType(), attribute_t);
     } else if (attr.equals(tiledb.tiledb_coords())) {
       attribute_t = array.getSchema().domain().type();
-      Types.typeCheckArray(buf, attribute_t);
+      Types.typeCheckArray(buffer.getNativeType(), attribute_t);
     } else {
       throw new TileDBError("Attribute does not exist: " + attr);
     }
     attr_buffs_.put(attr,
-        new Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>(
-            size,  // num elements
-            new Pair<Integer, SWIGTYPE_p_void> ( tiledb.tiledb_datatype_size(attribute_t).intValue(),
-                Types.createNativeArray(attribute_t, buf, size))));
+        new Pair<Integer, Pair<Integer, NativeArray>>(
+            buffer.getSize(),  // num elements
+            new Pair<Integer, NativeArray> ( tiledb.tiledb_datatype_size(attribute_t).intValue(),
+                buffer)));
   }
 
   /**
@@ -228,29 +228,30 @@ public class Query implements Finalizable {
    * @tparam Vec buffer type. Should always be a vector of the attribute type.
    * @param attr Attribute name
    * @param offsets Offsets where a new element begins in the data buffer.
-   * @param data Buffer vector with elements of the attribute type.
+   * @param buffer Buffer vector with elements of the attribute type.
    **/
-  public void set_buffer(String attr, long[] offsets, int offsetsSize, Object data, int size) throws TileDBError {
+  public void set_buffer(String attr, NativeArray offsets, NativeArray buffer) throws TileDBError {
     if (attr.equals(tiledb.tiledb_coords())) {
       throw new TileDBError("Cannot set coordinate buffer as variable sized.");
     }
-    set_buffer(attr, data, size);
+    if(!offsets.getNativeType().equals(tiledb_datatype_t.TILEDB_UINT64))
+      throw new TileDBError("Buffer offsets should be of type TILEDB_UINT64 or Long. Found type: "
+          +offsets.getNativeType());
+
+    set_buffer(attr, buffer);
 
     var_offsets_.put(attr,
-        new Pair<Integer, Pair<Integer, SWIGTYPE_p_void>>(
-            offsetsSize,
-            new Pair<Integer, SWIGTYPE_p_void>(tiledb.tiledb_datatype_size(tiledb_datatype_t.TILEDB_UINT64).intValue(),
-                PointerUtils.toVoid(
-                    (offsets==null)? new uint64_tArray(offsetsSize) :
-                    Utils.newUint64Array(offsets)
-                ))));
+        new Pair<Integer, Pair<Integer, NativeArray>>(
+            offsets.getSize(),
+            new Pair<Integer, NativeArray>(tiledb.tiledb_datatype_size(tiledb_datatype_t.TILEDB_UINT64).intValue(),
+                offsets)));
   }
 
   /** Set the coordinate buffer for sparse arrays **/
-  public void set_coordinates(Object buf, int size) throws TileDBError {
+  public void set_coordinates(NativeArray buffer) throws TileDBError {
 //    if (array.getSchema().getArrayType() != tiledb_array_type_t.TILEDB_SPARSE)
 //      throw new TileDBError("Cannot set coordinates for a dense array query");
-    set_buffer(tiledb.tiledb_coords(), buf, size);
+    set_buffer(tiledb.tiledb_coords(), buffer);
   }
 
 
@@ -278,14 +279,14 @@ public class Query implements Finalizable {
       int bufferId=0, attrId=0;
       for (String a : attr_buffs_.keySet()) {
         if (var_offsets_.containsKey(a)) {
-          Pair<Integer, Pair<Integer, SWIGTYPE_p_void>> p = var_offsets_.get(a);
-          tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond());
+          Pair<Integer, Pair<Integer, NativeArray>> p = var_offsets_.get(a);
+          tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond().toVoidPointer());
           buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
           sub_tsize_.add(p.getSecond().getFirst());
           bufferId++;
         }
-        Pair<Integer, Pair<Integer, SWIGTYPE_p_void>> p = attr_buffs_.get(a);
-        tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond());
+        Pair<Integer, Pair<Integer, NativeArray>> p = attr_buffs_.get(a);
+        tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond().toVoidPointer());
         buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
         tiledb.charpArray_setitem(attributeNames_, attrId, a);
         sub_tsize_.add(p.getSecond().getFirst());
@@ -311,17 +312,13 @@ public class Query implements Finalizable {
 
   public Object get_buffer(String attr) throws TileDBError {
     result_buffer_elements();
-    return Types.toJavaArray(
-        attr_buffs_.get(attr).getSecond().getSecond(),
-        array.getSchema().attributes().get(attr).getType(),
+    return attr_buffs_.get(attr).getSecond().getSecond().toJavaArray(
         result_buffer_elements.get(attr).getSecond().intValue());
   }
 
   public Object get_var_buffer(String attr) throws TileDBError {
     result_buffer_elements();
-    return Types.toJavaArray(
-        var_offsets_.get(attr).getSecond().getSecond(),
-        tiledb_datatype_t.TILEDB_UINT64,
+    return var_offsets_.get(attr).getSecond().getSecond().toJavaArray(
         result_buffer_elements.get(attr).getSecond().intValue());
   }
 
@@ -341,9 +338,22 @@ public class Query implements Finalizable {
     return "";  // silence error
   }
 
+  /**
+   * Delete the native object.
+   */
+  public void close() throws TileDBError {
+    for(Map.Entry<String, Pair<Integer, Pair<Integer, NativeArray>>> e : attr_buffs_.entrySet() ){
+      e.getValue().getSecond().getSecond().close();
+    }
+    buffer_sizes_.delete();
+    tiledb.delete_charpArray(attributeNames_);
+    tiledb.delete_voidpArray(buffers_);
+    ctx.handle_error(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
+  }
+
   @Override
   protected void finalize() throws Throwable {
-    free();
+    close();
     super.finalize();
   }
 }

@@ -62,11 +62,12 @@ public class DenseReadAsync {
     // Create query
     Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
     query.set_layout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
-    query.set_buffer("a1", null,max_sizes.get("a1").getSecond().intValue());
+    query.set_buffer("a1",
+        new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));
     query.set_buffer("a2",
-        null, max_sizes.get("a2").getFirst().intValue(),
-        null,max_sizes.get("a2").getSecond().intValue());
-    query.set_buffer("a3", null,max_sizes.get("a3").getSecond().intValue());
+        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
+        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
+    query.set_buffer("a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
 
 
     // Submit query with callback

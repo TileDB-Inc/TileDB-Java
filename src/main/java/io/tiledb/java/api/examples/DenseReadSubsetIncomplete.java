@@ -42,12 +42,13 @@ import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DenseReadSubsetIncomplete {
-  public static void main(String[] args) throws TileDBError {
+  public static void main(String[] args) throws TileDBError, UnsupportedEncodingException {
     // Create TileDB context
     Context ctx = new Context();
 
@@ -57,8 +58,8 @@ public class DenseReadSubsetIncomplete {
     Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
     query.set_layout(tiledb_layout_t.TILEDB_COL_MAJOR);
     long[] subarray = {3l, 4l, 2l, 4l};
-    query.set_subarray(subarray);
-    query.set_buffer("a1", null,2);
+    query.set_subarray(new NativeArray(ctx, subarray, Long.class));
+    query.set_buffer("a1", new NativeArray(ctx, 2,Integer.class));
 
     // Loop until the query is completed
 

@@ -24,28 +24,29 @@
 
 package io.tiledb.java.api;
 
+import java.lang.AutoCloseable;
 import java.util.Stack;
 
 public class Deleter extends Thread {
-  private final Stack<Finalizable> deleteStack;
+  private final Stack<AutoCloseable> deleteStack;
 
   public Deleter(){
-    deleteStack = new Stack<Finalizable>();
+    deleteStack = new Stack<AutoCloseable>();
   }
 
   @Override
   public void run() {
     while(!deleteStack.isEmpty()){
-      Finalizable object = deleteStack.pop();
+      AutoCloseable object = deleteStack.pop();
       try {
-        object.free();
-      } catch (TileDBError tileDBError) {
+        object.close();
+      } catch (Exception tileDBError) {
         tileDBError.printStackTrace();
       }
     }
   }
 
-  public void add(Finalizable object) {
+  public void add(AutoCloseable object) {
     deleteStack.push(object);
   }
 }

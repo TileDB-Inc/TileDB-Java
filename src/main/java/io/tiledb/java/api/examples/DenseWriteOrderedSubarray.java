@@ -40,33 +40,45 @@
 
 package io.tiledb.java.api.examples;
 
-import io.tiledb.java.api.Array;
-import io.tiledb.java.api.Context;
-import io.tiledb.java.api.Query;
-import io.tiledb.java.api.TileDBError;
+import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
 
+import java.io.UnsupportedEncodingException;
+
 public class DenseWriteOrderedSubarray {
-  public static void main(String[] args) throws TileDBError {
+  public static void main(String[] args) throws TileDBError, UnsupportedEncodingException {
 
     // Create TileDB context
     Context ctx = new Context();
 
     // Prepare cell buffers
-    int[] a1_data = {9, 12, 13, 11, 14, 15};
-    long[] a2_offsets = {0, 2, 3, 5, 9, 12};
-    String buffer_var_a2 = "jjmnnllllooopppp";
-    float buffer_a3[] = {9.1f, 9.2f, 12.1f, 12.2f, 13.1f, 13.2f, 11.1f, 11.2f, 14.1f, 14.2f, 15.1f, 15.2f};
+    NativeArray a1_data = new NativeArray(
+        ctx,
+        new int[]{9, 12, 13, 11, 14, 15},
+        Integer.class);
+    NativeArray a2_offsets = new NativeArray(
+        ctx,
+        new long[]{0, 2, 3, 5, 9, 12},
+        Long.class);
+    NativeArray buffer_var_a2 = new NativeArray(
+        ctx,
+        "jjmnnllllooopppp",
+        String.class);
+
+    NativeArray buffer_a3 = new NativeArray(
+        ctx,
+        new float[]{9.1f, 9.2f, 12.1f, 12.2f, 13.1f, 13.2f, 11.1f, 11.2f, 14.1f, 14.2f, 15.1f, 15.2f},
+        Float.class);
 
     // Create query
     Array my_dense_array = new Array(ctx,"my_dense_array");
     Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_WRITE);
     query.set_layout(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    query.set_subarray(new long[] {3, 4, 2, 4});
-    query.set_buffer("a1", a1_data, a1_data.length);
-    query.set_buffer("a2", a2_offsets, a2_offsets.length, buffer_var_a2.getBytes(), buffer_var_a2.length());
-    query.set_buffer("a3", buffer_a3, buffer_a3.length);
+    query.set_subarray(new NativeArray(ctx, new long[] {3, 4, 2, 4}, Long.class));
+    query.set_buffer("a1", a1_data);
+    query.set_buffer("a2", a2_offsets, buffer_var_a2);
+    query.set_buffer("a3", buffer_a3);
 
     // Submit query
     query.submit();

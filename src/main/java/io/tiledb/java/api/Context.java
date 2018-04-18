@@ -34,7 +34,7 @@ import java.util.Queue;
 import java.util.Stack;
 
 
-public class Context {
+public class Context implements AutoCloseable {
 
   private ContextCallback error_handler;
   private Config config;
@@ -110,16 +110,6 @@ public class Context {
     return tiledb.intp_value(ret) != 0;
   }
 
-  /**
-   * Delete the native object.
-   */
-  public void free() throws Throwable {
-    deleter.run();
-    if(config!=null)
-      config.free();
-    int rc = tiledb.tiledb_ctx_free(ctxpp);
-    handle_error(rc);
-  }
 
   private void create_context(Config config) throws TileDBError {
     ctxpp = Utils.new_tiledb_ctx_tpp();
@@ -156,13 +146,23 @@ public class Context {
     this.config = config;
   }
 
-  @Override
-  protected void finalize() throws Throwable {
-    free();
-    super.finalize();
+  public void deleterAdd(AutoCloseable object) {
+    deleter.add(object);
   }
 
-  public void deleterAdd(Finalizable object) {
-    deleter.add(object);
+  /**
+   * Close the context and delete all native objects. Should be called always to cleanup the context
+   */
+  public void close() throws TileDBError {
+    deleter.run();
+    if(config!=null)
+      config.close();
+    handle_error(tiledb.tiledb_ctx_free(ctxpp));
+  }
+
+  @Override
+  protected void finalize() throws Throwable {
+    close();
+    super.finalize();
   }
 }

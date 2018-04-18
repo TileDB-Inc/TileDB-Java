@@ -36,35 +36,49 @@
 
 package io.tiledb.java.api.examples;
 
-import io.tiledb.java.api.Array;
-import io.tiledb.java.api.Context;
-import io.tiledb.java.api.Query;
-import io.tiledb.java.api.TileDBError;
+import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
 
+import java.io.UnsupportedEncodingException;
+
 public class DenseWriteUnordered {
-  public static void main(String[] args) throws TileDBError {
+  public static void main(String[] args) throws TileDBError, UnsupportedEncodingException {
 
     // Create TileDB context
     Context ctx = new Context();
 
     // Prepare cell buffers
-    int[] a1_data = {211, 213, 212, 208};
-    long[] a2_offsets = {0, 4, 6, 7};
-    String buffer_var_a2 = "wwwwyyxu";
-    float buffer_a3[] = {211.1f, 211.2f, 213.1f, 213.2f, 212.1f, 212.2f, 208.1f, 208.2f};
-    long[] coords = {4, 2, 3, 4, 3, 3, 3, 1};
+    NativeArray a1_data = new NativeArray(
+        ctx,
+        new int[]{211, 213, 212, 208},
+        Integer.class);
+    NativeArray a2_offsets = new NativeArray(
+        ctx,
+        new long[]{0, 4, 6, 7},
+        Long.class);
+    NativeArray buffer_var_a2 = new NativeArray(
+        ctx,
+        "wwwwyyxu",
+        String.class);
+    NativeArray buffer_a3 = new NativeArray(
+        ctx,
+        new float[]{211.1f, 211.2f, 213.1f, 213.2f, 212.1f, 212.2f, 208.1f, 208.2f},
+        Float.class);
+    NativeArray coords = new NativeArray(
+        ctx,
+        new long[]{4, 2, 3, 4, 3, 3, 3, 1},
+        Long.class);
 
     // Create query
     Array my_dense_array = new Array(ctx,"my_dense_array");
     Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_WRITE);
     query.set_layout(tiledb_layout_t.TILEDB_UNORDERED);
-    query.set_subarray(new long[] {3, 4, 3, 4});
-    query.set_buffer("a1", a1_data, a1_data.length);
-    query.set_buffer("a2", a2_offsets, a2_offsets.length, buffer_var_a2.getBytes(), buffer_var_a2.length());
-    query.set_buffer("a3", buffer_a3, buffer_a3.length);
-    query.set_coordinates(coords, coords.length);
+    query.set_subarray(new NativeArray(ctx, new long[] {3, 4, 3, 4}, Long.class));
+    query.set_buffer("a1", a1_data);
+    query.set_buffer("a2", a2_offsets, buffer_var_a2);
+    query.set_buffer("a3", buffer_a3);
+    query.set_coordinates(coords);
 
     // Submit query
     query.submit();

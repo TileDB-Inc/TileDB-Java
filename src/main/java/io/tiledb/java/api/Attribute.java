@@ -57,7 +57,7 @@ import io.tiledb.libtiledb.*;
  * schema.add_attributes(a1, a2, a3);
  * @endcode
  */
-public class Attribute<T> implements Finalizable {
+public class Attribute<T> implements AutoCloseable {
 
   private SWIGTYPE_p_tiledb_attribute_t attributep;
   private SWIGTYPE_p_p_tiledb_attribute_t attributepp;
@@ -168,7 +168,16 @@ public class Attribute<T> implements Finalizable {
     return "";
   }
 
-  public void free() {
+  /**
+   * Delete the native object.
+   */
+  public void close() throws TileDBError {
+    ctx.handle_error(tiledb.tiledb_attribute_free(ctx.getCtxp(), attributepp));
+  }
 
+  @Override
+  protected void finalize() throws Throwable {
+    close();
+    super.finalize();
   }
 }

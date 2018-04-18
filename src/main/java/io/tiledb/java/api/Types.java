@@ -34,7 +34,7 @@ public class Types {
     if(atrrType.equals(int[].class)) {
       return tiledb_datatype_t.TILEDB_INT32;
     } else if(atrrType.equals(long[].class)) {
-      return tiledb_datatype_t.TILEDB_INT64;
+      return tiledb_datatype_t.TILEDB_UINT64;
     } else if(atrrType.equals(char[].class)) {
       return tiledb_datatype_t.TILEDB_CHAR;
     } else if(atrrType.equals(float[].class)) {
@@ -52,7 +52,7 @@ public class Types {
     } else if(atrrType.equals(Integer.class)) {
       return tiledb_datatype_t.TILEDB_INT32;
     } else if(atrrType.equals(Long.class)) {
-      return tiledb_datatype_t.TILEDB_INT64;
+      return tiledb_datatype_t.TILEDB_UINT64;
     } else if(atrrType.equals(Character.class)) {
       return tiledb_datatype_t.TILEDB_CHAR;
     } else if(atrrType.equals(Float.class)) {
@@ -200,7 +200,7 @@ public class Types {
   public static SWIGTYPE_p_void createNativeArrayPair(tiledb_datatype_t type, Pair d) throws TileDBError {
     switch(type){
       case TILEDB_FLOAT32:{
-        float[] domain_ = {(Float) d.getFirst(), (Float) d.getSecond()};
+        float[] domain_ = {(float) d.getFirst(), (float) d.getSecond()};
         floatArray domain = Utils.newFloatArray(domain_);
         return PointerUtils.toVoid(domain);
       }
@@ -508,6 +508,9 @@ public class Types {
     }
   }
 
+  public static void deleteArray(SWIGTYPE_p_void pointer) {
+  }
+
   public static Object toJavaArray(SWIGTYPE_p_void pointer, tiledb_datatype_t type, int size) throws TileDBError {
     switch (type) {
       case TILEDB_FLOAT32: {
@@ -569,14 +572,12 @@ public class Types {
     }
   }
 
-  public static boolean typeCheckArray(Object array, tiledb_datatype_t type) throws TileDBError {
-    if(array==null)
-      return true;
-    if(getJavaPrimitiveArrayType(type).equals(array.getClass())){
+  public static boolean typeCheckArray(tiledb_datatype_t first, tiledb_datatype_t second) throws TileDBError {
+    if(first.equals(second)){
       return true;
     }
     else {
-      throw new TileDBError("Type " + array.getClass() +" is not equal to the default type: "+getJavaPrimitiveArrayType(type) +" for " +type);
+      throw new TileDBError("Type " +first+" is not equal to the default type: "+second);
     }
   }
 

@@ -66,7 +66,7 @@ import java.util.Map;
  * ArraySchema s = ArraySchema(ctx, "my_array"); // Load schema from array
  * @endcode
  */
-public class ArraySchema implements Finalizable {
+public class ArraySchema implements AutoCloseable {
 
   private SWIGTYPE_p_p_tiledb_array_schema_t schemapp;
   private SWIGTYPE_p_tiledb_array_schema_t schemap;
@@ -362,6 +362,19 @@ public class ArraySchema implements Finalizable {
     }
   }
 
-  public void free() {
+  /**
+   * Delete the native object.
+   */
+  public void close() throws TileDBError {
+    ctx.handle_error(tiledb.tiledb_array_schema_free(ctx.getCtxp(), schemapp));
+    for(Map.Entry<String,Attribute> e : attributes().entrySet()){
+      e.getValue().close();
+    }
+  }
+
+  @Override
+  protected void finalize() throws Throwable {
+    close();
+    super.finalize();
   }
 }

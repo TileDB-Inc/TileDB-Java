@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * TileDB array class.
  */
-public class Array implements Finalizable {
+public class Array implements AutoCloseable {
   private Context ctx;
   private String uri;
   private ArraySchema schema;
@@ -163,7 +163,16 @@ public class Array implements Finalizable {
     return schema;
   }
 
-  public void free() {
+  /**
+   * Delete the native object.
+   */
+  public void close() throws TileDBError {
+    schema.close();
+  }
 
+  @Override
+  protected void finalize() throws Throwable {
+    close();
+    super.finalize();
   }
 }

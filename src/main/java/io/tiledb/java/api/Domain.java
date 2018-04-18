@@ -66,7 +66,7 @@ import java.util.List;
  * @endcode
  *
  **/
-public class Domain<T> implements Finalizable {
+public class Domain<T> implements AutoCloseable {
   private SWIGTYPE_p_p_tiledb_domain_t domainpp;
   private SWIGTYPE_p_tiledb_domain_t domainp;
   private Context ctx;
@@ -164,8 +164,21 @@ public class Domain<T> implements Finalizable {
     }
   }
 
+  /**
+   * Delete the native object.
+   */
+  public void close() throws TileDBError {
+    ctx.handle_error(tiledb.tiledb_domain_free(ctx.getCtxp(), domainpp));
+    if(dimensions!=null) {
+      for (Dimension d : dimensions) {
+        d.close();
+      }
+    }
+  }
 
-  public void free() {
-
+  @Override
+  protected void finalize() throws Throwable {
+    close();
+    super.finalize();
   }
 }
