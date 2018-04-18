@@ -41,9 +41,9 @@ import io.tiledb.libtiledb.*;
  *
  * @code{.java}
  * tiledb::Context ctx;
- * Attribute<Integer> a1 = new Attribute<Integer>(ctx,"a1",Integer.class);
- * Attribute<String> a2 = new Attribute<String>(ctx,"a2",String.class);
- * Attribute<Float> a3 = new Attribute<Float>(ctx,"a3",Float.class);
+ * Attribute a1 = new Attribute(ctx,"a1",Integer.class);
+ * Attribute a2 = new Attribute(ctx,"a2",String.class);
+ * Attribute a3 = new Attribute(ctx,"a3",Float.class);
  *
  * // Change compression scheme
  * a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
@@ -58,7 +58,7 @@ import io.tiledb.libtiledb.*;
  * schema.addAttribute(a3);
  * @endcode
  */
-public class Attribute<T> implements AutoCloseable {
+public class Attribute implements AutoCloseable {
 
   private SWIGTYPE_p_tiledb_attribute_t attributep;
   private SWIGTYPE_p_p_tiledb_attribute_t attributepp;
@@ -78,7 +78,7 @@ public class Attribute<T> implements AutoCloseable {
   }
 
   /* Default Constructor */
-  public Attribute(Context ctx, String name, Class<T> atrrType) throws TileDBError {
+  public Attribute(Context ctx, String name, Class atrrType) throws TileDBError {
     ctx.deleterAdd(this);
     this.ctx =ctx;
     this.name = name;

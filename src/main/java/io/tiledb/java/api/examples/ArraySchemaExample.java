@@ -61,9 +61,9 @@ public class ArraySchemaExample {
     schema.setDomain(domain);
 
     // Create and add getAttributes
-    Attribute<Integer> a1 = new Attribute<Integer>(ctx, "a1", Integer.class);
+    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
     a1.setCellValNum(3);
-    Attribute<Float> a2 = new Attribute<Float>(ctx, "a2", Float.class);
+    Attribute a2 = new Attribute(ctx, "a2", Float.class);
     a2.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
     schema.addAttribute(a1);
     schema.addAttribute(a2);

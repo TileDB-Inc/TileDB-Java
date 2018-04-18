@@ -51,10 +51,10 @@ public class DenseCreate {
 
 
     // Create and add getAttributes
-    Attribute<Integer> a1 = new Attribute<Integer>(ctx,"a1",Integer.class);
-    Attribute<String> a2 = new Attribute<String>(ctx,"a2",String.class);
+    Attribute a1 = new Attribute(ctx,"a1",Integer.class);
+    Attribute a2 = new Attribute(ctx,"a2",String.class);
     a2.setCellValNum(tiledb.tiledb_var_num());
-    Attribute<Float> a3 = new Attribute<Float>(ctx,"a3",Float.class);
+    Attribute a3 = new Attribute(ctx,"a3",Float.class);
     a3.setCellValNum(2);
     a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
     a2.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
