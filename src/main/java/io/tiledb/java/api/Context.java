@@ -30,9 +30,6 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
-import java.util.Queue;
-import java.util.Stack;
-
 
 public class Context implements AutoCloseable {
 
@@ -47,14 +44,14 @@ public class Context implements AutoCloseable {
    * Constructor.
    */
   public Context() throws TileDBError {
-    create_context(new Config());
+    createContext(new Config());
   }
 
   /**
    * Constructor with config parameters.
    */
   public Context(Config config) throws TileDBError {
-    create_context(config);
+    createContext(config);
   }
 
   /**
@@ -62,7 +59,7 @@ public class Context implements AutoCloseable {
    * `ContextCallback` is used. The callback accepts an error
    *  message.
    */
-  public void set_error_handler(ContextCallback error_handler) {
+  public void setErrorHandler(ContextCallback error_handler) {
     this.error_handler = error_handler;
   }
 
@@ -72,7 +69,7 @@ public class Context implements AutoCloseable {
    *
    * @param rc If != TILEDB_OK, call error handler
    */
-  public void handle_error(int rc) throws TileDBError {
+  public void handleError(int rc) throws TileDBError {
     // Do nothing if there is no error
     if (rc == tiledb.TILEDB_OK)
       return;
@@ -104,14 +101,14 @@ public class Context implements AutoCloseable {
   /**
    * Checks if the filesystem backend is supported.
    */
-  public boolean is_supported_fs(tiledb_filesystem_t fs) throws TileDBError {
+  public boolean isSupportedFs(tiledb_filesystem_t fs) throws TileDBError {
     SWIGTYPE_p_int ret = tiledb.new_intp();
     tiledb.tiledb_ctx_is_supported_fs(ctxp, fs, ret);
     return tiledb.intp_value(ret) != 0;
   }
 
 
-  private void create_context(Config config) throws TileDBError {
+  private void createContext(Config config) throws TileDBError {
     ctxpp = Utils.new_tiledb_ctx_tpp();
     if (tiledb.tiledb_ctx_create(ctxpp, config.getConfigp()) != tiledb.TILEDB_OK)
       throw new TileDBError("[TileDB::JavaAPI] Error: Failed to create context");
@@ -157,7 +154,7 @@ public class Context implements AutoCloseable {
     deleter.run();
     if(config!=null)
       config.close();
-    handle_error(tiledb.tiledb_ctx_free(ctxpp));
+    handleError(tiledb.tiledb_ctx_free(ctxpp));
   }
 
   @Override

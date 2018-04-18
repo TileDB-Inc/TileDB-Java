@@ -37,7 +37,7 @@ public class TiledbKVCreate {
     tiledb.tiledb_ctx_create(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
-    // Create attributes
+    // Create getAttributes
     SWIGTYPE_p_p_tiledb_attribute_t a1pp = Utils
         .new_tiledb_attribute_tpp();
     tiledb.tiledb_attribute_create(ctx, a1pp, "a1",

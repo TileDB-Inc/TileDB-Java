@@ -42,12 +42,12 @@ public class TiledbSparseReadGlobal {
     tiledb.tiledb_ctx_create(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
-    // Print non-empty domain
+    // Print non-empty getDomain
     uint64_tArray domain = new uint64_tArray(4);
     SWIGTYPE_p_int is_emptyp = tiledb.new_intp();
     tiledb.tiledb_array_get_non_empty_domain(ctx, "my_sparse_array",
         PointerUtils.toVoid(domain), is_emptyp);
-    System.out.println("Non-empty domain:");
+    System.out.println("Non-empty getDomain:");
     System.out.println("d1: (" + domain.getitem(0) + ", "
         + domain.getitem(1) + ")");
     System.out.println("d2: (" + domain.getitem(2) + ", "
@@ -106,7 +106,7 @@ public class TiledbSparseReadGlobal {
     // Submit query
     tiledb.tiledb_query_submit(ctx, query);
 
-    // Print cell values (assumes all attributes are read)
+    // Print cell values (assumes all getAttributes are read)
     int result_num = buffer_sizes.getitem(0).intValue() / 4;
     System.out.println("Result num: " + result_num);
     System.out.printf("%8s%9s%9s%11s%10s\n", tiledb.tiledb_coords(), "a1", "a2", "a3[0]", "a3[1]");

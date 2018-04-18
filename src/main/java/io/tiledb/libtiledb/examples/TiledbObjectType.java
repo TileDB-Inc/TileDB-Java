@@ -42,20 +42,20 @@ public class TiledbObjectType {
     tiledb.tiledb_ctx_create(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
-    // Get object type for group
+    // Get object getType for group
     SWIGTYPE_p_tiledb_object_t type = tiledb.new_tiledb_object_tp();
     tiledb.tiledb_object_type(ctx, "my_group", type);
     print_object_type(tiledb.tiledb_object_tp_value(type));
 
-    // Get object type for array
+    // Get object getType for array
     tiledb.tiledb_object_type(ctx, "my_dense_array", type);
     print_object_type(tiledb.tiledb_object_tp_value(type));
 
-    // Get object type for key-value
+    // Get object getType for key-value
     tiledb.tiledb_object_type(ctx, "my_kv", type);
     print_object_type(tiledb.tiledb_object_tp_value(type));
 
-    // Get invalid object type
+    // Get invalid object getType
     tiledb.tiledb_object_type(ctx, "some_invalid_path", type);
     print_object_type(tiledb.tiledb_object_tp_value(type));
 

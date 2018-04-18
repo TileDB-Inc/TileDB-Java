@@ -32,10 +32,10 @@ public class ContextTest {
   @Test
   public void testContext() throws Throwable {
     Context ctx = new Context();
-    ctx.set_error_handler(new Handler());
+    ctx.setErrorHandler(new Handler());
 
-    System.out.println("HDFS: "+ctx.is_supported_fs(tiledb_filesystem_t.TILEDB_HDFS));
-    System.out.println("S3: "+ctx.is_supported_fs(tiledb_filesystem_t.TILEDB_S3));
+    System.out.println("HDFS: "+ctx.isSupportedFs(tiledb_filesystem_t.TILEDB_HDFS));
+    System.out.println("S3: "+ctx.isSupportedFs(tiledb_filesystem_t.TILEDB_S3));
 
     ctx.free();
     ctx.finalize();

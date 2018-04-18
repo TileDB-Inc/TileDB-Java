@@ -34,12 +34,12 @@ public class TiledbDenseReadGlobal {
     tiledb.tiledb_ctx_create(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
-    // Print non-empty domain
+    // Print non-empty getDomain
     uint64_tArray domain = new uint64_tArray(4);
     SWIGTYPE_p_int is_emptyp = tiledb.new_intp();
     tiledb.tiledb_array_get_non_empty_domain(ctx, "my_dense_array",
         PointerUtils.toVoid(domain), is_emptyp);
-    System.out.println("Non-empty domain:" + tiledb.intp_value(is_emptyp));
+    System.out.println("Non-empty getDomain:" + tiledb.intp_value(is_emptyp));
     System.out.println("d1: (" + domain.getitem(0) + ", "
         + domain.getitem(1) + ")");
     System.out.println("d2: (" + domain.getitem(2) + ", "
@@ -100,7 +100,7 @@ public class TiledbDenseReadGlobal {
     a2_var_size = buffer_sizes.getitem(2).intValue() / UtilsJNI.sizeOfInt8();
     a3_size = buffer_sizes.getitem(3).intValue() / UtilsJNI.sizeOfFloat();
 
-    // Print cell values (assumes all attributes are read)
+    // Print cell values (assumes all getAttributes are read)
     int[] a1 = Utils.int32ArrayGet(buffer_a1, a1_size);
     long[] a2 = Utils.uint64ArrayGet(buffer_a2, a2_size);
     byte[] a2_var = Utils.int8ArrayGet(buffer_var_a2, a2_var_size);

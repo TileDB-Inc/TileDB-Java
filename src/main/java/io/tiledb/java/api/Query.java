@@ -41,9 +41,9 @@ import java.util.Map;
  *
  * @code{.cpp}
  * Query query(ctx, "my_dense_array", TILEDB_WRITE);
- * query.set_layout(TILEDB_GLOBAL_ORDER);
+ * query.setLayout(TILEDB_GLOBAL_ORDER);
  * std::vector a1_data = {1, 2, 3};
- * query.set_buffer("a1", a1_data);
+ * query.setBuffer("a1", a1_data);
  * query.submit();
  * @endcode
  */
@@ -55,13 +55,13 @@ public class Query implements AutoCloseable {
   private SWIGTYPE_p_tiledb_query_t queryp;
 
 
-  /** The attribute names that will be passed to a TileDB C query. */
+  /** The getAttribute names that will be passed to a TileDB C query. */
   private SWIGTYPE_p_p_char attributeNames_;
 
   /** The buffers that will be passed to a TileDB C query. */
   private SWIGTYPE_p_p_void buffers_;
 
-  /** The attribute names that will be passed to a TileDB C query. */
+  /** The getAttribute names that will be passed to a TileDB C query. */
   private SWIGTYPE_p_p_char attributes_;
 
   /** The buffer sizes that will be passed to a TileDB C query. */
@@ -70,11 +70,11 @@ public class Query implements AutoCloseable {
   /** Keeps track of vector value_type sizes to convert back at return. */
   private List<Integer> sub_tsize_;
 
-  /** Number of cells set by `set_subarray`, influences `resize_buffer`. */
+  /** Number of cells set by `setSubarray`, influences `resize_buffer`. */
   long subarray_cell_num_ = 0;
 
   /**
-   * Keeps track the offsets buffer of a variable-sized attribute.
+   * Keeps track the offsets buffer of a variable-sized getAttribute.
    *
    * Format:
    * Size of the vector, size of vector::value_type, vector.data()
@@ -82,7 +82,7 @@ public class Query implements AutoCloseable {
    HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>> var_offsets_;
 
   /**
-   * Keeps track the data buffer for an attribute.
+   * Keeps track the data buffer for an getAttribute.
    *
    * Format:
    * Size of the vector, size of vector::value_type, vector.data()
@@ -97,7 +97,7 @@ public class Query implements AutoCloseable {
     ctx = array.getCtx();
     ctx.deleterAdd(this);
     querypp = Utils.new_tiledb_query_tpp();
-    ctx.handle_error(tiledb.tiledb_query_create(ctx.getCtxp(), querypp, array.getUri(), type));
+    ctx.handleError(tiledb.tiledb_query_create(ctx.getCtxp(), querypp, array.getUri(), type));
     queryp = Utils.tiledb_query_tpp_value(querypp);
     var_offsets_ = new HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>>();
     attr_buffs_ = new HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>>();
@@ -105,23 +105,23 @@ public class Query implements AutoCloseable {
   }
 
   /** Sets the data layout of the buffers.  */
-  public void set_layout(tiledb_layout_t layout) throws TileDBError {
-    ctx.handle_error(tiledb.tiledb_query_set_layout(ctx.getCtxp(), queryp, layout));
+  public void setLayout(tiledb_layout_t layout) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_query_set_layout(ctx.getCtxp(), queryp, layout));
   }
 
   /** Returns the query status. */
-  public Status query_status() throws TileDBError {
+  public Status getQueryStatus() throws TileDBError {
     SWIGTYPE_p_tiledb_query_status_t statusp = tiledb.new_tiledb_query_status_tp();
-    ctx.handle_error(tiledb.tiledb_query_get_status(ctx.getCtxp(), queryp, statusp));
+    ctx.handleError(tiledb.tiledb_query_get_status(ctx.getCtxp(), queryp, statusp));
     Status status = Status.toStatus(statusp);
     tiledb.delete_tiledb_query_status_tp(statusp);
     return status;
   }
 
-  /** Returns the query status for a particular attribute. */
-  public Status attribute_status(String attr) throws TileDBError {
+  /** Returns the query status for a particular getAttribute. */
+  public Status getAttributeStatus(String attr) throws TileDBError {
     SWIGTYPE_p_tiledb_query_status_t statusp = tiledb.new_tiledb_query_status_tp();
-    ctx.handle_error(tiledb.tiledb_query_get_attribute_status(ctx.getCtxp(), queryp, attr, statusp));
+    ctx.handleError(tiledb.tiledb_query_get_attribute_status(ctx.getCtxp(), queryp, attr, statusp));
     Status status = Status.toStatus(statusp);
     tiledb.delete_tiledb_query_status_tp(statusp);
     return status;
@@ -129,15 +129,15 @@ public class Query implements AutoCloseable {
 
   /** Submits the query. Call will block until query is complete. */
   public Status submit() throws TileDBError {
-    prepare_submission();
-    ctx.handle_error(tiledb.tiledb_query_submit(ctx.getCtxp(), queryp));
+    prepareSubmission();
+    ctx.handleError(tiledb.tiledb_query_submit(ctx.getCtxp(), queryp));
     executed = true;
-    return query_status();
+    return getQueryStatus();
   }
 
   /** Submit an async query (non-blocking). */
-  public void submit_async() throws TileDBError {
-    submit_async(new DefaultCallback());
+  public void submitAsync() throws TileDBError {
+    submitAsync(new DefaultCallback());
   }
 
   /**
@@ -146,27 +146,27 @@ public class Query implements AutoCloseable {
    * @param callback Callback function.
    * @return Status of submitted query.
    */
-  public void submit_async(Callback callback) throws TileDBError {
-    prepare_submission();
-    ctx.handle_error(Utils.tiledb_query_submit_async(
+  public void submitAsync(Callback callback) throws TileDBError {
+    prepareSubmission();
+    ctx.handleError(Utils.tiledb_query_submit_async(
         ctx.getCtxp(), queryp, callback));
     executed = true;
   }
 
   /**
    * Returns the number of elements in the result buffers. This is a map
-   * from the attribute name to a pair of values.
+   * from the getAttribute getName to a pair of values.
    *
-   * The first is number of elements for var size attributes, and the second
-   * is number of elements in the data buffer. For fixed sized attributes
+   * The first is number of elements for var size getAttributes, and the second
+   * is number of elements in the data buffer. For fixed sized getAttributes
    * (and coordinates), the first is always 0.
    */
-  public HashMap<String, Pair<Long, Long>> result_buffer_elements() throws TileDBError {
+  public HashMap<String, Pair<Long, Long>> resultBufferElements() throws TileDBError {
     if(result_buffer_elements==null) {
       result_buffer_elements = new HashMap<String, Pair<Long, Long>>();
       int bid = 0;
       for (String attrName : attr_buffs_.keySet()) {
-        Attribute attr = array.getSchema().attributes().get(attrName);
+        Attribute attr = array.getSchema().getAttributes().get(attrName);
         boolean var =
             (!attr.getName().equals(tiledb.tiledb_coords()) &&
                 attr.getCellValNum() == tiledb.tiledb_var_num());
@@ -184,34 +184,34 @@ public class Query implements AutoCloseable {
   }
 
   /**
-   * Sets a subarray, defined in the order dimensions were added.
+   * Sets a subarray, defined in the order getDimensions were added.
    * Coordinates are inclusive.
    *
-   * @tparam T Array domain datatype
+   * @tparam T Array getDomain datatype
    * @param pairs The subarray defined as pairs of [start, stop] per dimension.
    */
-  public void set_subarray(NativeArray pairs) throws TileDBError {
-    Types.typeCheckArray(pairs.getNativeType(), array.getSchema().domain().type());
-    ctx.handle_error(
+  public void setSubarray(NativeArray pairs) throws TileDBError {
+    Types.typeCheck(pairs.getNativeType(), array.getSchema().getDomain().getType());
+    ctx.handleError(
         tiledb.tiledb_query_set_subarray(ctx.getCtxp(), queryp, pairs.toVoidPointer()));
   }
 
   /**
-   * Sets a buffer for a fixed-sized attribute.
+   * Sets a buffer for a fixed-sized getAttribute.
    *
-   * @tparam Vec buffer type. Should always be a vector of the attribute type.
-   * @param attr Attribute name
-   * @param buffer Buffer vector with elements of the attribute type.
+   * @tparam Vec buffer getType. Should always be a vector of the getAttribute getType.
+   * @param attr Attribute getName
+   * @param buffer Buffer vector with elements of the getAttribute getType.
    **/
-  public void set_buffer(String attr, NativeArray buffer) throws TileDBError {
-    HashMap<String, Attribute> schemaAttributes = array.getSchema().attributes();
+  public void setBuffer(String attr, NativeArray buffer) throws TileDBError {
+    HashMap<String, Attribute> schemaAttributes = array.getSchema().getAttributes();
     tiledb_datatype_t attribute_t;
     if(schemaAttributes.containsKey(attr)){
       attribute_t = schemaAttributes.get(attr).getType();
-      Types.typeCheckArray(buffer.getNativeType(), attribute_t);
+      Types.typeCheck(buffer.getNativeType(), attribute_t);
     } else if (attr.equals(tiledb.tiledb_coords())) {
-      attribute_t = array.getSchema().domain().type();
-      Types.typeCheckArray(buffer.getNativeType(), attribute_t);
+      attribute_t = array.getSchema().getDomain().getType();
+      Types.typeCheck(buffer.getNativeType(), attribute_t);
     } else {
       throw new TileDBError("Attribute does not exist: " + attr);
     }
@@ -223,22 +223,22 @@ public class Query implements AutoCloseable {
   }
 
   /**
-   * Sets a buffer for a variable-sized attribute.
+   * Sets a buffer for a variable-sized getAttribute.
    *
-   * @tparam Vec buffer type. Should always be a vector of the attribute type.
-   * @param attr Attribute name
+   * @tparam Vec buffer getType. Should always be a vector of the getAttribute getType.
+   * @param attr Attribute getName
    * @param offsets Offsets where a new element begins in the data buffer.
-   * @param buffer Buffer vector with elements of the attribute type.
+   * @param buffer Buffer vector with elements of the getAttribute getType.
    **/
-  public void set_buffer(String attr, NativeArray offsets, NativeArray buffer) throws TileDBError {
+  public void setBuffer(String attr, NativeArray offsets, NativeArray buffer) throws TileDBError {
     if (attr.equals(tiledb.tiledb_coords())) {
       throw new TileDBError("Cannot set coordinate buffer as variable sized.");
     }
     if(!offsets.getNativeType().equals(tiledb_datatype_t.TILEDB_UINT64))
-      throw new TileDBError("Buffer offsets should be of type TILEDB_UINT64 or Long. Found type: "
+      throw new TileDBError("Buffer offsets should be of getType TILEDB_UINT64 or Long. Found getType: "
           +offsets.getNativeType());
 
-    set_buffer(attr, buffer);
+    setBuffer(attr, buffer);
 
     var_offsets_.put(attr,
         new Pair<Integer, Pair<Integer, NativeArray>>(
@@ -248,15 +248,15 @@ public class Query implements AutoCloseable {
   }
 
   /** Set the coordinate buffer for sparse arrays **/
-  public void set_coordinates(NativeArray buffer) throws TileDBError {
+  public void setCoordinates(NativeArray buffer) throws TileDBError {
 //    if (array.getSchema().getArrayType() != tiledb_array_type_t.TILEDB_SPARSE)
 //      throw new TileDBError("Cannot set coordinates for a dense array query");
-    set_buffer(tiledb.tiledb_coords(), buffer);
+    setBuffer(tiledb.tiledb_coords(), buffer);
   }
 
 
-  /** Clears all attribute buffers. */
-  public void reset_buffers(){
+  /** Clears all getAttribute buffers. */
+  public void resetBuffers(){
     attr_buffs_.clear();
     var_offsets_.clear();
     executed=false;
@@ -268,7 +268,7 @@ public class Query implements AutoCloseable {
     sub_tsize_= new ArrayList<Integer>();
   }
 
-  private void prepare_submission() throws TileDBError {
+  private void prepareSubmission() throws TileDBError {
     if(!executed) {
       int numBuffers = attr_buffs_.size()+var_offsets_.size();
       buffers_ = tiledb.new_voidpArray(numBuffers);
@@ -294,7 +294,7 @@ public class Query implements AutoCloseable {
         attrId++;
 
         buffer_sizes_ = Utils.newUint64Array(buffer_sizes);
-        ctx.handle_error(tiledb.tiledb_query_set_buffers(
+        ctx.handleError(tiledb.tiledb_query_set_buffers(
             ctx.getCtxp(),
             queryp,
             attributeNames_,
@@ -306,18 +306,18 @@ public class Query implements AutoCloseable {
   }
 
   public void free() throws TileDBError {
-    ctx.handle_error(
+    ctx.handleError(
         tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
   }
 
-  public Object get_buffer(String attr) throws TileDBError {
-    result_buffer_elements();
+  public Object getBuffer(String attr) throws TileDBError {
+    resultBufferElements();
     return attr_buffs_.get(attr).getSecond().getSecond().toJavaArray(
         result_buffer_elements.get(attr).getSecond().intValue());
   }
 
-  public Object get_var_buffer(String attr) throws TileDBError {
-    result_buffer_elements();
+  public Object getVarBuffer(String attr) throws TileDBError {
+    resultBufferElements();
     return var_offsets_.get(attr).getSecond().getSecond().toJavaArray(
         result_buffer_elements.get(attr).getSecond().intValue());
   }
@@ -348,7 +348,7 @@ public class Query implements AutoCloseable {
     buffer_sizes_.delete();
     tiledb.delete_charpArray(attributeNames_);
     tiledb.delete_voidpArray(buffers_);
-    ctx.handle_error(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
+    ctx.handleError(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
   }
 
   @Override

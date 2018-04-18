@@ -79,7 +79,7 @@ public class TiledbDenseReadOrderedSubarray {
     // Submit query
     tiledb.tiledb_query_submit(ctx, query);
 
-    // Print cell values (assumes all attributes are read)
+    // Print cell values (assumes all getAttributes are read)
     int result_num = buffer_sizes.getitem(0).intValue() / 4;
     System.out.printf("Result num: %d\n\n", result_num);
     System.out.printf("%5s%10s%10s%10s\n", "a1", "a2", "a3[0]", "a3[1]");

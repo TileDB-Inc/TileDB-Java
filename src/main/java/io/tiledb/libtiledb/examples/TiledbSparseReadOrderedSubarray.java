@@ -94,7 +94,7 @@ public class TiledbSparseReadOrderedSubarray {
     // Submit query
     tiledb.tiledb_query_submit(ctx, query);
 
-    // Print cell values (assumes all attributes are read)
+    // Print cell values (assumes all getAttributes are read)
     int result_num = buffer_sizes.getitem(0).intValue() / 4;
     System.out.println("Result num: " + result_num);
     System.out.printf("%8s%9s%9s%11s%10s\n", tiledb.tiledb_coords(), "a1", "a2", "a3[0]", "a3[1]");

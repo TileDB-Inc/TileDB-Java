@@ -56,7 +56,7 @@ public class NativeArray implements AutoCloseable {
   public NativeArray(Context ctx, int size, tiledb_datatype_t nativeType) throws TileDBError {
     ctx.deleterAdd(this);
     this.size = size;
-    this.javaType = toJavaType(nativeType);
+    this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
     allocateEmptyArray();
   }
@@ -65,79 +65,31 @@ public class NativeArray implements AutoCloseable {
     ctx.deleterAdd(this);
     this.size = size;
     this.javaType = javaType;
-    this.nativeType = toNativeType(javaType);
+    this.nativeType = Types.getNativeType(javaType);
     allocateEmptyArray();
   }
 
   public NativeArray(Context ctx, Object buffer, Class javaType) throws TileDBError, UnsupportedEncodingException {
     ctx.deleterAdd(this);
     this.javaType = javaType;
-    this.nativeType = toNativeType(javaType);
+    this.nativeType = Types.getNativeType(javaType);
     this.size = getSize(buffer);
     createNativeArrayFromBuffer(buffer);
   }
 
-  public static tiledb_datatype_t toNativeType(Class javaType) throws TileDBError {
-    if (javaType.equals(Integer.class)) {
-      return tiledb_datatype_t.TILEDB_INT32;
-    } else if (javaType.equals(Long.class)) {
-      return tiledb_datatype_t.TILEDB_UINT64;
-    } else if (javaType.equals(String.class)) {
-      return tiledb_datatype_t.TILEDB_CHAR;
-    } else if (javaType.equals(Float.class)) {
-      return tiledb_datatype_t.TILEDB_FLOAT32;
-    } else if (javaType.equals(Double.class)) {
-      return tiledb_datatype_t.TILEDB_FLOAT64;
-    } else if (javaType.equals(Byte.class)) {
-      return tiledb_datatype_t.TILEDB_INT8;
-    } else if (javaType.equals(Short.class)) {
-      return tiledb_datatype_t.TILEDB_INT16;
-    } else if (javaType.equals(Boolean.class)) {
-      return tiledb_datatype_t.TILEDB_INT8;
-    } else {
-      throw new TileDBError("Not supported native array type " + javaType);
-    }
+  public NativeArray(Context ctx, Object buffer, tiledb_datatype_t nativeType) throws TileDBError, UnsupportedEncodingException {
+    ctx.deleterAdd(this);
+    this.javaType = Types.getJavaType(nativeType);
+    this.nativeType = nativeType;
+    this.size = getSize(buffer);
+    createNativeArrayFromBuffer(buffer);
   }
 
-  public static Class toJavaType(tiledb_datatype_t  nativeType) throws TileDBError {
-    switch (nativeType) {
-      case TILEDB_FLOAT32: {
-        return Float.class;
-      }
-      case TILEDB_FLOAT64: {
-        return Double.class;
-      }
-      case TILEDB_INT8: {
-        return Byte.class;
-      }
-      case TILEDB_INT16: {
-        return Short.class;
-      }
-      case TILEDB_INT32: {
-        return Integer.class;
-      }
-      case TILEDB_INT64: {
-        return Long.class;
-      }
-      case TILEDB_UINT8: {
-        return Short.class;
-      }
-      case TILEDB_UINT16: {
-        return Integer.class;
-      }
-      case TILEDB_UINT32: {
-        return Long.class;
-      }
-      case TILEDB_UINT64: {
-        return Long.class;
-      }
-      case TILEDB_CHAR: {
-        return String.class;
-      }
-      default: {
-        throw new TileDBError("Not supported native array type " + nativeType);
-      }
-    }
+  public NativeArray(Context ctx, tiledb_datatype_t nativeType, SWIGTYPE_p_p_void pointer) throws TileDBError {
+    ctx.deleterAdd(this);
+    this.javaType = Types.getJavaType(nativeType);
+    this.nativeType = nativeType;
+    createNativeArrayFromVoidPointer(pointer);
   }
 
   private int getSize(Object buffer) throws UnsupportedEncodingException, TileDBError {
@@ -176,7 +128,7 @@ public class NativeArray implements AutoCloseable {
         return stringToBytes(buffer).length;
       }
       default:{
-        throw new TileDBError("Not supported domain type "+nativeType);
+        throw new TileDBError("Not supported getDomain getType "+nativeType);
       }
     }
   }
@@ -240,7 +192,7 @@ public class NativeArray implements AutoCloseable {
         break;
       }
       default:{
-        throw new TileDBError("Not supported domain type "+nativeType);
+        throw new TileDBError("Not supported getDomain getType "+nativeType);
       }
     }
   }
@@ -292,7 +244,7 @@ public class NativeArray implements AutoCloseable {
         break;
       }
       default: {
-        throw new TileDBError("Not supported native array type " + nativeType);
+        throw new TileDBError("Not supported native array getType " + nativeType);
       }
     }
   }
@@ -333,7 +285,7 @@ public class NativeArray implements AutoCloseable {
         return int8_tArray.getitem(index);
       }
       default: {
-        throw new TileDBError("Not supported domain type " + nativeType);
+        throw new TileDBError("Not supported getDomain getType " + nativeType);
       }
     }
   }
@@ -388,7 +340,7 @@ public class NativeArray implements AutoCloseable {
         break;
       }
       default: {
-        throw new TileDBError("Not supported domain type " + nativeType);
+        throw new TileDBError("Not supported getDomain getType " + nativeType);
       }
     }
   }
@@ -429,7 +381,7 @@ public class NativeArray implements AutoCloseable {
         return PointerUtils.toVoid(int8_tArray);
       }
       default: {
-        throw new TileDBError("Not supported domain type " + nativeType);
+        throw new TileDBError("Not supported getDomain getType " + nativeType);
       }
     }
   }
@@ -471,10 +423,60 @@ public class NativeArray implements AutoCloseable {
         return Utils.int8ArrayGet(int8_tArray,elements);
       }
       default: {
-        throw new TileDBError("Not supported domain type " + nativeType);
+        throw new TileDBError("Not supported getDomain getType " + nativeType);
       }
     }
   }
+
+
+  private void createNativeArrayFromVoidPointer(SWIGTYPE_p_p_void pointer) throws TileDBError {
+    switch (nativeType) {
+      case TILEDB_FLOAT32: {
+        floatArray = PointerUtils.floatArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_FLOAT64: {
+        doubleArray = PointerUtils.doubleArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_INT8: {
+        int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_INT16: {
+        int16_tArray = PointerUtils.int16_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_INT32: {
+        int32_tArray = PointerUtils.int32_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_INT64: {
+        int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_UINT8: {
+        uint8_tArray = PointerUtils.uint8_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_UINT16: {
+        uint16_tArray = PointerUtils.uint16_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_UINT32: {
+        uint32_tArray = PointerUtils.uint32_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_UINT64: {
+        uint64_tArray = PointerUtils.uint64_tArrayFromVoid(pointer);
+        break;
+      }
+      default: {
+        throw new TileDBError("Not supported getDomain getType " + nativeType);
+      }
+    }
+  }
+
   private byte[] stringToBytes(Object buffer) throws UnsupportedEncodingException {
     return ((String) buffer).getBytes("UTF-8");
   }

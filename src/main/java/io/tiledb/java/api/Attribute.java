@@ -27,11 +27,11 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.*;
 
 /**
- * Describes an attribute of an Array cell.
+ * Describes an getAttribute of an Array cell.
  *
  * @details
- * An attribute specifies a datatype for a particular parameter in each
- * array cell. There are 3 supported attribute types:
+ * An getAttribute specifies a datatype for a particular parameter in each
+ * array cell. There are 3 supported getAttribute types:
  *
  * - Fundamental types, such as char, int, double, uint64_t, etc..
  * - Fixed sized arrays: std::array<T, N> where T is fundamental
@@ -50,7 +50,7 @@ import io.tiledb.libtiledb.*;
  * a1.cell_val_num(); // 1
  * a2.cell_val_num(); // Variable sized, TILEDB_VAR_NUM
  * a3.cell_val_num(); // sizeof(std::array<float, 3>), Objects stored as char
- * array a3.cell_size(); // same as cell_val_num since type is char
+ * array a3.cell_size(); // same as cell_val_num since getType is char
  * a3.type_size(); // sizeof(char)
  *
  * tiledb::ArraySchema schema(ctx);
@@ -83,7 +83,7 @@ public class Attribute<T> implements AutoCloseable {
     this.name = name;
     this.attributepp = Utils.new_tiledb_attribute_tpp();
     type =  Types.getNativeType(atrrType);
-    ctx.handle_error(tiledb.tiledb_attribute_create(ctx.getCtxp(), attributepp, name, type));
+    ctx.handleError(tiledb.tiledb_attribute_create(ctx.getCtxp(), attributepp, name, type));
     this.attributep = Utils.tiledb_attribute_tpp_value(attributepp);
   }
 
@@ -91,32 +91,32 @@ public class Attribute<T> implements AutoCloseable {
     return attributep;
   }
 
-  /** Returns the name of the attribute. */
+  /** Returns the getName of the getAttribute. */
   public String getName() throws TileDBError {
     if(name==null){
       SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
-      ctx.handle_error(tiledb.tiledb_attribute_get_name(ctx.getCtxp(), attributep, namepp));
+      ctx.handleError(tiledb.tiledb_attribute_get_name(ctx.getCtxp(), attributep, namepp));
       name = tiledb.charpp_value(namepp);
       tiledb.delete_charpp(namepp);
     }
     return name;
   }
 
-  /** Returns the attribute datatype. */
+  /** Returns the getAttribute datatype. */
   public tiledb_datatype_t getType() throws TileDBError {
     if(type==null){
       SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
-      ctx.handle_error(tiledb.tiledb_attribute_get_type(ctx.getCtxp(), attributep, typep));
+      ctx.handleError(tiledb.tiledb_attribute_get_type(ctx.getCtxp(), attributep, typep));
       type = tiledb.tiledb_datatype_tp_value(typep);
       tiledb.delete_tiledb_datatype_tp(typep);
     }
     return type;
   }
 
-  /** Returns the size (in bytes) of one cell on this attribute. */
+  /** Returns the size (in bytes) of one cell on this getAttribute. */
   public long getCellSize() throws TileDBError {
     SWIGTYPE_p_unsigned_long_long sizep = tiledb.new_ullp();
-    ctx.handle_error(tiledb.tiledb_attribute_get_cell_size(ctx.getCtxp(), attributep, sizep));
+    ctx.handleError(tiledb.tiledb_attribute_get_cell_size(ctx.getCtxp(), attributep, sizep));
     long size = tiledb.ullp_value(sizep).longValue();
     tiledb.delete_ullp(sizep);
     return size;
@@ -124,27 +124,27 @@ public class Attribute<T> implements AutoCloseable {
 
   /**
    * Returns the number of values stored in each cell.
-   * This is equal to the size of the attribute * sizeof(attr_type).
-   * For variable size attributes this is TILEDB_VAR_NUM.
+   * This is equal to the size of the getAttribute * sizeof(attr_type).
+   * For variable size getAttributes this is TILEDB_VAR_NUM.
    */
   public long getCellValNum() throws TileDBError {
     SWIGTYPE_p_unsigned_int sizep = tiledb.new_uintp();
-    ctx.handle_error(tiledb.tiledb_attribute_get_cell_val_num(ctx.getCtxp(), attributep, sizep));
+    ctx.handleError(tiledb.tiledb_attribute_get_cell_val_num(ctx.getCtxp(), attributep, sizep));
     long size = tiledb.uintp_value(sizep);
     tiledb.delete_uintp(sizep);
     return size;
   }
 
-  /** Sets the number of attribute values per cell. */
+  /** Sets the number of getAttribute values per cell. */
   public void setCellValNum(long size) throws TileDBError {
-    ctx.handle_error(tiledb.tiledb_attribute_set_cell_val_num(ctx.getCtxp(), attributep, size));
+    ctx.handleError(tiledb.tiledb_attribute_set_cell_val_num(ctx.getCtxp(), attributep, size));
   }
 
-  /** Returns the attribute compressor. */
+  /** Returns the getAttribute compressor. */
   public Compressor getCompressor() throws TileDBError {
     SWIGTYPE_p_tiledb_compressor_t compressor = tiledb.new_tiledb_compressor_tp();
     SWIGTYPE_p_int level = tiledb.new_intp();
-    ctx.handle_error(
+    ctx.handleError(
         tiledb.tiledb_attribute_get_compressor(ctx.getCtxp(), attributep, compressor, level));
     Compressor cmp = new Compressor(tiledb.tiledb_compressor_tp_value(compressor), tiledb.intp_value(level));
     tiledb.delete_intp(level);
@@ -152,9 +152,9 @@ public class Attribute<T> implements AutoCloseable {
     return cmp;
   }
 
-  /** Sets the attribute compressor. */
+  /** Sets the getAttribute compressor. */
   public void setCompressor(Compressor c) throws TileDBError {
-    ctx.handle_error(tiledb.tiledb_attribute_set_compressor(
+    ctx.handleError(tiledb.tiledb_attribute_set_compressor(
         ctx.getCtxp(), attributep, c.getCompressor(), c.getLevel()));
   }
 
@@ -172,7 +172,7 @@ public class Attribute<T> implements AutoCloseable {
    * Delete the native object.
    */
   public void close() throws TileDBError {
-    ctx.handle_error(tiledb.tiledb_attribute_free(ctx.getCtxp(), attributepp));
+    ctx.handleError(tiledb.tiledb_attribute_free(ctx.getCtxp(), attributepp));
   }
 
   @Override

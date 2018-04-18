@@ -40,7 +40,7 @@ public class TiledbSparseCreate {
     tiledb.tiledb_ctx_create(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
-    // Create dimensions
+    // Create getDimensions
     long[] d1_domain_ = {1, 4};
     uint64_tArray d1_domain = Utils.newUint64Array(d1_domain_);
     long[] d1_tile_extents_ = {2};
@@ -67,14 +67,14 @@ public class TiledbSparseCreate {
         PointerUtils.toVoid(d2_tile_extents));
     SWIGTYPE_p_tiledb_dimension_t d2 = Utils.tiledb_dimension_tpp_value(d2pp);
 
-    // Create domain
+    // Create getDomain
     SWIGTYPE_p_p_tiledb_domain_t domainpp = Utils.new_tiledb_domain_tpp();
     tiledb.tiledb_domain_create(ctx, domainpp);
     SWIGTYPE_p_tiledb_domain_t domain = Utils.tiledb_domain_tpp_value(domainpp);
     tiledb.tiledb_domain_add_dimension(ctx, domain, d1);
     tiledb.tiledb_domain_add_dimension(ctx, domain, d2);
 
-    // Create attributes
+    // Create getAttributes
     SWIGTYPE_p_p_tiledb_attribute_t a1pp = Utils
         .new_tiledb_attribute_tpp();
     tiledb.tiledb_attribute_create(ctx, a1pp, "a1",

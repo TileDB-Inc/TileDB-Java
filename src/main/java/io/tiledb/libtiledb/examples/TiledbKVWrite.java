@@ -36,7 +36,7 @@ public class TiledbKVWrite {
     tiledb.tiledb_ctx_create(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
-    // Key-values with three attributes
+    // Key-values with three getAttributes
     int key1_[] = {100};
     intArray key1 = Utils.newIntArray(key1_);
     int key1_a1_[] = {1};

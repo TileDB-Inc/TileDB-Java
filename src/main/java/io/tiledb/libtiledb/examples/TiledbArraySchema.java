@@ -64,7 +64,7 @@ public class TiledbArraySchema {
     System.out.println("Second dump:");
     tiledb.tiledb_array_schema_dump_stdout(ctx, array_schema);
 
-    // Create dimensions
+    // Create getDimensions
 
     long[] d1_domain_ = {1, 1000};
     uint64_tArray d1_domain = Utils.newUint64Array(d1_domain_);
@@ -88,14 +88,14 @@ public class TiledbArraySchema {
         PointerUtils.toVoid(d2_domain), PointerUtils.toVoid(d2_extent));
     SWIGTYPE_p_tiledb_dimension_t d2 = Utils.tiledb_dimension_tpp_value(d2pp);
 
-    // Create and set domain
+    // Create and set getDomain
     SWIGTYPE_p_p_tiledb_domain_t domainpp = Utils.new_tiledb_domain_tpp();
     tiledb.tiledb_domain_create(ctx, domainpp);
     SWIGTYPE_p_tiledb_domain_t domain = Utils.tiledb_domain_tpp_value(domainpp);
     tiledb.tiledb_domain_add_dimension(ctx, domain, d1);
     tiledb.tiledb_array_schema_set_domain(ctx, array_schema, domain);
 
-    // Create and add attributes
+    // Create and add getAttributes
 
     SWIGTYPE_p_p_tiledb_attribute_t a1pp = Utils
         .new_tiledb_attribute_tpp();
@@ -146,7 +146,7 @@ public class TiledbArraySchema {
     // Print from getters
     System.out.printf("\nFrom getters:\n");
     System.out
-        .printf("- Array type: %s\n",
+        .printf("- Array getType: %s\n",
             (tiledb.tiledb_array_type_tp_value(array_typep) == tiledb_array_type_t.TILEDB_DENSE) ? "dense"
                 : "sparse");
     System.out
@@ -190,7 +190,7 @@ public class TiledbArraySchema {
     }
     System.out.printf("\n");
 
-    // Get and print domain
+    // Get and print getDomain
     SWIGTYPE_p_p_tiledb_domain_t got_domainpp = Utils
         .new_tiledb_domain_tpp();
     tiledb.tiledb_array_schema_get_domain(ctx, array_schema, got_domainpp);

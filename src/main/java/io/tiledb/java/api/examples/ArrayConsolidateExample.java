@@ -45,7 +45,7 @@ import io.tiledb.java.api.Context;
 import io.tiledb.java.api.TileDBError;
 
 public class ArrayConsolidateExample {
-  public static void main(String[] args) throws TileDBError {
+  public static void main(String[] args) throws Exception {
     // Create TileDB context
     Context ctx = new Context();
 

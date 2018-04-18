@@ -55,40 +55,42 @@ public class Array implements AutoCloseable {
 
   /** Consolidates the fragments of an array. **/
   public void consolidate() throws TileDBError {
-    ctx.handle_error(tiledb.tiledb_array_consolidate(ctx.getCtxp(), uri));
+    ctx.handleError(tiledb.tiledb_array_consolidate(ctx.getCtxp(), uri));
   }
 
   /** Creates an array on persistent storage from a schema definition. **/
   public static void create(String uri, ArraySchema schema) throws TileDBError {
     Context ctx = schema.getCtx();
-    ctx.handle_error(tiledb.tiledb_array_schema_check(ctx.getCtxp(), schema.getSchemap()));
-    ctx.handle_error(tiledb.tiledb_array_create(ctx.getCtxp(), uri, schema.getSchemap()));
+    ctx.handleError(tiledb.tiledb_array_schema_check(ctx.getCtxp(), schema.getSchemap()));
+    ctx.handleError(tiledb.tiledb_array_create(ctx.getCtxp(), uri, schema.getSchemap()));
   }
 
 
 
   /**
-   * Get the non-empty domain of an array. This returns the bounding
+   * Get the non-empty getDomain of an array. This returns the bounding
    * coordinates for each dimension.
    *
    * @tparam T Domain datatype
    * @return Vector of dim names with a {lower, upper} pair. Inclusive.
    *         Empty vector if the array has no data.
    */
-  public HashMap<String, Pair> non_empty_domain() throws TileDBError {
+  public HashMap<String, Pair> nonEmptyDomain() throws TileDBError {
     HashMap<String, Pair> ret = new HashMap<String, Pair>();
 
     SWIGTYPE_p_int emptyp = tiledb.new_intp();
-    List<Dimension> dimensions = schema.domain().dimensions();
-    SWIGTYPE_p_void bufp = Types.createEmptyNativeArray(schema.domain().type(),2*dimensions.size());
-    ctx.handle_error(tiledb.tiledb_array_get_non_empty_domain(
-        ctx.getCtxp(), uri, bufp, emptyp));
+    List<Dimension> dimensions = schema.getDomain().getDimensions();
+    NativeArray buffer = new NativeArray(ctx,2*dimensions.size(), schema.getDomain().getType());
+    ctx.handleError(tiledb.tiledb_array_get_non_empty_domain(
+        ctx.getCtxp(), uri, buffer.toVoidPointer(), emptyp));
     if(tiledb.intp_value(emptyp)==1){
       return ret;
     }
     tiledb.delete_intp(emptyp);
+    int i=0;
     for (Dimension d : dimensions){
-      ret.put(d.name(), new Pair(d.domain().getFirst(), d.domain().getSecond()));
+      ret.put(d.getName(), new Pair(buffer.getItem(i), buffer.getItem(i+1)));
+      i+=2;
     }
     return ret;
   }
@@ -96,22 +98,21 @@ public class Array implements AutoCloseable {
   /**
    * Compute an upper bound on the buffer elements needed to read a subarray.
    *
-   * @tparam T The domain datatype
+   * @tparam T The getDomain datatype
    * @param subarray Targeted subarray.
-   * @return The maximum number of elements for each array attribute (plus
+   * @return The maximum number of elements for each array getAttribute (plus
    *     coordinates for sparse arrays).
-   *     Note that two numbers are returned per attribute. The first
+   *     Note that two numbers are returned per getAttribute. The first
    *     is the maximum number of elements in the offset buffer
-   *     (0 for fixed-sized attributes and coordinates),
+   *     (0 for fixed-sized getAttributes and coordinates),
    *     and the second is the maximum number of elements of the value buffer.
    */
-  public HashMap<String,Pair<Long,Long>> max_buffer_elements(Object subarray, int subarraySize) throws TileDBError {
+  public HashMap<String,Pair<Long,Long>> maxBufferElements(NativeArray subarray) throws TileDBError {
     HashMap<String, Pair<Long,Long>> ret = new HashMap<String, Pair<Long,Long>>();
-//    TODO check type
-//    System.out.println("subarray class: "+subarray.getClass());
-    SWIGTYPE_p_p_char names = tiledb.new_charpArray((int)schema.attribute_num());
+    Types.typeCheck(subarray.getNativeType(), schema.getDomain().getType());
+    SWIGTYPE_p_p_char names = tiledb.new_charpArray((int)schema.getAttributeNum());
     int attr_num = 0, nbuffs = 0 ;
-    for(Map.Entry<String,Attribute> a : schema.attributes().entrySet()) {
+    for(Map.Entry<String,Attribute> a : schema.getAttributes().entrySet()) {
       tiledb.charpArray_setitem(names, attr_num, a.getKey());
       nbuffs += a.getValue().getCellValNum() == tiledb.tiledb_var_num() ? 2 : 1;
       attr_num++;
@@ -122,9 +123,9 @@ public class Array implements AutoCloseable {
       tiledb.charpArray_setitem(names, attr_num, tiledb.tiledb_coords());
     }
     uint64_tArray sizes = new uint64_tArray(nbuffs);
-    SWIGTYPE_p_void nativeSubarray = Types.createNativeArray(schema.domain().type(), subarray, subarraySize);
+    SWIGTYPE_p_void nativeSubarray = subarray.toVoidPointer();
 
-    ctx.handle_error(tiledb.tiledb_array_compute_max_read_buffer_sizes(
+    ctx.handleError(tiledb.tiledb_array_compute_max_read_buffer_sizes(
         ctx.getCtxp(),
         uri,
         nativeSubarray,
@@ -133,7 +134,7 @@ public class Array implements AutoCloseable {
         sizes.cast()));
 
     int sid = 0;
-    for(Map.Entry<String,Attribute> a : schema.attributes().entrySet()) {
+    for(Map.Entry<String,Attribute> a : schema.getAttributes().entrySet()) {
       boolean var = a.getValue().getCellValNum() == tiledb.tiledb_var_num();
       ret.put(a.getKey(),
           var ?
@@ -145,7 +146,7 @@ public class Array implements AutoCloseable {
     }
     if (schema.getArrayType() == tiledb_array_type_t.TILEDB_SPARSE) {
       ret.put(tiledb.tiledb_coords(),
-          new Pair(0l, sizes.getitem(sid).longValue() / tiledb.tiledb_datatype_size(schema.domain().type()).longValue()));
+          new Pair(0l, sizes.getitem(sid).longValue() / tiledb.tiledb_datatype_size(schema.getDomain().getType()).longValue()));
     }
     sizes.delete();
     return ret;
@@ -167,7 +168,8 @@ public class Array implements AutoCloseable {
    * Delete the native object.
    */
   public void close() throws TileDBError {
-    schema.close();
+    if(schema!=null)
+      schema.close();
   }
 
   @Override

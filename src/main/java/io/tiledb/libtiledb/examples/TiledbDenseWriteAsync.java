@@ -68,7 +68,7 @@ public class TiledbDenseWriteAsync {
     tiledb.charpArray_setitem(attributes, 0, "a1");
     tiledb.charpArray_setitem(attributes, 1, "a2");
     tiledb.charpArray_setitem(attributes, 2, "a3");
-    // String[] attributes = {"a1", "a2", "a3"};
+    // String[] getAttributes = {"a1", "a2", "a3"};
     tiledb.tiledb_query_create(ctx, querypp, "my_dense_array",
         tiledb_query_type_t.TILEDB_WRITE);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);

@@ -31,11 +31,11 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Represents the domain of an array.
+ * Represents the getDomain of an array.
  *
  * @details
  * A Domain defines the set of Dimension objects for a given array. The
- * properties of a Domain derive from the underlying dimensions. A
+ * properties of a Domain derive from the underlying getDimensions. A
  * Domain is a component of an ArraySchema.
  *
  * @note The dimension can only be signed or unsigned integral types.
@@ -45,23 +45,23 @@ import java.util.List;
  * @code{.cpp}
  *
  * tiledb::Context ctx;
- * tiledb::Domain domain;
+ * tiledb::Domain getDomain;
  *
  * // Note the dimension bounds are inclusive.
  * auto d1 = tiledb::Dimension::create<int>(ctx, "d1", {-10, 10});
  * auto d2 = tiledb::Dimension::create<uint64_t>(ctx, "d2", {1, 10});
  * auto d3 = tiledb::Dimension::create<int>(ctx, "d3", {-100, 100});
  *
- * domain.add_dimension(d1);
- * domain.add_dimension(d2);
- * domain.add_dimension(d3); // Invalid, all dims must be same type
+ * getDomain.addDimension(d1);
+ * getDomain.addDimension(d2);
+ * getDomain.addDimension(d3); // Invalid, all dims must be same getType
  *
- * domain.cell_num(); // (10 - -10 + 1) * (10 - 1 + 1) = 210 max cells
- * domain.type(); // TILEDB_UINT64, determined from the dimensions
- * domain.rank(); // 2, d1 and d2
+ * getDomain.getCellNum(); // (10 - -10 + 1) * (10 - 1 + 1) = 210 max cells
+ * getDomain.getType(); // TILEDB_UINT64, determined from the getDimensions
+ * getDomain.getRank(); // 2, d1 and d2
  *
  * tiledb::ArraySchema schema(ctx, TILEDB_DENSE);
- * schema.set_domain(domain); // Set the array's domain
+ * schema.setDomain(getDomain); // Set the array's getDomain
  *
  * @endcode
  *
@@ -83,7 +83,7 @@ public class Domain<T> implements AutoCloseable {
     ctx.deleterAdd(this);
     this.ctx = ctx;
     domainpp = Utils.new_tiledb_domain_tpp();
-    ctx.handle_error(tiledb.tiledb_domain_create(ctx.getCtxp(), domainpp));
+    ctx.handleError(tiledb.tiledb_domain_create(ctx.getCtxp(), domainpp));
     this.domainp = Utils.tiledb_domain_tpp_value(domainpp);
   }
 
@@ -95,51 +95,51 @@ public class Domain<T> implements AutoCloseable {
     return domainp;
   }
 
-  /**
-   * Returns the total number of cells in the domain. Throws an exception
-   * if the domain type is `float32` or `float64`.
-   */
-  public long cell_num() throws TileDBError {
-    long ret = 1;
-    for (Dimension dim : dimensions) {
-//      Pair<T,T> d = dim.domain();
+//  /**
+//   * Returns the total number of cells in the getDomain. Throws an exception
+//   * if the getDomain getType is `float32` or `float64`.
+//   */
+//  public long getCellNum() throws TileDBError {
+//    long ret = 1;
+//    for (Dimension dim : getDimensions()) {
+//      Pair d = dim.getDomain();
 //      ret *= (d.getSecond() - d.getFirst() + 1);
-    }
-    return ret;
+//    }
+//    return ret;
+//
+//  }
 
-  }
-
-  /** Dumps the domain in an ASCII representation to an output. */
+  /** Dumps the getDomain in an ASCII representation to an output. */
   public void dump() throws TileDBError {
-    ctx.handle_error(tiledb.tiledb_domain_dump_stdout(ctx.getCtxp(), domainp));
+    ctx.handleError(tiledb.tiledb_domain_dump_stdout(ctx.getCtxp(), domainp));
   }
 
-  /** Returns the domain type. */
-  public tiledb_datatype_t type() throws TileDBError {
+  /** Returns the getDomain getType. */
+  public tiledb_datatype_t getType() throws TileDBError {
     SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
-    ctx.handle_error(tiledb.tiledb_domain_get_type(ctx.getCtxp(), domainp, typep));
+    ctx.handleError(tiledb.tiledb_domain_get_type(ctx.getCtxp(), domainp, typep));
     tiledb_datatype_t type = tiledb.tiledb_datatype_tp_value(typep);
     tiledb.delete_tiledb_datatype_tp(typep);
     return type;
   }
 
-  /** Get the rank (number of dimensions) **/
-  public long rank() throws TileDBError {
+  /** Get the getRank (number of getDimensions) **/
+  public long getRank() throws TileDBError {
     SWIGTYPE_p_unsigned_int np = tiledb.new_uintp();
-    ctx.handle_error(tiledb.tiledb_domain_get_rank(ctx.getCtxp(), domainp, np));
+    ctx.handleError(tiledb.tiledb_domain_get_rank(ctx.getCtxp(), domainp, np));
     long rank = tiledb.uintp_value(np);
     tiledb.delete_uintp(np);
     return rank;
   }
 
-  /** Returns the current set of dimensions in domain. */
-  public List<Dimension> dimensions() throws TileDBError {
+  /** Returns the current set of getDimensions in getDomain. */
+  public List<Dimension> getDimensions() throws TileDBError {
     if(dimensions==null){
-      long rank = rank();
+      long rank = getRank();
       dimensions = new ArrayList<Dimension>();
       for (long i=0; i<rank; i++){
         SWIGTYPE_p_p_tiledb_dimension_t dimpp = Utils.new_tiledb_dimension_tpp();
-        ctx.handle_error(
+        ctx.handleError(
             tiledb.tiledb_domain_get_dimension_from_index(ctx.getCtxp(), domainp, i, dimpp));
         Dimension dim = new Dimension(ctx, dimpp);
         dimensions.add(dim);
@@ -148,19 +148,19 @@ public class Domain<T> implements AutoCloseable {
     return dimensions;
   }
 
-  /** Adds a new dimension to the domain. */
-  public void add_dimension(Dimension d) throws TileDBError {
+  /** Adds a new dimension to the getDomain. */
+  public void addDimension(Dimension d) throws TileDBError {
     if(dimensions==null){
       dimensions = new ArrayList<Dimension>();
     }
     dimensions.add(d);
-    ctx.handle_error(tiledb.tiledb_domain_add_dimension(ctx.getCtxp(), domainp, d.getDimensionp()));
+    ctx.handleError(tiledb.tiledb_domain_add_dimension(ctx.getCtxp(), domainp, d.getDimensionp()));
   }
 
   /** Add multiple Dimension's. **/
-  public void add_dimensions(Collection<Dimension> dims) throws TileDBError {
+  public void addDimensions(Collection<Dimension> dims) throws TileDBError {
     for (Dimension d : dims) {
-      add_dimension(d);
+      addDimension(d);
     }
   }
 
@@ -168,7 +168,7 @@ public class Domain<T> implements AutoCloseable {
    * Delete the native object.
    */
   public void close() throws TileDBError {
-    ctx.handle_error(tiledb.tiledb_domain_free(ctx.getCtxp(), domainpp));
+    ctx.handleError(tiledb.tiledb_domain_free(ctx.getCtxp(), domainpp));
     if(dimensions!=null) {
       for (Dimension d : dimensions) {
         d.close();

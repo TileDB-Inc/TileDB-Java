@@ -33,7 +33,7 @@ import java.util.Map;
 
 public class ConfigExample {
 
-  public static void main(String[] args) throws TileDBError {
+  public static void main(String[] args) throws Exception {
     // Create TileDB context
     Config config = new Config();
 

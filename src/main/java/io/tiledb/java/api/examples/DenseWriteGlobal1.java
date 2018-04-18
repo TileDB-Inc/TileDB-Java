@@ -38,7 +38,7 @@ import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
 
 public class DenseWriteGlobal1 {
-  public static void main(String[] args) throws Throwable {
+  public static void main(String[] args) throws Exception {
     Context ctx = null;
     // Create TileDB context
     ctx = new Context();
@@ -79,10 +79,10 @@ public class DenseWriteGlobal1 {
     // Create query
     Array my_dense_array = new Array(ctx, "my_dense_array");
     Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_WRITE);
-    query.set_layout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
-    query.set_buffer("a1", a1_data);
-    query.set_buffer("a2", a2_offsets, buffer_var_a2);
-    query.set_buffer("a3", buffer_a3);
+    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    query.setBuffer("a1", a1_data);
+    query.setBuffer("a2", a2_offsets, buffer_var_a2);
+    query.setBuffer("a3", buffer_a3);
 
     // Submit query
     query.submit();

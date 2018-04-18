@@ -32,7 +32,7 @@ public class TiledbSparseReadSubsetIncomplete {
 
   /*
    * It shows how to read from a sparse array, constraining the read to a
-   * specific subarray and a subset of attributes. Moreover, the program shows
+   * specific subarray and a subset of getAttributes. Moreover, the program shows
    * how to handle incomplete queries that did not complete because the input
    * buffers were not big enough to hold the entire result.
    *

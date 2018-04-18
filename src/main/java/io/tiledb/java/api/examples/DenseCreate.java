@@ -35,24 +35,22 @@ import io.tiledb.libtiledb.tiledb_array_type_t;
 import io.tiledb.libtiledb.tiledb_compressor_t;
 import io.tiledb.libtiledb.tiledb_layout_t;
 
-import static io.tiledb.libtiledb.tiledb_compressor_t.TILEDB_GZIP;
-
 public class DenseCreate {
-  public static void main(String[] args) throws TileDBError {
+  public static void main(String[] args) throws Exception {
 
     // Create TileDB context
     Context ctx = new Context();
-    // Create dimensions
+    // Create getDimensions
     Dimension<Long> d1 = new Dimension<Long>(ctx,"d1",Long.class, new Pair<Long, Long>(1l,4l),2l);
     Dimension<Long> d2 = new Dimension<Long>(ctx,"d2",Long.class, new Pair<Long, Long>(1l,4l),2l);
 
-    // Create domain
+    // Create getDomain
     Domain<Integer> domain = new Domain<Integer>(ctx);
-    domain.add_dimension(d1);
-    domain.add_dimension(d2);
+    domain.addDimension(d1);
+    domain.addDimension(d2);
 
 
-    // Create and add attributes
+    // Create and add getAttributes
     Attribute<Integer> a1 = new Attribute<Integer>(ctx,"a1",Integer.class);
     Attribute<Character> a2 = new Attribute<Character>(ctx,"a2",Character.class);
     a2.setCellValNum(tiledb.tiledb_var_num());
@@ -64,12 +62,12 @@ public class DenseCreate {
 
     // Create array schema
     ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_DENSE);
-    schema.set_tile_order(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.set_cell_order(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.set_domain(domain);
-    schema.add_attribute(a1);
-    schema.add_attribute(a2);
-    schema.add_attribute(a3);
+    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    schema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    schema.setDomain(domain);
+    schema.addAttribute(a1);
+    schema.addAttribute(a2);
+    schema.addAttribute(a3);
 
 
     // Check array schema
@@ -83,5 +81,6 @@ public class DenseCreate {
     schema.dump();
 
     Array my_dense_array = new Array(ctx, "my_dense_array", schema);
+
   }
 }

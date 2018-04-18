@@ -42,13 +42,8 @@ import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 public class DenseReadSubsetIncomplete {
-  public static void main(String[] args) throws TileDBError, UnsupportedEncodingException {
+  public static void main(String[] args) throws Exception {
     // Create TileDB context
     Context ctx = new Context();
 
@@ -56,10 +51,10 @@ public class DenseReadSubsetIncomplete {
 
     // Create query
     Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
-    query.set_layout(tiledb_layout_t.TILEDB_COL_MAJOR);
+    query.setLayout(tiledb_layout_t.TILEDB_COL_MAJOR);
     long[] subarray = {3l, 4l, 2l, 4l};
-    query.set_subarray(new NativeArray(ctx, subarray, Long.class));
-    query.set_buffer("a1", new NativeArray(ctx, 2,Integer.class));
+    query.setSubarray(new NativeArray(ctx, subarray, Long.class));
+    query.setBuffer("a1", new NativeArray(ctx, 2,Integer.class));
 
     // Loop until the query is completed
 
@@ -68,10 +63,10 @@ public class DenseReadSubsetIncomplete {
       System.out.println("Reading cells...");
       query.submit();
 
-      int[] a1_buff = (int[]) query.get_buffer("a1");
+      int[] a1_buff = (int[]) query.getBuffer("a1");
       for (int i =0; i< a1_buff.length; i++){
         System.out.println(a1_buff[i]);
       }
-    } while (query.query_status() == Status.INCOMPLETE);
+    } while (query.getQueryStatus() == Status.INCOMPLETE);
   }
 }
