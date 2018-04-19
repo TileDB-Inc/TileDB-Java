@@ -358,10 +358,13 @@ public class Query implements AutoCloseable {
     for(Map.Entry<String, Pair<Integer, Pair<Integer, NativeArray>>> e : attr_buffs_.entrySet() ){
       e.getValue().getSecond().getSecond().close();
     }
-    buffer_sizes_.delete();
-    tiledb.delete_charpArray(attributeNames_);
-    tiledb.delete_voidpArray(buffers_);
-    ctx.handleError(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
+    if(queryp!=null) {
+      buffer_sizes_.delete();
+      tiledb.delete_charpArray(attributeNames_);
+      tiledb.delete_voidpArray(buffers_);
+      ctx.handleError(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
+      ctx.handleError(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
+    }
   }
 
   @Override

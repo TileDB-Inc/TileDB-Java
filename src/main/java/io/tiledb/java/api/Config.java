@@ -225,7 +225,8 @@ public class Config implements AutoCloseable {
    * Delete the native object.
    */
   public void close() throws TileDBError {
-    tiledb.tiledb_config_free(configpp);
+    if(configp!=null)
+      tiledb.tiledb_config_free(configpp);
   }
 
   @Override

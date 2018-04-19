@@ -366,7 +366,8 @@ public class ArraySchema implements AutoCloseable {
    * Delete the native object.
    */
   public void close() throws TileDBError {
-    ctx.handleError(tiledb.tiledb_array_schema_free(ctx.getCtxp(), schemapp));
+    if(schemap!=null)
+      ctx.handleError(tiledb.tiledb_array_schema_free(ctx.getCtxp(), schemapp));
     if(attributes!=null) {
       for (Map.Entry<String, Attribute> e : attributes.entrySet()) {
         e.getValue().close();

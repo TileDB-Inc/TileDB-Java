@@ -168,7 +168,9 @@ public class Domain implements AutoCloseable {
    * Delete the native object.
    */
   public void close() throws TileDBError {
-    ctx.handleError(tiledb.tiledb_domain_free(ctx.getCtxp(), domainpp));
+    if(domainp!=null)
+      ctx.handleError(tiledb.tiledb_domain_free(ctx.getCtxp(), domainpp));
+
     if(dimensions!=null) {
       for (Dimension d : dimensions) {
         d.close();

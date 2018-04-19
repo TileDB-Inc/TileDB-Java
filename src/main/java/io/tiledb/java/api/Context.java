@@ -154,7 +154,8 @@ public class Context implements AutoCloseable {
     deleter.run();
     if(config!=null)
       config.close();
-    handleError(tiledb.tiledb_ctx_free(ctxpp));
+    if(ctxp!=null)
+      handleError(tiledb.tiledb_ctx_free(ctxpp));
   }
 
   @Override
@@ -163,10 +164,4 @@ public class Context implements AutoCloseable {
     super.finalize();
   }
 
-  public class ContextCallback {
-    /** The default error handler callback. */
-    public void call(String msg) throws TileDBError {
-      throw new TileDBError(msg);
-    }
-  }
 }
