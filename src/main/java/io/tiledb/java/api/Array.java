@@ -108,7 +108,10 @@ public class Array implements AutoCloseable {
   public HashMap<String,Pair<Long,Long>> maxBufferElements(NativeArray subarray) throws TileDBError {
     HashMap<String, Pair<Long,Long>> ret = new HashMap<String, Pair<Long,Long>>();
     Types.typeCheck(subarray.getNativeType(), schema.getDomain().getType());
-    SWIGTYPE_p_p_char names = tiledb.new_charpArray((int)schema.getAttributeNum());
+    SWIGTYPE_p_p_char names = tiledb.new_charpArray(
+        (schema.getArrayType() == tiledb_array_type_t.TILEDB_SPARSE)?
+            (int)schema.getAttributeNum()+1 :
+            (int)schema.getAttributeNum());
     int attr_num = 0, nbuffs = 0 ;
     for(Map.Entry<String,Attribute> a : schema.getAttributes().entrySet()) {
       tiledb.charpArray_setitem(names, attr_num, a.getKey());
@@ -117,8 +120,8 @@ public class Array implements AutoCloseable {
     }
     if (schema.getArrayType() == tiledb_array_type_t.TILEDB_SPARSE) {
       nbuffs++;
-      attr_num++;
       tiledb.charpArray_setitem(names, attr_num, tiledb.tiledb_coords());
+      attr_num++;
     }
     uint64_tArray sizes = new uint64_tArray(nbuffs);
     SWIGTYPE_p_void nativeSubarray = subarray.toVoidPointer();

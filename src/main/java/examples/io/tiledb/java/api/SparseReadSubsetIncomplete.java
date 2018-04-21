@@ -20,61 +20,56 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * @section DESCRIPTION
+ *
+ * It shows how to read from a sparse array, constraining the read
+ * to a specific subarray and a subset of attributes. Moreover, the
+ * program shows how to handle incomplete queries that did not complete
+ * because the input buffers were not big enough to hold the entire
+ * result.
+ *
+ * You need to run the following to make it work:
+ *
+ * SparseCreate
+ * SparseWriteGlobal1
+ * SparseReadSubsetIncomplete
  */
 
 package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
+import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
 
-public class DenseWriteGlobal1 {
+import java.util.Arrays;
+import java.util.HashMap;
+
+public class SparseReadSubsetIncomplete {
   public static void main(String[] args) throws Exception {
     // Create TileDB context
     Context ctx = new Context();
 
-    // Prepare cell buffers
-    NativeArray a1_data = new NativeArray(
-        ctx,
-        new int[]{
-            0, 1, 2, 3, 4, 5, 6, 7,
-            8, 9, 10, 11, 12, 13, 14, 15
-        },
-        Integer.class);
-    NativeArray a2_offsets = new NativeArray(
-        ctx,
-        new long[]{
-            0, 1, 3, 6, 10, 11, 13, 16,
-            20, 21, 23, 26, 30, 31, 33, 36
-        },
-        Long.class);
-    NativeArray buffer_var_a2 = new NativeArray(
-        ctx,
-        "abbcccdddd"+
-            "effggghhhh"+
-            "ijjkkkllll"+
-            "mnnooopppp",
-        String.class);
-
-    NativeArray buffer_a3 = new NativeArray(
-        ctx,
-        new float[]{
-            0.1f,  0.2f,  1.1f,  1.2f,  2.1f,  2.2f,  3.1f,  3.2f,
-            4.1f,  4.2f,  5.1f,  5.2f,  6.1f,  6.2f,  7.1f,  7.2f,
-            8.1f,  8.2f,  9.1f,  9.2f,  10.1f, 10.2f, 11.1f, 11.2f,
-            12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
-        },
-        Float.class);
+    Array my_sparse_array = new Array(ctx, "my_sparse_array");
 
     // Create query
-    Array my_dense_array = new Array(ctx, "my_dense_array");
-    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_WRITE);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
-    query.setBuffer("a1", a1_data);
-    query.setBuffer("a2", a2_offsets, buffer_var_a2);
-    query.setBuffer("a3", buffer_a3);
+    Query query = new Query(my_sparse_array, tiledb_query_type_t.TILEDB_READ);
+    query.setLayout(tiledb_layout_t.TILEDB_COL_MAJOR);
+    query.setSubarray(new NativeArray(ctx, new long[]{3l, 4l, 2l, 4l}, Long.class));
+    query.setBuffer("a1", new NativeArray(ctx, 2,Integer.class));
 
-    // Submit query
-    query.submit();
+    // Loop until the query is completed
+
+    System.out.println("a1\n---");
+    do {
+      System.out.println("Reading cells...");
+      query.submit();
+
+      int[] a1_buff = (int[]) query.getBuffer("a1");
+      for (int i =0; i< a1_buff.length; i++){
+        System.out.println(a1_buff[i]);
+      }
+    } while (query.getQueryStatus() == Status.INCOMPLETE);
   }
 }

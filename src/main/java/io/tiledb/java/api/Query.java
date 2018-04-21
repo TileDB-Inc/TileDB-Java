@@ -171,22 +171,20 @@ public class Query implements AutoCloseable {
    * (and coordinates), the first is always 0.
    */
   public HashMap<String, Pair<Long, Long>> resultBufferElements() throws TileDBError {
-    if(result_buffer_elements==null) {
-      result_buffer_elements = new HashMap<String, Pair<Long, Long>>();
-      int bid = 0;
-      for (String attrName : attr_buffs_.keySet()) {
-        Attribute attr = array.getSchema().getAttributes().get(attrName);
-        boolean var =
-            (!attr.getName().equals(tiledb.tiledb_coords()) &&
-                attr.getCellValNum() == tiledb.tiledb_var_num());
-        result_buffer_elements.put(attr.getName(),
-            (var) ? new Pair<Long, Long>(
-                buffer_sizes_.getitem(bid).longValue() / sub_tsize_.get(bid),
-                buffer_sizes_.getitem(bid + 1).longValue() / sub_tsize_.get(bid + 1)) :
-                new Pair<Long, Long>(
-                    0l, buffer_sizes_.getitem(bid).longValue() / sub_tsize_.get(bid)));
-        bid += (var) ? 2 : 1;
-      }
+    result_buffer_elements = new HashMap<String, Pair<Long, Long>>();
+    int bid = 0;
+    for (String attrName : attr_buffs_.keySet()) {
+      Attribute attr = array.getSchema().getAttributes().get(attrName);
+      boolean var =
+          (!attrName.equals(tiledb.tiledb_coords()) &&
+              attr.getCellValNum() == tiledb.tiledb_var_num());
+      result_buffer_elements.put(attrName,
+          (var) ? new Pair<Long, Long>(
+              buffer_sizes_.getitem(bid).longValue() / sub_tsize_.get(bid),
+              buffer_sizes_.getitem(bid + 1).longValue() / sub_tsize_.get(bid + 1)) :
+              new Pair<Long, Long>(
+                  0l, buffer_sizes_.getitem(bid).longValue() / sub_tsize_.get(bid)));
+      bid += (var) ? 2 : 1;
     }
     return result_buffer_elements;
 

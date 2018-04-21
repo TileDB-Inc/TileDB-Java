@@ -61,11 +61,21 @@ public class DenseReadOrderedSubarray {
     long[] a2_offsets = (long[]) query.getVarBuffer("a2");
     byte[] a2_data = (byte[]) query.getBuffer("a2");
     float[] a3_buff = (float[]) query.getBuffer("a3");
+
+    System.out.println("Result num: " + a1_buff.length );
+    System.out.println(
+        String.format("%9s","a1") +
+            String.format("%11s","a2") +
+            String.format("%11s","a3[0]") +
+            String.format("%10s","a3[1]"));
+
     for (int i =0; i< a1_buff.length; i++){
       int end = (i==a1_buff.length-1)? a2_data.length : (int) a2_offsets[i+1];
-      System.out.println(a1_buff[i] +", "+
-          new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end))
-          +", ["+a3_buff[2*i]+","+a3_buff[2*i+1]+"]");
+      System.out.println(
+          String.format("%9s",a1_buff[i])+
+              String.format("%11s",new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end)))+
+              String.format("%11s",a3_buff[2*i])+
+              String.format("%10s",a3_buff[2*i+1]));
     }
   }
 }
