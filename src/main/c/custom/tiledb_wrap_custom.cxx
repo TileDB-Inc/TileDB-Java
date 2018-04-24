@@ -1313,7 +1313,7 @@ JNIEXPORT jlongArray JNICALL Java_io_tiledb_libtiledb_UtilsJNI_int64ArrayGet(JNI
   jlongArray jresult = jenv->NewLongArray(sz);
   if (!jresult)
     return NULL;
-  jenv->SetLongArrayRegion(jresult, 0, sz, arr);
+  jenv->SetLongArrayRegion(jresult, 0, sz, (jlong*) arr);
   return jresult;
 }
 
