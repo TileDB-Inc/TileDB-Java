@@ -36,9 +36,6 @@ public class ContextTest {
 
     System.out.println("HDFS: "+ctx.isSupportedFs(tiledb_filesystem_t.TILEDB_HDFS));
     System.out.println("S3: "+ctx.isSupportedFs(tiledb_filesystem_t.TILEDB_S3));
-
-    ctx.free();
-    ctx.finalize();
   }
 
   private class Handler extends ContextCallback{

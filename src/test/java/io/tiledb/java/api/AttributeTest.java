@@ -33,7 +33,7 @@ public class AttributeTest {
   @Test
   public void testArraySchema() throws Throwable {
     Context ctx = new Context();
-    Attribute<long[]> a = new Attribute<long[]>(ctx,"a1", long[].class);
+    Attribute a = new Attribute(ctx,"a1", Long.class);
     System.out.println(a.getName());
     System.out.println(a.getType());
     a.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, 1));
