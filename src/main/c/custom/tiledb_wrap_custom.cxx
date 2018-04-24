@@ -735,7 +735,7 @@ static int SWIG_JavaArrayInLonglong (JNIEnv *jenv, jlong **jarr, jlong **carr, j
   return 1;
 }
 
-static void SWIG_JavaArrayArgoutLonglong (JNIEnv *jenv, jlong *jarr, jlong *carr, jlongArray input) {
+static void SWIG_JavaArrayArgoutLonglong (JNIEnv *jenv, jlong *jarr, jlongArray input) {
   jenv->ReleaseLongArrayElements(input, jarr, JNI_ABORT);
 }
 
@@ -1303,7 +1303,7 @@ JNIEXPORT jlong JNICALL Java_io_tiledb_libtiledb_UtilsJNI_newInt64ArraySet(JNIEn
   (void)jenv;
   (void)jcls;
   if (!SWIG_JavaArrayInLonglong(jenv, &jarr1, (long long **)&arg1, jarg1)) return 0;  
-  SWIG_JavaArrayArgoutLonglong(jenv, jarr1, arg1, jarg1);
+  SWIG_JavaArrayArgoutLonglong(jenv, jarr1, jarg1);
   *(void **)&jresult = (void *)arg1; 
   return jresult; 
 }
