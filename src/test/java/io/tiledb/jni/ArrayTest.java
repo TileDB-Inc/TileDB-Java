@@ -25,7 +25,7 @@
 package io.tiledb.jni;
 
 
-import io.tiledb.api.*;
+import io.tiledb.libtiledb.*;
 import org.junit.Assert;
 import org.junit.Test;
 
