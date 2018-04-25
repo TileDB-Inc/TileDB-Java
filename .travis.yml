@@ -25,7 +25,7 @@ install:
   - popd # ./build/TileDB -> ./build
   - popd # ./build -> .
   # Build and install extension module
-  - ./gradlew assemble
+  - ./gradlew assemble test
 
 script:
   - ./gradlew test
