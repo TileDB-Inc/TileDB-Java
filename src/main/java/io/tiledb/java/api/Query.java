@@ -330,7 +330,7 @@ public class Query implements AutoCloseable {
   public long[] getVarBuffer(String attr) throws TileDBError {
     resultBufferElements();
     return (long[])var_offsets_.get(attr).getSecond().getSecond().toJavaArray(
-        result_buffer_elements.get(attr).getSecond().intValue());
+        result_buffer_elements.get(attr).getFirst().intValue());
   }
 
   private static class DefaultCallback implements Callback {
@@ -357,7 +357,8 @@ public class Query implements AutoCloseable {
       for (Map.Entry<String, Pair<Integer, Pair<Integer, NativeArray>>> e : attr_buffs_.entrySet()) {
         e.getValue().getSecond().getSecond().close();
       }
-      buffer_sizes_.delete();
+      if(buffer_sizes_!=null)
+        buffer_sizes_.delete();
       tiledb.delete_charpArray(attributeNames_);
       tiledb.delete_voidpArray(buffers_);
       ctx.handleError(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
