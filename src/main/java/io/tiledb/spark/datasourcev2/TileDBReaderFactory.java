@@ -27,19 +27,20 @@ package io.tiledb.spark.datasourcev2;
 import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.catalyst.expressions.GenericRow;
+import org.apache.spark.sql.execution.vectorized.OffHeapColumnVector;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.sources.v2.reader.DataReader;
 import org.apache.spark.sql.sources.v2.reader.DataReaderFactory;
-import org.apache.spark.sql.sources.v2.reader.DataSourceReader;
+import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
+import org.apache.spark.sql.vectorized.ColumnarBatch;
 
 import java.io.IOException;
 import java.util.*;
 
-public class TileDBReaderFactory implements DataReaderFactory<Row>, DataReader<Row> {
+public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, DataReader<ColumnarBatch> {
+  private static final int BATCH_SIZE = 5;
   private StructField[] attributes;
   private String arrayName;
   private long[] subarray;
@@ -47,33 +48,15 @@ public class TileDBReaderFactory implements DataReaderFactory<Row>, DataReader<R
   private Query query;
   private Context ctx;
 
+  private boolean hasNext;
+  private OffHeapColumnVector[] vectors;
+  private ColumnarBatch batch;
+
   TileDBReaderFactory(long[] subarray, StructType requiredSchema, DataSourceOptions options) {
     this.subarray = subarray;
     attributes = requiredSchema.fields();
     arrayName = options.get("array").orElse("");
     initilized = false;
-    
-
-//      query.setBuffer("a1",
-//          new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));
-//      query.setBuffer("a2",
-//          new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
-//          new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
-//      query.setBuffer("a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
-
-//      // Submit query
-//      System.out.println("Query submitted: " + query.submit() );
-//
-//      // Print cell values (assumes all getAttributes are read)
-//      HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
-////      a1_buff = (int[]) query.getBuffer("a1");
-//      a2_offsets = (long[]) query.getVarBuffer("a2");
-//      a2_data = (byte[]) query.getBuffer("a2");
-////      a3_buff = (float[]) query.getBuffer("a3");
-////        coords = (long[]) query.getBuffer(tiledb.tiledb_coords());
-//
-//      index = 0;
-//      query.close();
   }
 
   public TileDBReaderFactory(long[] subarray, StructField[] attributes, String arrayName) {
@@ -84,18 +67,12 @@ public class TileDBReaderFactory implements DataReaderFactory<Row>, DataReader<R
 
 
   @Override
-  public DataReader<Row> createDataReader() {
+  public DataReader<ColumnarBatch> createDataReader() {
     return new TileDBReaderFactory(subarray, attributes, arrayName);
   }
 
   @Override
   public boolean next() {
-//    System.out.println(a2_offsets.length);
-//    if(index>=a2_offsets.length){
-//      return false;
-//    }
-//    return true;
-    boolean firstRecord = false;
     if(query==null){
       //initialize
       try {
@@ -109,6 +86,9 @@ public class TileDBReaderFactory implements DataReaderFactory<Row>, DataReader<R
         query = new Query(array, tiledb_query_type_t.TILEDB_READ);
         query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
         query.setSubarray(nsubarray);
+
+        vectors = new OffHeapColumnVector[attributes.length];
+        int i = 0;
         for(StructField field : attributes){
           String name = field.name();
           if(max_sizes.get(name).getFirst()!=0){
@@ -116,17 +96,23 @@ public class TileDBReaderFactory implements DataReaderFactory<Row>, DataReader<R
           }
           else{
             query.setBuffer(name,
-                new NativeArray(ctx, 1,arraySchema.getAttribute(name).getType()));
+                new NativeArray(ctx, BATCH_SIZE,arraySchema.getAttribute(name).getType()));
+            //ToDo
+            vectors[i] = new OffHeapColumnVector(BATCH_SIZE, DataTypes.IntegerType);
           }
+          i++;
         }
-        firstRecord = true;
+        batch = new ColumnarBatch(vectors);
+        hasNext = true;
       } catch (Exception tileDBError) {
         tileDBError.printStackTrace();
       }
     }
     try {
       query.submit();
-      return query.getQueryStatus() == Status.INCOMPLETE;
+      boolean ret = hasNext;
+      hasNext = query.getQueryStatus() == Status.INCOMPLETE;
+      return ret;
     } catch (TileDBError tileDBError) {
       tileDBError.printStackTrace();
     }
@@ -134,39 +120,33 @@ public class TileDBReaderFactory implements DataReaderFactory<Row>, DataReader<R
   }
 
   @Override
-  public Row get() {
-//    int end = (index==a2_offsets.length-1)? a2_data.length : (int) a2_offsets[index+1];
-//    GenericRow ret = new GenericRow(new Object[] {
-////        null,
-////        null,
-////        a1_buff[index],
-//        new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[index], end))
-////        new float[]{a3_buff[2*index], a3_buff[2*index+1]}
-//    });
-//    index++;
-//    return ret;
-    GenericRow ret = null;
+  public ColumnarBatch get() {
     try {
-      List<Object> row = new ArrayList<Object>();
+      int i = 0, currentSize=0;
       for(StructField field : attributes) {
         String name = field.name();
         int[] a1_buff = (int[]) query.getBuffer(name);
-        row.add(a1_buff[0]);
+        currentSize = a1_buff.length;
+        vectors[i].reset();
+        vectors[i].putInts(0, currentSize, a1_buff,0);
+        i++;
       }
-      ret = new GenericRow(row.toArray());
+      batch.setNumRows(currentSize);
     } catch (TileDBError tileDBError) {
       tileDBError.printStackTrace();
     }
-    return ret;
+    return batch;
   }
 
   @Override
   public void close() throws IOException {
-//    try {
-//      query.close();
-//      ctx.close();
-//    } catch (TileDBError tileDBError) {
-//      tileDBError.printStackTrace();
-//    }
+    try {
+      if(query!=null) {
+        query.close();
+        ctx.close();
+      }
+    } catch (TileDBError tileDBError) {
+      tileDBError.printStackTrace();
+    }
   }
 }

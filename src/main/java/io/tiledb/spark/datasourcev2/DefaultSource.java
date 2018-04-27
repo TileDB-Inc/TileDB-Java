@@ -32,12 +32,13 @@ import org.apache.spark.sql.sources.v2.DataSourceV2;
 import org.apache.spark.sql.sources.v2.ReadSupport;
 import org.apache.spark.sql.sources.v2.reader.*;
 import org.apache.spark.sql.types.*;
+import org.apache.spark.sql.vectorized.ColumnarBatch;
 
 import java.util.List;
 
 
 public class DefaultSource implements DataSourceV2, ReadSupport {
-  class Reader implements DataSourceReader, SupportsPushDownRequiredColumns {
+  class Reader implements DataSourceReader, SupportsPushDownRequiredColumns, SupportsScanColumnarBatch {
     private Context ctx;
     private DataSourceOptions options;
     private StructType requiredSchema;
@@ -62,7 +63,7 @@ public class DefaultSource implements DataSourceV2, ReadSupport {
       }
     }
 
-    public List<DataReaderFactory<Row>> createDataReaderFactories() {
+    public List<DataReaderFactory<ColumnarBatch>> createBatchDataReaderFactories() {
 
       return java.util.Arrays.asList(
           new TileDBReaderFactory(new long[]{1l, 2l, 1l, 4l}, requiredSchema, options),

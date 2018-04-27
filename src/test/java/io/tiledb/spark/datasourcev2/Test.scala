@@ -36,7 +36,7 @@ object Test {
 
     val simpleDf = sparkSession.read
       .format("io.tiledb.spark.datasourcev2")
-      .option("array", "my_sparse_array")
+      .option("array", "my_dense_array")
       .load()
       .select("a1")
     simpleDf.show()
