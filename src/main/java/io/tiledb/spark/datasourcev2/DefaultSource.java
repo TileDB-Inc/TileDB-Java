@@ -72,7 +72,6 @@ public class DefaultSource implements DataSourceV2, ReadSupport {
 
     @Override
     public void pruneColumns(StructType requiredSchema) {
-      System.out.println("pruning: "+requiredSchema);
       this.requiredSchema = requiredSchema;
     }
   }

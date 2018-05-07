@@ -36,9 +36,10 @@ object Test {
 
     val simpleDf = sparkSession.read
       .format("io.tiledb.spark.datasourcev2")
-      .option("array", "my_dense_array")
+      .option("arrayURI", "my_dense_array")
+      .option("batchSize", "3")
       .load()
-      .select("a1")
+      .select("a2")
     simpleDf.show()
   }
 }

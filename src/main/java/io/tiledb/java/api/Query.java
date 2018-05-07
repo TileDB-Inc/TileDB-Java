@@ -266,14 +266,14 @@ public class Query implements AutoCloseable {
     attr_buffs_.clear();
     var_offsets_.clear();
     executed=false;
-    buffer_sizes_.delete();
+    if(buffer_sizes_!=null)
+      buffer_sizes_.delete();
     tiledb.delete_charpArray(attributeNames_);
     tiledb.delete_voidpArray(buffers_);
     sub_tsize_= new ArrayList<Integer>();
   }
 
   private void prepareSubmission() throws TileDBError {
-    if(!executed) {
       int numBuffers = attr_buffs_.size()+var_offsets_.size();
       buffers_ = tiledb.new_voidpArray(numBuffers);
       attributeNames_ = tiledb.new_charpArray(numBuffers);
@@ -296,17 +296,16 @@ public class Query implements AutoCloseable {
         sub_tsize_.add(p.getSecond().getFirst());
         bufferId++;
         attrId++;
-
-        buffer_sizes_ = Utils.newUint64Array(buffer_sizes);
-        ctx.handleError(tiledb.tiledb_query_set_buffers(
-            ctx.getCtxp(),
-            queryp,
-            attributeNames_,
-            attrId,
-            buffers_,
-            buffer_sizes_.cast()));
       }
-    }
+
+      buffer_sizes_ = Utils.newUint64Array(buffer_sizes);
+      ctx.handleError(tiledb.tiledb_query_set_buffers(
+          ctx.getCtxp(),
+          queryp,
+          attributeNames_,
+          attrId,
+          buffers_,
+          buffer_sizes_.cast()));
   }
 
   /**

@@ -22,37 +22,24 @@
  * SOFTWARE.
  */
 
-package examples.io.tiledb.java.api;
+package io.tiledb.spark.datasourcev2;
 
-import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
+import org.apache.spark.sql.sources.v2.DataSourceOptions;
 
-public class DenseReadSubsetIncomplete {
-  public static void main(String[] args) throws Exception {
-    // Create TileDB context
-    Context ctx = new Context();
+import java.io.Serializable;
 
-    Array my_dense_array = new Array(ctx, "my_dense_array");
+public class TileDBOptions implements Serializable {
+  private static final String ARRAY_URI_KEY = "arrayURI";
+  private static final String BATCH_SIZE_KEY = "batchSize";
 
-    // Create query
-    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_COL_MAJOR);
-    long[] subarray = {1l, 4l, 1l, 4l};
-    query.setSubarray(new NativeArray(ctx, subarray, Long.class));
-    query.setBuffer("a1", new NativeArray(ctx, 34, Integer.class));
+  private static final String DEFAULT_ARRAY_URI = "";
+  private static final String DEFAULT_BATCH_SIZE = "5";
 
-    // Loop until the query is completed
+  public String ARRAY_URI;
+  public int BATCH_SIZE;
 
-    System.out.println("a1\n---");
-    do {
-      System.out.println("Reading cells...");
-      query.submit();
-
-      int[] a1_buff = (int[]) query.getBuffer("a1");
-      for (int i =0; i< a1_buff.length; i++){
-        System.out.println(a1_buff[i]);
-      }
-    } while (query.getQueryStatus() == Status.INCOMPLETE);
+  public TileDBOptions(DataSourceOptions options){
+    ARRAY_URI = options.get(ARRAY_URI_KEY).orElse(DEFAULT_ARRAY_URI);
+    BATCH_SIZE = Integer.parseInt(options.get(BATCH_SIZE_KEY).orElse(DEFAULT_BATCH_SIZE));
   }
 }

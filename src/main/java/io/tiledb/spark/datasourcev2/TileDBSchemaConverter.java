@@ -39,17 +39,18 @@ import static org.apache.spark.sql.types.DataTypes.*;
 public class TileDBSchemaConverter {
 
   private final Context ctx;
-  private final DataSourceOptions options;
+  private final TileDBOptions options;
   private final StructType requiredSchema;
 
   public TileDBSchemaConverter(Context ctx, DataSourceOptions options, StructType requiredSchema) {
     this.ctx = ctx;
-    this.options = options;
+    this.options = new TileDBOptions(options);
     this.requiredSchema = requiredSchema;
   }
 
   public StructType getSchema() throws TileDBError {
-    Array array = new Array(ctx, options.get("array").orElse(null));
+    String arrayURI = options.ARRAY_URI;
+    Array array = new Array(ctx, arrayURI);
     ArraySchema arraySchema = array.getSchema();
     StructType schema = new StructType();
     for( Attribute attribute : arraySchema.getAttributes().values()){
@@ -137,7 +138,6 @@ public class TileDBSchemaConverter {
         schema = schema.add(field);
       }
     }
-    System.out.println("!!!"+schema);
     return schema;
   }
 }
