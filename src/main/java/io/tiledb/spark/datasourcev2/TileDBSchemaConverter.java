@@ -25,14 +25,12 @@
 package io.tiledb.spark.datasourcev2;
 
 import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb;
+import io.tiledb.libtiledb.tiledb_datatype_t;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
-
-import java.util.Map;
 
 import static org.apache.spark.sql.types.DataTypes.*;
 
@@ -53,91 +51,101 @@ public class TileDBSchemaConverter {
     Array array = new Array(ctx, arrayURI);
     ArraySchema arraySchema = array.getSchema();
     StructType schema = new StructType();
+    for (Dimension dimension : arraySchema.getDomain().getDimensions()){
+      if(requiredSchema==null || requiredSchema.getFieldIndex(dimension.getName()).isDefined()) {
+        schema = schema.add(toStructField(dimension.getType(), 1l, dimension.getName()));
+      }
+
+    }
     for( Attribute attribute : arraySchema.getAttributes().values()){
       if(requiredSchema==null || requiredSchema.getFieldIndex(attribute.getName()).isDefined()) {
-        StructField field = null;
-        switch (attribute.getType()) {
-          case TILEDB_FLOAT32: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(FloatType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), FloatType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_FLOAT64: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(DoubleType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), DoubleType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_INT8: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(ByteType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), ByteType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_INT16: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(ShortType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), ShortType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_INT32: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(IntegerType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), IntegerType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_INT64: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(LongType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), LongType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_UINT8: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(ShortType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), ShortType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_UINT16: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(IntegerType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), IntegerType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_UINT32: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(LongType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), LongType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_UINT64: {
-            if (attribute.getCellValNum() > 1)
-              field = new StructField(attribute.getName(), DataTypes.createArrayType(LongType), true, Metadata.empty());
-            else
-              field = new StructField(attribute.getName(), LongType, true, Metadata.empty());
-            break;
-          }
-          case TILEDB_CHAR: {
-            field = new StructField(attribute.getName(), StringType, true, Metadata.empty());
-            break;
-          }
-          default: {
-            throw new TileDBError("Not supported getDomain getType " + attribute.getType());
-          }
-        }
-        schema = schema.add(field);
+        schema = schema.add(toStructField(attribute.getType(), attribute.getCellValNum(), attribute.getName()));
       }
     }
     return schema;
+  }
+
+  private StructField toStructField(tiledb_datatype_t type, long cellValNum, String name) throws TileDBError {
+    StructField field = null;
+    switch (type) {
+      case TILEDB_FLOAT32: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(FloatType), true, Metadata.empty());
+        else
+          field = new StructField(name, FloatType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_FLOAT64: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(DoubleType), true, Metadata.empty());
+        else
+          field = new StructField(name, DoubleType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_INT8: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(ByteType), true, Metadata.empty());
+        else
+          field = new StructField(name, ByteType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_INT16: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(ShortType), true, Metadata.empty());
+        else
+          field = new StructField(name, ShortType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_INT32: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(IntegerType), true, Metadata.empty());
+        else
+          field = new StructField(name, IntegerType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_INT64: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(LongType), true, Metadata.empty());
+        else
+          field = new StructField(name, LongType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_UINT8: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(ShortType), true, Metadata.empty());
+        else
+          field = new StructField(name, ShortType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_UINT16: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(IntegerType), true, Metadata.empty());
+        else
+          field = new StructField(name, IntegerType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_UINT32: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(LongType), true, Metadata.empty());
+        else
+          field = new StructField(name, LongType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_UINT64: {
+        if (cellValNum > 1)
+          field = new StructField(name, DataTypes.createArrayType(LongType), true, Metadata.empty());
+        else
+          field = new StructField(name, LongType, true, Metadata.empty());
+        break;
+      }
+      case TILEDB_CHAR: {
+        field = new StructField(name, StringType, true, Metadata.empty());
+        break;
+      }
+      default: {
+        throw new TileDBError("Not supported getDomain getType " + type);
+      }
+    }
+    return field;
   }
 }

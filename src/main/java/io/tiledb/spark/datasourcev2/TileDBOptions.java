@@ -31,15 +31,33 @@ import java.io.Serializable;
 public class TileDBOptions implements Serializable {
   private static final String ARRAY_URI_KEY = "arrayURI";
   private static final String BATCH_SIZE_KEY = "batchSize";
+  private static final String SUBARRAY_KEY = "subarray";
 
   private static final String DEFAULT_ARRAY_URI = "";
   private static final String DEFAULT_BATCH_SIZE = "5";
+  private static final String DEFAULT_SUBARRAY = "";
 
   public String ARRAY_URI;
   public int BATCH_SIZE;
+  public long[] subarray;
 
   public TileDBOptions(DataSourceOptions options){
     ARRAY_URI = options.get(ARRAY_URI_KEY).orElse(DEFAULT_ARRAY_URI);
     BATCH_SIZE = Integer.parseInt(options.get(BATCH_SIZE_KEY).orElse(DEFAULT_BATCH_SIZE));
+    subarray = parseLineToLongArray(options.get(SUBARRAY_KEY).orElse(DEFAULT_SUBARRAY));
+  }
+
+  private long[] toLongArray(String[] arr) {
+    long[] ints = new long[arr.length];
+    for (int i = 0; i < arr.length; i++) {
+      ints[i] = Long.parseLong(arr[i]);
+    }
+    return ints;
+  }
+
+  private long[] parseLineToLongArray(String line) {
+    if(line.isEmpty())
+      return null;
+    return toLongArray(line.split(","));
   }
 }

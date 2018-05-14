@@ -34,12 +34,20 @@ object Test {
       .appName("Test")
       .getOrCreate()
 
-    val simpleDf = sparkSession.read
+    var df = sparkSession.read
       .format("io.tiledb.spark.datasourcev2")
-      .option("arrayURI", "my_dense_array")
+      .option("arrayURI", "byte_sparse_array")
       .option("batchSize", "3")
+      .option("subarray", "1,2,3,4")
       .load()
-      .select("a2")
-    simpleDf.show()
+
+    //print df schema
+    df.schema.printTreeString()
+//      .select("d1","d2","a2")
+
+//    df = df.filter("(d1>=1 and d1<=12+23) or (d1>=20 and d1<=30)")
+//    df = df.filter(df("d1").geq(1))
+//      .filter(df("d1").leq(3))
+    df.show()
   }
 }

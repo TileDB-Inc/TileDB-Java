@@ -27,6 +27,8 @@ package io.tiledb.spark.datasourcev2;
 import io.tiledb.java.api.Context;
 import io.tiledb.java.api.TileDBError;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.sources.Filter;
+import org.apache.spark.sql.sources.GreaterThan;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.sources.v2.DataSourceV2;
 import org.apache.spark.sql.sources.v2.ReadSupport;
@@ -34,19 +36,22 @@ import org.apache.spark.sql.sources.v2.reader.*;
 import org.apache.spark.sql.types.*;
 import org.apache.spark.sql.vectorized.ColumnarBatch;
 
+import java.util.Arrays;
 import java.util.List;
 
 
 public class DefaultSource implements DataSourceV2, ReadSupport {
-  class Reader implements DataSourceReader, SupportsPushDownRequiredColumns, SupportsScanColumnarBatch {
+  class Reader implements DataSourceReader, SupportsPushDownRequiredColumns, SupportsScanColumnarBatch, SupportsPushDownFilters {
     private Context ctx;
     private DataSourceOptions options;
     private StructType requiredSchema;
+    private SubarrayBuilder subarrayBuilder;
 
     public Reader(DataSourceOptions options) {
       try {
         this.options = options;
         ctx = new Context();
+        subarrayBuilder = new SubarrayBuilder(ctx, options);
       } catch (TileDBError tileDBError) {
         tileDBError.printStackTrace();
       }
@@ -64,15 +69,27 @@ public class DefaultSource implements DataSourceV2, ReadSupport {
     }
 
     public List<DataReaderFactory<ColumnarBatch>> createBatchDataReaderFactories() {
-
       return java.util.Arrays.asList(
-          new TileDBReaderFactory(new long[]{1l, 2l, 1l, 4l}, requiredSchema, options),
-          new TileDBReaderFactory(new long[]{3l, 4l, 1l, 4l}, requiredSchema, options));
+          new TileDBReaderFactory(new TileDBOptions(options).subarray, requiredSchema, options));
+//      return java.util.Arrays.asList(
+//          new TileDBReaderFactory(new long[]{1l, 2l, 1l, 4l}, requiredSchema, options),
+//          new TileDBReaderFactory(new long[]{3l, 4l, 1l, 4l}, requiredSchema, options));
     }
 
     @Override
     public void pruneColumns(StructType requiredSchema) {
       this.requiredSchema = requiredSchema;
+    }
+
+    @Override
+    public Filter[] pushFilters(Filter[] filters) {
+      subarrayBuilder.pushFilters(filters);
+      return subarrayBuilder.getNotPushedFilters();
+    }
+
+    @Override
+    public Filter[] pushedFilters() {
+      return subarrayBuilder.getPushedFilters();
     }
   }
 

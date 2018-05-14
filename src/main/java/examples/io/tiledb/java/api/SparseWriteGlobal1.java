@@ -86,11 +86,11 @@ public class SparseWriteGlobal1 {
 
     NativeArray coords_buff = new NativeArray(
         ctx,
-        new long[]{1, 1, 1, 2, 1, 4, 2, 3, 3, 1, 4, 2, 3, 3, 3, 4},
-        Long.class);
+        new byte[]{1, 1, 1, 2, 1, 4, 2, 3, 3, 1, 4, 2, 3, 3, 3, 4},
+        Byte.class);
 
     // Create query
-    Array my_sparse_array = new Array(ctx, "my_sparse_array");
+    Array my_sparse_array = new Array(ctx, "byte_sparse_array");
     Query query = new Query(my_sparse_array, tiledb_query_type_t.TILEDB_WRITE);
     query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
     query.setBuffer("a1", a1_data);
