@@ -27,37 +27,30 @@ package io.tiledb.spark.datasourcev2;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Optional;
 
 public class TileDBOptions implements Serializable {
-  private static final String ARRAY_URI_KEY = "arrayURI";
-  private static final String BATCH_SIZE_KEY = "batchSize";
-  private static final String SUBARRAY_KEY = "subarray";
+  public static final String ARRAY_URI_KEY = "arrayURI";
+  public static final String BATCH_SIZE_KEY = "batchSize";
+  public static final String SUBARRAY_MIN_KEY = "subarray.{}.min";
+  public static final String SUBARRAY_MAX_KEY = "subarray.{}.max";
 
-  private static final String DEFAULT_ARRAY_URI = "";
-  private static final String DEFAULT_BATCH_SIZE = "5";
-  private static final String DEFAULT_SUBARRAY = "";
+  public static final String DEFAULT_ARRAY_URI = "";
+  public static final String DEFAULT_BATCH_SIZE = "5000";
 
   public String ARRAY_URI;
   public int BATCH_SIZE;
-  public long[] subarray;
+
+  private final Map<String, String> options;
 
   public TileDBOptions(DataSourceOptions options){
+    this.options = options.asMap();
     ARRAY_URI = options.get(ARRAY_URI_KEY).orElse(DEFAULT_ARRAY_URI);
     BATCH_SIZE = Integer.parseInt(options.get(BATCH_SIZE_KEY).orElse(DEFAULT_BATCH_SIZE));
-    subarray = parseLineToLongArray(options.get(SUBARRAY_KEY).orElse(DEFAULT_SUBARRAY));
   }
 
-  private long[] toLongArray(String[] arr) {
-    long[] ints = new long[arr.length];
-    for (int i = 0; i < arr.length; i++) {
-      ints[i] = Long.parseLong(arr[i]);
-    }
-    return ints;
-  }
-
-  private long[] parseLineToLongArray(String line) {
-    if(line.isEmpty())
-      return null;
-    return toLongArray(line.split(","));
+  public Optional<String> get(String key) {
+    return Optional.ofNullable(options.get(key));
   }
 }

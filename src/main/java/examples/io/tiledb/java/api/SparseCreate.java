@@ -41,9 +41,8 @@ public class SparseCreate {
     // Create TileDB context
     Context ctx = new Context();
     // Create getDimensions
-    Dimension<Byte> d1 = new Dimension<Byte>(ctx,"d1",Byte.class, new Pair<Byte, Byte>((byte)1,(byte)4),(byte)2);
-    Dimension<Byte> d2 = new Dimension<Byte>(ctx,"d2",Byte.class, new Pair<Byte, Byte>((byte)1,(byte)4),(byte)2);
-
+    Dimension<Long> d1 = new Dimension<Long>(ctx,"d1",Long.class, new Pair<Long, Long>(1l,4l),2l);
+    Dimension<Long> d2 = new Dimension<Long>(ctx,"d2",Long.class, new Pair<Long, Long>(1l,4l),2l);
     // Create getDomain
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
@@ -81,7 +80,7 @@ public class SparseCreate {
     // Print array schema contents
     schema.dump();
 
-    Array my_sparse_array = new Array(ctx, "byte_sparse_array", schema);
+    Array my_sparse_array = new Array(ctx, "my_sparse_array", schema);
 
   }
 }

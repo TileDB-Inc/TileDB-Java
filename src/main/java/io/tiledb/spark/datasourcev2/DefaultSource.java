@@ -52,7 +52,7 @@ public class DefaultSource implements DataSourceV2, ReadSupport {
         this.options = options;
         ctx = new Context();
         subarrayBuilder = new SubarrayBuilder(ctx, options);
-      } catch (TileDBError tileDBError) {
+      } catch (Exception tileDBError) {
         tileDBError.printStackTrace();
       }
     }
@@ -70,7 +70,7 @@ public class DefaultSource implements DataSourceV2, ReadSupport {
 
     public List<DataReaderFactory<ColumnarBatch>> createBatchDataReaderFactories() {
       return java.util.Arrays.asList(
-          new TileDBReaderFactory(new TileDBOptions(options).subarray, requiredSchema, options));
+          new TileDBReaderFactory(subarrayBuilder.getSubArray(), requiredSchema, options));
 //      return java.util.Arrays.asList(
 //          new TileDBReaderFactory(new long[]{1l, 2l, 1l, 4l}, requiredSchema, options),
 //          new TileDBReaderFactory(new long[]{3l, 4l, 1l, 4l}, requiredSchema, options));

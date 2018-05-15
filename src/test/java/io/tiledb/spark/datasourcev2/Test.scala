@@ -36,18 +36,26 @@ object Test {
 
     var df = sparkSession.read
       .format("io.tiledb.spark.datasourcev2")
-      .option("arrayURI", "byte_sparse_array")
-      .option("batchSize", "3")
-      .option("subarray", "1,2,3,4")
+      .option("arrayURI", "my_sparse_array")
+//      .option("batchSize", "3")
+      //add subarray filter
+      .option("subarray.d1.min", 1)
+      .option("subarray.d1.max", 2)
+      .option("subarray.d2.min", 1)
+      .option("subarray.d2.max", 4)
       .load()
+      //select columns
+      .select("d1","d2","a2")
 
     //print df schema
     df.schema.printTreeString()
-//      .select("d1","d2","a2")
 
-//    df = df.filter("(d1>=1 and d1<=12+23) or (d1>=20 and d1<=30)")
-//    df = df.filter(df("d1").geq(1))
-//      .filter(df("d1").leq(3))
+    //add sql filters
+//    df = df.filter("(d1>=1 and d1<=2) and (d2>=1 and d2<=4)")
+//    df = df.filter(df("d2").geq(1))
+//      .filter(df("d2").leq(2))
+
+    //print df
     df.show()
   }
 }
