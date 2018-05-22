@@ -42,6 +42,18 @@ public class SubarrayBuilder {
   private Object subarray;
   private Context ctx;
 
+
+  public SubarrayBuilder(Context ctx, TileDBOptions options) throws Exception {
+    this.ctx = ctx;
+    this.options = options;
+    String arrayURI = options.ARRAY_URI;
+    Array array = new Array(ctx, arrayURI);
+    subarray = initSubarray(array.getSchema());
+    dimensions = array.getSchema().getDomain().getDimensions();
+    pushedFilters = new ArrayList<Filter>(1);
+    notPushedFilters = new ArrayList<Filter>(1);
+  }
+
   public SubarrayBuilder(Context ctx, DataSourceOptions dataSourceOptions) throws Exception {
     this.ctx = ctx;
     this.options = new TileDBOptions(dataSourceOptions);

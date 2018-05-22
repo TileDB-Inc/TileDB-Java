@@ -174,7 +174,7 @@ public class Attribute implements AutoCloseable {
    */
   public void close() throws TileDBError {
     if(attributep!=null)
-      ctx.handleError(tiledb.tiledb_attribute_free(ctx.getCtxp(), attributepp));
+      tiledb.tiledb_attribute_free(attributepp);
   }
 
   @Override

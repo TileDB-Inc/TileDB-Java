@@ -42,34 +42,51 @@ import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
+import scala.tools.cmd.gen.AnyVals;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class SparseReadSubsetIncomplete {
   public static void main(String[] args) throws Exception {
     // Create TileDB context
     Context ctx = new Context();
 
-    Array my_sparse_array = new Array(ctx, "my_sparse_array");
+    Array my_sparse_array = new Array(ctx, "my_big_array");
 
     // Create query
     Query query = new Query(my_sparse_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_COL_MAJOR);
-    query.setSubarray(new NativeArray(ctx, new long[]{3l, 4l, 2l, 4l}, Long.class));
-    query.setBuffer("a1", new NativeArray(ctx, 2,Integer.class));
+//    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    query.setSubarray(new NativeArray(ctx, new long[]{0l, 1000l, 0l, 1000l}, Long.class));
+    query.setBuffer("a1", new NativeArray(ctx, 3000,Integer.class));
 
+    List partitions = query.getPartitions();
+    System.out.println("Partition number : "+partitions.size());
+    for(Object partition : partitions){
+      long[] part = (long[]) partition;
+      for (int i = 0; i<part.length; i++){
+        System.out.print(part[i]+",");
+      }
+      System.out.println();
+    }
+    System.exit(0);
     // Loop until the query is completed
 
     System.out.println("a1\n---");
+    int count =0, sum=0;
     do {
       System.out.println("Reading cells...");
       query.submit();
 
       int[] a1_buff = (int[]) query.getBuffer("a1");
-      for (int i =0; i< a1_buff.length; i++){
-        System.out.println(a1_buff[i]);
-      }
+      System.out.println(a1_buff.length);
+      sum += a1_buff.length;
+//      for (int i =0; i< a1_buff.length; i++){
+//        System.out.println(a1_buff[i]);
+//      }
+      count++;
     } while (query.getQueryStatus() == Status.INCOMPLETE);
+    System.out.println("count: "+count+" sum: "+sum);
   }
 }

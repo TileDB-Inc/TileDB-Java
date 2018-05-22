@@ -78,7 +78,8 @@ public class TiledbDenseWriteUnordered {
     tiledb.tiledb_query_submit(ctx, query);
 
     // Clean up
-    tiledb.tiledb_query_free(ctx, querypp);
+    tiledb.tiledb_query_finalize(ctx, query);
+    tiledb.tiledb_query_free(querypp);
     tiledb.tiledb_ctx_free(ctxpp);
 
   }

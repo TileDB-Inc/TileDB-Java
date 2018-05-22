@@ -85,7 +85,7 @@ public class TileDBObject {
       String new_uri,
       boolean force) throws TileDBError {
     ctx.handleError(
-        tiledb.tiledb_object_move(ctx.getCtxp(), old_uri, new_uri, (force)? 1 : 0));
+        tiledb.tiledb_object_move(ctx.getCtxp(), old_uri, new_uri));
   }
 
   /**

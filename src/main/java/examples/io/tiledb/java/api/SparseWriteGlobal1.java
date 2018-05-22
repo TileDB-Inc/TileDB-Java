@@ -92,7 +92,7 @@ public class SparseWriteGlobal1 {
     // Create query
     Array my_sparse_array = new Array(ctx, "my_sparse_array");
     Query query = new Query(my_sparse_array, tiledb_query_type_t.TILEDB_WRITE);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);

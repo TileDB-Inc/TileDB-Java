@@ -24,23 +24,31 @@
 
 package io.tiledb.spark.datasourcev2;
 
-import io.tiledb.java.api.Context;
-import io.tiledb.java.api.TileDBError;
+import io.tiledb.java.api.*;
+import io.tiledb.libtiledb.tiledb;
+import io.tiledb.libtiledb.tiledb_query_type_t;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.sources.Filter;
 import org.apache.spark.sql.sources.GreaterThan;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.sources.v2.DataSourceV2;
 import org.apache.spark.sql.sources.v2.ReadSupport;
+import org.apache.spark.sql.sources.v2.WriteSupport;
 import org.apache.spark.sql.sources.v2.reader.*;
+import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
+import org.apache.spark.sql.sources.v2.writer.DataWriter;
+import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
+import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
 import org.apache.spark.sql.types.*;
 import org.apache.spark.sql.vectorized.ColumnarBatch;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 
-public class DefaultSource implements DataSourceV2, ReadSupport {
+public class DefaultSource implements DataSourceV2, ReadSupport, WriteSupport {
+
   class Reader implements DataSourceReader, SupportsPushDownRequiredColumns, SupportsScanColumnarBatch, SupportsPushDownFilters {
     private Context ctx;
     private DataSourceOptions options;
@@ -60,7 +68,8 @@ public class DefaultSource implements DataSourceV2, ReadSupport {
     @Override
     public StructType readSchema() {
       try {
-        TileDBSchemaConverter tileDBSchemaConverter = new TileDBSchemaConverter(ctx, options, requiredSchema);
+        TileDBSchemaConverter tileDBSchemaConverter = new TileDBSchemaConverter(ctx, options);
+        tileDBSchemaConverter.setRequiredSchema(requiredSchema);
         return tileDBSchemaConverter.getSchema();
       } catch (TileDBError tileDBError) {
         tileDBError.printStackTrace();
@@ -68,12 +77,33 @@ public class DefaultSource implements DataSourceV2, ReadSupport {
       }
     }
 
+    @Override
     public List<DataReaderFactory<ColumnarBatch>> createBatchDataReaderFactories() {
-      return java.util.Arrays.asList(
-          new TileDBReaderFactory(subarrayBuilder.getSubArray(), requiredSchema, options));
-//      return java.util.Arrays.asList(
-//          new TileDBReaderFactory(new long[]{1l, 2l, 1l, 4l}, requiredSchema, options),
-//          new TileDBReaderFactory(new long[]{3l, 4l, 1l, 4l}, requiredSchema, options));
+      List<Object> partitions = new ArrayList<>();
+      try {
+        partitions = getSubarrayPartitions(subarrayBuilder.getSubArray(), requiredSchema, options);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      if(partitions.isEmpty()) {
+        return java.util.Arrays.asList(
+            new TileDBReaderFactory(subarrayBuilder.getSubArray(), requiredSchema, options));
+      }
+      else{
+        List<DataReaderFactory<ColumnarBatch>> ret = new ArrayList<>(partitions.size());
+        for(Object partition : partitions){
+          ret.add(new TileDBReaderFactory(partition, requiredSchema, options));
+        }
+        return ret;
+      }
+    }
+
+    private List<Object> getSubarrayPartitions(Object subarray, StructType requiredSchema, DataSourceOptions options) throws Exception {
+      TileDBReaderFactory readerFactory = new TileDBReaderFactory(subarray, requiredSchema, options, true);
+      readerFactory.next();
+      List<Object> ret = readerFactory.getPartitions();
+      readerFactory.close();
+      return ret;
     }
 
     @Override
@@ -97,4 +127,10 @@ public class DefaultSource implements DataSourceV2, ReadSupport {
   public DataSourceReader createReader(DataSourceOptions options) {
     return new DefaultSource.Reader(options);
   }
+
+  @Override
+  public Optional<DataSourceWriter> createWriter(String jobId, StructType schema, SaveMode mode, DataSourceOptions options) {
+    return TileDBWriterFactory.getWriter(jobId, schema, mode, options);
+  }
+
 }

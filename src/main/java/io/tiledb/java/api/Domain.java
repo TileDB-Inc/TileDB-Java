@@ -169,7 +169,7 @@ public class Domain implements AutoCloseable {
    */
   public void close() throws TileDBError {
     if(domainp!=null)
-      ctx.handleError(tiledb.tiledb_domain_free(ctx.getCtxp(), domainpp));
+      tiledb.tiledb_domain_free(domainpp);
 
     if(dimensions!=null) {
       for (Dimension d : dimensions) {

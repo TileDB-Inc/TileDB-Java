@@ -24,7 +24,7 @@
 
 package io.tiledb.spark.datasourcev2
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{SaveMode, SparkSession}
 
 object Test {
   def main(args: Array[String]): Unit = {
@@ -36,16 +36,17 @@ object Test {
 
     var df = sparkSession.read
       .format("io.tiledb.spark.datasourcev2")
-      .option("arrayURI", "my_sparse_array")
-//      .option("batchSize", "3")
+      .option("arrayURI", "my_big_array")
+      .option("batchSize", "10000")
+      .option("partitionSize", "10000")
       //add subarray filter
-      .option("subarray.d1.min", 1)
-      .option("subarray.d1.max", 2)
-      .option("subarray.d2.min", 1)
-      .option("subarray.d2.max", 4)
+//      .option("subarray.d1.min", 1)
+//      .option("subarray.d1.max", 2)
+//      .option("subarray.d2.min", 1)
+//      .option("subarray.d2.max", 4)
       .load()
       //select columns
-      .select("d1","d2","a2")
+//      .select("d1","d2","a1")
 
     //print df schema
     df.schema.printTreeString()
@@ -55,7 +56,15 @@ object Test {
 //    df = df.filter(df("d2").geq(1))
 //      .filter(df("d2").leq(2))
 
+    System.out.println("Count: "+df.collect().length)
     //print df
     df.show()
+
+//    df.write
+//      .format("io.tiledb.spark.datasourcev2")
+//      .option("arrayURI", "my_dense_array1")
+//      .option("batchSize", "1000")
+//        .mode(SaveMode.Overwrite)
+//      .save()
   }
 }

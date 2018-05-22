@@ -129,13 +129,13 @@ public class TiledbSparseCreate {
     tiledb.tiledb_array_create(ctx, "my_sparse_array", array_schema);
 
     // Clean up
-    tiledb.tiledb_attribute_free(ctx, a1pp);
-    tiledb.tiledb_attribute_free(ctx, a2pp);
-    tiledb.tiledb_attribute_free(ctx, a3pp);
-    tiledb.tiledb_dimension_free(ctx, d1pp);
-    tiledb.tiledb_dimension_free(ctx, d2pp);
-    tiledb.tiledb_domain_free(ctx, domainpp);
-    tiledb.tiledb_array_schema_free(ctx, array_schemapp);
+    tiledb.tiledb_attribute_free(a1pp);
+    tiledb.tiledb_attribute_free(a2pp);
+    tiledb.tiledb_attribute_free(a3pp);
+    tiledb.tiledb_dimension_free(d1pp);
+    tiledb.tiledb_dimension_free(d2pp);
+    tiledb.tiledb_domain_free(domainpp);
+    tiledb.tiledb_array_schema_free(array_schemapp);
     tiledb.tiledb_ctx_free(ctxpp);
   }
 }

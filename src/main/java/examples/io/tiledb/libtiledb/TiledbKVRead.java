@@ -110,8 +110,8 @@ public class TiledbKVRead {
         PointerUtils.floatArrayFromVoid(a3).getitem(1));
 
     // Clean up
-    tiledb.tiledb_kv_close(ctx, kvpp);
-    tiledb.tiledb_kv_item_free(ctx, kv_itempp);
+    tiledb.tiledb_kv_close(ctx, kv);
+    tiledb.tiledb_kv_item_free(kv_itempp);
     tiledb.tiledb_ctx_free(ctxpp);
 
   }

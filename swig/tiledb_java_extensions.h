@@ -46,28 +46,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**@{*/
-/** C Library export. */
-#if (defined __GNUC__ && __GNUC__ >= 4) || defined __INTEL_COMPILER
-#define TILEDB_EXPORT __attribute__((visibility("default")))
-#elif defined _MSC_VER
-#define TILEDB_EXPORT __declspec(dllexport)
-#else
-#define TILEDB_EXPORT
-#pragma message("TILEDB_EXPORT is not defined for this compiler")
-#endif
-/**@}*/
-
-#if (defined __GNUC__) || defined __INTEL_COMPILER
-#define TILEDB_DEPRECATED __attribute__((deprecated, visibility("default")))
-#elif defined _MSC_VER
-#define TILEDB_DEPRECATED __declspec(deprecated)
-#else
-#define DEPRECATED
-#pragma message("TILEDB_DEPRECATED is not defined for this compiler")
-#endif
-    
     
 	TILEDB_EXPORT int tiledb_dimension_dump_stdout(
     	tiledb_ctx_t* ctx, const tiledb_dimension_t* dim){
@@ -163,7 +141,6 @@ extern "C" {
         return tiledb_object_walk(ctx, path, order, callback, (void *) &callback_data);
     }
 
-#undef TILEDB_EXPORT
 #ifdef __cplusplus
 }
 #endif

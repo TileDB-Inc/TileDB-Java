@@ -155,7 +155,7 @@ public class Context implements AutoCloseable {
     if(config!=null)
       config.close();
     if(ctxp!=null)
-      handleError(tiledb.tiledb_ctx_free(ctxpp));
+      tiledb.tiledb_ctx_free(ctxpp);
   }
 
   @Override

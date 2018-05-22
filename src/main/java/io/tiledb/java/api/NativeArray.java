@@ -124,6 +124,13 @@ public class NativeArray implements AutoCloseable {
     createNativeArrayFromVoidPointer(pointer);
   }
 
+  protected NativeArray(Context ctx, tiledb_datatype_t nativeType, SWIGTYPE_p_void pointer) throws TileDBError {
+    ctx.deleterAdd(this);
+    this.javaType = Types.getJavaType(nativeType);
+    this.nativeType = nativeType;
+    createNativeArrayFromVoidPointer(pointer);
+  }
+
   private int getSize(Object buffer) throws UnsupportedEncodingException, TileDBError {
     switch(nativeType){
       case TILEDB_FLOAT32:{
@@ -478,6 +485,54 @@ public class NativeArray implements AutoCloseable {
   }
 
   private void createNativeArrayFromVoidPointer(SWIGTYPE_p_p_void pointer) throws TileDBError {
+    switch (nativeType) {
+      case TILEDB_FLOAT32: {
+        floatArray = PointerUtils.floatArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_FLOAT64: {
+        doubleArray = PointerUtils.doubleArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_INT8: {
+        int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_INT16: {
+        int16_tArray = PointerUtils.int16_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_INT32: {
+        int32_tArray = PointerUtils.int32_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_INT64: {
+        int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_UINT8: {
+        uint8_tArray = PointerUtils.uint8_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_UINT16: {
+        uint16_tArray = PointerUtils.uint16_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_UINT32: {
+        uint32_tArray = PointerUtils.uint32_tArrayFromVoid(pointer);
+        break;
+      }
+      case TILEDB_UINT64: {
+        uint64_tArray = PointerUtils.uint64_tArrayFromVoid(pointer);
+        break;
+      }
+      default: {
+        throw new TileDBError("Not supported getDomain getType " + nativeType);
+      }
+    }
+  }
+
+  private void createNativeArrayFromVoidPointer(SWIGTYPE_p_void pointer) throws TileDBError {
     switch (nativeType) {
       case TILEDB_FLOAT32: {
         floatArray = PointerUtils.floatArrayFromVoid(pointer);

@@ -158,16 +158,16 @@ public class TiledbKVWrite {
     tiledb.tiledb_kv_add_item(ctx, kv, kv_item4);
 
     // The following will flush the buffered key-value items to the disk
-    tiledb.tiledb_kv_close(ctx, kvpp);
+    tiledb.tiledb_kv_close(ctx, kv);
 
     // Consolidate key-value store (optional)
     tiledb.tiledb_kv_consolidate(ctx, "my_kv");
 
     // Clean up
-    tiledb.tiledb_kv_item_free(ctx, kv_item1pp);
-    tiledb.tiledb_kv_item_free(ctx, kv_item2pp);
-    tiledb.tiledb_kv_item_free(ctx, kv_item3pp);
-    tiledb.tiledb_kv_item_free(ctx, kv_item4pp);
+    tiledb.tiledb_kv_item_free(kv_item1pp);
+    tiledb.tiledb_kv_item_free(kv_item2pp);
+    tiledb.tiledb_kv_item_free(kv_item3pp);
+    tiledb.tiledb_kv_item_free(kv_item4pp);
     tiledb.tiledb_ctx_free(ctxpp);
 
   }

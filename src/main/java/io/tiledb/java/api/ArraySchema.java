@@ -367,7 +367,7 @@ public class ArraySchema implements AutoCloseable {
    */
   public void close() throws TileDBError {
     if(schemap!=null)
-      ctx.handleError(tiledb.tiledb_array_schema_free(ctx.getCtxp(), schemapp));
+      tiledb.tiledb_array_schema_free(schemapp);
     if(attributes!=null) {
       for (Map.Entry<String, Attribute> e : attributes.entrySet()) {
         e.getValue().close();

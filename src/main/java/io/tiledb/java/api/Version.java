@@ -25,6 +25,8 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.SWIGTYPE_p_int;
+import io.tiledb.libtiledb.SWIGTYPE_p_long_long;
+import io.tiledb.libtiledb.SWIGTYPE_p_p_char;
 import io.tiledb.libtiledb.tiledb;
 
 /**  TileDB version. Format: `major_minor_rev`.*/

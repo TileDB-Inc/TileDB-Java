@@ -91,6 +91,7 @@ public class Query implements AutoCloseable {
   private HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>> attr_buffs_;
   private HashMap<String, Pair<Long, Long>> result_buffer_elements;
   private boolean executed;
+  private NativeArray subarray;
 
   public Query(Array array, tiledb_query_type_t type) throws TileDBError {
     this.type =type;
@@ -119,18 +120,32 @@ public class Query implements AutoCloseable {
     return status;
   }
 
-  /**
-   * Returns the query status for a particular attribute.
-   * @param attr
-   * @return
-   * @throws TileDBError
-   */
-  public Status getAttributeStatus(String attr) throws TileDBError {
-    SWIGTYPE_p_tiledb_query_status_t statusp = tiledb.new_tiledb_query_status_tp();
-    ctx.handleError(tiledb.tiledb_query_get_attribute_status(ctx.getCtxp(), queryp, attr, statusp));
-    Status status = Status.toStatus(statusp);
-    tiledb.delete_tiledb_query_status_tp(statusp);
-    return status;
+
+  public List<Object> getPartitions() throws TileDBError {
+    preparePartitionSubmission();
+
+    SWIGTYPE_p_p_p_void partitions = tiledb.new_voidppp();
+    SWIGTYPE_p_unsigned_long_long partitonNump = tiledb.new_ullp();
+    ctx.handleError(tiledb.tiledb_array_partition_subarray(
+        ctx.getCtxp(),
+        array.getUri(),
+        subarray.toVoidPointer(),
+        tiledb_layout_t.TILEDB_ROW_MAJOR,
+        attributeNames_,
+        (long)attr_buffs_.size(),
+        buffer_sizes_.cast(),
+        partitions,
+        partitonNump
+        ));
+
+    int partitonNum = tiledb.ullp_value(partitonNump).intValue();
+    List<Object> ret = new ArrayList<Object>(partitonNum);
+    for (int p = 0; p<partitonNum; p++) {
+      NativeArray partition = new NativeArray(ctx, subarray.getNativeType(),
+          tiledb.voidpArray_getitem(tiledb.voidppp_value(partitions),p));
+      ret.add(partition.toJavaArray(array.getSchema().getDomain().getDimensions().size()*2));
+    }
+    return ret;
   }
 
   /**
@@ -199,6 +214,7 @@ public class Query implements AutoCloseable {
    */
   public void setSubarray(NativeArray subarray) throws TileDBError {
     Types.typeCheck(subarray.getNativeType(), array.getSchema().getDomain().getType());
+    this.subarray = subarray;
     ctx.handleError(
         tiledb.tiledb_query_set_subarray(ctx.getCtxp(), queryp, subarray.toVoidPointer()));
   }
@@ -273,6 +289,23 @@ public class Query implements AutoCloseable {
     sub_tsize_= new ArrayList<Integer>();
   }
 
+  private void preparePartitionSubmission() throws TileDBError {
+    int numBuffers = attr_buffs_.size()+var_offsets_.size();
+    attributeNames_ = tiledb.new_charpArray(numBuffers);
+
+    long buffer_sizes[] = new long[numBuffers];
+    int bufferId=0, attrId=0;
+    for (String a : attr_buffs_.keySet()) {
+      Pair<Integer, Pair<Integer, NativeArray>> p = attr_buffs_.get(a);
+      buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
+      tiledb.charpArray_setitem(attributeNames_, attrId, a);
+      bufferId++;
+      attrId++;
+    }
+
+    buffer_sizes_ = Utils.newUint64Array(buffer_sizes);
+  }
+
   private void prepareSubmission() throws TileDBError {
       int numBuffers = attr_buffs_.size()+var_offsets_.size();
       buffers_ = tiledb.new_voidpArray(numBuffers);
@@ -292,6 +325,8 @@ public class Query implements AutoCloseable {
         Pair<Integer, Pair<Integer, NativeArray>> p = attr_buffs_.get(a);
         tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond().toVoidPointer());
         buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
+//        System.out.println("!!!!"+buffer_sizes[bufferId]);
+//        System.out.println("!!!!@@"+p.getSecond().getSecond().getSize());
         tiledb.charpArray_setitem(attributeNames_, attrId, a);
         sub_tsize_.add(p.getSecond().getFirst());
         bufferId++;
@@ -360,7 +395,8 @@ public class Query implements AutoCloseable {
         buffer_sizes_.delete();
       tiledb.delete_charpArray(attributeNames_);
       tiledb.delete_voidpArray(buffers_);
-      ctx.handleError(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
+      ctx.handleError(tiledb.tiledb_query_finalize(ctx.getCtxp(), queryp));
+//      ctx.handleError(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
       queryp = null;
     }
   }

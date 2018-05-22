@@ -86,11 +86,12 @@ public class TiledbSparseReadSubsetIncomplete {
         System.out.printf("%d\n", buffer_a1.getitem(i));
 
       // Get status
-      tiledb.tiledb_query_get_attribute_status(ctx, query, "a1", statusp);
+      tiledb.tiledb_query_get_status(ctx, query, statusp);
     } while (tiledb.tiledb_query_status_tp_value(statusp) == tiledb_query_status_t.TILEDB_INCOMPLETE);
 
     // Clean up
-    tiledb.tiledb_query_free(ctx, querypp);
+    tiledb.tiledb_query_finalize(ctx, query);
+    tiledb.tiledb_query_free(querypp);
     tiledb.tiledb_ctx_free(ctxpp);
   }
 }

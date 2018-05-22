@@ -32,6 +32,7 @@
 %include "cpointer.i"
 %pointer_functions(int, intp);
 %pointer_functions(float, floatp);
+%pointer_functions(void **, voidppp);
 %pointer_functions(int *, intpp);
 %pointer_functions(char *, charpp);
 %pointer_functions(unsigned int, uintp);

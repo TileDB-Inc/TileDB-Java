@@ -136,7 +136,7 @@ public class Dimension<T> implements AutoCloseable {
    */
   public void close() throws TileDBError {
     if(dimensionp!=null)
-      ctx.handleError(tiledb.tiledb_dimension_free(ctx.getCtxp(), dimensionpp));
+      tiledb.tiledb_dimension_free(dimensionpp);
   }
 
   @Override

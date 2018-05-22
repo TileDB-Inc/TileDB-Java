@@ -25,7 +25,7 @@
 package io.tiledb.spark.datasourcev2;
 
 import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb_datatype_t;
+import io.tiledb.libtiledb.*;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
@@ -36,13 +36,21 @@ import static org.apache.spark.sql.types.DataTypes.*;
 
 public class TileDBSchemaConverter {
 
-  private final Context ctx;
-  private final TileDBOptions options;
-  private final StructType requiredSchema;
+  private Context ctx;
+  private TileDBOptions options;
+  private StructType requiredSchema;
 
-  public TileDBSchemaConverter(Context ctx, DataSourceOptions options, StructType requiredSchema) {
+  public TileDBSchemaConverter(Context ctx, DataSourceOptions options) {
     this.ctx = ctx;
     this.options = new TileDBOptions(options);
+  }
+
+  public TileDBSchemaConverter(Context ctx, TileDBOptions tileDBOptions) {
+    this.ctx = ctx;
+    this.options = tileDBOptions;
+  }
+
+  public void setRequiredSchema(StructType requiredSchema) {
     this.requiredSchema = requiredSchema;
   }
 
@@ -55,7 +63,6 @@ public class TileDBSchemaConverter {
       if(requiredSchema==null || requiredSchema.getFieldIndex(dimension.getName()).isDefined()) {
         schema = schema.add(toStructField(dimension.getType(), 1l, dimension.getName()));
       }
-
     }
     for( Attribute attribute : arraySchema.getAttributes().values()){
       if(requiredSchema==null || requiredSchema.getFieldIndex(attribute.getName()).isDefined()) {
@@ -147,5 +154,53 @@ public class TileDBSchemaConverter {
       }
     }
     return field;
+  }
+
+  public ArraySchema toTileDBSchema(StructType schema) throws Exception {
+    // Create getDimensions
+    Dimension<Long> d1 = new Dimension<Long>(ctx,"d1",Long.class, new Pair<Long, Long>(1l,4l),2l);
+    Dimension<Long> d2 = new Dimension<Long>(ctx,"d2",Long.class, new Pair<Long, Long>(1l,4l),2l);
+
+    // Create getDomain
+    Domain domain = new Domain(ctx);
+    domain.addDimension(d1);
+    domain.addDimension(d2);
+
+
+    // Create and add getAttributes
+    Attribute a1 = new Attribute(ctx,"a1",Integer.class);
+    Attribute a2 = new Attribute(ctx,"a2",String.class);
+    a2.setCellValNum(tiledb.tiledb_var_num());
+    Attribute a3 = new Attribute(ctx,"a3",Float.class);
+    a3.setCellValNum(2);
+    a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
+//    a2.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
+//    a3.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_ZSTD, -1));
+
+    // Create array schema
+    ArraySchema arraySchema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_DENSE);
+    arraySchema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    arraySchema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    arraySchema.setDomain(domain);
+    arraySchema.addAttribute(a1);
+//    arraySchema.addAttribute(a2);
+//    arraySchema.addAttribute(a3);
+
+
+    // Check array schema
+    try {
+      arraySchema.check();
+    }catch (Exception e){
+      e.printStackTrace();
+    }
+
+//    for(StructField field : schema.fields()){
+//      Attribute attribute = toAttribute(field);
+//    }
+    return arraySchema;
+  }
+
+  private Attribute toAttribute(StructField field) {
+    return null;
   }
 }

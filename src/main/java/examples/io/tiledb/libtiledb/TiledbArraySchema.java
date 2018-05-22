@@ -186,7 +186,7 @@ public class TiledbArraySchema {
       tiledb.tiledb_attribute_get_name(ctx,
           Utils.tiledb_attribute_tpp_value(attrpp), attr_namepp);
       System.out.printf("* %s\n", tiledb.charpp_value(attr_namepp));
-      tiledb.tiledb_attribute_free(ctx, attrpp);
+      tiledb.tiledb_attribute_free(attrpp);
     }
     System.out.printf("\n");
 
@@ -211,17 +211,17 @@ public class TiledbArraySchema {
       SWIGTYPE_p_tiledb_dimension_t dim = Utils.tiledb_dimension_tpp_value(dimpp);
       tiledb.tiledb_dimension_get_name(ctx, dim, dim_namepp);
       System.out.printf("* %s\n", tiledb.charpp_value(dim_namepp));
-      tiledb.tiledb_dimension_free(ctx, dimpp);
+      tiledb.tiledb_dimension_free(dimpp);
     }
 
     // Clean up
-    tiledb.tiledb_attribute_free(ctx, a1pp);
-    tiledb.tiledb_attribute_free(ctx, a2pp);
-    tiledb.tiledb_dimension_free(ctx, d1pp);
-    tiledb.tiledb_dimension_free(ctx, d2pp);
-    tiledb.tiledb_domain_free(ctx, domainpp);
-    tiledb.tiledb_domain_free(ctx, got_domainpp);
-    tiledb.tiledb_array_schema_free(ctx, array_schemapp);
+    tiledb.tiledb_attribute_free(a1pp);
+    tiledb.tiledb_attribute_free(a2pp);
+    tiledb.tiledb_dimension_free(d1pp);
+    tiledb.tiledb_dimension_free(d2pp);
+    tiledb.tiledb_domain_free(domainpp);
+    tiledb.tiledb_domain_free(got_domainpp);
+    tiledb.tiledb_array_schema_free(array_schemapp);
     tiledb.tiledb_ctx_free(ctxpp);
   }
 }

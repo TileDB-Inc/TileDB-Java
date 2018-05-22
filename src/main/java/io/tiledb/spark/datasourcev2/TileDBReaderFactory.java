@@ -44,6 +44,7 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
   private StructField[] attributes;
   private Object subarray;
   private boolean initilized;
+  private boolean partitioning;
   private Query query;
   private Context ctx;
   private TileDBOptions options;
@@ -66,7 +67,10 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
     this.options = options;
   }
 
-
+  public TileDBReaderFactory(Object subarray, StructType requiredSchema, DataSourceOptions options, boolean partitioning) {
+    this(subarray,requiredSchema,options);
+    this.partitioning = partitioning;
+  }
 
 
   @Override
@@ -88,9 +92,10 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
 
         // Create query
         query = new Query(array, tiledb_query_type_t.TILEDB_READ);
-        query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+//        query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
         query.setSubarray(nsubarray);
 
+        int buffSize = (partitioning) ? options.PARTITION_SIZE : options.BATCH_SIZE;
         vectors = OnHeapColumnVector.allocateColumns(options.BATCH_SIZE, attributes);
         int i = 0;
         for(StructField field : attributes){
@@ -103,15 +108,16 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
           int valPerRow = (int) ((cellValNum == tiledb.tiledb_var_num())? max_sizes.get(name).getFirst() : cellValNum);
           if(cellValNum == tiledb.tiledb_var_num()){
             query.setBuffer(name,
-                new NativeArray(ctx, options.BATCH_SIZE, Long.class),
-                new NativeArray(ctx, options.BATCH_SIZE * max_sizes.get(name).getSecond().intValue(),
+                new NativeArray(ctx, buffSize, Long.class),
+                new NativeArray(ctx, buffSize * max_sizes.get(name).getSecond().intValue(),
                     arraySchema.getAttribute(name).getType()));
           } else {
             query.setBuffer(name,
-                new NativeArray(ctx, options.BATCH_SIZE * valPerRow, arraySchema.getAttribute(name).getType()));
+                new NativeArray(ctx, buffSize * valPerRow, arraySchema.getAttribute(name).getType()));
           }
         }
-        query.setCoordinates(new NativeArray(ctx, options.BATCH_SIZE * 2, arraySchema.getDomain().getType()));
+        query.setCoordinates(new NativeArray(ctx, buffSize * arraySchema.getDomain().getDimensions().size(),
+            arraySchema.getDomain().getType()));
         batch = new ColumnarBatch(vectors);
         hasNext = true;
       } catch (Exception tileDBError) {
@@ -238,6 +244,8 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
         throw new TileDBError("Not supported getDomain getType " + attribute.getType());
       }
     }
+
+    System.out.println(numValues);
     return numValues;
   }
 
@@ -446,5 +454,9 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
     } catch (TileDBError tileDBError) {
       tileDBError.printStackTrace();
     }
+  }
+
+  public List<Object> getPartitions() throws TileDBError {
+    return query.getPartitions();
   }
 }

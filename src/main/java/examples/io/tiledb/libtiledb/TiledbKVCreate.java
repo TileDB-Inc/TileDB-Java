@@ -87,10 +87,10 @@ public class TiledbKVCreate {
     tiledb.tiledb_kv_schema_dump_stdout(ctx, kv_schema);
 
     // Clean up
-    tiledb.tiledb_attribute_free(ctx, a1pp);
-    tiledb.tiledb_attribute_free(ctx, a2pp);
-    tiledb.tiledb_attribute_free(ctx, a3pp);
-    tiledb.tiledb_kv_schema_free(ctx, kv_schemapp);
+    tiledb.tiledb_attribute_free(a1pp);
+    tiledb.tiledb_attribute_free(a2pp);
+    tiledb.tiledb_attribute_free(a3pp);
+    tiledb.tiledb_kv_schema_free(kv_schemapp);
     tiledb.tiledb_ctx_free(ctxpp);
   }
 }

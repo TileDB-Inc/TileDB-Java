@@ -26,6 +26,8 @@ package examples.io.tiledb.libtiledb;
 
 import io.tiledb.libtiledb.*;
 
+import java.math.BigInteger;
+
 public class TiledbSparseReadGlobal {
 
   /*
@@ -82,8 +84,7 @@ public class TiledbSparseReadGlobal {
         .intValue());
     floatArray buffer_a3 = new floatArray(buffer_sizes.getitem(3)
         .intValue() / 4);
-    uint64_tArray buffer_coords = new uint64_tArray(buffer_sizes.getitem(4)
-        .intValue() / 8);
+    uint64_tArray buffer_coords = new uint64_tArray(buffer_sizes.getitem(4).intValue() / 8);
 
     SWIGTYPE_p_p_void buffers = tiledb.new_voidpArray(5);
     tiledb.voidpArray_setitem(buffers, 0, PointerUtils.toVoid(buffer_a1));
@@ -98,6 +99,12 @@ public class TiledbSparseReadGlobal {
     tiledb.tiledb_query_create(ctx, querypp, "my_sparse_array",
         tiledb_query_type_t.TILEDB_READ);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
+
+    attributes = tiledb.new_charpArray(4);
+    tiledb.charpArray_setitem(attributes, 0, "a1");
+    tiledb.charpArray_setitem(attributes, 1, "a2");
+    tiledb.charpArray_setitem(attributes, 2, "a3");
+    tiledb.charpArray_setitem(attributes, 3, "__coords");
     tiledb.tiledb_query_set_buffers(ctx, query, attributes, 4, buffers,
         buffer_sizes.cast());
     tiledb.tiledb_query_set_layout(ctx, query,
@@ -128,7 +135,8 @@ public class TiledbSparseReadGlobal {
     }
 
     // Clean up
-    tiledb.tiledb_query_free(ctx, querypp);
+    tiledb.tiledb_query_finalize(ctx, query);
+    tiledb.tiledb_query_free(querypp);
     tiledb.tiledb_ctx_free(ctxpp);
 
   }
