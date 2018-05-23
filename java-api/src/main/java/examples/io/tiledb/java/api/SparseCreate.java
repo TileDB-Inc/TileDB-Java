@@ -34,7 +34,6 @@ import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.tiledb_array_type_t;
 import io.tiledb.libtiledb.tiledb_compressor_t;
 import io.tiledb.libtiledb.tiledb_layout_t;
-import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 
 public class SparseCreate {
   public static void main(String[] args) throws Exception {

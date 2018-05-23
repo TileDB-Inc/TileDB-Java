@@ -1,2 +1,4 @@
-rootProject.name = 'tiledb-jni'
+rootProject.name = 'tiledb-java'
 
+include 'java-api'
+include 'spark'

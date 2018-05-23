@@ -42,7 +42,6 @@ import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
-import scala.tools.cmd.gen.AnyVals;
 
 import java.util.Arrays;
 import java.util.HashMap;
