@@ -198,7 +198,7 @@ static void charpArray_setitem(char * *ary, int index, char * value) {
 }
 ```
 
-5) Open `src/main/java/io/tiledb/libtiledb/tiledbJNI` and add the following at the top of the class
+5) Open `src/main/java/io/tiledb/libtiledb/tiledbJNI.java` and add the following at the top of the class
 ```
 public class tiledbJNI {
 
