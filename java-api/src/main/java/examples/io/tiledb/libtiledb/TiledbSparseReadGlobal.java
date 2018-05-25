@@ -41,13 +41,19 @@ public class TiledbSparseReadGlobal {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_create(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+
+    // Open array
+    SWIGTYPE_p_p_tiledb_array_t arraypp = Utils.new_tiledb_array_tpp();
+    tiledb.tiledb_array_alloc(ctx, "my_sparse_array", arraypp);
+    SWIGTYPE_p_tiledb_array_t arrayp = Utils.tiledb_array_tpp_value(arraypp);
+    tiledb.tiledb_array_open(ctx, arrayp);
 
     // Print non-empty getDomain
     uint64_tArray domain = new uint64_tArray(4);
     SWIGTYPE_p_int is_emptyp = tiledb.new_intp();
-    tiledb.tiledb_array_get_non_empty_domain(ctx, "my_sparse_array",
+    tiledb.tiledb_array_get_non_empty_domain(ctx, arrayp,
         PointerUtils.toVoid(domain), is_emptyp);
     System.out.println("Non-empty getDomain:");
     System.out.println("d1: (" + domain.getitem(0) + ", "
@@ -65,7 +71,7 @@ public class TiledbSparseReadGlobal {
     long[] subarray_ = {1, 4, 1, 4};
     uint64_tArray subarray = Utils.newUint64Array(subarray_);
     tiledb.tiledb_array_compute_max_read_buffer_sizes(ctx,
-        "my_sparse_array", PointerUtils.toVoid(subarray), attributes,
+        arrayp, PointerUtils.toVoid(subarray), attributes,
         4, buffer_sizes.cast());
     System.out.println("Maximum buffer sizes:");
     System.out.printf("a1: %s\n", buffer_sizes.getitem(0));
@@ -96,7 +102,7 @@ public class TiledbSparseReadGlobal {
 
     // Create query
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
-    tiledb.tiledb_query_create(ctx, querypp, "my_sparse_array",
+    tiledb.tiledb_query_alloc(ctx, querypp, arrayp,
         tiledb_query_type_t.TILEDB_READ);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
 
@@ -134,10 +140,20 @@ public class TiledbSparseReadGlobal {
           buffer_a3.getitem(2 * i + 1));
     }
 
-    // Clean up
+    // Finalize query
     tiledb.tiledb_query_finalize(ctx, query);
+
+    // Close array
+    tiledb.tiledb_array_close(ctx, arrayp);
+
+    // Clean up
+    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_query_free(querypp);
     tiledb.tiledb_ctx_free(ctxpp);
+    buffer_a1.delete();
+    buffer_a2.delete();
+    buffer_var_a2.delete();
+    buffer_a3.delete();
 
   }
 }

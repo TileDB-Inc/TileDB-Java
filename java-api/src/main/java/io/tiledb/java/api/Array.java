@@ -36,7 +36,10 @@ import java.util.Map;
 public class Array implements AutoCloseable {
   private Context ctx;
   private String uri;
+  private SWIGTYPE_p_p_tiledb_array_t arraypp;
+  private SWIGTYPE_p_tiledb_array_t arrayp;
   private ArraySchema schema;
+  private boolean initialized = false;
 
   public Array(Context ctx, String uri, ArraySchema schema) throws TileDBError {
     ctx.deleterAdd(this);
@@ -44,6 +47,7 @@ public class Array implements AutoCloseable {
     this.ctx = ctx;
     this.uri = uri;
     this.schema = schema;
+    openArray();
   }
 
   public Array(Context ctx, String uri) throws TileDBError {
@@ -51,6 +55,15 @@ public class Array implements AutoCloseable {
     schema = new ArraySchema(ctx, uri);
     this.ctx = ctx;
     this.uri = uri;
+    openArray();
+  }
+
+  private void openArray() throws TileDBError {
+    arraypp = Utils.new_tiledb_array_tpp();
+    ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, arraypp));
+    arrayp = Utils.tiledb_array_tpp_value(arraypp);
+    ctx.handleError(tiledb.tiledb_array_open(ctx.getCtxp(), arrayp));
+    initialized = true;
   }
 
   /** Consolidates the fragments of an array. **/
@@ -81,7 +94,7 @@ public class Array implements AutoCloseable {
     List<Dimension> dimensions = schema.getDomain().getDimensions();
     NativeArray buffer = new NativeArray(ctx,2*dimensions.size(), schema.getDomain().getType());
     ctx.handleError(tiledb.tiledb_array_get_non_empty_domain(
-        ctx.getCtxp(), uri, buffer.toVoidPointer(), emptyp));
+        ctx.getCtxp(), arrayp, buffer.toVoidPointer(), emptyp));
     if(tiledb.intp_value(emptyp)==1){
       return ret;
     }
@@ -128,7 +141,7 @@ public class Array implements AutoCloseable {
 
     ctx.handleError(tiledb.tiledb_array_compute_max_read_buffer_sizes(
         ctx.getCtxp(),
-        uri,
+        arrayp,
         nativeSubarray,
         names,
         attr_num,
@@ -165,12 +178,21 @@ public class Array implements AutoCloseable {
     return schema;
   }
 
+  public SWIGTYPE_p_tiledb_array_t getArrayp() {
+    return arrayp;
+  }
+
   /**
    * Delete the native object.
    */
   public void close() throws TileDBError {
-    if(schema!=null)
-      schema.close();
+    if(initialized) {
+      initialized = false;
+      tiledb.tiledb_array_close(ctx.getCtxp(), arrayp);
+      tiledb.tiledb_array_free(arraypp);
+      if(schema!=null)
+        schema.close();
+    }
   }
 
   @Override

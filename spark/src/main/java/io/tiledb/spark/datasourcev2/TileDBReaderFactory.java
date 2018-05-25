@@ -49,6 +49,7 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
   private Context ctx;
   private TileDBOptions options;
   private ArraySchema arraySchema;
+  private Array array;
 
   private boolean hasNext;
   private OnHeapColumnVector[] vectors;
@@ -85,7 +86,7 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
       try {
         ctx = new Context();
         // Compute maximum buffer elements for the query results per attribute
-        Array array = new Array(ctx, options.ARRAY_URI);
+        array = new Array(ctx, options.ARRAY_URI);
         arraySchema = array.getSchema();
         NativeArray nsubarray = new NativeArray(ctx, subarray, arraySchema.getDomain().getType());
         HashMap<String, Pair<Long,Long>> max_sizes = array.maxBufferElements(nsubarray);
@@ -315,6 +316,9 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
     if(attribute.getCellValNum()==tiledb.tiledb_var_num()) {
       //add var length offsets
       long[] offsets = (long[]) query.getVarBuffer(name);
+      for(int i= 0; i<offsets.length; i++)
+        System.out.print(offsets[i]+",");
+      System.out.println();
       for (int j = 0; j < offsets.length; j++) {
         int length = (j == offsets.length - 1) ? bufferLength - (int) offsets[j] : (int) offsets[j + 1] - (int) offsets[j];
         vectors[index].putArray(j, (int) offsets[j], length);
@@ -449,6 +453,7 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
       batch.close();
       if(query!=null) {
         query.close();
+        array.close();
         ctx.close();
       }
     } catch (TileDBError tileDBError) {

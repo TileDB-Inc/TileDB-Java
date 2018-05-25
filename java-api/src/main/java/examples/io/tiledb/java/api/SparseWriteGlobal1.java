@@ -100,5 +100,7 @@ public class SparseWriteGlobal1 {
 
     // Submit query
     query.submit();
+
+    query.close();
   }
 }

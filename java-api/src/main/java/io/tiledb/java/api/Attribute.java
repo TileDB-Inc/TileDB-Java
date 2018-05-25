@@ -84,7 +84,7 @@ public class Attribute implements AutoCloseable {
     this.name = name;
     this.attributepp = Utils.new_tiledb_attribute_tpp();
     type =  Types.getNativeType(atrrType);
-    ctx.handleError(tiledb.tiledb_attribute_create(ctx.getCtxp(), attributepp, name, type));
+    ctx.handleError(tiledb.tiledb_attribute_alloc(ctx.getCtxp(), attributepp, name, type));
     this.attributep = Utils.tiledb_attribute_tpp_value(attributepp);
   }
 

@@ -83,7 +83,7 @@ public class Domain implements AutoCloseable {
     ctx.deleterAdd(this);
     this.ctx = ctx;
     domainpp = Utils.new_tiledb_domain_tpp();
-    ctx.handleError(tiledb.tiledb_domain_create(ctx.getCtxp(), domainpp));
+    ctx.handleError(tiledb.tiledb_domain_alloc(ctx.getCtxp(), domainpp));
     this.domainp = Utils.tiledb_domain_tpp_value(domainpp);
   }
 
@@ -126,7 +126,7 @@ public class Domain implements AutoCloseable {
   /** Get the rank (number of dimensions) **/
   public long getRank() throws TileDBError {
     SWIGTYPE_p_unsigned_int np = tiledb.new_uintp();
-    ctx.handleError(tiledb.tiledb_domain_get_rank(ctx.getCtxp(), domainp, np));
+    ctx.handleError(tiledb.tiledb_domain_get_ndim(ctx.getCtxp(), domainp, np));
     long rank = tiledb.uintp_value(np);
     tiledb.delete_uintp(np);
     return rank;

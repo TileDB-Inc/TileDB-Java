@@ -66,7 +66,7 @@ public class Dimension<T> implements AutoCloseable {
     NativeArray tileExtent = new NativeArray(ctx,1,this.type);
     tileExtent.setItem(0, (Object) extent);
 //    SWIGTYPE_p_void tile_extent = Types.createNativeArrayExtent(this.getType, extent);
-    ctx.handleError(tiledb.tiledb_dimension_create(
+    ctx.handleError(tiledb.tiledb_dimension_alloc(
         ctx.getCtxp(), dimensionpp, name, this.type, domainBuffer.toVoidPointer(), tileExtent.toVoidPointer()));
     this.dimensionp = Utils.tiledb_dimension_tpp_value(dimensionpp);
   }

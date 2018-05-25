@@ -267,6 +267,15 @@ static tiledb_attribute_t * tiledb_attribute_tpp_value(tiledb_attribute_t * *obj
   return *obj;
 }
 
+static tiledb_array_t * *new_tiledb_array_tpp() {
+  return new tiledb_array_t *();
+}
+
+static tiledb_array_t * tiledb_array_tpp_value(tiledb_array_t * *obj) {
+  return *obj;
+}
+
+
 static tiledb_array_schema_t * *new_tiledb_array_schema_tpp() {
   return new tiledb_array_schema_t *();
 }
@@ -966,6 +975,30 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_UtilsJNI_tiledb_1attribute_1tp
   arg1 = *(tiledb_attribute_t ***)&jarg1;
   result = (tiledb_attribute_t *)tiledb_attribute_tpp_value(arg1);
   *(tiledb_attribute_t **)&jresult = result;
+  return jresult;
+}
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_UtilsJNI_new_1tiledb_1array_1tpp(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  tiledb_array_t **result = 0 ;
+
+  (void)jenv;
+  (void)jcls;
+  result = (tiledb_array_t **)new_tiledb_array_tpp();
+  *(tiledb_array_t ***)&jresult = result;
+  return jresult;
+}
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_UtilsJNI_tiledb_1array_1tpp_1value(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_array_t **arg1 = (tiledb_array_t **) 0 ;
+  tiledb_array_t *result = 0 ;
+
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_array_t ***)&jarg1;
+  result = (tiledb_array_t *)tiledb_array_tpp_value(arg1);
+  *(tiledb_array_t **)&jresult = result;
   return jresult;
 }
 

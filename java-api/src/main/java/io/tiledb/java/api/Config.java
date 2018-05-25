@@ -137,7 +137,7 @@ public class Config implements AutoCloseable {
     HashMap<String, String> result = new HashMap<String, String>();
     SWIGTYPE_p_p_tiledb_config_iter_t iterpp = Utils.new_tiledb_config_iter_tpp();
     SWIGTYPE_p_p_tiledb_error_t errorpp = Utils.new_tiledb_error_tpp();
-    int rc = tiledb.tiledb_config_iter_create(configp, iterpp, prefix, errorpp);
+    int rc = tiledb.tiledb_config_iter_alloc(configp, iterpp, prefix, errorpp);
     checkConfigError(rc, errorpp);
 
     SWIGTYPE_p_tiledb_config_iter_t iterp = Utils.tiledb_config_iter_tpp_value(iterpp);
@@ -181,7 +181,7 @@ public class Config implements AutoCloseable {
   private void createConfig() throws TileDBError {
     this.configpp = Utils.new_tiledb_config_tpp();
     SWIGTYPE_p_p_tiledb_error_t errorpp = Utils.new_tiledb_error_tpp();
-    int rc = tiledb.tiledb_config_create(configpp, errorpp);
+    int rc = tiledb.tiledb_config_alloc(configpp, errorpp);
     checkConfigError(rc, errorpp);
     this.configp = Utils.tiledb_config_tpp_value(configpp);
   }

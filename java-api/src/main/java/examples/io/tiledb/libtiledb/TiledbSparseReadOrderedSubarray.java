@@ -42,8 +42,14 @@ public class TiledbSparseReadOrderedSubarray {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_create(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+
+    // Open array
+    SWIGTYPE_p_p_tiledb_array_t arraypp = Utils.new_tiledb_array_tpp();
+    tiledb.tiledb_array_alloc(ctx, "my_sparse_array", arraypp);
+    SWIGTYPE_p_tiledb_array_t arrayp = Utils.tiledb_array_tpp_value(arraypp);
+    tiledb.tiledb_array_open(ctx, arrayp);
 
     // Compute maximum buffer sizes for each attribute
     SWIGTYPE_p_p_char attributes = tiledb.new_charpArray(4);
@@ -56,7 +62,7 @@ public class TiledbSparseReadOrderedSubarray {
     long[] subarray_ = {3, 4, 2, 4};
     uint64_tArray subarray = Utils.newUint64Array(subarray_);
     tiledb.tiledb_array_compute_max_read_buffer_sizes(ctx,
-        "my_sparse_array", PointerUtils.toVoid(subarray), attributes, 4,
+        arrayp, PointerUtils.toVoid(subarray), attributes, 4,
         buffer_sizes.cast());
 
     // Prepare cell buffers
@@ -81,7 +87,7 @@ public class TiledbSparseReadOrderedSubarray {
 
     // Create query
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
-    tiledb.tiledb_query_create(ctx, querypp, "my_sparse_array",
+    tiledb.tiledb_query_alloc(ctx, querypp, arrayp,
         tiledb_query_type_t.TILEDB_READ);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_layout(ctx, query,
@@ -115,9 +121,19 @@ public class TiledbSparseReadOrderedSubarray {
           buffer_a3.getitem(2 * i + 1));
     }
 
-    // Clean up
+    // Finalize query
     tiledb.tiledb_query_finalize(ctx, query);
+
+    // Close array
+    tiledb.tiledb_array_close(ctx, arrayp);
+
+    // Clean up
+    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_query_free(querypp);
     tiledb.tiledb_ctx_free(ctxpp);
+    buffer_a1.delete();
+    buffer_a2.delete();
+    buffer_var_a2.delete();
+    buffer_a3.delete();
   }
 }

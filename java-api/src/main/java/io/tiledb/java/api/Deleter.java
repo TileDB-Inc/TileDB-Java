@@ -39,7 +39,7 @@ public class Deleter extends Thread {
     while(!deleteStack.isEmpty()){
       AutoCloseable object = deleteStack.pop();
       try {
-//        System.out.println("Deleting "+ object.getClass());
+        System.out.println("Deleting "+ object.getClass());
         object.close();
       } catch (Exception tileDBError) {
         tileDBError.printStackTrace();
@@ -48,6 +48,6 @@ public class Deleter extends Thread {
   }
 
   public void add(AutoCloseable object) {
-    deleteStack.push(object);
+//    deleteStack.push(object);
   }
 }

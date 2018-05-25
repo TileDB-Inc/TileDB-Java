@@ -80,7 +80,7 @@ public class ArraySchema implements AutoCloseable {
     ctx.deleterAdd(this);
     this.ctx = ctx;
     schemapp = Utils.new_tiledb_array_schema_tpp();
-    ctx.handleError(tiledb.tiledb_array_schema_create(ctx.getCtxp(), schemapp, type));
+    ctx.handleError(tiledb.tiledb_array_schema_alloc(ctx.getCtxp(), schemapp, type));
     schemap = Utils.tiledb_array_schema_tpp_value(schemapp);
   }
 

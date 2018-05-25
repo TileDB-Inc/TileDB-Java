@@ -31,8 +31,14 @@ public class TiledbDenseWriteAsync {
   public static void main(String[] args) throws InterruptedException {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_create(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+
+    // Open array
+    SWIGTYPE_p_p_tiledb_array_t arraypp = Utils.new_tiledb_array_tpp();
+    tiledb.tiledb_array_alloc(ctx, "my_dense_array", arraypp);
+    SWIGTYPE_p_tiledb_array_t arrayp = Utils.tiledb_array_tpp_value(arraypp);
+    tiledb.tiledb_array_open(ctx, arrayp);
 
     // Prepare cell buffers
     int[] buffer_a1 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
@@ -69,7 +75,7 @@ public class TiledbDenseWriteAsync {
     tiledb.charpArray_setitem(attributes, 1, "a2");
     tiledb.charpArray_setitem(attributes, 2, "a3");
     // String[] getAttributes = {"a1", "a2", "a3"};
-    tiledb.tiledb_query_create(ctx, querypp, "my_dense_array",
+    tiledb.tiledb_query_alloc(ctx, querypp, arrayp,
         tiledb_query_type_t.TILEDB_WRITE);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_layout(ctx, query,
@@ -91,8 +97,14 @@ public class TiledbDenseWriteAsync {
     } while (tiledb.tiledb_query_status_tp_value(status) != tiledb_query_status_t.TILEDB_COMPLETED);
 
 
-    // Clean up
+    // Finalize query
     tiledb.tiledb_query_finalize(ctx, query);
+
+    // Close array
+    tiledb.tiledb_array_close(ctx, arrayp);
+
+    // Clean up
+    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_query_free(querypp);
     tiledb.tiledb_ctx_free(ctxpp);
 

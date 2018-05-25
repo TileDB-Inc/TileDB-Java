@@ -292,6 +292,16 @@ public class Utils {
     return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_attribute_t(cPtr, false);
   }
 
+  public static SWIGTYPE_p_p_tiledb_array_t new_tiledb_array_tpp() {
+    long cPtr = UtilsJNI.new_tiledb_array_tpp();
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_array_t(cPtr, false);
+  }
+
+  public static SWIGTYPE_p_tiledb_array_t tiledb_array_tpp_value(SWIGTYPE_p_p_tiledb_array_t obj) {
+    long cPtr = UtilsJNI.tiledb_array_tpp_value(SWIGTYPE_p_p_tiledb_array_t.getCPtr(obj));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_array_t(cPtr, false);
+  }
+
   public static SWIGTYPE_p_p_tiledb_array_schema_t new_tiledb_array_schema_tpp() {
     long cPtr = UtilsJNI.new_tiledb_array_schema_tpp();
     return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_array_schema_t(cPtr, false);

@@ -99,7 +99,7 @@ public class Query implements AutoCloseable {
     ctx = array.getCtx();
     ctx.deleterAdd(this);
     querypp = Utils.new_tiledb_query_tpp();
-    ctx.handleError(tiledb.tiledb_query_create(ctx.getCtxp(), querypp, array.getUri(), type));
+    ctx.handleError(tiledb.tiledb_query_alloc(ctx.getCtxp(), querypp, array.getArrayp(), type));
     queryp = Utils.tiledb_query_tpp_value(querypp);
     var_offsets_ = new HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>>();
     attr_buffs_ = new HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>>();
@@ -128,7 +128,7 @@ public class Query implements AutoCloseable {
     SWIGTYPE_p_unsigned_long_long partitonNump = tiledb.new_ullp();
     ctx.handleError(tiledb.tiledb_array_partition_subarray(
         ctx.getCtxp(),
-        array.getUri(),
+        array.getArrayp(),
         subarray.toVoidPointer(),
         tiledb_layout_t.TILEDB_ROW_MAJOR,
         attributeNames_,
@@ -396,7 +396,7 @@ public class Query implements AutoCloseable {
       tiledb.delete_charpArray(attributeNames_);
       tiledb.delete_voidpArray(buffers_);
       ctx.handleError(tiledb.tiledb_query_finalize(ctx.getCtxp(), queryp));
-//      ctx.handleError(tiledb.tiledb_query_free(ctx.getCtxp(), querypp));
+      tiledb.tiledb_query_free(querypp);
       queryp = null;
     }
   }
