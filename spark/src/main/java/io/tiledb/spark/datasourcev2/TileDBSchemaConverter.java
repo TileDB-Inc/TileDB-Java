@@ -27,10 +27,9 @@ package io.tiledb.spark.datasourcev2;
 import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.*;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
-import org.apache.spark.sql.types.DataTypes;
-import org.apache.spark.sql.types.Metadata;
-import org.apache.spark.sql.types.StructField;
-import org.apache.spark.sql.types.StructType;
+import org.apache.spark.sql.types.*;
+
+import java.util.ArrayList;
 
 import static org.apache.spark.sql.types.DataTypes.*;
 
@@ -157,50 +156,83 @@ public class TileDBSchemaConverter {
   }
 
   public ArraySchema toTileDBSchema(StructType schema) throws Exception {
-    // Create getDimensions
-    Dimension<Long> d1 = new Dimension<Long>(ctx,"d1",Long.class, new Pair<Long, Long>(1l,4l),2l);
-    Dimension<Long> d2 = new Dimension<Long>(ctx,"d2",Long.class, new Pair<Long, Long>(1l,4l),2l);
-
-    // Create getDomain
-    Domain domain = new Domain(ctx);
-    domain.addDimension(d1);
-    domain.addDimension(d2);
-
-
-    // Create and add getAttributes
-    Attribute a1 = new Attribute(ctx,"a1",Integer.class);
-    Attribute a2 = new Attribute(ctx,"a2",String.class);
-    a2.setCellValNum(tiledb.tiledb_var_num());
-    Attribute a3 = new Attribute(ctx,"a3",Float.class);
-    a3.setCellValNum(2);
-    a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
-//    a2.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
-//    a3.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_ZSTD, -1));
-
-    // Create array schema
-    ArraySchema arraySchema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_DENSE);
+    ArraySchema arraySchema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
     arraySchema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
     arraySchema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    arraySchema.setDomain(domain);
-    arraySchema.addAttribute(a1);
-//    arraySchema.addAttribute(a2);
-//    arraySchema.addAttribute(a3);
-
-
-    // Check array schema
-    try {
-      arraySchema.check();
-    }catch (Exception e){
-      e.printStackTrace();
+    Domain domain = new Domain(ctx);
+    ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+    for(StructField field : schema.fields()){
+      if(options.DIMENSIONS.contains(field.name())) {
+        Dimension dimension = toDimension(field);
+        domain.addDimension(dimension);
+      }
+      else {
+        Attribute attribute = toAttribute(field);
+        attributes.add(attribute);
+      }
     }
 
-//    for(StructField field : schema.fields()){
-//      Attribute attribute = toAttribute(field);
-//    }
+    arraySchema.setDomain(domain);
+    for(Attribute attribute : attributes){
+      arraySchema.addAttribute(attribute);
+    }
+
+    // Check array schema
+    arraySchema.check();
+
     return arraySchema;
   }
 
-  private Attribute toAttribute(StructField field) {
+  private Dimension toDimension(StructField field) throws Exception {
+    DataType dataType = field.dataType();
+    if (dataType instanceof IntegerType) {
+    } else if (dataType instanceof LongType) {
+      return new Dimension<Long>(ctx,field.name(),Long.class, new Pair<Long, Long>(1l,4l),2l);
+    } else if (dataType instanceof ShortType) {
+    } else if (dataType instanceof ByteType) {
+    } else {
+      throw new Exception("Datatype not supported for dimension: " + dataType);
+    }
     return null;
+
+  }
+
+  private Attribute toAttribute(StructField field) throws Exception {
+    DataType dataType = field.dataType();
+    if (dataType instanceof IntegerType) {
+      return new Attribute(ctx, field.name(), Integer.class);
+    } else if (dataType instanceof StringType) {
+      Attribute attribute = new Attribute(ctx, field.name(), String.class);
+      attribute.setCellValNum(tiledb.tiledb_var_num());
+      return attribute;
+    } else if (dataType instanceof ShortType) {
+    } else if (dataType instanceof ByteType) {
+
+    } else if (dataType instanceof ArrayType) {
+      ArrayType at = (ArrayType)dataType;
+      DataType type = at.elementType();
+      if (type instanceof FloatType) {
+        Attribute attribute = new Attribute(ctx, field.name(), Float.class);
+        attribute.setCellValNum(tiledb.tiledb_var_num());
+        return attribute;
+      } else if (type instanceof LongType) {
+      } else if (type instanceof ShortType) {
+      } else if (type instanceof ByteType) {
+
+      } else {
+        throw new Exception("Datatype not supported for attribute: " + dataType);
+      }
+
+    } else {
+      throw new Exception("Datatype not supported for attribute: " + dataType);
+    }
+    return null;
+
+//    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
+//    Attribute a2 = new Attribute(ctx, "a2", String.class);
+//    a2.setCellValNum(tiledb.tiledb_var_num());
+//    Attribute a3 = new Attribute(ctx, "a3", Float.class);
+//    a3.setCellValNum(2);
+//    a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
   }
 }

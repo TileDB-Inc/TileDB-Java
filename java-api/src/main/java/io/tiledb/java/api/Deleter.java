@@ -48,6 +48,6 @@ public class Deleter extends Thread {
   }
 
   public void add(AutoCloseable object) {
-    deleteStack.push(object);
+//    deleteStack.push(object);
   }
 }

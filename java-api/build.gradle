@@ -77,14 +77,3 @@ test {
         showStandardStreams = true
     }
 }
-
-//copy tiledb.h to swig/
-//fix tiledb.h
-//swig -java -c++ -package io.tiledb.libtiledb -outdir src/main/java/io/tiledb/libtiledb -o src/main/c/generated/tiledb_wrap.cxx swig/tiledb.i
-//charpArray_setitem
-//ary[index]= new char[sizeof(value)];
-//strcpy(ary[index], value);
-//tiledbJNI
-//static {
-//    System.loadLibrary("tiledb");
-//}
