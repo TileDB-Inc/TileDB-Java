@@ -63,8 +63,6 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
       Array array = new Array(ctx, tileDBOptions.ARRAY_URI);
       array.close();
     } catch (Exception tileDBError) {
-//      System.out.println(tileDBError.getMessage()+"!!!!!!");
-//      if(tileDBError.getMessage().contains("Schema file not found"))
         createTable = true;
     }
     try {
@@ -229,7 +227,7 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
       if(batch.size()==0)
         return;
 
-      System.out.println("Flushing: "+batch);
+//      System.out.println("Flushing: "+batch);
 
       // Create query
       query = new Query(array, tiledb_query_type_t.TILEDB_WRITE);
@@ -243,12 +241,10 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
         if (cellValNum == tiledb.tiledb_var_num()) {
           NativeArray first = new NativeArray(ctx, (int) batch.size(), Long.class);
           NativeArray second = new NativeArray(ctx, (int)  varLengthIndex.get(name).getFirst(), arraySchema.getAttribute(name).getType());
-          System.out.println(name+" : "+first.getSize() +", "+second.getSize());
           Pair<NativeArray, NativeArray> pair = new Pair<NativeArray, NativeArray>(first, second);
           nativeArrays.put(name, pair);
           query.setBuffer(name, first, second);
         } else {
-          System.out.println(name+" : "+batch.size() * (int) cellValNum);
           NativeArray second = new NativeArray(ctx, batch.size() * (int) cellValNum, arraySchema.getAttribute(name).getType());
           Pair<NativeArray, NativeArray> pair = new Pair<NativeArray, NativeArray>(null, second);
           nativeArrays.put(name, pair);
@@ -271,22 +267,21 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
           long cellValNum = arraySchema.getAttribute(name).getCellValNum();
           Pair<NativeArray, NativeArray> pair = nativeArrays.get(name);
           if(cellValNum == tiledb.tiledb_var_num()){
+            int typeSize = tiledb.tiledb_datatype_size(arraySchema.getAttribute(name).getType()).intValue();
             try {
               Seq array = (Seq) record.getAs(name);
               for (int index = 0; index < array.size(); index++) {
-                System.out.println(getIndex(name).getSecond()+","+array.apply(index));
                 pair.getSecond().setItem(getIndex(name).getSecond(), array.apply(index));
                 increaseValueIndex(name);
               }
-              System.out.println(rowIndex+","+getIndex(name).getFirst());
               pair.getFirst().setItem(rowIndex, getIndex(name).getFirst());
-              increaseRowIndex(name,array.size());
+              increaseRowIndex(name,array.size()*typeSize);
             } catch (ClassCastException e){
               String s = (String) record.getAs(name);
               pair.getSecond().setItem(getIndex(name).getSecond(), s);
               increaseValueIndex(name, s.getBytes().length);
               pair.getFirst().setItem(rowIndex, getIndex(name).getFirst());
-              increaseRowIndex(name,s.getBytes().length);
+              increaseRowIndex(name,s.getBytes().length * typeSize);
             }
           } else {
             if(cellValNum == 1 ) {
