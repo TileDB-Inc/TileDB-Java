@@ -41,7 +41,7 @@ public class TiledbKVRead {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_create(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
     // Prepare key
@@ -63,8 +63,9 @@ public class TiledbKVRead {
 
     // Open the key-value store
     SWIGTYPE_p_p_tiledb_kv_t kvpp = Utils.new_tiledb_kv_tpp();
-    tiledb.tiledb_kv_open(ctx, kvpp, "my_kv", null, 0);
+    tiledb.tiledb_kv_alloc(ctx, "my_kv",kvpp);
     SWIGTYPE_p_tiledb_kv_t kv = Utils.tiledb_kv_tpp_value(kvpp);
+    tiledb.tiledb_kv_open(ctx, kv, null, 0);
 
     // Get key-value item
     SWIGTYPE_p_p_tiledb_kv_item_t kv_itempp = Utils

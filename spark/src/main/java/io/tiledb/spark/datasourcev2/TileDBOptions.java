@@ -40,7 +40,7 @@ public class TileDBOptions implements Serializable {
 
   public static final String DEFAULT_ARRAY_URI = "";
   public static final String DEFAULT_DIMENSIONS = "";
-  public static final String DEFAULT_BATCH_SIZE = "5000";
+  public static final String DEFAULT_BATCH_SIZE = "10000";
   public static final String DEFAULT_PARTITION_SIZE = "100000";
 
   public String ARRAY_URI;

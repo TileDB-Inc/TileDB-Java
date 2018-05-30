@@ -36,7 +36,7 @@ object Test {
 
     var df = sparkSession.read
       .format("io.tiledb.spark.datasourcev2")
-      .option("arrayURI", "my_sparse_array")
+      .option("arrayURI", "my_dense_array")
       .option("batchSize", "10000")
       .option("partitionSize", "10000")
       //add subarray filter
@@ -60,24 +60,22 @@ object Test {
     //print df
     df.show()
 
+
     df.write
       .format("io.tiledb.spark.datasourcev2")
       .option("arrayURI", "my_sparse_array1")
-      .option("batchSize", "8")
+//      .option("batchSize", "2")
       .option("dimensions", "d1,d2")
       .option("subarray.d1.min", 1)
       .option("subarray.d1.max", 4)
       .option("subarray.d2.min", 1)
       .option("subarray.d2.max", 4)
-        .mode(SaveMode.Overwrite)
+      .mode(SaveMode.Overwrite)
       .save()
-
 
     sparkSession.read
       .format("io.tiledb.spark.datasourcev2")
       .option("arrayURI", "my_sparse_array1")
-      .option("batchSize", "10000")
-      .option("partitionSize", "10000")
       .load()
       .show()
   }

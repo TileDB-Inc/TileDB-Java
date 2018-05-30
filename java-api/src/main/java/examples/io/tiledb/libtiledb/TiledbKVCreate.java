@@ -34,13 +34,13 @@ public class TiledbKVCreate {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_create(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
     // Create getAttributes
     SWIGTYPE_p_p_tiledb_attribute_t a1pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_create(ctx, a1pp, "a1",
+    tiledb.tiledb_attribute_alloc(ctx, a1pp, "a1",
         tiledb_datatype_t.TILEDB_INT32);
     SWIGTYPE_p_tiledb_attribute_t a1 = Utils.tiledb_attribute_tpp_value(a1pp);
     tiledb.tiledb_attribute_set_compressor(ctx, a1,
@@ -49,7 +49,7 @@ public class TiledbKVCreate {
 
     SWIGTYPE_p_p_tiledb_attribute_t a2pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_create(ctx, a2pp, "a2",
+    tiledb.tiledb_attribute_alloc(ctx, a2pp, "a2",
         tiledb_datatype_t.TILEDB_CHAR);
     SWIGTYPE_p_tiledb_attribute_t a2 = Utils.tiledb_attribute_tpp_value(a2pp);
     tiledb.tiledb_attribute_set_compressor(ctx, a2,
@@ -59,7 +59,7 @@ public class TiledbKVCreate {
 
     SWIGTYPE_p_p_tiledb_attribute_t a3pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_create(ctx, a3pp, "a3",
+    tiledb.tiledb_attribute_alloc(ctx, a3pp, "a3",
         tiledb_datatype_t.TILEDB_FLOAT32);
     SWIGTYPE_p_tiledb_attribute_t a3 = Utils.tiledb_attribute_tpp_value(a3pp);
     tiledb.tiledb_attribute_set_compressor(ctx, a3,
@@ -69,7 +69,7 @@ public class TiledbKVCreate {
     // Create kv schema
     SWIGTYPE_p_p_tiledb_kv_schema_t kv_schemapp = Utils
         .new_tiledb_kv_schema_tpp();
-    tiledb.tiledb_kv_schema_create(ctx, kv_schemapp);
+    tiledb.tiledb_kv_schema_alloc(ctx, kv_schemapp);
     SWIGTYPE_p_tiledb_kv_schema_t kv_schema = Utils
         .tiledb_kv_schema_tpp_value(kv_schemapp);
     tiledb.tiledb_kv_schema_add_attribute(ctx, kv_schema, a1);

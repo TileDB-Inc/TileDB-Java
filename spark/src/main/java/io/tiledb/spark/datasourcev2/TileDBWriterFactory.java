@@ -47,6 +47,7 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
     if(init) {
       if (deleteTable)
         deleteTable();
+
       if (createTable)
         createTable();
     }
@@ -60,8 +61,10 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
       ctx = new Context();
       tileDBOptions = new TileDBOptions(options);
       Array array = new Array(ctx, tileDBOptions.ARRAY_URI);
+      array.close();
     } catch (Exception tileDBError) {
-      if(tileDBError.getMessage().contains("Schema file not found"))
+//      System.out.println(tileDBError.getMessage()+"!!!!!!");
+//      if(tileDBError.getMessage().contains("Schema file not found"))
         createTable = true;
     }
     try {
@@ -116,7 +119,8 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
   private void createTable() throws Exception {
     TileDBSchemaConverter tileDBSchemaConverter = new TileDBSchemaConverter(ctx, tileDBOptions);
     ArraySchema arraySchema = tileDBSchemaConverter.toTileDBSchema(schema);
-    new Array(ctx, tileDBOptions.ARRAY_URI, arraySchema);
+    Array array = new Array(ctx, tileDBOptions.ARRAY_URI, arraySchema);
+    array.close();
   }
 
 
@@ -146,7 +150,7 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
     private void init() throws Exception {
       ctx = new Context();
       subarrayBuilder = new SubarrayBuilder(ctx, options);
-      array = new Array(ctx, options.ARRAY_URI);
+      array = new Array(ctx, tileDBOptions.ARRAY_URI);
       arraySchema = array.getSchema();
       attributeNames = new ArrayList<>();
       for(Attribute attribute : arraySchema.getAttributes().values()) {
@@ -239,7 +243,7 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
         if (cellValNum == tiledb.tiledb_var_num()) {
           NativeArray first = new NativeArray(ctx, (int) batch.size(), Long.class);
           NativeArray second = new NativeArray(ctx, (int)  varLengthIndex.get(name).getFirst(), arraySchema.getAttribute(name).getType());
-          System.out.println(name+" : "+batch.size() +", "+(int) varLengthIndex.get(name).getFirst());
+          System.out.println(name+" : "+first.getSize() +", "+second.getSize());
           Pair<NativeArray, NativeArray> pair = new Pair<NativeArray, NativeArray>(first, second);
           nativeArrays.put(name, pair);
           query.setBuffer(name, first, second);
@@ -274,6 +278,7 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
                 pair.getSecond().setItem(getIndex(name).getSecond(), array.apply(index));
                 increaseValueIndex(name);
               }
+              System.out.println(rowIndex+","+getIndex(name).getFirst());
               pair.getFirst().setItem(rowIndex, getIndex(name).getFirst());
               increaseRowIndex(name,array.size());
             } catch (ClassCastException e){
@@ -314,7 +319,7 @@ public class TileDBWriterFactory implements DataWriterFactory, DataSourceWriter 
       try {
         flush();
         if(ctx!=null) {
-//          query.close();
+          array.close();
           ctx.close();
         }
       } catch (Exception tileDBError) {

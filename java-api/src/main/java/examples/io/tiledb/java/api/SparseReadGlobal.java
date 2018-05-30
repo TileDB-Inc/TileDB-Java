@@ -50,7 +50,7 @@ public class SparseReadGlobal {
     Context ctx = new Context();
 
     // Print non-empty getDomain
-    Array my_sparse_array = new Array(ctx, "my_sparse_array");
+    Array my_sparse_array = new Array(ctx, "my_sparse_array1");
     HashMap<String, Pair> dom = my_sparse_array.nonEmptyDomain();
     for (Map.Entry<String, Pair> e : dom.entrySet()){
       System.out.println(e.getKey() + ": ("+e.getValue().getFirst()+", "+e.getValue().getSecond()+")");
@@ -72,7 +72,9 @@ public class SparseReadGlobal {
     query.setBuffer("a2",
         new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
         new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
-    query.setBuffer("a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
+    query.setBuffer("a3",
+        new NativeArray(ctx, max_sizes.get("a3").getFirst().intValue(), Long.class),
+        new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
     query.setCoordinates(new NativeArray(ctx, max_sizes.get(tiledb.tiledb_coords()).getSecond().intValue(), Long.class));
 
     // Submit query
@@ -84,7 +86,12 @@ public class SparseReadGlobal {
     long[] a2_offsets = (long[]) query.getVarBuffer("a2");
     byte[] a2_data = (byte[]) query.getBuffer("a2");
     float[] a3_buff = (float[]) query.getBuffer("a3");
+    long[] a3_offsets = (long[]) query.getVarBuffer("a3");
     long[] coords = (long[]) query.getBuffer(tiledb.tiledb_coords());
+
+    for(int i= 0; i<a3_offsets.length; i++)
+      System.out.print(a3_offsets[i]+",");
+    System.out.println();
 
     System.out.println("Result num: " + a1_buff.length );
     System.out.println(String.format("%8s",tiledb.tiledb_coords()) +

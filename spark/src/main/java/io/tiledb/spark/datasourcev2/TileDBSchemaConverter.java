@@ -157,8 +157,6 @@ public class TileDBSchemaConverter {
 
   public ArraySchema toTileDBSchema(StructType schema) throws Exception {
     ArraySchema arraySchema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
-    arraySchema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    arraySchema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
     Domain domain = new Domain(ctx);
     ArrayList<Attribute> attributes = new ArrayList<Attribute>();
     for(StructField field : schema.fields()){
@@ -227,12 +225,5 @@ public class TileDBSchemaConverter {
       throw new Exception("Datatype not supported for attribute: " + dataType);
     }
     return null;
-
-//    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
-//    Attribute a2 = new Attribute(ctx, "a2", String.class);
-//    a2.setCellValNum(tiledb.tiledb_var_num());
-//    Attribute a3 = new Attribute(ctx, "a3", Float.class);
-//    a3.setCellValNum(2);
-//    a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
   }
 }

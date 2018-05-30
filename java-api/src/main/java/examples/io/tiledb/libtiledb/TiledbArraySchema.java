@@ -20,6 +20,96 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * @section DESCRIPTION
+ *
+ * This example explores the C API for the array schema.
+ *
+ * Simply run the following to make it work.
+ *
+ * ```
+ * $ java -cp build/libs/tiledb-jni-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema
+ * First dump:
+ * - Array type: sparse
+ * - Cell order: row-major
+ * - Tile order: row-major
+ * - Capacity: 10000
+ * - Coordinates compressor: BLOSC_ZSTD
+ * - Coordinates compression level: -1
+ *
+ * Second dump:
+ * - Array type: sparse
+ * - Cell order: col-major
+ * - Tile order: row-major
+ * - Capacity: 10
+ * - Coordinates compressor: ZSTD
+ * - Coordinates compression level: 4
+ *
+ * Third dump:
+ * - Array type: sparse
+ * - Cell order: col-major
+ * - Tile order: row-major
+ * - Capacity: 10
+ * - Coordinates compressor: ZSTD
+ * - Coordinates compression level: 4
+ *
+ * === Domain ===
+ * - Dimensions type: UINT64
+ *
+ * ### Dimension ###
+ * - Name: <anonymous>
+ * - Domain: [1,1000]
+ * - Tile extent: 10
+ *
+ * ### Dimension ###
+ * - Name: d2
+ * - Domain: [101,10000]
+ * - Tile extent: 100
+ *
+ * ### Attribute ###
+ * - Name: <anonymous>
+ * - Type: INT32
+ * - Compressor: NO_COMPRESSION
+ * - Compression level: -1
+ * - Cell val num: 3
+ *
+ * ### Attribute ###
+ * - Name: a2
+ * - Type: FLOAT32
+ * - Compressor: GZIP
+ * - Compression level: -1
+ * - Cell val num: 1
+ *
+ * From getters:
+ * - Array type: sparse
+ * - Cell order: col-major
+ * - Tile order: row-major
+ * - Capacity: 10
+ * - Coordinates compressor: (ZSTD, 4)
+ * - Offsets compressor: (BLOSC_LZ, 5)
+ *
+ * Array schema attribute names:
+ * * __attr
+ * * a2
+ *
+ * === Domain ===
+ * - Dimensions type: UINT64
+ *
+ * ### Dimension ###
+ * - Name: <anonymous>
+ * - Domain: [1,1000]
+ * - Tile extent: 10
+ *
+ * ### Dimension ###
+ * - Name: d2
+ * - Domain: [101,10000]
+ * - Tile extent: 100
+ *
+ * Array schema dimension names:
+ * * __dim_0
+ * * d2
+ * ```
+ *
  */
 
 package examples.io.tiledb.libtiledb;
@@ -33,13 +123,13 @@ public class TiledbArraySchema {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_create(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
     // Create array schema
     SWIGTYPE_p_p_tiledb_array_schema_t array_schemapp = Utils
         .new_tiledb_array_schema_tpp();
-    tiledb.tiledb_array_schema_create(ctx, array_schemapp,
+    tiledb.tiledb_array_schema_alloc(ctx, array_schemapp,
         tiledb_array_type_t.TILEDB_SPARSE);
     SWIGTYPE_p_tiledb_array_schema_t array_schema = Utils
         .tiledb_array_schema_tpp_value(array_schemapp);
@@ -72,7 +162,7 @@ public class TiledbArraySchema {
     uint64_tArray d1_extent = Utils.newUint64Array(d1_extents_);
     SWIGTYPE_p_p_tiledb_dimension_t d1pp = Utils
         .new_tiledb_dimension_tpp();
-    tiledb.tiledb_dimension_create(ctx, d1pp, "",
+    tiledb.tiledb_dimension_alloc(ctx, d1pp, "",
         tiledb_datatype_t.TILEDB_UINT64,
         PointerUtils.toVoid(d1_domain), PointerUtils.toVoid(d1_extent));
     SWIGTYPE_p_tiledb_dimension_t d1 = Utils.tiledb_dimension_tpp_value(d1pp);
@@ -83,14 +173,14 @@ public class TiledbArraySchema {
     uint64_tArray d2_extent = Utils.newUint64Array(d2_extents_);
     SWIGTYPE_p_p_tiledb_dimension_t d2pp = Utils
         .new_tiledb_dimension_tpp();
-    tiledb.tiledb_dimension_create(ctx, d2pp, "d2",
+    tiledb.tiledb_dimension_alloc(ctx, d2pp, "d2",
         tiledb_datatype_t.TILEDB_UINT64,
         PointerUtils.toVoid(d2_domain), PointerUtils.toVoid(d2_extent));
     SWIGTYPE_p_tiledb_dimension_t d2 = Utils.tiledb_dimension_tpp_value(d2pp);
 
     // Create and set getDomain
     SWIGTYPE_p_p_tiledb_domain_t domainpp = Utils.new_tiledb_domain_tpp();
-    tiledb.tiledb_domain_create(ctx, domainpp);
+    tiledb.tiledb_domain_alloc(ctx, domainpp);
     SWIGTYPE_p_tiledb_domain_t domain = Utils.tiledb_domain_tpp_value(domainpp);
     tiledb.tiledb_domain_add_dimension(ctx, domain, d1);
     tiledb.tiledb_array_schema_set_domain(ctx, array_schema, domain);
@@ -99,12 +189,12 @@ public class TiledbArraySchema {
 
     SWIGTYPE_p_p_tiledb_attribute_t a1pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_create(ctx, a1pp, "",
+    tiledb.tiledb_attribute_alloc(ctx, a1pp, "",
         tiledb_datatype_t.TILEDB_INT32);
     SWIGTYPE_p_tiledb_attribute_t a1 = Utils.tiledb_attribute_tpp_value(a1pp);
     SWIGTYPE_p_p_tiledb_attribute_t a2pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_create(ctx, a2pp, "a2",
+    tiledb.tiledb_attribute_alloc(ctx, a2pp, "a2",
         tiledb_datatype_t.TILEDB_FLOAT32);
     SWIGTYPE_p_tiledb_attribute_t a2 = Utils.tiledb_attribute_tpp_value(a2pp);
 
@@ -200,13 +290,13 @@ public class TiledbArraySchema {
 
     // Print the dimension names
     System.out.printf("\nArray schema dimension names: \n");
-    SWIGTYPE_p_unsigned_int rankp = tiledb.new_uintp();
-    tiledb.tiledb_domain_get_rank(ctx, domain, rankp);
-    long rank = tiledb.uintp_value(rankp);
+    SWIGTYPE_p_unsigned_int ndimp = tiledb.new_uintp();
+    tiledb.tiledb_domain_get_ndim(ctx, domain, ndimp);
+    long ndim = tiledb.uintp_value(ndimp);
     SWIGTYPE_p_p_tiledb_dimension_t dimpp = Utils
         .new_tiledb_dimension_tpp();
     SWIGTYPE_p_p_char dim_namepp = tiledb.new_charpp();
-    for (long i = 0; i < rank; i++) {
+    for (long i = 0; i < ndim; i++) {
       tiledb.tiledb_domain_get_dimension_from_index(ctx, domain, i, dimpp);
       SWIGTYPE_p_tiledb_dimension_t dim = Utils.tiledb_dimension_tpp_value(dimpp);
       tiledb.tiledb_dimension_get_name(ctx, dim, dim_namepp);

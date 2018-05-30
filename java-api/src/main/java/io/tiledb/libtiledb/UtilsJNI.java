@@ -136,6 +136,10 @@ public class UtilsJNI {
 
   public final static native long tiledb_attribute_tpp_value(long jarg1);
 
+  public final static native long new_tiledb_array_tpp();
+
+  public final static native long tiledb_array_tpp_value(long jarg1);
+
   public final static native long new_tiledb_array_schema_tpp();
 
   public final static native long tiledb_array_schema_tpp_value(long jarg1);

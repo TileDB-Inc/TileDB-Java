@@ -20,6 +20,38 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * @section DESCRIPTION
+ *This program shows how to consolidate arrays.
+ *
+ * One way to make this work is by first creating a dense array and making three
+ * different writes:
+ *
+ * ```
+ * $ java -cp build/libs/tiledb-jni-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbDenseCreate
+ * $ java -cp build/libs/tiledb-jni-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbDenseWriteGlobal1
+ * $ java -cp build/libs/tiledb-jni-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbDenseWriteGlobalSubarray
+ * $ java -cp build/libs/tiledb-jni-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbDenseWriteUnordered
+ * $ ls -1 my_dense_array
+ * __0x7ffff10e73c0_1517941950491
+ * __0x7ffff10e73c0_1517941954698
+ * __0x7ffff10e73c0_1517941959273
+ * __array_schema.tdb
+ * __lock.tdb
+ * ```
+ *
+ * The above will create three fragments (appearing as separate subdirectories).
+ *
+ * Running this program will consolidate the 3 fragments/directories into a
+ * single one.
+ *
+ * ```
+ * $ java -cp build/libs/tiledb-jni-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArrayConsolidate
+ * $ ls -1 my_dense_array
+ * __0x7ffff10e73c0_1517941970634_1517941959273
+ * __lock.tdb
+ * __array_schema.tdb
+ * ```
  */
 
 package examples.io.tiledb.libtiledb;
@@ -31,7 +63,7 @@ public class TiledbArrayConsolidate {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_create(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
     // Consolidate array

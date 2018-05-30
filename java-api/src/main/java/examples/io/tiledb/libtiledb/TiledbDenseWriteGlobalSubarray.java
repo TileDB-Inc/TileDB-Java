@@ -31,8 +31,14 @@ public class TiledbDenseWriteGlobalSubarray {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_create(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+
+    // Open array
+    SWIGTYPE_p_p_tiledb_array_t arraypp = Utils.new_tiledb_array_tpp();
+    tiledb.tiledb_array_alloc(ctx, "my_dense_array", arraypp);
+    SWIGTYPE_p_tiledb_array_t arrayp = Utils.tiledb_array_tpp_value(arraypp);
+    tiledb.tiledb_array_open(ctx, arrayp);
 
     // Prepare cell buffers - #1
     int[] buffer_a1 = {112, 113, 114, 115};
@@ -65,7 +71,7 @@ public class TiledbDenseWriteGlobalSubarray {
 
     long[] subarray_ = {3, 4, 3, 4};
     uint64_tArray subarray = Utils.newUint64Array(subarray_);
-    tiledb.tiledb_query_create(ctx, querypp, "my_dense_array",
+    tiledb.tiledb_query_alloc(ctx, querypp, arrayp,
         tiledb_query_type_t.TILEDB_WRITE);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_layout(ctx, query,
@@ -77,8 +83,14 @@ public class TiledbDenseWriteGlobalSubarray {
     // Submit query
     tiledb.tiledb_query_submit(ctx, query);
 
-    // Clean up
+    // Finalize query
     tiledb.tiledb_query_finalize(ctx, query);
+
+    // Close array
+    tiledb.tiledb_array_close(ctx, arrayp);
+
+    // Clean up
+    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_query_free(querypp);
     tiledb.tiledb_ctx_free(ctxpp);
 

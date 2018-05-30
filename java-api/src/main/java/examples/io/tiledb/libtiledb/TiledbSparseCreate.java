@@ -37,7 +37,7 @@ public class TiledbSparseCreate {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_create(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(ctxpp, null);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
     // Create getDimensions
@@ -48,7 +48,7 @@ public class TiledbSparseCreate {
         .newUint64Array(d1_tile_extents_);
     SWIGTYPE_p_p_tiledb_dimension_t d1pp = Utils
         .new_tiledb_dimension_tpp();
-    tiledb.tiledb_dimension_create(ctx, d1pp, "d1",
+    tiledb.tiledb_dimension_alloc(ctx, d1pp, "d1",
         tiledb_datatype_t.TILEDB_UINT64,
         PointerUtils.toVoid(d1_domain),
         PointerUtils.toVoid(d1_tile_extents));
@@ -61,7 +61,7 @@ public class TiledbSparseCreate {
         .newUint64Array(d2_tile_extents_);
     SWIGTYPE_p_p_tiledb_dimension_t d2pp = Utils
         .new_tiledb_dimension_tpp();
-    tiledb.tiledb_dimension_create(ctx, d2pp, "d2",
+    tiledb.tiledb_dimension_alloc(ctx, d2pp, "d2",
         tiledb_datatype_t.TILEDB_UINT64,
         PointerUtils.toVoid(d2_domain),
         PointerUtils.toVoid(d2_tile_extents));
@@ -69,7 +69,7 @@ public class TiledbSparseCreate {
 
     // Create getDomain
     SWIGTYPE_p_p_tiledb_domain_t domainpp = Utils.new_tiledb_domain_tpp();
-    tiledb.tiledb_domain_create(ctx, domainpp);
+    tiledb.tiledb_domain_alloc(ctx, domainpp);
     SWIGTYPE_p_tiledb_domain_t domain = Utils.tiledb_domain_tpp_value(domainpp);
     tiledb.tiledb_domain_add_dimension(ctx, domain, d1);
     tiledb.tiledb_domain_add_dimension(ctx, domain, d2);
@@ -77,7 +77,7 @@ public class TiledbSparseCreate {
     // Create getAttributes
     SWIGTYPE_p_p_tiledb_attribute_t a1pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_create(ctx, a1pp, "a1",
+    tiledb.tiledb_attribute_alloc(ctx, a1pp, "a1",
         tiledb_datatype_t.TILEDB_INT32);
     SWIGTYPE_p_tiledb_attribute_t a1 = Utils.tiledb_attribute_tpp_value(a1pp);
     tiledb.tiledb_attribute_set_compressor(ctx, a1,
@@ -86,7 +86,7 @@ public class TiledbSparseCreate {
 
     SWIGTYPE_p_p_tiledb_attribute_t a2pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_create(ctx, a2pp, "a2",
+    tiledb.tiledb_attribute_alloc(ctx, a2pp, "a2",
         tiledb_datatype_t.TILEDB_CHAR);
     SWIGTYPE_p_tiledb_attribute_t a2 = Utils.tiledb_attribute_tpp_value(a2pp);
     tiledb.tiledb_attribute_set_compressor(ctx, a2,
@@ -95,7 +95,7 @@ public class TiledbSparseCreate {
 
     SWIGTYPE_p_p_tiledb_attribute_t a3pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_create(ctx, a3pp, "a3",
+    tiledb.tiledb_attribute_alloc(ctx, a3pp, "a3",
         tiledb_datatype_t.TILEDB_FLOAT32);
     SWIGTYPE_p_tiledb_attribute_t a3 = Utils.tiledb_attribute_tpp_value(a3pp);
     tiledb.tiledb_attribute_set_compressor(ctx, a3,
@@ -105,7 +105,7 @@ public class TiledbSparseCreate {
     // Create array schema
     SWIGTYPE_p_p_tiledb_array_schema_t array_schemapp = Utils
         .new_tiledb_array_schema_tpp();
-    tiledb.tiledb_array_schema_create(ctx, array_schemapp,
+    tiledb.tiledb_array_schema_alloc(ctx, array_schemapp,
         tiledb_array_type_t.TILEDB_SPARSE);
     SWIGTYPE_p_tiledb_array_schema_t array_schema = Utils
         .tiledb_array_schema_tpp_value(array_schemapp);
