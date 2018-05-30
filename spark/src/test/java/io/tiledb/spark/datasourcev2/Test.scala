@@ -67,8 +67,10 @@ object Test {
       .option("dimensions", "d1,d2")
       .option("subarray.d1.min", 1)
       .option("subarray.d1.max", 4)
+      .option("subarray.d1.extent", 2)
       .option("subarray.d2.min", 1)
       .option("subarray.d2.max", 4)
+      .option("subarray.d2.extent", 2)
       .mode(SaveMode.Overwrite)
       .save()
 

@@ -28,7 +28,6 @@ import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.*;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.types.*;
-
 import java.util.ArrayList;
 
 import static org.apache.spark.sql.types.DataTypes.*;
@@ -184,15 +183,40 @@ public class TileDBSchemaConverter {
   private Dimension toDimension(StructField field) throws Exception {
     DataType dataType = field.dataType();
     if (dataType instanceof IntegerType) {
+      int min = Integer.parseInt(options.get(TileDBOptions.SUBARRAY_MIN_KEY.replace("{}",field.name()))
+          .orElse(Integer.MIN_VALUE + ""));
+      int max = Integer.parseInt(options.get(TileDBOptions.SUBARRAY_MAX_KEY.replace("{}",field.name()))
+          .orElse(Integer.MAX_VALUE + ""));
+      int extent = Integer.parseInt(options.get(TileDBOptions.SUBARRAY_EXTENT_KEY.replace("{}",field.name()))
+          .orElse("1"));
+      return new Dimension<Integer>(ctx,field.name(),Integer.class, new Pair<Integer, Integer>(min,max),extent);
     } else if (dataType instanceof LongType) {
-      return new Dimension<Long>(ctx,field.name(),Long.class, new Pair<Long, Long>(1l,4l),2l);
+      long min = Long.parseLong(options.get(TileDBOptions.SUBARRAY_MIN_KEY.replace("{}",field.name()))
+              .orElse(Long.MIN_VALUE + ""));
+      long max = Long.parseLong(options.get(TileDBOptions.SUBARRAY_MAX_KEY.replace("{}",field.name()))
+              .orElse(Long.MAX_VALUE + ""));
+      long extent = Long.parseLong(options.get(TileDBOptions.SUBARRAY_EXTENT_KEY.replace("{}",field.name()))
+          .orElse("1"));
+      return new Dimension<Long>(ctx,field.name(),Long.class, new Pair<Long, Long>(min,max),extent);
     } else if (dataType instanceof ShortType) {
+      int min = Short.parseShort(options.get(TileDBOptions.SUBARRAY_MIN_KEY.replace("{}",field.name()))
+              .orElse(Short.MIN_VALUE + ""));
+      int max = Short.parseShort(options.get(TileDBOptions.SUBARRAY_MAX_KEY.replace("{}",field.name()))
+              .orElse(Short.MAX_VALUE + ""));
+      short extent = Short.parseShort(options.get(TileDBOptions.SUBARRAY_EXTENT_KEY.replace("{}",field.name()))
+          .orElse("1"));
+      return new Dimension<Short>(ctx,field.name(),Short.class, new Pair<Short, Short>((short)min,(short)max),extent);
     } else if (dataType instanceof ByteType) {
+      int min = Integer.parseInt(options.get(TileDBOptions.SUBARRAY_MIN_KEY.replace("{}",field.name()))
+              .orElse("-128"));
+      int max = Integer.parseInt(options.get(TileDBOptions.SUBARRAY_MAX_KEY.replace("{}",field.name()))
+              .orElse("128"));
+      short extent = Short.parseShort(options.get(TileDBOptions.SUBARRAY_EXTENT_KEY.replace("{}",field.name()))
+          .orElse("1"));
+      return new Dimension<Byte>(ctx,field.name(),Byte.class, new Pair<Byte, Byte>((byte)min,(byte)max),(byte) extent);
     } else {
       throw new Exception("Datatype not supported for dimension: " + dataType);
     }
-    return null;
-
   }
 
   private Attribute toAttribute(StructField field) throws Exception {
@@ -204,26 +228,47 @@ public class TileDBSchemaConverter {
       attribute.setCellValNum(tiledb.tiledb_var_num());
       return attribute;
     } else if (dataType instanceof ShortType) {
+      return new Attribute(ctx, field.name(), Short.class);
     } else if (dataType instanceof ByteType) {
-
+      return new Attribute(ctx, field.name(), Byte.class);
+    } else if (dataType instanceof LongType) {
+      return new Attribute(ctx, field.name(), Long.class);
+    } else if (dataType instanceof FloatType) {
+      return new Attribute(ctx, field.name(), Float.class);
+    } else if (dataType instanceof DoubleType) {
+      return new Attribute(ctx, field.name(), Double.class);
     } else if (dataType instanceof ArrayType) {
       ArrayType at = (ArrayType)dataType;
       DataType type = at.elementType();
-      if (type instanceof FloatType) {
-        Attribute attribute = new Attribute(ctx, field.name(), Float.class);
+      if (type instanceof IntegerType) {
+        Attribute attribute = new Attribute(ctx, field.name(), Integer.class);
+        attribute.setCellValNum(tiledb.tiledb_var_num());
+        return attribute;
+      } else if (type instanceof ShortType) {
+        Attribute attribute = new Attribute(ctx, field.name(), Short.class);
+        attribute.setCellValNum(tiledb.tiledb_var_num());
+        return attribute;
+      } else if (type instanceof ByteType) {
+        Attribute attribute = new Attribute(ctx, field.name(), Byte.class);
         attribute.setCellValNum(tiledb.tiledb_var_num());
         return attribute;
       } else if (type instanceof LongType) {
-      } else if (type instanceof ShortType) {
-      } else if (type instanceof ByteType) {
-
+        Attribute attribute = new Attribute(ctx, field.name(), Long.class);
+        attribute.setCellValNum(tiledb.tiledb_var_num());
+        return attribute;
+      } else if (type instanceof FloatType) {
+        Attribute attribute = new Attribute(ctx, field.name(), Float.class);
+        attribute.setCellValNum(tiledb.tiledb_var_num());
+        return attribute;
+      } else if (type instanceof DoubleType) {
+        Attribute attribute = new Attribute(ctx, field.name(), Double.class);
+        attribute.setCellValNum(tiledb.tiledb_var_num());
+        return attribute;
       } else {
         throw new Exception("Datatype not supported for attribute: " + dataType);
       }
-
     } else {
       throw new Exception("Datatype not supported for attribute: " + dataType);
     }
-    return null;
   }
 }
