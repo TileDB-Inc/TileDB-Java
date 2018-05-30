@@ -245,8 +245,6 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
         throw new TileDBError("Not supported getDomain getType " + attribute.getType());
       }
     }
-
-    System.out.println(numValues);
     return numValues;
   }
 
@@ -316,12 +314,10 @@ public class TileDBReaderFactory implements DataReaderFactory<ColumnarBatch>, Da
     if(attribute.getCellValNum()==tiledb.tiledb_var_num()) {
       //add var length offsets
       long[] offsets = (long[]) query.getVarBuffer(name);
-      for(int i= 0; i<offsets.length; i++)
-        System.out.print(offsets[i]+",");
-      System.out.println();
+      int typeSize = tiledb.tiledb_datatype_size(attribute.getType()).intValue();
       for (int j = 0; j < offsets.length; j++) {
-        int length = (j == offsets.length - 1) ? bufferLength - (int) offsets[j] : (int) offsets[j + 1] - (int) offsets[j];
-        vectors[index].putArray(j, (int) offsets[j], length);
+        int length = (j == offsets.length - 1) ? bufferLength*typeSize - (int) offsets[j] : (int) offsets[j + 1] - (int) offsets[j];
+        vectors[index].putArray(j, ((int) offsets[j])/typeSize, length/typeSize);
       }
       numValues = offsets.length;
     }

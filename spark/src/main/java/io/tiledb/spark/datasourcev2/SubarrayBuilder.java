@@ -27,6 +27,7 @@ package io.tiledb.spark.datasourcev2;
 import io.tiledb.java.api.*;
 import org.apache.spark.sql.sources.*;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
+import org.apache.spark.sql.types.StructField;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

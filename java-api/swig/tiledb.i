@@ -1,16 +1,19 @@
 %module tiledb
+
+#define TILEDB_EXPORT
+#define __attribute__(x)
+
 %{
 #include <string>
 #include <vector>
+#include <stdio.h>
 #include "tiledb.h"
 #include "tiledb_java_extensions.h"
 %}
 
-
 %include "stdint.i"
 %include "std_string.i"
 %include "std_vector.i"
-
 
 %include carrays.i
 %array_class(int, intArray);
@@ -38,13 +41,9 @@
 %pointer_functions(unsigned int, uintp);
 %pointer_functions(unsigned long long, ullp);
 
-
 %include "typemaps.i"
 %include "enums.swg"
 %javaconst(1);
-
-
-
 
 %pointer_functions(tiledb_object_t, tiledb_object_tp);
 %pointer_functions(tiledb_query_type_t, tiledb_query_type_tp);
@@ -57,13 +56,5 @@
 %pointer_functions(tiledb_walk_order_t, tiledb_walk_order_tp);
 %pointer_functions(tiledb_vfs_mode_t, tiledb_vfs_mode_tp);
 
-
-%include "tiledb.h"
-
-
-
+%include "tiledb_generated.h"
 %include "tiledb_java_extensions.h"
-
-
-
-

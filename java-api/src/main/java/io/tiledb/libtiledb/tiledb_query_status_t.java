@@ -12,7 +12,8 @@ public enum tiledb_query_status_t {
   TILEDB_FAILED(-1),
   TILEDB_COMPLETED(0),
   TILEDB_INPROGRESS(1),
-  TILEDB_INCOMPLETE(2);
+  TILEDB_INCOMPLETE(2),
+  TILEDB_UNINITIALIZED(3);
 
   public final int swigValue() {
     return swigValue;

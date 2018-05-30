@@ -261,7 +261,6 @@ public class Query implements AutoCloseable {
           +offsets.getNativeType());
 
     setBuffer(attr, buffer);
-
     var_offsets_.put(attr,
         new Pair<Integer, Pair<Integer, NativeArray>>(
             offsets.getSize(),
@@ -325,8 +324,6 @@ public class Query implements AutoCloseable {
         Pair<Integer, Pair<Integer, NativeArray>> p = attr_buffs_.get(a);
         tiledb.voidpArray_setitem(buffers_, bufferId, p.getSecond().getSecond().toVoidPointer());
         buffer_sizes[bufferId]=p.getFirst() * p.getSecond().getFirst();
-//        System.out.println("!!!!"+buffer_sizes[bufferId]);
-//        System.out.println("!!!!@@"+p.getSecond().getSecond().getSize());
         tiledb.charpArray_setitem(attributeNames_, attrId, a);
         sub_tsize_.add(p.getSecond().getFirst());
         bufferId++;
