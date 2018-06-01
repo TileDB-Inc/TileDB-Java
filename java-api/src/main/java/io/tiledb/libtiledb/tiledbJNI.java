@@ -9,6 +9,16 @@
 package io.tiledb.libtiledb;
 
 public class tiledbJNI {
+
+  static {
+    try {
+      System.loadLibrary("tiledb");
+    } catch (UnsatisfiedLinkError e) {
+      System.err.println("Native code library failed to load. \n" + e);
+      System.exit(1);
+    }
+  }
+
   public final static native long new_intArray(int jarg1);
   public final static native void delete_intArray(long jarg1);
   public final static native int intArray_getitem(long jarg1, intArray jarg1_, int jarg2);
