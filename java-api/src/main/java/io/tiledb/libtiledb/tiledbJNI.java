@@ -9,11 +9,6 @@
 package io.tiledb.libtiledb;
 
 public class tiledbJNI {
-
-  static {
-    System.loadLibrary("tiledb");
-  }
-
   public final static native long new_intArray(int jarg1);
   public final static native void delete_intArray(long jarg1);
   public final static native int intArray_getitem(long jarg1, intArray jarg1_, int jarg2);
@@ -194,7 +189,7 @@ public class tiledbJNI {
   public final static native int tiledb_config_load_from_file(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_config_unset(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_config_save_to_file(long jarg1, String jarg2, long jarg3);
-  public final static native int tiledb_config_iter_alloc(long jarg1, long jarg2, String jarg3, long jarg4);
+  public final static native int tiledb_config_iter_alloc(long jarg1, String jarg2, long jarg3, long jarg4);
   public final static native int tiledb_config_iter_reset(long jarg1, long jarg2, String jarg3, long jarg4);
   public final static native void tiledb_config_iter_free(long jarg1);
   public final static native int tiledb_config_iter_here(long jarg1, long jarg2, long jarg3, long jarg4);
@@ -207,7 +202,7 @@ public class tiledbJNI {
   public final static native int tiledb_ctx_is_supported_fs(long jarg1, int jarg2, long jarg3);
   public final static native int tiledb_ctx_cancel_tasks(long jarg1);
   public final static native int tiledb_group_create(long jarg1, String jarg2);
-  public final static native int tiledb_attribute_alloc(long jarg1, long jarg2, String jarg3, int jarg4);
+  public final static native int tiledb_attribute_alloc(long jarg1, String jarg2, int jarg3, long jarg4);
   public final static native void tiledb_attribute_free(long jarg1);
   public final static native int tiledb_attribute_set_compressor(long jarg1, long jarg2, int jarg3, int jarg4);
   public final static native int tiledb_attribute_set_cell_val_num(long jarg1, long jarg2, long jarg3);
@@ -225,14 +220,14 @@ public class tiledbJNI {
   public final static native int tiledb_domain_get_dimension_from_index(long jarg1, long jarg2, long jarg3, long jarg4);
   public final static native int tiledb_domain_get_dimension_from_name(long jarg1, long jarg2, String jarg3, long jarg4);
   public final static native int tiledb_domain_dump(long jarg1, long jarg2, long jarg3);
-  public final static native int tiledb_dimension_alloc(long jarg1, long jarg2, String jarg3, int jarg4, long jarg5, long jarg6);
+  public final static native int tiledb_dimension_alloc(long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, long jarg6);
   public final static native void tiledb_dimension_free(long jarg1);
   public final static native int tiledb_dimension_get_name(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_dimension_get_type(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_dimension_get_domain(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_dimension_get_tile_extent(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_dimension_dump(long jarg1, long jarg2, long jarg3);
-  public final static native int tiledb_array_schema_alloc(long jarg1, long jarg2, int jarg3);
+  public final static native int tiledb_array_schema_alloc(long jarg1, int jarg2, long jarg3);
   public final static native void tiledb_array_schema_free(long jarg1);
   public final static native int tiledb_array_schema_add_attribute(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_schema_set_domain(long jarg1, long jarg2, long jarg3);
@@ -242,7 +237,7 @@ public class tiledbJNI {
   public final static native int tiledb_array_schema_set_coords_compressor(long jarg1, long jarg2, int jarg3, int jarg4);
   public final static native int tiledb_array_schema_set_offsets_compressor(long jarg1, long jarg2, int jarg3, int jarg4);
   public final static native int tiledb_array_schema_check(long jarg1, long jarg2);
-  public final static native int tiledb_array_schema_load(long jarg1, long jarg2, String jarg3);
+  public final static native int tiledb_array_schema_load(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_array_schema_get_array_type(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_schema_get_capacity(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_schema_get_cell_order(long jarg1, long jarg2, long jarg3);
@@ -254,21 +249,23 @@ public class tiledbJNI {
   public final static native int tiledb_array_schema_get_attribute_from_index(long jarg1, long jarg2, long jarg3, long jarg4);
   public final static native int tiledb_array_schema_get_attribute_from_name(long jarg1, long jarg2, String jarg3, long jarg4);
   public final static native int tiledb_array_schema_dump(long jarg1, long jarg2, long jarg3);
-  public final static native int tiledb_query_alloc(long jarg1, long jarg2, long jarg3, int jarg4);
+  public final static native int tiledb_query_alloc(long jarg1, long jarg2, int jarg3, long jarg4);
   public final static native int tiledb_query_set_subarray(long jarg1, long jarg2, long jarg3);
-  public final static native int tiledb_query_set_buffers(long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
+  public final static native int tiledb_query_set_buffer(long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+  public final static native int tiledb_query_set_buffer_var(long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6, long jarg7);
   public final static native int tiledb_query_set_layout(long jarg1, long jarg2, int jarg3);
   public final static native int tiledb_query_finalize(long jarg1, long jarg2);
   public final static native void tiledb_query_free(long jarg1);
   public final static native int tiledb_query_submit(long jarg1, long jarg2);
   public final static native int tiledb_query_submit_async(long jarg1, long jarg2, long jarg3, long jarg4);
-  public final static native int tiledb_query_reset_buffers(long jarg1, long jarg2, long jarg3, long jarg4);
   public final static native int tiledb_query_get_status(long jarg1, long jarg2, long jarg3);
+  public final static native int tiledb_query_get_type(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_alloc(long jarg1, String jarg2, long jarg3);
-  public final static native int tiledb_array_open(long jarg1, long jarg2);
+  public final static native int tiledb_array_open(long jarg1, long jarg2, int jarg3);
   public final static native int tiledb_array_close(long jarg1, long jarg2);
   public final static native void tiledb_array_free(long jarg1);
   public final static native int tiledb_array_get_schema(long jarg1, long jarg2, long jarg3);
+  public final static native int tiledb_array_get_query_type(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_create(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_array_consolidate(long jarg1, String jarg2);
   public final static native int tiledb_array_get_non_empty_domain(long jarg1, long jarg2, long jarg3, long jarg4);
@@ -283,7 +280,7 @@ public class tiledbJNI {
   public final static native void tiledb_kv_schema_free(long jarg1);
   public final static native int tiledb_kv_schema_add_attribute(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_kv_schema_check(long jarg1, long jarg2);
-  public final static native int tiledb_kv_schema_load(long jarg1, long jarg2, String jarg3);
+  public final static native int tiledb_kv_schema_load(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_kv_schema_get_attribute_num(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_kv_schema_get_attribute_from_index(long jarg1, long jarg2, long jarg3, long jarg4);
   public final static native int tiledb_kv_schema_get_attribute_from_name(long jarg1, long jarg2, String jarg3, long jarg4);
@@ -304,7 +301,7 @@ public class tiledbJNI {
   public final static native int tiledb_kv_get_schema(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_kv_add_item(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_kv_flush(long jarg1, long jarg2);
-  public final static native int tiledb_kv_get_item(long jarg1, long jarg2, long jarg3, long jarg4, int jarg5, java.math.BigInteger jarg6);
+  public final static native int tiledb_kv_get_item(long jarg1, long jarg2, long jarg3, int jarg4, java.math.BigInteger jarg5, long jarg6);
   public final static native int tiledb_kv_has_key(long jarg1, long jarg2, long jarg3, int jarg4, java.math.BigInteger jarg5, long jarg6);
   public final static native int tiledb_kv_iter_alloc(long jarg1, long jarg2, long jarg3);
   public final static native void tiledb_kv_iter_free(long jarg1);

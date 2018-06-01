@@ -19,7 +19,14 @@ public enum tiledb_datatype_t {
   TILEDB_INT16,
   TILEDB_UINT16,
   TILEDB_UINT32,
-  TILEDB_UINT64;
+  TILEDB_UINT64,
+  TILEDB_STRING_ASCII,
+  TILEDB_STRING_UTF8,
+  TILEDB_STRING_UTF16,
+  TILEDB_STRING_UTF32,
+  TILEDB_STRING_UCS2,
+  TILEDB_STRING_UCS4,
+  TILEDB_ANY;
 
   public final int swigValue() {
     return swigValue;
