@@ -8,7 +8,7 @@
 
 package io.tiledb.libtiledb;
 
-public class tiledb {
+public class tiledb implements tiledbConstants {
   public static SWIGTYPE_p_p_char new_charpArray(int nelements) {
     long cPtr = tiledbJNI.new_charpArray(nelements);
     return (cPtr == 0) ? null : new SWIGTYPE_p_p_char(cPtr, false);

@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-package io.tiledb.api;
+package io.tiledb.libtiledb;
 
 public abstract class PathCallback {
   private int call(long path, int type){

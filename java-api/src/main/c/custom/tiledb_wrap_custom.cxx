@@ -1360,8 +1360,8 @@ JNIEXPORT jlong JNICALL Java_io_tiledb_libtiledb_UtilsJNI_newCharArraySet(JNIEnv
   if (jarg1) {
     char *temp = (char *)jenv->GetStringUTFChars(jarg1, 0);
     jsize length = jenv->GetStringUTFLength(jarg1);
-  	arg1 = new char[length];
-  	strcpy(arg1, temp);
+      arg1 = new char[length];
+      strcpy(arg1, temp);
     if (!arg1) return 0;
     jenv->ReleaseStringUTFChars(jarg1, (const char *)temp);
   }
@@ -1756,5 +1756,3 @@ JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_UtilsJNI_tiledb_1object_1ls(JNIE
 #ifdef __cplusplus
 }
 #endif
-
-

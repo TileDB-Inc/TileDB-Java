@@ -1,4 +1,4 @@
-package io.tiledb.api;
+package io.tiledb.libtiledb;
 
 public class PointerUtils {
 
