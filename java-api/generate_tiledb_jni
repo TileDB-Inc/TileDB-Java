@@ -20,7 +20,7 @@ Dependencies:
     Bash
     AwK
     Swig
-    GCC / Clang C++ compiler 
+    GCC / Clang C++ compiler
 
 Example:
     ./generate_tiledb_jni --prefix=/usr/local
@@ -85,24 +85,57 @@ if [[ ! -x `which swig` ]]; then
   die "swig wrapper generator not found in path"
 fi
 
+# define the necessary macro contants
+# (removed during preprocessor macro expansion)
+echo '
+#define TILEDB_OK 0
+#define TILEDB_ERR (-1)
+#define TILEDB_OOM (-2)
+' > swig/tiledb_generated.h || die "could not write ./swig/tiledb_generated.h tmp file"
+
 # remove system headers
 awk '!/#\s*include/ || /tiledb_/ {print}' ${tiledb_header} |
-g++ -E -P -nostdinc++ -I "${tiledb_include}" -x c++ - > swig/tiledb_generated.h || 
+g++ -E -P -nostdinc++ -I "${tiledb_include}" -x c++ - >> swig/tiledb_generated.h ||
   die "error generating temp combined swig/tiledb_generated.h header for swig generation"
 
-cleanup() {
+# if existing libtiledb generated source exists, delete it
+cleanup_java() {
+  if [[ -d ./src/main/java/io/libtiledb ]]; then
+    rm ./src/main/java/io/libtiledb/*
+  fi
+}
+
+cleanup_java || die "error deleting previous swig generated java sources"
+
+cleanup_cxx() {
+  if [[ -d ./src/main/c/generated ]]; then
+    rm -r ./src/main/c/generated/*
+  fi
+}
+
+cleanup_cxx  || die "error deleting previous swig generated c++ jni sources"
+
+swig -java -c++ -package io.tiledb.libtiledb \
+                -outdir src/main/java/io/tiledb/libtiledb \
+		-o src/main/c/generated/tiledb_wrap.cxx swig/tiledb.i
+
+cleanup_header() {
   if [[ -f ./swig/tiledb_generated.h ]]; then
     rm ./swig/tiledb_generated.h
   fi
 }
 
-swig -java -c++ -package io.tiledb.libtiledb \
-                -outdir src/main/java/io/tiledb/libtiledb \
-		-o src/main/c/generated/tiledb_wrap.cxx swig/tiledb.i
 case "$?" in
 0 )
-cleanup && echo 'Swig success! src/main/c/generated/tiledb_wrap.cxx';;
+cleanup_header && echo 'Swig success! src/main/c/generated/tiledb_wrap.cxx';;
 1 )
-cleanup && die 'Swig failure!';;
+cleanup_header && die 'Swig failure!';;
 esac
+
+copy_custom_code() {
+  cp ./swig/customCode/* ./src/main/java/io/tiledb/libtiledb/
+}
+
+copy_custom_code || die "error copying custom java code to io/tiledb/libtiledb"
+
 exit 0
