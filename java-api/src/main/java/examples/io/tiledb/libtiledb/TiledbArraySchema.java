@@ -123,14 +123,14 @@ public class TiledbArraySchema {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_alloc(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(null, ctxpp);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
     // Create array schema
     SWIGTYPE_p_p_tiledb_array_schema_t array_schemapp = Utils
         .new_tiledb_array_schema_tpp();
-    tiledb.tiledb_array_schema_alloc(ctx, array_schemapp,
-        tiledb_array_type_t.TILEDB_SPARSE);
+    tiledb.tiledb_array_schema_alloc(ctx,
+        tiledb_array_type_t.TILEDB_SPARSE, array_schemapp);
     SWIGTYPE_p_tiledb_array_schema_t array_schema = Utils
         .tiledb_array_schema_tpp_value(array_schemapp);
 
@@ -148,7 +148,7 @@ public class TiledbArraySchema {
     tiledb.tiledb_array_schema_set_coords_compressor(ctx, array_schema,
         tiledb_compressor_t.TILEDB_ZSTD, 4);
     tiledb.tiledb_array_schema_set_offsets_compressor(ctx, array_schema,
-        tiledb_compressor_t.TILEDB_BLOSC, 5);
+        tiledb_compressor_t.TILEDB_BLOSC_LZ, 5);
 
     // Print array schema contents again
     System.out.println("Second dump:");
@@ -162,9 +162,11 @@ public class TiledbArraySchema {
     uint64_tArray d1_extent = Utils.newUint64Array(d1_extents_);
     SWIGTYPE_p_p_tiledb_dimension_t d1pp = Utils
         .new_tiledb_dimension_tpp();
-    tiledb.tiledb_dimension_alloc(ctx, d1pp, "",
+    tiledb.tiledb_dimension_alloc(ctx, "",
         tiledb_datatype_t.TILEDB_UINT64,
-        PointerUtils.toVoid(d1_domain), PointerUtils.toVoid(d1_extent));
+        PointerUtils.toVoid(d1_domain), 
+	PointerUtils.toVoid(d1_extent),
+	d1pp);
     SWIGTYPE_p_tiledb_dimension_t d1 = Utils.tiledb_dimension_tpp_value(d1pp);
 
     long[] d2_domain_ = {101, 10000};
@@ -173,9 +175,11 @@ public class TiledbArraySchema {
     uint64_tArray d2_extent = Utils.newUint64Array(d2_extents_);
     SWIGTYPE_p_p_tiledb_dimension_t d2pp = Utils
         .new_tiledb_dimension_tpp();
-    tiledb.tiledb_dimension_alloc(ctx, d2pp, "d2",
+    tiledb.tiledb_dimension_alloc(ctx, "d2",
         tiledb_datatype_t.TILEDB_UINT64,
-        PointerUtils.toVoid(d2_domain), PointerUtils.toVoid(d2_extent));
+        PointerUtils.toVoid(d2_domain), 
+	PointerUtils.toVoid(d2_extent),
+	d2pp);
     SWIGTYPE_p_tiledb_dimension_t d2 = Utils.tiledb_dimension_tpp_value(d2pp);
 
     // Create and set getDomain
@@ -189,13 +193,13 @@ public class TiledbArraySchema {
 
     SWIGTYPE_p_p_tiledb_attribute_t a1pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_alloc(ctx, a1pp, "",
-        tiledb_datatype_t.TILEDB_INT32);
+    tiledb.tiledb_attribute_alloc(ctx, "",
+        tiledb_datatype_t.TILEDB_INT32, a1pp);
     SWIGTYPE_p_tiledb_attribute_t a1 = Utils.tiledb_attribute_tpp_value(a1pp);
     SWIGTYPE_p_p_tiledb_attribute_t a2pp = Utils
         .new_tiledb_attribute_tpp();
-    tiledb.tiledb_attribute_alloc(ctx, a2pp, "a2",
-        tiledb_datatype_t.TILEDB_FLOAT32);
+    tiledb.tiledb_attribute_alloc(ctx, "a2",
+        tiledb_datatype_t.TILEDB_FLOAT32, a2pp);
     SWIGTYPE_p_tiledb_attribute_t a2 = Utils.tiledb_attribute_tpp_value(a2pp);
 
     tiledb.tiledb_attribute_set_compressor(ctx, a1,
@@ -256,7 +260,7 @@ public class TiledbArraySchema {
         tiledb.intp_value(coords_compression_level));
     System.out
         .printf("- Offsets compressor: %s",
-            (tiledb.tiledb_compressor_tp_value(offsets_compressor) == tiledb_compressor_t.TILEDB_BLOSC) ? "(BLOSC"
+            (tiledb.tiledb_compressor_tp_value(offsets_compressor) == tiledb_compressor_t.TILEDB_BLOSC_LZ) ? "(BLOSC"
                 : "error");
     System.out.printf(", %d)\n",
         tiledb.intp_value(offsets_compression_level));

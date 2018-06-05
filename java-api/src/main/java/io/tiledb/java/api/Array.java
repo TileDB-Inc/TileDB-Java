@@ -60,7 +60,7 @@ public class Array implements AutoCloseable {
 
   private void openArray() throws TileDBError {
     arraypp = Utils.new_tiledb_array_tpp();
-    ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, arraypp));
+    ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, arraypp)); 
     arrayp = Utils.tiledb_array_tpp_value(arraypp);
     ctx.handleError(tiledb.tiledb_array_open(ctx.getCtxp(), arrayp, tiledb_query_type_t.TILEDB_READ));
     initialized = true;
