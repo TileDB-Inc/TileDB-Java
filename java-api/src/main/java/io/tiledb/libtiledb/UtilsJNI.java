@@ -78,9 +78,78 @@ public class UtilsJNI {
 
   public final static native long[] uint64ArrayGet(long array, int size);
 
-  public final static native int tiledb_query_submit_async(long jarg1, tiledb_ctx_t jarg1_, long jarg2, tiledb_query_t jarg2_, Object jarg3);
+  public final static native int tiledb_query_submit_async(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, long jarg2, SWIGTYPE_p_tiledb_query_t jarg2_, Object jarg3);
+
   public final static native long java_callback();
-  public final static native int tiledb_object_walk(long jarg1, tiledb_ctx_t jarg1_, String jarg2, int jarg3, Object jarg4);
-  public final static native int tiledb_ls(long jarg1, tiledb_ctx_t jarg1_, String jarg2, Object jarg3);
+
+  public final static native int tiledb_object_walk(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, int jarg3, Object jarg4);
+
+  public final static native int tiledb_object_ls(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, Object jarg3);
+
   public final static native long java_path_callback();
+
+  public final static native long new_tiledb_config_tpp();
+
+  public final static native long tiledb_config_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_config_iter_tpp();
+
+  public final static native long tiledb_config_iter_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_ctx_tpp();
+
+  public final static native long tiledb_ctx_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_error_tpp();
+
+  public final static native long tiledb_error_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_attribute_tpp();
+
+  public final static native long tiledb_attribute_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_array_tpp();
+
+  public final static native long tiledb_array_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_array_schema_tpp();
+
+  public final static native long tiledb_array_schema_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_dimension_tpp();
+
+  public final static native long tiledb_dimension_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_domain_tpp();
+
+  public final static native long tiledb_domain_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_query_tpp();
+
+  public final static native long tiledb_query_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_kv_schema_tpp();
+
+  public final static native long tiledb_kv_schema_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_kv_tpp();
+
+  public final static native long tiledb_kv_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_kv_item_tpp();
+
+  public final static native long tiledb_kv_item_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_kv_iter_tpp();
+
+  public final static native long tiledb_kv_iter_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_vfs_tpp();
+
+  public final static native long tiledb_vfs_tpp_value(long jarg1);
+
+  public final static native long new_tiledb_vfs_fh_tpp();
+
+  public final static native long tiledb_vfs_fh_tpp_value(long jarg1);
+
 }
