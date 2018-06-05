@@ -80,7 +80,7 @@ public class ArraySchema implements AutoCloseable {
     ctx.deleterAdd(this);
     this.ctx = ctx;
     schemapp = Utils.new_tiledb_array_schema_tpp();
-    ctx.handleError(tiledb.tiledb_array_schema_alloc(ctx.getCtxp(), schemapp, type));
+    ctx.handleError(tiledb.tiledb_array_schema_alloc(ctx.getCtxp(), type, schemapp));
     schemap = Utils.tiledb_array_schema_tpp_value(schemapp);
   }
 
@@ -91,7 +91,7 @@ public class ArraySchema implements AutoCloseable {
     ctx.deleterAdd(this);
     this.ctx = ctx;
     schemapp = Utils.new_tiledb_array_schema_tpp();
-    ctx.handleError(tiledb.tiledb_array_schema_load(ctx.getCtxp(), schemapp, uri));
+    ctx.handleError(tiledb.tiledb_array_schema_load(ctx.getCtxp(), uri, schemapp));
     schemap = Utils.tiledb_array_schema_tpp_value(schemapp);
   }
 
