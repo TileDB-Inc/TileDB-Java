@@ -7,7 +7,6 @@ public class Utils {
     return ret;
   }
 
-
   public static int32_tArray newInt32_tArray(int[] array) {
     int32_tArray ret = new int32_tArray(UtilsJNI.newInt32ArraySet(array), true);
     return ret;
@@ -216,6 +215,7 @@ public class Utils {
     return (cPtr == 0) ? null : new SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int(cPtr, false);
   }
 
+
   public static int tiledb_object_walk(tiledb_ctx_t ctx, String path, tiledb_walk_order_t order, PathCallback callback) {
     return UtilsJNI.tiledb_object_walk(tiledb_ctx_t.getCPtr(ctx), ctx, path, order.swigValue(), callback);
   }
@@ -227,4 +227,6 @@ public class Utils {
   public static int tiledb_ls(tiledb_ctx_t ctx, String path, PathCallback callback) {
     return UtilsJNI.tiledb_ls(tiledb_ctx_t.getCPtr(ctx), ctx, path, callback);
   }
+
+
 }
