@@ -110,7 +110,7 @@ public class Context implements AutoCloseable {
 
   private void createContext(Config config) throws TileDBError {
     ctxpp = Utils.new_tiledb_ctx_tpp();
-    if (tiledb.tiledb_ctx_alloc(ctxpp, config.getConfigp()) != tiledb.TILEDB_OK)
+    if (tiledb.tiledb_ctx_alloc(config.getConfigp(), ctxpp) != tiledb.TILEDB_OK)
       throw new TileDBError("[TileDB::JavaAPI] Error: Failed to create context");
     ctxp = Utils.tiledb_ctx_tpp_value(ctxpp);
     this.config = config;
