@@ -31,14 +31,14 @@ public class TiledbDenseWriteUnordered {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_alloc(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(null, ctxpp);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
     // Open array
     SWIGTYPE_p_p_tiledb_array_t arraypp = Utils.new_tiledb_array_tpp();
     tiledb.tiledb_array_alloc(ctx, "my_dense_array", arraypp);
     SWIGTYPE_p_tiledb_array_t arrayp = Utils.tiledb_array_tpp_value(arraypp);
-    tiledb.tiledb_array_open(ctx, arrayp);
+    tiledb.tiledb_array_open(ctx, arrayp, tiledb_query_type_t.TILEDB_WRITE);
 
     // Prepare cell buffers - #1
     int[] buffer_a1 = {211, 213, 212, 208};
@@ -72,8 +72,8 @@ public class TiledbDenseWriteUnordered {
     tiledb.charpArray_setitem(attributes, 1, "a2");
     tiledb.charpArray_setitem(attributes, 2, "a3");
     tiledb.charpArray_setitem(attributes, 3, tiledb.tiledb_coords());
-    tiledb.tiledb_query_alloc(ctx, querypp, arrayp,
-        tiledb_query_type_t.TILEDB_WRITE);
+    tiledb.tiledb_query_alloc(ctx, arrayp,
+        tiledb_query_type_t.TILEDB_WRITE, querypp);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_layout(ctx, query,
         tiledb_layout_t.TILEDB_UNORDERED);

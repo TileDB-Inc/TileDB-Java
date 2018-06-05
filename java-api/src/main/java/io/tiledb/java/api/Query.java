@@ -99,7 +99,7 @@ public class Query implements AutoCloseable {
     ctx = array.getCtx();
     ctx.deleterAdd(this);
     querypp = Utils.new_tiledb_query_tpp();
-    ctx.handleError(tiledb.tiledb_query_alloc(ctx.getCtxp(), querypp, array.getArrayp(), type));
+    ctx.handleError(tiledb.tiledb_query_alloc(ctx.getCtxp(), array.getArrayp(), type, querypp));
     queryp = Utils.tiledb_query_tpp_value(querypp);
     var_offsets_ = new HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>>();
     attr_buffs_ = new HashMap<String, Pair<Integer, Pair<Integer, NativeArray>>>();
