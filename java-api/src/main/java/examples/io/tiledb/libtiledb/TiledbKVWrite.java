@@ -33,7 +33,7 @@ public class TiledbKVWrite {
   public static void main(String[] args) throws Exception {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_alloc(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(null, ctxpp);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
     // Key-values with three getAttributes

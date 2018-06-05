@@ -38,7 +38,7 @@ public class TiledbDenseReadGlobal {
     SWIGTYPE_p_p_tiledb_array_t arraypp = Utils.new_tiledb_array_tpp();
     tiledb.tiledb_array_alloc(ctx, "my_dense_array", arraypp);
     SWIGTYPE_p_tiledb_array_t arrayp = Utils.tiledb_array_tpp_value(arraypp);
-    tiledb.tiledb_array_open(ctx, arrayp);
+    tiledb.tiledb_array_open(ctx, arrayp, tiledb_query_type_t.TILEDB_READ);
 
     // Print non-empty getDomain
     uint64_tArray domain = new uint64_tArray(4);
@@ -89,8 +89,8 @@ public class TiledbDenseReadGlobal {
 
     // Create query
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
-    tiledb.tiledb_query_alloc(ctx, querypp, arrayp,
-        tiledb_query_type_t.TILEDB_READ);
+    tiledb.tiledb_query_alloc(ctx, arrayp,
+        tiledb_query_type_t.TILEDB_READ, querypp);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_buffers(ctx, query, attributes, 3, buffers,
         buffer_sizes.cast());

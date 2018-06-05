@@ -45,14 +45,14 @@ public class TiledbSparseReadSubsetIncomplete {
   public static void main(String[] args) {
     // Create TileDB context
     SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
-    tiledb.tiledb_ctx_alloc(ctxpp, null);
+    tiledb.tiledb_ctx_alloc(null, ctxpp);
     SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
 
     // Open array
     SWIGTYPE_p_p_tiledb_array_t arraypp = Utils.new_tiledb_array_tpp();
     tiledb.tiledb_array_alloc(ctx, "my_sparse_array", arraypp);
     SWIGTYPE_p_tiledb_array_t arrayp = Utils.tiledb_array_tpp_value(arraypp);
-    tiledb.tiledb_array_open(ctx, arrayp);
+    tiledb.tiledb_array_open(ctx, arrayp, tiledb_query_type_t.TILEDB_READ);
 
     // Prepare cell buffers
     intArray buffer_a1 = new intArray(2);
@@ -68,8 +68,8 @@ public class TiledbSparseReadSubsetIncomplete {
     long[] subarray_ = {3, 4, 2, 4};
     uint64_tArray subarray = Utils.newUint64Array(subarray_);
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
-    tiledb.tiledb_query_alloc(ctx, querypp, arrayp,
-        tiledb_query_type_t.TILEDB_READ);
+    tiledb.tiledb_query_alloc(ctx, arrayp,
+        tiledb_query_type_t.TILEDB_READ, querypp);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_layout(ctx, query,
         tiledb_layout_t.TILEDB_COL_MAJOR);
