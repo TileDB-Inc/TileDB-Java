@@ -67,16 +67,20 @@ public class TiledbSparseReadSubsetIncomplete {
     tiledb.charpArray_setitem(attributes, 0, "a1");
     long[] subarray_ = {3, 4, 2, 4};
     uint64_tArray subarray = Utils.newUint64Array(subarray_);
+
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
     tiledb.tiledb_query_alloc(ctx, arrayp,
         tiledb_query_type_t.TILEDB_READ, querypp);
+
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_layout(ctx, query,
         tiledb_layout_t.TILEDB_COL_MAJOR);
+
     tiledb.tiledb_query_set_subarray(ctx, query,
         PointerUtils.toVoid(subarray));
-    tiledb.tiledb_query_set_buffers(ctx, query, attributes, 1, buffers,
-        buffer_sizes.cast());
+
+    tiledb.tiledb_query_set_buffer(ctx, query, "a1",
+	PointerUtils.toVoid(buffer_a1), buffer_sizes.cast());
 
     // Loop until the query is completed
     System.out.printf("a1\n---\n");
