@@ -69,57 +69,61 @@ public class TiledbDenseReadGlobal {
     System.out.println("a3: " + buffer_sizes.getitem(3));
 
     // Prepare cell buffers
-    int a1_size = buffer_sizes.getitem(0).intValue() / UtilsJNI.sizeOfInt32();
-    int a2_size = buffer_sizes.getitem(1).intValue() / UtilsJNI.sizeOfUint64();
-    int a2_var_size = buffer_sizes.getitem(2).intValue() / UtilsJNI.sizeOfInt8();
-    int a3_size = buffer_sizes.getitem(3).intValue() / UtilsJNI.sizeOfFloat();
+    int a1_int_size = buffer_sizes.getitem(0).intValue() / UtilsJNI.sizeOfInt32();
+    int a2_int_size = buffer_sizes.getitem(1).intValue() / UtilsJNI.sizeOfUint64();
+    int a2_int_var_size = buffer_sizes.getitem(2).intValue() / UtilsJNI.sizeOfInt8();
+    int a3_int_size = buffer_sizes.getitem(3).intValue() / UtilsJNI.sizeOfFloat();
 
-    int32_tArray buffer_a1 = new int32_tArray(a1_size);
-    uint64_tArray buffer_a2 = new uint64_tArray(a2_size);
-    int8_tArray buffer_var_a2 = new int8_tArray(a2_var_size);
-    floatArray buffer_a3 = new floatArray(a3_size);
-
-
-    SWIGTYPE_p_p_void buffers = tiledb.new_voidpArray(4);
-    tiledb.voidpArray_setitem(buffers, 0, PointerUtils.toVoid(buffer_a1));
-    tiledb.voidpArray_setitem(buffers, 1, PointerUtils.toVoid(buffer_a2));
-    tiledb.voidpArray_setitem(buffers, 2,
-        PointerUtils.toVoid(buffer_var_a2));
-    tiledb.voidpArray_setitem(buffers, 3, PointerUtils.toVoid(buffer_a3));
-
-    // Create query
+    int32_tArray buffer_a1 = new int32_tArray(a1_int_size);
+    uint64_tArray buffer_a2 = new uint64_tArray(a2_int_size);
+    int8_tArray buffer_var_a2 = new int8_tArray(a2_int_var_size);
+    floatArray buffer_a3 = new floatArray(a3_int_size);
+   
+    uint64_tArray a1_size = new uint64_tArray(1);
+    uint64_tArray a2_size = new uint64_tArray(1);
+    uint64_tArray a2_var_size = new uint64_tArray(1);
+    uint64_tArray a3_size = new uint64_tArray(1);
+    
+     // Create query
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
     tiledb.tiledb_query_alloc(ctx, arrayp,
         tiledb_query_type_t.TILEDB_READ, querypp);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
-    tiledb.tiledb_query_set_buffers(ctx, query, attributes, 3, buffers,
-        buffer_sizes.cast());
-    tiledb.tiledb_query_set_layout(ctx, query,
+     tiledb.tiledb_query_set_layout(ctx, query,
         tiledb_layout_t.TILEDB_GLOBAL_ORDER);
 
-    // Submit query
+    tiledb.tiledb_query_set_buffer(ctx, query, "a1",
+	PointerUtils.toVoid(buffer_a1), a1_size.cast());
+    tiledb.tiledb_query_set_buffer_var(ctx, query, "a2", 
+	buffer_a2.cast(),
+	a2_size.cast(),
+	PointerUtils.toVoid(buffer_var_a2),
+        a2_var_size.cast());
+    tiledb.tiledb_query_set_buffer(ctx, query, "a3",
+	PointerUtils.toVoid(buffer_a3), a3_size.cast());
+
+      // Submit query
     tiledb.tiledb_query_submit(ctx, query);
 
-
-    a1_size = buffer_sizes.getitem(0).intValue() / UtilsJNI.sizeOfInt32();
-    a2_size = buffer_sizes.getitem(1).intValue() / UtilsJNI.sizeOfUint64();
-    a2_var_size = buffer_sizes.getitem(2).intValue() / UtilsJNI.sizeOfInt8();
-    a3_size = buffer_sizes.getitem(3).intValue() / UtilsJNI.sizeOfFloat();
+    a1_int_size = a1_size.getitem(0).intValue() / UtilsJNI.sizeOfInt32();
+    a2_int_size = a2_size.getitem(0).intValue() / UtilsJNI.sizeOfUint64();
+    a2_int_var_size = a2_var_size.getitem(0).intValue() / UtilsJNI.sizeOfInt8();
+    a3_int_size = a3_size.getitem(0).intValue() / UtilsJNI.sizeOfFloat();
 
     // Print cell values (assumes all getAttributes are read)
-    int[] a1 = Utils.int32ArrayGet(buffer_a1, a1_size);
-    long[] a2 = Utils.uint64ArrayGet(buffer_a2, a2_size);
-    byte[] a2_var = Utils.int8ArrayGet(buffer_var_a2, a2_var_size);
-    float[] a3 = Utils.floatArrayGet(buffer_a3, a3_size);
+    int[] a1 = Utils.int32ArrayGet(buffer_a1, a1_int_size);
+    long[] a2 = Utils.uint64ArrayGet(buffer_a2, a2_int_size);
+    byte[] a2_var = Utils.int8ArrayGet(buffer_var_a2, a2_int_var_size);
+    float[] a3 = Utils.floatArrayGet(buffer_a3, a3_int_size);
 
-    int result_num = a1_size;
+    int result_num = a1_int_size;
     System.out.println("Result num: " + result_num);
     System.out.println("a1, a2, a3[0], a3[1]");
     System.out.println("-----------------------------------------");
     for (int i = 0; i < result_num; ++i) {
       System.out.print(a1[i] + ", ");
       int var_size = (i != result_num - 1) ? (int) a2[i + 1] - (int) a2[i]
-          : a2_var_size - (int) a2[i];
+          : a2_int_var_size - (int) a2[i];
       System.out.print(Utils.substring(a2_var, (int) a2[i], var_size)
           + ", ");
       System.out.print(a3[2 * i] + " "

@@ -281,8 +281,8 @@ public class tiledbJNI {
   public final static native int tiledb_array_create(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_array_consolidate(long jarg1, String jarg2);
   public final static native int tiledb_array_get_non_empty_domain(long jarg1, long jarg2, long jarg3, long jarg4);
-  public final static native int tiledb_array_compute_max_read_buffer_sizes(long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
-  public final static native int tiledb_array_partition_subarray(long jarg1, long jarg2, long jarg3, int jarg4, long jarg5, long jarg6, long jarg7, long jarg8, long jarg9);
+  public final static native int tiledb_array_max_buffer_size(long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+  public final static native int tiledb_array_max_buffer_size_var(long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
   public final static native int tiledb_object_type(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_object_remove(long jarg1, String jarg2);
   public final static native int tiledb_object_move(long jarg1, String jarg2, String jarg3);

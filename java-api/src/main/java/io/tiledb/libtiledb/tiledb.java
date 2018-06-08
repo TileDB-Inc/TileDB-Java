@@ -808,12 +808,12 @@ public class tiledb implements tiledbConstants {
     return tiledbJNI.tiledb_array_get_non_empty_domain(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_t.getCPtr(array), SWIGTYPE_p_void.getCPtr(domain), SWIGTYPE_p_int.getCPtr(is_empty));
   }
 
-  public static int tiledb_array_compute_max_read_buffer_sizes(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_array_t array, SWIGTYPE_p_void subarray, SWIGTYPE_p_p_char attributes, long attribute_num, SWIGTYPE_p_unsigned_long_long buffer_sizes) {
-    return tiledbJNI.tiledb_array_compute_max_read_buffer_sizes(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_t.getCPtr(array), SWIGTYPE_p_void.getCPtr(subarray), SWIGTYPE_p_p_char.getCPtr(attributes), attribute_num, SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_sizes));
+  public static int tiledb_array_max_buffer_size(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_array_t array, String attribute, SWIGTYPE_p_void subarray, SWIGTYPE_p_unsigned_long_long buffer_size) {
+    return tiledbJNI.tiledb_array_max_buffer_size(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_t.getCPtr(array), attribute, SWIGTYPE_p_void.getCPtr(subarray), SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_size));
   }
 
-  public static int tiledb_array_partition_subarray(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_array_t array, SWIGTYPE_p_void subarray, tiledb_layout_t layout, SWIGTYPE_p_p_char attributes, long attribute_num, SWIGTYPE_p_unsigned_long_long buffer_sizes, SWIGTYPE_p_p_p_void subarray_partitions, SWIGTYPE_p_unsigned_long_long npartitions) {
-    return tiledbJNI.tiledb_array_partition_subarray(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_t.getCPtr(array), SWIGTYPE_p_void.getCPtr(subarray), layout.swigValue(), SWIGTYPE_p_p_char.getCPtr(attributes), attribute_num, SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_sizes), SWIGTYPE_p_p_p_void.getCPtr(subarray_partitions), SWIGTYPE_p_unsigned_long_long.getCPtr(npartitions));
+  public static int tiledb_array_max_buffer_size_var(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_array_t array, String attribute, SWIGTYPE_p_void subarray, SWIGTYPE_p_unsigned_long_long buffer_off_size, SWIGTYPE_p_unsigned_long_long buffer_val_size) {
+    return tiledbJNI.tiledb_array_max_buffer_size_var(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_t.getCPtr(array), attribute, SWIGTYPE_p_void.getCPtr(subarray), SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_off_size), SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_val_size));
   }
 
   public static int tiledb_object_type(SWIGTYPE_p_tiledb_ctx_t ctx, String path, SWIGTYPE_p_tiledb_object_t type) {
