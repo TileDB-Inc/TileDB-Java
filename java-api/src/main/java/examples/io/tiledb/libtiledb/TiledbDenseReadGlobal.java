@@ -51,39 +51,44 @@ public class TiledbDenseReadGlobal {
     System.out.println("d2: (" + domain.getitem(2) + ", "
         + domain.getitem(3) + ")");
 
-    // // Print maximum buffer sizes for each attribute
+    // Print maximum buffer sizes for each attribute
+    uint64_tArray a1_size = new uint64_tArray(1);
+    uint64_tArray a2_size = new uint64_tArray(1);
+    uint64_tArray a2_var_size = new uint64_tArray(1);
+    uint64_tArray a3_size = new uint64_tArray(1);
+ 
     SWIGTYPE_p_p_char attributes = tiledb.new_charpArray(3);
     tiledb.charpArray_setitem(attributes, 0, "a1");
     tiledb.charpArray_setitem(attributes, 1, "a2");
     tiledb.charpArray_setitem(attributes, 2, "a3");
-    uint64_tArray buffer_sizes = new uint64_tArray(4);
+    
     long[] subarray_ = {1, 4, 1, 4};
     uint64_tArray subarray = Utils.newUint64Array(subarray_);
-    tiledb.tiledb_array_compute_max_read_buffer_sizes(ctx,
-        arrayp, PointerUtils.toVoid(subarray), attributes, 3,
-        buffer_sizes.cast());
+    
+    tiledb.tiledb_array_max_buffer_size(ctx, arrayp, "a1",
+        PointerUtils.toVoid(subarray), a1_size.cast());
+    tiledb.tiledb_array_max_buffer_size_var(ctx, arrayp, "a2",
+	PointerUtils.toVoid(subarray), a2_size.cast(), a2_var_size.cast());
+    tiledb.tiledb_array_max_buffer_size(ctx, arrayp, "a3",
+	PointerUtils.toVoid(subarray), a3_size.cast());
+
     System.out.println("Maximum buffer sizes:");
-    System.out.println("a1: " + buffer_sizes.getitem(0));
-    System.out.println("a2: (" + buffer_sizes.getitem(1) + ", "
-        + buffer_sizes.getitem(2) + ")");
-    System.out.println("a3: " + buffer_sizes.getitem(3));
+    System.out.println("a1: " + a1_size.getitem(0));
+    System.out.println("a2: (" + a2_size.getitem(0) + ", "
+        + a2_var_size.getitem(0) + ")");
+    System.out.println("a3: " + a3_size.getitem(0));
 
     // Prepare cell buffers
-    int a1_int_size = buffer_sizes.getitem(0).intValue() / UtilsJNI.sizeOfInt32();
-    int a2_int_size = buffer_sizes.getitem(1).intValue() / UtilsJNI.sizeOfUint64();
-    int a2_int_var_size = buffer_sizes.getitem(2).intValue() / UtilsJNI.sizeOfInt8();
-    int a3_int_size = buffer_sizes.getitem(3).intValue() / UtilsJNI.sizeOfFloat();
+    int a1_int_size = a1_size.getitem(0).intValue() / UtilsJNI.sizeOfInt32();
+    int a2_int_size = a2_size.getitem(0).intValue() / UtilsJNI.sizeOfUint64();
+    int a2_int_var_size = a2_var_size.getitem(0).intValue() / UtilsJNI.sizeOfInt8();
+    int a3_int_size = a3_size.getitem(0).intValue() / UtilsJNI.sizeOfFloat();
 
     int32_tArray buffer_a1 = new int32_tArray(a1_int_size);
     uint64_tArray buffer_a2 = new uint64_tArray(a2_int_size);
     int8_tArray buffer_var_a2 = new int8_tArray(a2_int_var_size);
     floatArray buffer_a3 = new floatArray(a3_int_size);
    
-    uint64_tArray a1_size = new uint64_tArray(1);
-    uint64_tArray a2_size = new uint64_tArray(1);
-    uint64_tArray a2_var_size = new uint64_tArray(1);
-    uint64_tArray a3_size = new uint64_tArray(1);
-    
      // Create query
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
     tiledb.tiledb_query_alloc(ctx, arrayp,
