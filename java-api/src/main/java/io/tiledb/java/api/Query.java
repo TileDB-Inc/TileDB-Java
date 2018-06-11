@@ -120,34 +120,6 @@ public class Query implements AutoCloseable {
     return status;
   }
 
-
-  public List<Object> getPartitions() throws TileDBError {
-    preparePartitionSubmission();
-
-    SWIGTYPE_p_p_p_void partitions = tiledb.new_voidppp();
-    SWIGTYPE_p_unsigned_long_long partitonNump = tiledb.new_ullp();
-    ctx.handleError(tiledb.tiledb_array_partition_subarray(
-        ctx.getCtxp(),
-        array.getArrayp(),
-        subarray.toVoidPointer(),
-        tiledb_layout_t.TILEDB_ROW_MAJOR,
-        attributeNames_,
-        (long)attr_buffs_.size(),
-        buffer_sizes_.cast(),
-        partitions,
-        partitonNump
-        ));
-
-    int partitonNum = tiledb.ullp_value(partitonNump).intValue();
-    List<Object> ret = new ArrayList<Object>(partitonNum);
-    for (int p = 0; p<partitonNum; p++) {
-      NativeArray partition = new NativeArray(ctx, subarray.getNativeType(),
-          tiledb.voidpArray_getitem(tiledb.voidppp_value(partitions),p));
-      ret.add(partition.toJavaArray(array.getSchema().getDomain().getDimensions().size()*2));
-    }
-    return ret;
-  }
-
   /**
    * Submits the query. Call will block until query is complete.
    * @return
