@@ -57,32 +57,31 @@ public class TiledbDenseWriteGlobal1 {
         13.2f, 14.1f, 14.2f, 15.1f, 15.2f};
     floatArray a3 = Utils.newFloatArray(buffer_a3);
 
-    SWIGTYPE_p_p_void buffers = tiledb.new_voidpArray(4);
-    tiledb.voidpArray_setitem(buffers, 0, PointerUtils.toVoid(a1));
-    tiledb.voidpArray_setitem(buffers, 1, PointerUtils.toVoid(a2));
-    tiledb.voidpArray_setitem(buffers, 2, PointerUtils.toVoid(var_a2));
-    tiledb.voidpArray_setitem(buffers, 3, PointerUtils.toVoid(a3));
-    long buffer_sizes_[] = {buffer_a1.length * Utils.sizeOfType(a1),
-        buffer_a2.length * Utils.sizeOfType(a2),
-        buffer_var_a2.length() * Utils.sizeOfType(var_a2),
-        buffer_a3.length * Utils.sizeOfType(a3)};
-    uint64_tArray buffer_sizes = Utils.newUint64Array(buffer_sizes_);
-
     // Create query
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
-    SWIGTYPE_p_p_char attributes = tiledb.new_charpArray(3);
-    tiledb.charpArray_setitem(attributes, 0, "a1");
-    tiledb.charpArray_setitem(attributes, 1, "a2");
-    tiledb.charpArray_setitem(attributes, 2, "a3");
-    // String[] getAttributes = {"a1", "a2", "a3"};
     tiledb.tiledb_query_alloc(ctx, arrayp,
         tiledb_query_type_t.TILEDB_WRITE, querypp);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_layout(ctx, query,
         tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    
+    long[] buffer_a1_size = {buffer_a1.length * Utils.sizeOfType(a1)};
+    uint64_tArray a1_size = Utils.newUint64Array(buffer_a1_size);
+    tiledb.tiledb_query_set_buffer(ctx, query, "a1",
+	PointerUtils.toVoid(a1), a1_size.cast());
+   
+    long[] buffer_a2_size = {buffer_a2.length * Utils.sizeOfType(a2)};
+    uint64_tArray a2_size = Utils.newUint64Array(buffer_a2_size);
+    long[] buffer_var_a2_size = {buffer_var_a2.length() * Utils.sizeOfType(var_a2)};
+    uint64_tArray var_a2_size = Utils.newUint64Array(buffer_var_a2_size);
+    tiledb.tiledb_query_set_buffer_var(ctx, query, "a2",
+        a2.cast(), a2_size.cast(),
+	PointerUtils.toVoid(var_a2), var_a2_size.cast());
 
-    tiledb.tiledb_query_set_buffers(ctx, query, attributes, 3, buffers,
-        buffer_sizes.cast());
+    long[] buffer_a3_size = {buffer_a3.length * Utils.sizeOfType(a3)};
+    uint64_tArray a3_size = Utils.newUint64Array(buffer_a3_size);
+    tiledb.tiledb_query_set_buffer(ctx, query, "a3", 
+        PointerUtils.toVoid(a3), a3_size.cast());
 
     // Submit query
     tiledb.tiledb_query_submit(ctx, query);
