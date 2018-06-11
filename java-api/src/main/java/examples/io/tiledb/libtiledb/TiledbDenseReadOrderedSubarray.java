@@ -46,29 +46,32 @@ public class TiledbDenseReadOrderedSubarray {
     tiledb.charpArray_setitem(attributes, 1, "a2");
     tiledb.charpArray_setitem(attributes, 2, "a3");
 
-    uint64_tArray buffer_sizes = new uint64_tArray(4);
     long[] subarray_ = {3, 4, 2, 4};
     uint64_tArray subarray = Utils.newUint64Array(subarray_);
-    tiledb.tiledb_array_compute_max_read_buffer_sizes(ctx,
-        arrayp, PointerUtils.toVoid(subarray), attributes, 3,
-        buffer_sizes.cast());
+
+    uint64_tArray a1_size = new uint64_tArray(1);
+    uint64_tArray a2_size = new uint64_tArray(1);
+    uint64_tArray var_a2_size = new uint64_tArray(1);
+    uint64_tArray a3_size = new uint64_tArray(1);
+    
+    tiledb.tiledb_array_max_buffer_size(ctx, arrayp, "a1",
+	PointerUtils.toVoid(subarray), a1_size.cast());
+    
+    tiledb.tiledb_array_max_buffer_size_var(ctx, arrayp, "a2", 
+	PointerUtils.toVoid(subarray), a2_size.cast(), var_a2_size.cast());
+
+    tiledb.tiledb_array_max_buffer_size(ctx, arrayp, "a3", 
+	PointerUtils.toVoid(subarray), a3_size.cast());
 
     // Prepare cell buffers
     intArray buffer_a1 = new intArray(
-        buffer_sizes.getitem(0).intValue() / 4);
-    uint64_tArray buffer_a2 = new uint64_tArray(buffer_sizes.getitem(1)
+        a1_size.getitem(0).intValue() / 4);
+    uint64_tArray buffer_a2 = new uint64_tArray(a2_size.getitem(0)
         .intValue() / 8);
-    charArray buffer_var_a2 = new charArray(buffer_sizes.getitem(2)
+    charArray buffer_var_a2 = new charArray(var_a2_size.getitem(0)
         .intValue());
-    floatArray buffer_a3 = new floatArray(buffer_sizes.getitem(3)
+    floatArray buffer_a3 = new floatArray(a3_size.getitem(0)
         .intValue() / 4);
-
-    SWIGTYPE_p_p_void buffers = tiledb.new_voidpArray(4);
-    tiledb.voidpArray_setitem(buffers, 0, PointerUtils.toVoid(buffer_a1));
-    tiledb.voidpArray_setitem(buffers, 1, PointerUtils.toVoid(buffer_a2));
-    tiledb.voidpArray_setitem(buffers, 2,
-        PointerUtils.toVoid(buffer_var_a2));
-    tiledb.voidpArray_setitem(buffers, 3, PointerUtils.toVoid(buffer_a3));
 
     // Create query
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
@@ -79,14 +82,20 @@ public class TiledbDenseReadOrderedSubarray {
         tiledb_layout_t.TILEDB_ROW_MAJOR);
     tiledb.tiledb_query_set_subarray(ctx, query,
         PointerUtils.toVoid(subarray));
-    tiledb.tiledb_query_set_buffers(ctx, query, attributes, 3, buffers,
-        buffer_sizes.cast());
+    
+    tiledb.tiledb_query_set_buffer(ctx, query, "a1", 
+	PointerUtils.toVoid(buffer_a1), a1_size.cast());
+    tiledb.tiledb_query_set_buffer_var(ctx, query, "a2", 
+	buffer_a2.cast(), a2_size.cast(),
+	PointerUtils.toVoid(buffer_var_a2), var_a2_size.cast());
+    tiledb.tiledb_query_set_buffer(ctx, query, "a3", 
+	PointerUtils.toVoid(buffer_a3), a3_size.cast());
 
     // Submit query
     tiledb.tiledb_query_submit(ctx, query);
 
     // Print cell values (assumes all getAttributes are read)
-    int result_num = buffer_sizes.getitem(0).intValue() / 4;
+    int result_num = a1_size.getitem(0).intValue() / 4;
     System.out.printf("Result num: %d\n\n", result_num);
     System.out.printf("%5s%10s%10s%10s\n", "a1", "a2", "a3[0]", "a3[1]");
     System.out.printf("------------------------------------\n");
@@ -94,7 +103,7 @@ public class TiledbDenseReadOrderedSubarray {
       System.out.printf("%5d ", buffer_a1.getitem(i));
       int var_size = (i != result_num - 1) ? buffer_a2.getitem(i + 1)
           .intValue() - buffer_a2.getitem(i).intValue()
-          : buffer_sizes.getitem(2).intValue()
+          : var_a2_size.getitem(0).intValue()
           - buffer_a2.getitem(i).intValue();
       System.out.print(Utils.substring(buffer_var_a2, buffer_a2
           .getitem(i).intValue(), var_size));
@@ -109,8 +118,8 @@ public class TiledbDenseReadOrderedSubarray {
     tiledb.tiledb_array_close(ctx, arrayp);
 
     // Clean up
-    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_query_free(querypp);
+    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_ctx_free(ctxpp);
     buffer_a1.delete();
     buffer_a2.delete();
