@@ -54,32 +54,36 @@ public class TiledbSparseWriteUnordered2 {
     long buffer_coords_[] = {3, 4, 4, 2, 1, 1};
     uint64_tArray buffer_coords = Utils.newUint64Array(buffer_coords_);
 
-    SWIGTYPE_p_p_void buffers = tiledb.new_voidpArray(5);
-    tiledb.voidpArray_setitem(buffers, 0, PointerUtils.toVoid(a1));
-    tiledb.voidpArray_setitem(buffers, 1, PointerUtils.toVoid(a2));
-    tiledb.voidpArray_setitem(buffers, 2, PointerUtils.toVoid(var_a2));
-    tiledb.voidpArray_setitem(buffers, 3, PointerUtils.toVoid(a3));
-    tiledb.voidpArray_setitem(buffers, 4,
-        PointerUtils.toVoid(buffer_coords));
-    long buffer_sizes_[] = {buffer_a1.length * 4, buffer_a2.length * 8,
-        buffer_var_a2.length(), buffer_a3.length * 4,
-        buffer_coords_.length * 8};
-    uint64_tArray buffer_sizes = Utils.newUint64Array(buffer_sizes_);
-
     // Create query
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
-    SWIGTYPE_p_p_char attributes = tiledb.new_charpArray(4);
-    tiledb.charpArray_setitem(attributes, 0, "a1");
-    tiledb.charpArray_setitem(attributes, 1, "a2");
-    tiledb.charpArray_setitem(attributes, 2, "a3");
-    tiledb.charpArray_setitem(attributes, 3, tiledb.tiledb_coords());
     tiledb.tiledb_query_alloc(ctx, arrayp,
         tiledb_query_type_t.TILEDB_WRITE, querypp);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_layout(ctx, query,
         tiledb_layout_t.TILEDB_UNORDERED);
-    tiledb.tiledb_query_set_buffers(ctx, query, attributes, 4, buffers,
-        buffer_sizes.cast());
+
+    long[] buffer_a1_size = {buffer_a1.length * 4};
+    uint64_tArray a1_size = Utils.newUint64Array(buffer_a1_size);
+    tiledb.tiledb_query_set_buffer(ctx, query, "a1", 
+	PointerUtils.toVoid(a1), a1_size.cast());
+
+    long[] buffer_a2_size = {buffer_a2.length * 8};
+    uint64_tArray a2_size = Utils.newUint64Array(buffer_a2_size);
+    long[] buffer_var_a2_size = {buffer_var_a2.length()};
+    uint64_tArray var_a2_size = Utils.newUint64Array(buffer_var_a2_size);
+    tiledb.tiledb_query_set_buffer_var(ctx, query, "a2",
+        a2.cast(), a2_size.cast(), 
+	PointerUtils.toVoid(var_a2), var_a2_size.cast());
+
+    long[] buffer_a3_size = {buffer_a3.length * 4};
+    uint64_tArray a3_size = Utils.newUint64Array(buffer_a3_size);
+    tiledb.tiledb_query_set_buffer(ctx, query, "a3", 
+	PointerUtils.toVoid(a3), a3_size.cast());
+    
+    long[] buffer_coords_size = {buffer_coords_.length * 8};
+    uint64_tArray coords_size = Utils.newUint64Array(buffer_coords_size);    
+    tiledb.tiledb_query_set_buffer(ctx, query, tiledb.tiledb_coords(),
+	PointerUtils.toVoid(buffer_coords), coords_size.cast()); 
 
     // Submit query - #1
     tiledb.tiledb_query_submit(ctx, query);
@@ -100,22 +104,29 @@ public class TiledbSparseWriteUnordered2 {
     uint64_tArray buffer_coords_2 = Utils
         .newUint64Array(buffer_coords_2_);
 
-    SWIGTYPE_p_p_void buffers_2 = tiledb.new_voidpArray(5);
-    tiledb.voidpArray_setitem(buffers_2, 0, PointerUtils.toVoid(a1_2));
-    tiledb.voidpArray_setitem(buffers_2, 1, PointerUtils.toVoid(a2_2));
-    tiledb.voidpArray_setitem(buffers_2, 2, PointerUtils.toVoid(var_a2_2));
-    tiledb.voidpArray_setitem(buffers_2, 3, PointerUtils.toVoid(a3_2));
-    tiledb.voidpArray_setitem(buffers_2, 4,
-        PointerUtils.toVoid(buffer_coords_2));
-    long buffer_sizes_2_[] = {buffer_a1_2.length * 4,
-        buffer_a2_2.length * 8, buffer_var_a2_2.length(),
-        buffer_a3_2.length * 4, buffer_coords_2_.length * 8};
-    uint64_tArray buffer_sizes_2 = Utils
-        .newUint64Array(buffer_sizes_2_);
-
     // Reset buffers
-    tiledb.tiledb_query_reset_buffers(ctx, query, buffers_2,
-        buffer_sizes_2.cast());
+    long[] buffer_a1_2_size = {buffer_a1_2.length * 4};
+    uint64_tArray a1_2_size = Utils.newUint64Array(buffer_a1_2_size);
+    tiledb.tiledb_query_set_buffer(ctx, query, "a1", 
+	PointerUtils.toVoid(a1), a1_size.cast());
+   
+    long[] buffer_a2_2_size = {buffer_a2_2.length * 8};
+    uint64_tArray a2_2_size = Utils.newUint64Array(buffer_a2_2_size);
+    long[] buffer_var_a2_2_size = {buffer_var_a2_2.length()};
+    uint64_tArray var_a2_2_size = Utils.newUint64Array(buffer_var_a2_2_size);
+    tiledb.tiledb_query_set_buffer_var(ctx, query, "a2",
+        a2_2.cast(), a2_2_size.cast(), 
+	PointerUtils.toVoid(var_a2_2), var_a2_2_size.cast());
+
+    long[] buffer_a3_2_size = {buffer_a3_2.length * 4};
+    uint64_tArray a3_2_size = Utils.newUint64Array(buffer_a3_2_size);
+    tiledb.tiledb_query_set_buffer(ctx, query, "a3", 
+	PointerUtils.toVoid(a3_2), a3_2_size.cast());
+    
+    long[] buffer_coords_2_size = {buffer_coords_2_.length * 8};
+    uint64_tArray coords_2_size = Utils.newUint64Array(buffer_coords_2_size);    
+    tiledb.tiledb_query_set_buffer(ctx, query, tiledb.tiledb_coords(),
+	PointerUtils.toVoid(buffer_coords_2), coords_2_size.cast()); 
 
     // Submit query - #2
     tiledb.tiledb_query_submit(ctx, query);
@@ -127,8 +138,8 @@ public class TiledbSparseWriteUnordered2 {
     tiledb.tiledb_array_close(ctx, arrayp);
 
     // Clean up
-    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_query_free(querypp);
+    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_ctx_free(ctxpp);
 
   }
