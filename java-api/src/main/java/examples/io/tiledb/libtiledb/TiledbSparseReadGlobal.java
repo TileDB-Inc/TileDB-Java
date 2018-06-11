@@ -62,65 +62,66 @@ public class TiledbSparseReadGlobal {
         + domain.getitem(3) + ")");
 
     // // Print maximum buffer sizes for each attribute
-    SWIGTYPE_p_p_char attributes = tiledb.new_charpArray(4);
-    tiledb.charpArray_setitem(attributes, 0, "a1");
-    tiledb.charpArray_setitem(attributes, 1, "a2");
-    tiledb.charpArray_setitem(attributes, 2, "a3");
-    tiledb.charpArray_setitem(attributes, 3, tiledb.tiledb_coords());
-    uint64_tArray buffer_sizes = new uint64_tArray(5);
+    uint64_tArray a1_size = new uint64_tArray(1);
+    uint64_tArray a2_size = new uint64_tArray(1);
+    uint64_tArray var_a2_size = new uint64_tArray(1);
+    uint64_tArray a3_size = new uint64_tArray(1);
+    uint64_tArray coords_size = new uint64_tArray(1);
+
     long[] subarray_ = {1, 4, 1, 4};
     uint64_tArray subarray = Utils.newUint64Array(subarray_);
-    tiledb.tiledb_array_compute_max_read_buffer_sizes(ctx,
-        arrayp, PointerUtils.toVoid(subarray), attributes,
-        4, buffer_sizes.cast());
+     
+    tiledb.tiledb_array_max_buffer_size(ctx, arrayp, "a1",
+	PointerUtils.toVoid(subarray), a1_size.cast());
+    tiledb.tiledb_array_max_buffer_size_var(ctx, arrayp, "a2",
+	PointerUtils.toVoid(subarray), a2_size.cast(), var_a2_size.cast());
+    tiledb.tiledb_array_max_buffer_size(ctx, arrayp, "a3",
+	PointerUtils.toVoid(subarray), a3_size.cast());
+    tiledb.tiledb_array_max_buffer_size(ctx, arrayp, tiledb.tiledb_coords(),
+	PointerUtils.toVoid(subarray), coords_size.cast());
+
     System.out.println("Maximum buffer sizes:");
-    System.out.printf("a1: %s\n", buffer_sizes.getitem(0));
-    System.out.printf("a2: (%s, %s)\n", buffer_sizes.getitem(1),
-        buffer_sizes.getitem(2));
-    System.out.printf("a3: %s\n", buffer_sizes.getitem(3));
+    System.out.printf("a1: %s\n", a1_size.getitem(0));
+    System.out.printf("a2: (%s, %s)\n", a2_size.getitem(0),
+        var_a2_size.getitem(0));
+    System.out.printf("a3: %s\n", a3_size.getitem(0));
     System.out.printf("%s: %s\n\n", tiledb.tiledb_coords(),
-        buffer_sizes.getitem(4));
+        coords_size.getitem(0));
 
     // Prepare cell buffers
     intArray buffer_a1 = new intArray(
-        buffer_sizes.getitem(0).intValue() / 4);
-    uint64_tArray buffer_a2 = new uint64_tArray(buffer_sizes.getitem(1)
+        a1_size.getitem(0).intValue() / 4);
+    uint64_tArray buffer_a2 = new uint64_tArray(a2_size.getitem(0)
         .intValue() / 8);
-    charArray buffer_var_a2 = new charArray(buffer_sizes.getitem(2)
+    charArray buffer_var_a2 = new charArray(var_a2_size.getitem(0)
         .intValue());
-    floatArray buffer_a3 = new floatArray(buffer_sizes.getitem(3)
+    floatArray buffer_a3 = new floatArray(a3_size.getitem(0)
         .intValue() / 4);
-    uint64_tArray buffer_coords = new uint64_tArray(buffer_sizes.getitem(4).intValue() / 8);
-
-    SWIGTYPE_p_p_void buffers = tiledb.new_voidpArray(5);
-    tiledb.voidpArray_setitem(buffers, 0, PointerUtils.toVoid(buffer_a1));
-    tiledb.voidpArray_setitem(buffers, 1, PointerUtils.toVoid(buffer_a2));
-    tiledb.voidpArray_setitem(buffers, 2,
-        PointerUtils.toVoid(buffer_var_a2));
-    tiledb.voidpArray_setitem(buffers, 3, PointerUtils.toVoid(buffer_a3));
-    tiledb.voidpArray_setitem(buffers, 4, PointerUtils.toVoid(buffer_coords));
+    uint64_tArray buffer_coords = new uint64_tArray(coords_size.getitem(0).intValue() / 8);
 
     // Create query
     SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
     tiledb.tiledb_query_alloc(ctx, arrayp,
         tiledb_query_type_t.TILEDB_READ, querypp);
     SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
-
-    attributes = tiledb.new_charpArray(4);
-    tiledb.charpArray_setitem(attributes, 0, "a1");
-    tiledb.charpArray_setitem(attributes, 1, "a2");
-    tiledb.charpArray_setitem(attributes, 2, "a3");
-    tiledb.charpArray_setitem(attributes, 3, "__coords");
-    tiledb.tiledb_query_set_buffers(ctx, query, attributes, 4, buffers,
-        buffer_sizes.cast());
     tiledb.tiledb_query_set_layout(ctx, query,
         tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+
+    tiledb.tiledb_query_set_buffer(ctx, query, "a1", 
+	PointerUtils.toVoid(buffer_a1), a1_size.cast());
+    tiledb.tiledb_query_set_buffer_var(ctx, query, "a2", 
+	buffer_a2.cast(), a2_size.cast(), 
+	PointerUtils.toVoid(buffer_var_a2), var_a2_size.cast());
+    tiledb.tiledb_query_set_buffer(ctx, query, "a3", 
+	PointerUtils.toVoid(buffer_a3), a3_size.cast());
+    tiledb.tiledb_query_set_buffer(ctx, query, tiledb.tiledb_coords(),
+	PointerUtils.toVoid(buffer_coords), coords_size.cast());
 
     // Submit query
     tiledb.tiledb_query_submit(ctx, query);
 
     // Print cell values (assumes all getAttributes are read)
-    int result_num = buffer_sizes.getitem(0).intValue() / 4;
+    int result_num = a1_size.getitem(0).intValue() / 4;
     System.out.println("Result num: " + result_num);
     System.out.printf("%8s%9s%9s%11s%10s\n", tiledb.tiledb_coords(), "a1", "a2", "a3[0]", "a3[1]");
     System.out.printf("------------------------------------\n");
@@ -132,7 +133,7 @@ public class TiledbSparseReadGlobal {
       System.out.printf("%10d ", buffer_a1.getitem(i));
       int var_size = (i != result_num - 1) ? buffer_a2.getitem(i + 1)
           .intValue() - buffer_a2.getitem(i).intValue()
-          : buffer_sizes.getitem(2).intValue()
+          : var_a2_size.getitem(0).intValue()
           - buffer_a2.getitem(i).intValue();
       System.out.printf("%10s", Utils.substring(buffer_var_a2, buffer_a2
           .getitem(i).intValue(), var_size));
@@ -147,13 +148,12 @@ public class TiledbSparseReadGlobal {
     tiledb.tiledb_array_close(ctx, arrayp);
 
     // Clean up
-    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_query_free(querypp);
+    tiledb.tiledb_array_free(arraypp);
     tiledb.tiledb_ctx_free(ctxpp);
     buffer_a1.delete();
     buffer_a2.delete();
     buffer_var_a2.delete();
     buffer_a3.delete();
-
   }
 }
