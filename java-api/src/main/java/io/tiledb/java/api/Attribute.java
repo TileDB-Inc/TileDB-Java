@@ -135,6 +135,10 @@ public class Attribute implements AutoCloseable {
     tiledb.delete_uintp(sizep);
     return size;
   }
+  
+  public boolean isVar() throws TileDBError {
+    return getCellValNum() == tiledb.tiledb_var_num();
+  }
 
   /** Sets the number of Attribute values per cell. */
   public void setCellValNum(long size) throws TileDBError {
