@@ -113,6 +113,13 @@ public class ArraySchema implements AutoCloseable {
     tiledb.delete_tiledb_array_type_tp(typep);
     return type;
   }
+ 
+  /**
+   * Returns true if the array is sparse.
+   */ 
+  public boolean isSparse() throws TileDBError {
+    return getArrayType() == tiledb_array_type_t.TILEDB_SPARSE;
+  }
 
   /**
    * Returns the tile capacity.

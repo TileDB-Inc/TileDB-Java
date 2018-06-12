@@ -78,8 +78,6 @@ public class Array implements AutoCloseable {
     ctx.handleError(tiledb.tiledb_array_create(ctx.getCtxp(), uri, schema.getSchemap()));
   }
 
-
-
   /**
    * Get the non-empty getDomain of an array. This returns the bounding
    * coordinates for each dimension.
@@ -119,50 +117,54 @@ public class Array implements AutoCloseable {
    *     and the second is the maximum number of elements of the value buffer.
    */
   public HashMap<String,Pair<Long,Long>> maxBufferElements(NativeArray subarray) throws TileDBError {
-    HashMap<String, Pair<Long,Long>> ret = new HashMap<String, Pair<Long,Long>>();
+    
     Types.typeCheck(subarray.getNativeType(), schema.getDomain().getType());
-    SWIGTYPE_p_p_char names = tiledb.new_charpArray(
-        (schema.getArrayType() == tiledb_array_type_t.TILEDB_SPARSE)?
-            (int)schema.getAttributeNum()+1 :
-            (int)schema.getAttributeNum());
-    int attr_num = 0, nbuffs = 0 ;
-    for(Map.Entry<String,Attribute> a : schema.getAttributes().entrySet()) {
-      tiledb.charpArray_setitem(names, attr_num, a.getKey());
-      nbuffs += a.getValue().getCellValNum() == tiledb.tiledb_var_num() ? 2 : 1;
-      attr_num++;
-    }
-    if (schema.getArrayType() == tiledb_array_type_t.TILEDB_SPARSE) {
-      nbuffs++;
-      tiledb.charpArray_setitem(names, attr_num, tiledb.tiledb_coords());
-      attr_num++;
-    }
-    uint64_tArray sizes = new uint64_tArray(nbuffs);
-    SWIGTYPE_p_void nativeSubarray = subarray.toVoidPointer();
+    
+    uint64_tArray off_nbytes = new uint64_tArray(1);
+    uint64_tArray val_nbytes = new uint64_tArray(1);
 
-    ctx.handleError(tiledb.tiledb_array_compute_max_read_buffer_sizes(
-        ctx.getCtxp(),
-        arrayp,
-        nativeSubarray,
-        names,
-        attr_num,
-        sizes.cast()));
+    HashMap<String, Pair<Long,Long>> ret = new HashMap<String, Pair<Long,Long>>();
+    
+    for(Map.Entry<String, Attribute> a : schema.getAttributes().entrySet()) {
+      if (a.getValue().isVar()) {
+      	ctx.handleError(tiledb.tiledb_array_max_buffer_size_var(
+	  ctx.getCtxp(),
+	  arrayp, 
+          a.getKey(),
+	  subarray.toVoidPointer(), 
+	  off_nbytes.cast(), 
+	  val_nbytes.cast()));
+	ret.put(a.getKey(),
+		new Pair(off_nbytes.getitem(0).longValue() / 
+			 tiledb.tiledb_offset_size().longValue(),
+			 val_nbytes.getitem(0).longValue() / 
+		     	 tiledb.tiledb_datatype_size(a.getValue().getType()).longValue()));
+      } else {
+        ctx.handleError(tiledb.tiledb_array_max_buffer_size(
+	  ctx.getCtxp(),
+	  arrayp,
+	  a.getKey(),
+	  subarray.toVoidPointer(), 
+	  val_nbytes.cast()));
+	ret.put(a.getKey(), 
+		new Pair(0l, val_nbytes.getitem(0).longValue() /
+			     tiledb.tiledb_datatype_size(a.getValue().getType()).longValue()));
+      } 
+    }
+    if (schema.isSparse()) {
+	ctx.handleError(tiledb.tiledb_array_max_buffer_size(
+	  ctx.getCtxp(),
+	  arrayp, 
+	  tiledb.tiledb_coords(), 
+	  subarray.toVoidPointer(), 
+	  val_nbytes.cast()));
+  	ret.put(tiledb.tiledb_coords(),
+          	new Pair(0l, val_nbytes.getitem(0).longValue() / 
+			     tiledb.tiledb_datatype_size(schema.getDomain().getType()).longValue()));
 
-    int sid = 0;
-    for(Map.Entry<String,Attribute> a : schema.getAttributes().entrySet()) {
-      boolean var = a.getValue().getCellValNum() == tiledb.tiledb_var_num();
-      ret.put(a.getKey(),
-          var ?
-              new Pair(sizes.getitem(sid).longValue() / tiledb.tiledb_offset_size().longValue(),
-                  sizes.getitem(sid+1).longValue() / tiledb.tiledb_datatype_size(a.getValue().getType()).longValue()) :
-              new Pair(0l,sizes.getitem(sid).longValue())
-      );
-      sid += var ? 2 : 1;
-    }
-    if (schema.getArrayType() == tiledb_array_type_t.TILEDB_SPARSE) {
-      ret.put(tiledb.tiledb_coords(),
-          new Pair(0l, sizes.getitem(sid).longValue() / tiledb.tiledb_datatype_size(schema.getDomain().getType()).longValue()));
-    }
-    sizes.delete();
+    } 
+    off_nbytes.delete();
+    val_nbytes.delete();
     return ret;
   }
 
@@ -171,8 +173,7 @@ public class Array implements AutoCloseable {
   }
 
   public String getUri() {
-    return uri;
-  }
+    return uri; }
 
   public ArraySchema getSchema() {
     return schema;
