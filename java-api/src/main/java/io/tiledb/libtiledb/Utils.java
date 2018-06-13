@@ -385,6 +385,7 @@ public class Utils {
 
   public static SWIGTYPE_p_tiledb_vfs_fh_t tiledb_vfs_fh_tpp_value(SWIGTYPE_p_p_tiledb_vfs_fh_t obj) {
     long cPtr = UtilsJNI.tiledb_vfs_fh_tpp_value(SWIGTYPE_p_p_tiledb_vfs_fh_t.getCPtr(obj));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_vfs_fh_t(cPtr, false);
   }
 
 }
