@@ -68,7 +68,7 @@ public class TiledbDenseWriteUnordered {
     tiledb.tiledb_query_set_buffer(ctx, query, "a1",
         PointerUtils.toVoid(a1), a1_size.cast());
     
-    long[] buffer_a2_size = {buffer_a2_size.length * 8};
+    long[] buffer_a2_size = {buffer_a2.length * 8};
     uint64_tArray a2_size = Utils.newUint64Array(buffer_a2_size);
     long[] buffer_var_a2_size = {buffer_var_a2.length()};
     uint64_tArray var_a2_size = Utils.newUint64Array(buffer_var_a2_size);
