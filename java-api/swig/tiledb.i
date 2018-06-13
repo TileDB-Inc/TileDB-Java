@@ -42,7 +42,7 @@
 %array_class(uint64_t, uint64_tArray);
 
 %array_functions(char *, charpArray);
-%array_functions( void *, voidpArray )
+%array_functions(void *, voidpArray )
 
 %include "cpointer.i"
 %pointer_functions(int, intp);

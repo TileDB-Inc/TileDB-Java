@@ -1,4 +1,4 @@
 rootProject.name = 'tiledb-java'
 
 include 'java-api'
-include 'spark'
+//include 'spark'
