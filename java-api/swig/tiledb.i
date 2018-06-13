@@ -19,7 +19,7 @@
 #include <vector>
 #include <stdio.h>
 
-#include "tiledb.h"
+#include "tiledb/tiledb.h"
 #include "tiledb_java_extensions.h"
 %}
 
