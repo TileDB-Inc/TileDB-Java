@@ -37,7 +37,7 @@
 #include <cstdint>
 #include <cstdio>
 
-#include "tiledb.h"
+#include "tiledb/tiledb.h"
 
 /* ********************************* */
 /*               MACROS              */

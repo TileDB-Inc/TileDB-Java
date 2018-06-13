@@ -234,7 +234,7 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include <vector>
 #include <stdio.h>
 
-#include "tiledb.h"
+#include "tiledb/tiledb.h"
 #include "tiledb_java_extensions.h"
 
 

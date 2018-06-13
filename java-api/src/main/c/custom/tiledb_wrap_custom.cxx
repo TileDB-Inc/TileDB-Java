@@ -223,7 +223,7 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 
 #include <stdio.h>
 #include <typeinfo>
-#include "tiledb.h"
+#include "tiledb/tiledb.h"
 
 typedef int intArray;
 
