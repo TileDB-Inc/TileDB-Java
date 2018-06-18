@@ -39,7 +39,7 @@ public class Dimension<T> implements AutoCloseable {
     ctx.deleterAdd(this);
     this.ctx = ctx;
     this.dimensionpp = dimensionpp;
-    this.dimensionp = Utils.tiledb_dimension_tpp_value(dimensionpp);
+    this.dimensionp = tiledb.tiledb_dimension_tpp_value(dimensionpp);
   }
 
   /**
@@ -56,7 +56,7 @@ public class Dimension<T> implements AutoCloseable {
 
   private void createImpl(Context ctx, String name, Class<T> type, Pair<T,T> domain, T extent) throws Exception {
     this.ctx = ctx;
-    dimensionpp = Utils.new_tiledb_dimension_tpp();
+    dimensionpp = tiledb.new_tiledb_dimension_tpp();
     this.type =  Types.getNativeType(type);
     this.name =name;
     this.domain = domain;
@@ -66,10 +66,15 @@ public class Dimension<T> implements AutoCloseable {
     NativeArray tileExtent = new NativeArray(ctx,1,this.type);
     tileExtent.setItem(0, (Object) extent);
 //    SWIGTYPE_p_void tile_extent = Types.createNativeArrayExtent(this.getType, extent);
-    ctx.handleError(tiledb.tiledb_dimension_alloc(
-        ctx.getCtxp(), name, this.type,
-	domainBuffer.toVoidPointer(), tileExtent.toVoidPointer(), dimensionpp));
-    this.dimensionp = Utils.tiledb_dimension_tpp_value(dimensionpp);
+    ctx.handleError(
+      tiledb.tiledb_dimension_alloc(
+        ctx.getCtxp(), 
+        name, 
+        this.type,
+	      domainBuffer.toVoidPointer(), 
+        tileExtent.toVoidPointer(), 
+        dimensionpp));
+    this.dimensionp = tiledb.tiledb_dimension_tpp_value(dimensionpp);
   }
 
 
@@ -90,7 +95,7 @@ public class Dimension<T> implements AutoCloseable {
 
   /** Returns the dimension datatype. */
   public tiledb_datatype_t getType() throws TileDBError {
-    if(type==null){
+    if (type == null) {
       SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
       ctx.handleError(tiledb.tiledb_dimension_get_type(ctx.getCtxp(), dimensionp, typep));
       type = tiledb.tiledb_datatype_tp_value(typep);
@@ -101,7 +106,7 @@ public class Dimension<T> implements AutoCloseable {
 
   /** Returns the domain of the dimension. **/
   public Pair<T, T> getDomain() throws TileDBError {
-    if(domain==null){
+    if (domain == null) {
       getType();
       SWIGTYPE_p_p_void domainpp = tiledb.new_voidpArray(1);
       ctx.handleError(tiledb.tiledb_dimension_get_domain(ctx.getCtxp(), dimensionp, domainpp));
@@ -114,7 +119,7 @@ public class Dimension<T> implements AutoCloseable {
   /** Returns a string representation of the domain. */
   public String domainToStr() throws TileDBError {
     Pair<T, T> d = getDomain();
-    return "("+d.getFirst()+ ", "+d.getSecond()+")";
+    return "(" + d.getFirst() + ", " + d.getSecond() + ")";
   }
 
   /** Returns the tile extent of the dimension. */

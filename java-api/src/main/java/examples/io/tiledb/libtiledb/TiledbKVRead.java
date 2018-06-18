@@ -40,9 +40,9 @@ public class TiledbKVRead {
 
   public static void main(String[] args) {
     // Create TileDB context
-    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
+    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = tiledb.new_tiledb_ctx_tpp();
     tiledb.tiledb_ctx_alloc(null, ctxpp);
-    SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+    SWIGTYPE_p_tiledb_ctx_t ctx = tiledb.tiledb_ctx_tpp_value(ctxpp);
 
     // Prepare key
 //		int key_[] = { 100 };
@@ -62,17 +62,16 @@ public class TiledbKVRead {
     BigInteger key_size = new BigInteger("5");
 
     // Open the key-value store
-    SWIGTYPE_p_p_tiledb_kv_t kvpp = Utils.new_tiledb_kv_tpp();
+    SWIGTYPE_p_p_tiledb_kv_t kvpp = tiledb.new_tiledb_kv_tpp();
     tiledb.tiledb_kv_alloc(ctx, "my_kv",kvpp);
-    SWIGTYPE_p_tiledb_kv_t kv = Utils.tiledb_kv_tpp_value(kvpp);
+    SWIGTYPE_p_tiledb_kv_t kv = tiledb.tiledb_kv_tpp_value(kvpp);
     tiledb.tiledb_kv_open(ctx, kv, null, 0);
 
     // Get key-value item
-    SWIGTYPE_p_p_tiledb_kv_item_t kv_itempp = Utils
-        .new_tiledb_kv_item_tpp();
+    SWIGTYPE_p_p_tiledb_kv_item_t kv_itempp = tiledb.new_tiledb_kv_item_tpp();
     tiledb.tiledb_kv_get_item(ctx, kv, PointerUtils.toVoid(key),
         key_type, key_size, kv_itempp);
-    SWIGTYPE_p_tiledb_kv_item_t kv_item = Utils.tiledb_kv_item_tpp_value(kv_itempp);
+    SWIGTYPE_p_tiledb_kv_item_t kv_item = tiledb.tiledb_kv_item_tpp_value(kv_itempp);
     //
     // // Check if item exists
     // if (kv_item == NULL) {

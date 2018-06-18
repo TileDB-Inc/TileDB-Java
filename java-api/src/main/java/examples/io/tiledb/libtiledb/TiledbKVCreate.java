@@ -33,45 +33,40 @@ public class TiledbKVCreate {
    */
   public static void main(String[] args) {
     // Create TileDB context
-    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
+    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = tiledb.new_tiledb_ctx_tpp();
     tiledb.tiledb_ctx_alloc(null, ctxpp);
-    SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+    SWIGTYPE_p_tiledb_ctx_t ctx = tiledb.tiledb_ctx_tpp_value(ctxpp);
 
     // Create getAttributes
-    SWIGTYPE_p_p_tiledb_attribute_t a1pp = Utils
-        .new_tiledb_attribute_tpp();
+    SWIGTYPE_p_p_tiledb_attribute_t a1pp = tiledb.new_tiledb_attribute_tpp();
     tiledb.tiledb_attribute_alloc(ctx, "a1",
         tiledb_datatype_t.TILEDB_INT32, a1pp);
-    SWIGTYPE_p_tiledb_attribute_t a1 = Utils.tiledb_attribute_tpp_value(a1pp);
+    SWIGTYPE_p_tiledb_attribute_t a1 = tiledb.tiledb_attribute_tpp_value(a1pp);
     tiledb.tiledb_attribute_set_compressor(ctx, a1,
         tiledb_compressor_t.TILEDB_BLOSC_LZ, -1);
     tiledb.tiledb_attribute_set_cell_val_num(ctx, a1, 1);
 
-    SWIGTYPE_p_p_tiledb_attribute_t a2pp = Utils
-        .new_tiledb_attribute_tpp();
+    SWIGTYPE_p_p_tiledb_attribute_t a2pp = tiledb.new_tiledb_attribute_tpp();
     tiledb.tiledb_attribute_alloc(ctx, "a2",
         tiledb_datatype_t.TILEDB_CHAR, a2pp);
-    SWIGTYPE_p_tiledb_attribute_t a2 = Utils.tiledb_attribute_tpp_value(a2pp);
+    SWIGTYPE_p_tiledb_attribute_t a2 = tiledb.tiledb_attribute_tpp_value(a2pp);
     tiledb.tiledb_attribute_set_compressor(ctx, a2,
         tiledb_compressor_t.TILEDB_GZIP, -1);
     tiledb.tiledb_attribute_set_cell_val_num(ctx, a2,
         tiledb.tiledb_var_num());
 
-    SWIGTYPE_p_p_tiledb_attribute_t a3pp = Utils
-        .new_tiledb_attribute_tpp();
+    SWIGTYPE_p_p_tiledb_attribute_t a3pp = tiledb.new_tiledb_attribute_tpp();
     tiledb.tiledb_attribute_alloc(ctx, "a3",
         tiledb_datatype_t.TILEDB_FLOAT32, a3pp);
-    SWIGTYPE_p_tiledb_attribute_t a3 = Utils.tiledb_attribute_tpp_value(a3pp);
+    SWIGTYPE_p_tiledb_attribute_t a3 = tiledb.tiledb_attribute_tpp_value(a3pp);
     tiledb.tiledb_attribute_set_compressor(ctx, a3,
         tiledb_compressor_t.TILEDB_ZSTD, -1);
     tiledb.tiledb_attribute_set_cell_val_num(ctx, a3, 2);
 
     // Create kv schema
-    SWIGTYPE_p_p_tiledb_kv_schema_t kv_schemapp = Utils
-        .new_tiledb_kv_schema_tpp();
+    SWIGTYPE_p_p_tiledb_kv_schema_t kv_schemapp = tiledb.new_tiledb_kv_schema_tpp();
     tiledb.tiledb_kv_schema_alloc(ctx, kv_schemapp);
-    SWIGTYPE_p_tiledb_kv_schema_t kv_schema = Utils
-        .tiledb_kv_schema_tpp_value(kv_schemapp);
+    SWIGTYPE_p_tiledb_kv_schema_t kv_schema = tiledb.tiledb_kv_schema_tpp_value(kv_schemapp);
     tiledb.tiledb_kv_schema_add_attribute(ctx, kv_schema, a1);
     tiledb.tiledb_kv_schema_add_attribute(ctx, kv_schema, a2);
     tiledb.tiledb_kv_schema_add_attribute(ctx, kv_schema, a3);

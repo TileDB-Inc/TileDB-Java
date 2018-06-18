@@ -79,9 +79,9 @@ public class ArraySchema implements AutoCloseable {
   public ArraySchema(Context ctx, tiledb_array_type_t type) throws TileDBError {
     ctx.deleterAdd(this);
     this.ctx = ctx;
-    schemapp = Utils.new_tiledb_array_schema_tpp();
+    schemapp = tiledb.new_tiledb_array_schema_tpp();
     ctx.handleError(tiledb.tiledb_array_schema_alloc(ctx.getCtxp(), type, schemapp));
-    schemap = Utils.tiledb_array_schema_tpp_value(schemapp);
+    schemap = tiledb.tiledb_array_schema_tpp_value(schemapp);
   }
 
   /**
@@ -90,9 +90,9 @@ public class ArraySchema implements AutoCloseable {
   public ArraySchema(Context ctx, String uri) throws TileDBError {
     ctx.deleterAdd(this);
     this.ctx = ctx;
-    schemapp = Utils.new_tiledb_array_schema_tpp();
+    schemapp = tiledb.new_tiledb_array_schema_tpp();
     ctx.handleError(tiledb.tiledb_array_schema_load(ctx.getCtxp(), uri, schemapp));
-    schemap = Utils.tiledb_array_schema_tpp_value(schemapp);
+    schemap = tiledb.tiledb_array_schema_tpp_value(schemapp);
   }
 
   /**
@@ -240,7 +240,7 @@ public class ArraySchema implements AutoCloseable {
    * Retruns the array getDomain of array.
    */
   public Domain getDomain() throws TileDBError {
-    SWIGTYPE_p_p_tiledb_domain_t domainpp = Utils.new_tiledb_domain_tpp();
+    SWIGTYPE_p_p_tiledb_domain_t domainpp = tiledb.new_tiledb_domain_tpp();
     ctx.handleError(tiledb.tiledb_array_schema_get_domain(ctx.getCtxp(), schemap, domainpp));
     return new Domain(ctx, domainpp);
   }
@@ -273,7 +273,7 @@ public class ArraySchema implements AutoCloseable {
   public HashMap<String, Attribute> getAttributes() throws TileDBError {
     if(attributes == null) {
       attributes = new HashMap<String, Attribute>();
-      SWIGTYPE_p_p_tiledb_attribute_t attrpp = Utils.new_tiledb_attribute_tpp();
+      SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
       SWIGTYPE_p_unsigned_int nattrp = tiledb.new_uintp();
       ctx.handleError(
           tiledb.tiledb_array_schema_get_attribute_num(ctx.getCtxp(), schemap, nattrp));
@@ -292,7 +292,7 @@ public class ArraySchema implements AutoCloseable {
    * Gets an getAttribute by getName.
    **/
   public Attribute getAttribute(String name) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_attribute_t attrpp = Utils.new_tiledb_attribute_tpp();
+    SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
     ctx.handleError(tiledb.tiledb_array_schema_get_attribute_from_name(
         ctx.getCtxp(), schemap, name, attrpp));
     return new Attribute(ctx, attrpp);
@@ -314,7 +314,7 @@ public class ArraySchema implements AutoCloseable {
    * Get an getAttribute by index
    **/
   public Attribute getAttribute(long i) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_attribute_t attrpp = Utils.new_tiledb_attribute_tpp();
+    SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
     ctx.handleError(tiledb.tiledb_array_schema_get_attribute_from_index(
         ctx.getCtxp(), schemap, i, attrpp));
     return new Attribute(ctx, attrpp);

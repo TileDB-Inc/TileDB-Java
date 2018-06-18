@@ -30,9 +30,9 @@ public class TiledbError {
 
   public static void main(String[] args) {
     // Create TileDB context
-    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
+    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = tiledb.new_tiledb_ctx_tpp();
     tiledb.tiledb_ctx_alloc(null, ctxpp);
-    SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+    SWIGTYPE_p_tiledb_ctx_t ctx = tiledb.tiledb_ctx_tpp_value(ctxpp);
 
     // Create a group
     int rc = tiledb.tiledb_group_create(ctx, "my_group");
@@ -54,9 +54,9 @@ public class TiledbError {
 
   public static void print_error(SWIGTYPE_p_tiledb_ctx_t ctx) {
 
-    SWIGTYPE_p_p_tiledb_error_t errpp = Utils.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_error_t errpp = tiledb.new_tiledb_error_tpp();
     tiledb.tiledb_ctx_get_last_error(ctx, errpp);
-    SWIGTYPE_p_tiledb_error_t err = Utils.tiledb_error_tpp_value(errpp);
+    SWIGTYPE_p_tiledb_error_t err = tiledb.tiledb_error_tpp_value(errpp);
 
     SWIGTYPE_p_p_char msg = tiledb.new_charpp();
     tiledb.tiledb_error_message(err, msg);

@@ -70,9 +70,9 @@ public class Query implements AutoCloseable {
     ctx.deleterAdd(this);
     this.type = type;
     this.array = array;
-    this.querypp = Utils.new_tiledb_query_tpp();
+    this.querypp = tiledb.new_tiledb_query_tpp();
     ctx.handleError(tiledb.tiledb_query_alloc(ctx.getCtxp(), array.getArrayp(), type, this.querypp));
-    this.queryp = Utils.tiledb_query_tpp_value(querypp);
+    this.queryp = tiledb.tiledb_query_tpp_value(querypp);
     this.buffers_ = new HashMap<String, NativeArray>();
     this.var_buffers_ = new HashMap<String, Pair<NativeArray, NativeArray>>();
     this.buffer_sizes_ = new HashMap<String, Pair<uint64_tArray, uint64_tArray>>();

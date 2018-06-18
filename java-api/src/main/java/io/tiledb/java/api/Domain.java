@@ -76,15 +76,15 @@ public class Domain implements AutoCloseable {
     ctx.deleterAdd(this);
     this.ctx = ctx;
     this.domainpp = domainpp;
-    this.domainp = Utils.tiledb_domain_tpp_value(domainpp);
+    this.domainp = tiledb.tiledb_domain_tpp_value(domainpp);
   }
 
   public Domain(Context ctx) throws TileDBError {
     ctx.deleterAdd(this);
     this.ctx = ctx;
-    domainpp = Utils.new_tiledb_domain_tpp();
+    domainpp = tiledb.new_tiledb_domain_tpp();
     ctx.handleError(tiledb.tiledb_domain_alloc(ctx.getCtxp(), domainpp));
-    this.domainp = Utils.tiledb_domain_tpp_value(domainpp);
+    this.domainp = tiledb.tiledb_domain_tpp_value(domainpp);
   }
 
   protected SWIGTYPE_p_p_tiledb_domain_t getDomainpp() {
@@ -138,7 +138,7 @@ public class Domain implements AutoCloseable {
       long rank = getRank();
       dimensions = new ArrayList<Dimension>();
       for (long i=0; i<rank; i++){
-        SWIGTYPE_p_p_tiledb_dimension_t dimpp = Utils.new_tiledb_dimension_tpp();
+        SWIGTYPE_p_p_tiledb_dimension_t dimpp = tiledb.new_tiledb_dimension_tpp();
         ctx.handleError(
             tiledb.tiledb_domain_get_dimension_from_index(ctx.getCtxp(), domainp, i, dimpp));
         Dimension dim = new Dimension(ctx, dimpp);

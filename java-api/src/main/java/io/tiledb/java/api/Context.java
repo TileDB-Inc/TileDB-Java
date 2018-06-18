@@ -33,10 +33,11 @@ import io.tiledb.libtiledb.*;
 
 public class Context implements AutoCloseable {
 
-  private ContextCallback errorHandler;
-  private Config config;
   private SWIGTYPE_p_p_tiledb_ctx_t ctxpp;
   private SWIGTYPE_p_tiledb_ctx_t ctxp;
+  
+  private Config config;
+  private ContextCallback errorHandler;
 
   private Deleter deleter;
 
@@ -75,7 +76,7 @@ public class Context implements AutoCloseable {
       return;
 
     // Get error
-    SWIGTYPE_p_p_tiledb_error_t errorpp = Utils.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
     rc = tiledb.tiledb_ctx_get_last_error(ctxp, errorpp);
     if (rc != tiledb.TILEDB_OK) {
       tiledb.tiledb_error_free(errorpp);
@@ -84,7 +85,7 @@ public class Context implements AutoCloseable {
 
     // Get error message
     SWIGTYPE_p_p_char msgpp = tiledb.new_charpp();
-    rc = tiledb.tiledb_error_message(Utils.tiledb_error_tpp_value(errorpp), msgpp);
+    rc = tiledb.tiledb_error_message(tiledb.tiledb_error_tpp_value(errorpp), msgpp);
     String msg = tiledb.charpp_value(msgpp);
     if (rc != tiledb.TILEDB_OK) {
       tiledb.tiledb_error_free(errorpp);
@@ -109,10 +110,10 @@ public class Context implements AutoCloseable {
 
 
   private void createContext(Config config) throws TileDBError {
-    ctxpp = Utils.new_tiledb_ctx_tpp();
+    ctxpp = tiledb.new_tiledb_ctx_tpp();
     if (tiledb.tiledb_ctx_alloc(config.getConfigp(), ctxpp) != tiledb.TILEDB_OK)
       throw new TileDBError("[TileDB::JavaAPI] Error: Failed to create context");
-    ctxp = Utils.tiledb_ctx_tpp_value(ctxpp);
+    ctxp = tiledb.tiledb_ctx_tpp_value(ctxpp);
     this.config = config;
     errorHandler = new ContextCallback();
     deleter = new Deleter();

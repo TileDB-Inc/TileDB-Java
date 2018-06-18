@@ -101,19 +101,19 @@ g++ -E -P -nostdinc++ -I "${tiledb_include}" -x c++ - >> swig/tiledb_generated.h
 # if existing libtiledb generated source exists, delete it
 cleanup_java() {
   if [[ -d ./src/main/java/io/tiledb/libtiledb ]]; then
-    rm -r ./src/main/java/io/tiledb/libtiledb/*
+    rm -r ./src/main/java/io/tiledb/libtiledb/* 
   fi
 }
 
-cleanup_java || die "error deleting previous swig generated java sources"
+cleanup_java || die "error deleting existing java source files"
 
 cleanup_cxx() {
   if [[ -d ./src/main/c/generated ]]; then
-    rm -r ./src/main/c/generated/*
+    rm -r ./src/main/c/generated/* 
   fi
 }
 
-cleanup_cxx || die "error deleting previous swig generated c++ jni sources"
+cleanup_cxx || die "error deleting existing cxx source files"
 
 swig -v -java -c++ -package io.tiledb.libtiledb \
                 -outdir src/main/java/io/tiledb/libtiledb \
