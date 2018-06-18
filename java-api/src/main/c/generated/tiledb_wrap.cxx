@@ -893,6 +893,48 @@ static tiledb_vfs_mode_t tiledb_vfs_mode_tp_value(tiledb_vfs_mode_t *obj) {
 }
 
 
+static tiledb_config_t *new_tiledb_config_tp() { 
+  return new tiledb_config_t(); 
+}
+
+static tiledb_config_t *copy_tiledb_config_tp(tiledb_config_t value) { 
+  return new tiledb_config_t(value); 
+}
+
+static void delete_tiledb_config_tp(tiledb_config_t *obj) { 
+  if (obj) delete obj; 
+}
+
+static void tiledb_config_tp_assign(tiledb_config_t *obj, tiledb_config_t value) {
+  *obj = value;
+}
+
+static tiledb_config_t tiledb_config_tp_value(tiledb_config_t *obj) {
+  return *obj;
+}
+
+
+static tiledb_config_t* *new_tiledb_config_tpp() { 
+  return new tiledb_config_t*(); 
+}
+
+static tiledb_config_t* *copy_tiledb_config_tpp(tiledb_config_t* value) { 
+  return new tiledb_config_t*(value); 
+}
+
+static void delete_tiledb_config_tpp(tiledb_config_t* *obj) { 
+  if (obj) delete obj; 
+}
+
+static void tiledb_config_tpp_assign(tiledb_config_t* *obj, tiledb_config_t* value) {
+  *obj = value;
+}
+
+static tiledb_config_t* tiledb_config_tpp_value(tiledb_config_t* *obj) {
+  return *obj;
+}
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -3204,6 +3246,142 @@ SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1vfs_1mode_1tp
   arg1 = *(tiledb_vfs_mode_t **)&jarg1; 
   result = (tiledb_vfs_mode_t)tiledb_vfs_mode_tp_value(arg1);
   jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1tiledb_1config_1tp(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  tiledb_config_t *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (tiledb_config_t *)new_tiledb_config_tp();
+  *(tiledb_config_t **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_copy_1tiledb_1config_1tp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_config_t arg1 ;
+  tiledb_config_t *argp1 ;
+  tiledb_config_t *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  argp1 = *(tiledb_config_t **)&jarg1; 
+  if (!argp1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "Attempt to dereference null tiledb_config_t");
+    return 0;
+  }
+  arg1 = *argp1; 
+  result = (tiledb_config_t *)copy_tiledb_config_tp(arg1);
+  *(tiledb_config_t **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_delete_1tiledb_1config_1tp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  tiledb_config_t *arg1 = (tiledb_config_t *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_config_t **)&jarg1; 
+  delete_tiledb_config_tp(arg1);
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1config_1tp_1assign(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  tiledb_config_t *arg1 = (tiledb_config_t *) 0 ;
+  tiledb_config_t arg2 ;
+  tiledb_config_t *argp2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_config_t **)&jarg1; 
+  argp2 = *(tiledb_config_t **)&jarg2; 
+  if (!argp2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "Attempt to dereference null tiledb_config_t");
+    return ;
+  }
+  arg2 = *argp2; 
+  tiledb_config_tp_assign(arg1,arg2);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1config_1tp_1value(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_config_t *arg1 = (tiledb_config_t *) 0 ;
+  tiledb_config_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_config_t **)&jarg1; 
+  result = tiledb_config_tp_value(arg1);
+  *(tiledb_config_t **)&jresult = new tiledb_config_t((const tiledb_config_t &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1tiledb_1config_1tpp(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  tiledb_config_t **result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (tiledb_config_t **)new_tiledb_config_tpp();
+  *(tiledb_config_t ***)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_copy_1tiledb_1config_1tpp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_config_t *arg1 = (tiledb_config_t *) 0 ;
+  tiledb_config_t **result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_config_t **)&jarg1; 
+  result = (tiledb_config_t **)copy_tiledb_config_tpp(arg1);
+  *(tiledb_config_t ***)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_delete_1tiledb_1config_1tpp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  tiledb_config_t **arg1 = (tiledb_config_t **) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_config_t ***)&jarg1; 
+  delete_tiledb_config_tpp(arg1);
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1config_1tpp_1assign(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  tiledb_config_t **arg1 = (tiledb_config_t **) 0 ;
+  tiledb_config_t *arg2 = (tiledb_config_t *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_config_t ***)&jarg1; 
+  arg2 = *(tiledb_config_t **)&jarg2; 
+  tiledb_config_tpp_assign(arg1,arg2);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1config_1tpp_1value(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_config_t **arg1 = (tiledb_config_t **) 0 ;
+  tiledb_config_t *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_config_t ***)&jarg1; 
+  result = (tiledb_config_t *)tiledb_config_tpp_value(arg1);
+  *(tiledb_config_t **)&jresult = result; 
   return jresult;
 }
 

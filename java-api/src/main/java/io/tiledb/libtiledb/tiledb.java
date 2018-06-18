@@ -420,6 +420,51 @@ public class tiledb implements tiledbConstants {
     return tiledb_vfs_mode_t.swigToEnum(tiledbJNI.tiledb_vfs_mode_tp_value(SWIGTYPE_p_tiledb_vfs_mode_t.getCPtr(obj)));
   }
 
+  public static SWIGTYPE_p_tiledb_config_t new_tiledb_config_tp() {
+    long cPtr = tiledbJNI.new_tiledb_config_tp();
+    return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_config_t(cPtr, false);
+  }
+
+  public static SWIGTYPE_p_tiledb_config_t copy_tiledb_config_tp(SWIGTYPE_p_tiledb_config_t value) {
+    long cPtr = tiledbJNI.copy_tiledb_config_tp(SWIGTYPE_p_tiledb_config_t.getCPtr(value));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_config_t(cPtr, false);
+  }
+
+  public static void delete_tiledb_config_tp(SWIGTYPE_p_tiledb_config_t obj) {
+    tiledbJNI.delete_tiledb_config_tp(SWIGTYPE_p_tiledb_config_t.getCPtr(obj));
+  }
+
+  public static void tiledb_config_tp_assign(SWIGTYPE_p_tiledb_config_t obj, SWIGTYPE_p_tiledb_config_t value) {
+    tiledbJNI.tiledb_config_tp_assign(SWIGTYPE_p_tiledb_config_t.getCPtr(obj), SWIGTYPE_p_tiledb_config_t.getCPtr(value));
+  }
+
+  public static SWIGTYPE_p_tiledb_config_t tiledb_config_tp_value(SWIGTYPE_p_tiledb_config_t obj) {
+    return new SWIGTYPE_p_tiledb_config_t(tiledbJNI.tiledb_config_tp_value(SWIGTYPE_p_tiledb_config_t.getCPtr(obj)), true);
+  }
+
+  public static SWIGTYPE_p_p_tiledb_config_t new_tiledb_config_tpp() {
+    long cPtr = tiledbJNI.new_tiledb_config_tpp();
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_config_t(cPtr, false);
+  }
+
+  public static SWIGTYPE_p_p_tiledb_config_t copy_tiledb_config_tpp(SWIGTYPE_p_tiledb_config_t value) {
+    long cPtr = tiledbJNI.copy_tiledb_config_tpp(SWIGTYPE_p_tiledb_config_t.getCPtr(value));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_config_t(cPtr, false);
+  }
+
+  public static void delete_tiledb_config_tpp(SWIGTYPE_p_p_tiledb_config_t obj) {
+    tiledbJNI.delete_tiledb_config_tpp(SWIGTYPE_p_p_tiledb_config_t.getCPtr(obj));
+  }
+
+  public static void tiledb_config_tpp_assign(SWIGTYPE_p_p_tiledb_config_t obj, SWIGTYPE_p_tiledb_config_t value) {
+    tiledbJNI.tiledb_config_tpp_assign(SWIGTYPE_p_p_tiledb_config_t.getCPtr(obj), SWIGTYPE_p_tiledb_config_t.getCPtr(value));
+  }
+
+  public static SWIGTYPE_p_tiledb_config_t tiledb_config_tpp_value(SWIGTYPE_p_p_tiledb_config_t obj) {
+    long cPtr = tiledbJNI.tiledb_config_tpp_value(SWIGTYPE_p_p_tiledb_config_t.getCPtr(obj));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_config_t(cPtr, false);
+  }
+
   public static String tiledb_coords() {
     return tiledbJNI.tiledb_coords();
   }

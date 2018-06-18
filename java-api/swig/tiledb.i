@@ -68,5 +68,7 @@
 %pointer_functions(tiledb_walk_order_t, tiledb_walk_order_tp);
 %pointer_functions(tiledb_vfs_mode_t, tiledb_vfs_mode_tp);
 
+%pointer_functions(tiledb_config_t, tiledb_config_tp);
+
 %include "tiledb_generated.h"
 %include "tiledb_java_extensions.h"

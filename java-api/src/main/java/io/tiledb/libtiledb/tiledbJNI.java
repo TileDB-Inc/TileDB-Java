@@ -184,6 +184,16 @@ public class tiledbJNI {
   public final static native void delete_tiledb_vfs_mode_tp(long jarg1);
   public final static native void tiledb_vfs_mode_tp_assign(long jarg1, int jarg2);
   public final static native int tiledb_vfs_mode_tp_value(long jarg1);
+  public final static native long new_tiledb_config_tp();
+  public final static native long copy_tiledb_config_tp(long jarg1);
+  public final static native void delete_tiledb_config_tp(long jarg1);
+  public final static native void tiledb_config_tp_assign(long jarg1, long jarg2);
+  public final static native long tiledb_config_tp_value(long jarg1);
+  public final static native long new_tiledb_config_tpp();
+  public final static native long copy_tiledb_config_tpp(long jarg1);
+  public final static native void delete_tiledb_config_tpp(long jarg1);
+  public final static native void tiledb_config_tpp_assign(long jarg1, long jarg2);
+  public final static native long tiledb_config_tpp_value(long jarg1);
   public final static native String tiledb_coords();
   public final static native long tiledb_var_num();
   public final static native long tiledb_max_path();
