@@ -2,10 +2,6 @@ package io.tiledb.libtiledb;
 
 public class PointerUtils {
 
-  public static SWIGTYPE_p_void toVoid(intArray p) {
-    return new SWIGTYPE_p_void(intArray.getCPtr(p), false);
-  }
-
   public static SWIGTYPE_p_void toVoid(int32_tArray p) {
     return new SWIGTYPE_p_void(int32_tArray.getCPtr(p), false);
   }
@@ -50,10 +46,6 @@ public class PointerUtils {
     return new SWIGTYPE_p_void(uint64_tArray.getCPtr(p), false);
   }
 
-  public static intArray intFromVoid(SWIGTYPE_p_void p) {
-    return new intArray(SWIGTYPE_p_void.getCPtr(p), false);
-  }
-
   public static int32_tArray int32_tArrayFromVoid(SWIGTYPE_p_void p) {
     return new int32_tArray(SWIGTYPE_p_void.getCPtr(p), false);
   }
@@ -96,10 +88,6 @@ public class PointerUtils {
 
   public static uint64_tArray uint64_tArrayFromVoid(SWIGTYPE_p_void p) {
     return new uint64_tArray(SWIGTYPE_p_void.getCPtr(p), false);
-  }
-
-  public static intArray intFromVoid(SWIGTYPE_p_p_void p) {
-    return new intArray(SWIGTYPE_p_void.getCPtr(tiledb.derefVoid(p)), false);
   }
 
   public static int32_tArray int32_tArrayFromVoid(SWIGTYPE_p_p_void p) {

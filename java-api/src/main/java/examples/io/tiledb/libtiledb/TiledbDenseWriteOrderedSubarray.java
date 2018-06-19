@@ -42,7 +42,7 @@ public class TiledbDenseWriteOrderedSubarray {
 
     // Prepare cell buffers - #1
     int[] buffer_a1 = {9, 12, 13, 11, 14, 15};
-    intArray a1 = Utils.newIntArray(buffer_a1);
+    int32_tArray a1 = Utils.newInt32_tArray(buffer_a1);
     long[] buffer_a2 = {0, 2, 3, 5, 9, 12};
     uint64_tArray a2 = Utils.newUint64Array(buffer_a2);
     String buffer_var_a2 = "jjmnnllllooopppp";

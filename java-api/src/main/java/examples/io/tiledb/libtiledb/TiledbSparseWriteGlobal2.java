@@ -42,7 +42,7 @@ public class TiledbSparseWriteGlobal2 {
 
     // Prepare cell buffers - #1
     int[] buffer_a1 = {0, 1, 2};
-    intArray a1 = Utils.newIntArray(buffer_a1);
+    int32_tArray a1 = Utils.newInt32Array(buffer_a1);
     long[] buffer_a2 = {0, 1, 3, 6, 10, 11, 13, 16};
     uint64_tArray a2 = Utils.newUint64Array(buffer_a2);
     String buffer_var_a2 = "abbcccddddeffggghhhh";
@@ -91,7 +91,7 @@ public class TiledbSparseWriteGlobal2 {
 
     // Prepare cell buffers - #2
     int[] buffer_a1_2 = {3, 4, 5, 6, 7};
-    intArray a1_2 = Utils.newIntArray(buffer_a1_2);
+    int32_tArray a1_2 = Utils.newInt32Array(buffer_a1_2);
     long[] buffer_a2_2 = {};
     uint64_tArray a2_2 = Utils.newUint64Array(buffer_a2_2);
     String buffer_var_a2_2 = "";

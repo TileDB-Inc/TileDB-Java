@@ -26,7 +26,7 @@ package examples.io.tiledb.libtiledb;
 
 import io.tiledb.libtiledb.*;
 
-public class TiledbSparseWriteUnordered2 {
+public class TiledbSparseWriteUnordered1 {
 
   public static void main(String[] args) {
     // Create TileDB context
@@ -42,7 +42,7 @@ public class TiledbSparseWriteUnordered2 {
 
     // Prepare cell buffers - #1
     int[] buffer_a1 = {7, 5, 0, 6, 4, 3, 1, 2};
-    intArray a1 = Utils.newIntArray(buffer_a1);
+    int32_tArray a1 = Utils.newInt32Array(buffer_a1);
     long[] buffer_a2 = {0, 4, 6, 7, 10, 11, 15, 17};
     uint64_tArray a2 = Utils.newUint64Array(buffer_a2);
     String buffer_var_a2 = "hhhhffagggeddddbbccc";

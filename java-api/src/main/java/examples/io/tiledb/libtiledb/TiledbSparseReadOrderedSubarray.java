@@ -71,7 +71,7 @@ public class TiledbSparseReadOrderedSubarray {
 	PointerUtils.toVoid(subarray), coords_size.cast());  
    
     // Prepare cell buffers
-    intArray buffer_a1 = new intArray(
+    int32_tArray buffer_a1 = new int32_tArray(
         a1_size.getitem(0).intValue() / 4);
     uint64_tArray buffer_a2 = new uint64_tArray(a2_size.getitem(0)
         .intValue() / 8);

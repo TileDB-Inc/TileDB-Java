@@ -32,14 +32,6 @@ import org.junit.Test;
 public class ArrayTest {
 
   @Test
-  public void testInt() {
-    int[] a_ = {Integer.MIN_VALUE, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, Integer.MAX_VALUE};
-    intArray a1 = Utils.newIntArray(a_);
-    int[] res = Utils.intArrayGet(a1, a_.length);
-    Assert.assertArrayEquals(a_, res);
-  }
-
-  @Test
   public void testInt32() {
     int[] a_ = {Integer.MIN_VALUE, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, Integer.MAX_VALUE};
     int32_tArray a1 = Utils.newInt32_tArray(a_);

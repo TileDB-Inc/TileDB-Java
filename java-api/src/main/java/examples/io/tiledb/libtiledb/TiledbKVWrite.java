@@ -38,9 +38,9 @@ public class TiledbKVWrite {
 
     // Key-values with three getAttributes
     int key1_[] = {100};
-    intArray key1 = Utils.newIntArray(key1_);
+    int32_tArray key1 = Utils.newInt32_tArray(key1_);
     int key1_a1_[] = {1};
-    intArray key1_a1 = Utils.newIntArray(key1_a1_);
+    int32_tArray key1_a1 = Utils.newInt32_tArray(key1_a1_);
     charArray key1_a2 = Utils.newCharArray("a");
     float key1_a3_[] = {1.1f, 1.2f};
     floatArray key1_a3 = Utils.newFloatArray(key1_a3_);
@@ -48,7 +48,7 @@ public class TiledbKVWrite {
     float key2_[] = {(float) 200.0};
     floatArray key2 = Utils.newFloatArray(key2_);
     int key2_a1_[] = {2};
-    intArray key2_a1 = Utils.newIntArray(key2_a1_);
+    int32_tArray key2_a1 = Utils.newInt32_tArray(key2_a1_);
     charArray key2_a2 = Utils.newCharArray("bb");
     float key2_a3_[] = {1.1f, 1.2f};
     floatArray key2_a3 = Utils.newFloatArray(key2_a3_);
@@ -56,14 +56,14 @@ public class TiledbKVWrite {
     double key3_[] = {300.0, 300.1};
     doubleArray key3 = Utils.newDoubleArray(key3_);
     int key3_a1_[] = {3};
-    intArray key3_a1 = Utils.newIntArray(key3_a1_);
+    int32_tArray key3_a1 = Utils.newInt32_tArray(key3_a1_);
     charArray key3_a2 = Utils.newCharArray("ccc");
     float key3_a3_[] = {3.1f, 3.2f};
     floatArray key3_a3 = Utils.newFloatArray(key3_a3_);
 
     charArray key4 = Utils.newCharArray("key_4");
     int key4_a1_[] = {4};
-    intArray key4_a1 = Utils.newIntArray(key4_a1_);
+    int32_tArray key4_a1 = Utils.newInt32_tArray(key4_a1_);
     charArray key4_a2 = Utils.newCharArray("dddd");
     float key4_a3_[] = {4.1f, 4.2f};
     floatArray key4_a3 = Utils.newFloatArray(key4_a3_);
@@ -128,8 +128,7 @@ public class TiledbKVWrite {
         new BigInteger("" + key3_a3_.length * 4));
 
     // Create fourth key-value item object
-    SWIGTYPE_p_p_tiledb_kv_item_t kv_item4pp = Utils
-        .new_tiledb_kv_item_tpp();
+    SWIGTYPE_p_p_tiledb_kv_item_t kv_item4pp = tiledb.new_tiledb_kv_item_tpp();
     tiledb.tiledb_kv_item_alloc(ctx, kv_item4pp);
     SWIGTYPE_p_tiledb_kv_item_t kv_item4 = tiledb.tiledb_kv_item_tpp_value(kv_item4pp);
 

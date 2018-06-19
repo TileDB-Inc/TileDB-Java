@@ -42,7 +42,7 @@ public class TiledbSparseWriteUnordered2 {
 
     // Prepare cell buffers - #1
     int[] buffer_a1 = {7, 5, 0};
-    intArray a1 = Utils.newIntArray(buffer_a1);
+    int32_tArray a1 = Utils.newInt32Array(buffer_a1);
     long[] buffer_a2 = {0, 4, 6};
     uint64_tArray a2 = Utils.newUint64Array(buffer_a2);
     String buffer_var_a2 = "hhhhffa";
@@ -90,7 +90,7 @@ public class TiledbSparseWriteUnordered2 {
 
     // Prepare cell buffers - #2
     int[] buffer_a1_2 = {6, 4, 3, 1, 2};
-    intArray a1_2 = Utils.newIntArray(buffer_a1_2);
+    int32_tArray a1_2 = Utils.newInt32Array(buffer_a1_2);
     long[] buffer_a2_2 = {0, 3, 4, 8, 10};
     uint64_tArray a2_2 = Utils.newUint64Array(buffer_a2_2);
     String buffer_var_a2_2 = "gggeddddbbccc";
@@ -101,8 +101,7 @@ public class TiledbSparseWriteUnordered2 {
     floatArray a3_2 = Utils.newFloatArray(buffer_a3_2);
 
     long buffer_coords_2_[] = {3, 3, 3, 1, 2, 3, 1, 2, 1, 4};
-    uint64_tArray buffer_coords_2 = Utils
-        .newUint64Array(buffer_coords_2_);
+    uint64_tArray buffer_coords_2 = Utils.newUint64Array(buffer_coords_2_);
 
     // Reset buffers
     long[] buffer_a1_2_size = {buffer_a1_2.length * 4};
