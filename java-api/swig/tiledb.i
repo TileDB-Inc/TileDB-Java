@@ -24,11 +24,7 @@
 %}
 
 %include "stdint.i"
-%include "std_string.i"
-%include "std_vector.i"
-
 %include "carrays.i"
-%array_class(int, intArray);
 %array_class(int32_t, int32_tArray);
 %array_class(int64_t, int64_tArray);
 %array_class(char, charArray);

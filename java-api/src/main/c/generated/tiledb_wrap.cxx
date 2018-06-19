@@ -241,38 +241,6 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include <stdint.h>		// Use the C99 official header
 
 
-#include <string>
-
-
-#include <typeinfo>
-#include <stdexcept>
-
-
-#include <vector>
-#include <stdexcept>
-
-
-typedef int intArray;
-
-SWIGINTERN intArray *new_intArray(int nelements){
-  return new int[nelements]();
-}
-SWIGINTERN void delete_intArray(intArray *self){
-  delete [] self;
-}
-SWIGINTERN int intArray_getitem(intArray *self,int index){
-  return self[index];
-}
-SWIGINTERN void intArray_setitem(intArray *self,int index,int value){
-  self[index] = value;
-}
-SWIGINTERN int *intArray_cast(intArray *self){
-  return self;
-}
-SWIGINTERN intArray *intArray_frompointer(int *t){
-  return (intArray *) t;
-}
-
 typedef int32_t int32_tArray;
 
 SWIGINTERN int32_tArray *new_int32_tArray(int nelements){
@@ -1853,91 +1821,6 @@ static tiledb_vfs_fh_t* tiledb_vfs_fh_tpp_value(tiledb_vfs_fh_t* *obj) {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1intArray(JNIEnv *jenv, jclass jcls, jint jarg1) {
-  jlong jresult = 0 ;
-  int arg1 ;
-  intArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = (int)jarg1; 
-  result = (intArray *)new_intArray(arg1);
-  *(intArray **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_delete_1intArray(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  intArray *arg1 = (intArray *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(intArray **)&jarg1; 
-  delete_intArray(arg1);
-}
-
-
-SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_intArray_1getitem(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
-  jint jresult = 0 ;
-  intArray *arg1 = (intArray *) 0 ;
-  int arg2 ;
-  int result;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(intArray **)&jarg1; 
-  arg2 = (int)jarg2; 
-  result = (int)intArray_getitem(arg1,arg2);
-  jresult = (jint)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_intArray_1setitem(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
-  intArray *arg1 = (intArray *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(intArray **)&jarg1; 
-  arg2 = (int)jarg2; 
-  arg3 = (int)jarg3; 
-  intArray_setitem(arg1,arg2,arg3);
-}
-
-
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_intArray_1cast(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  jlong jresult = 0 ;
-  intArray *arg1 = (intArray *) 0 ;
-  int *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(intArray **)&jarg1; 
-  result = (int *)intArray_cast(arg1);
-  *(int **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_intArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  int *arg1 = (int *) 0 ;
-  intArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(int **)&jarg1; 
-  result = (intArray *)intArray_frompointer(arg1);
-  *(intArray **)&jresult = result; 
-  return jresult;
-}
-
 
 SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1int32_1tArray(JNIEnv *jenv, jclass jcls, jint jarg1) {
   jlong jresult = 0 ;

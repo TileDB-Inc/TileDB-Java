@@ -104,7 +104,7 @@ public class TiledbKVRead {
     int a2_size_ = tiledb.ullp_value(a2_size).intValue();
     System.out.printf("a1, a2, (a3.first, a3.second)\n");
     System.out.printf("-----------------------------\n");
-    System.out.printf("%d", PointerUtils.intFromVoid(a1).getitem(0));
+    System.out.printf("%d", PointerUtils.int32_tArrayFromVoid(a1).getitem(0));
     System.out.printf(", %s", Utils.substring(PointerUtils.charArrayFromVoid(a2), 0, a2_size_));
     System.out.printf(", (%f, %f)\n", PointerUtils.floatArrayFromVoid(a3).getitem(0),
         PointerUtils.floatArrayFromVoid(a3).getitem(1));

@@ -43,7 +43,7 @@ public class TiledbDenseReadSubsetIncomplete {
     tiledb.tiledb_array_open(ctx, arrayp, tiledb_query_type_t.TILEDB_READ);
 
     // Prepare cell buffers
-    intArray buffer_a1 = new intArray(2);
+    int32_tArray buffer_a1 = new int32_tArray(2);
 
     uint64_tArray buffer_a1_size = new uint64_tArray(1);
     buffer_a1_size.setitem(0, new BigInteger("8"));

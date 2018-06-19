@@ -50,7 +50,7 @@ public class TiledbSparseWriteUnordered1Again {
 
     // Prepare cell buffers - #1
     int[] buffer_a1 = {107, 104, 106, 105};
-    intArray a1 = Utils.newIntArray(buffer_a1);
+    int32_tArray a1 = Utils.newInt32Array(buffer_a1);
     long[] buffer_a2 = {0, 3, 4, 5};
     uint64_tArray a2 = Utils.newUint64Array(buffer_a2);
     String buffer_var_a2 = "yyyuwvvvv";

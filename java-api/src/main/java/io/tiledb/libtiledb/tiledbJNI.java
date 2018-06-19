@@ -19,12 +19,6 @@ public class tiledbJNI {
     }
   }
 
-  public final static native long new_intArray(int jarg1);
-  public final static native void delete_intArray(long jarg1);
-  public final static native int intArray_getitem(long jarg1, intArray jarg1_, int jarg2);
-  public final static native void intArray_setitem(long jarg1, intArray jarg1_, int jarg2, int jarg3);
-  public final static native long intArray_cast(long jarg1, intArray jarg1_);
-  public final static native long intArray_frompointer(long jarg1);
   public final static native long new_int32_tArray(int jarg1);
   public final static native void delete_int32_tArray(long jarg1);
   public final static native int int32_tArray_getitem(long jarg1, int32_tArray jarg1_, int jarg2);

@@ -43,7 +43,7 @@ public class TiledbDenseWriteGlobal1 {
     // Prepare cell buffers
     int[] buffer_a1 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
         15};
-    intArray a1 = Utils.newIntArray(buffer_a1);
+    int32_tArray a1 = Utils.newInt32Array(buffer_a1);
     long[] buffer_a2 = {0, 1, 3, 6, 10, 11, 13, 16, 20, 21, 23, 26, 30,
         31, 33, 36};
     uint64_tArray a2 = Utils.newUint64Array(buffer_a2);

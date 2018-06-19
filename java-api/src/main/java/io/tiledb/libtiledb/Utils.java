@@ -2,14 +2,13 @@ package io.tiledb.libtiledb;
 
 public class Utils {
 
-  public static intArray newIntArray(int[] array) {
-    intArray ret = new intArray(UtilsJNI.newIntArraySet(array), true);
-    return ret;
-  }
-
   public static int32_tArray newInt32_tArray(int[] array) {
     int32_tArray ret = new int32_tArray(UtilsJNI.newInt32ArraySet(array), true);
     return ret;
+  }
+
+  public static int32_tArray newInt32Array(int[] array) {
+    return newInt32_tArray(array);
   }
 
   public static int64_tArray newInt64_tArray(long[] array) {
@@ -63,10 +62,6 @@ public class Utils {
   }
 
 
-  public static int[] intArrayGet(intArray array, int size) {
-    return UtilsJNI.intArrayGet(intArray.getCPtr(array), size);
-  }
-
   public static int[] int32ArrayGet(int32_tArray array, int size) {
     return UtilsJNI.int32ArrayGet(int32_tArray.getCPtr(array), size);
   }
@@ -114,10 +109,7 @@ public class Utils {
 
   public static int sizeOfType(Object array) {
     Class arrayClass = array.getClass();
-    if(arrayClass.equals(intArray.class)){
-      return UtilsJNI.sizeOfInt();
-    }
-    else if(arrayClass.equals(int32_tArray.class)){
+    if(arrayClass.equals(int32_tArray.class)){
       return UtilsJNI.sizeOfInt32();
     }
     else if(arrayClass.equals(int64_tArray.class)){
