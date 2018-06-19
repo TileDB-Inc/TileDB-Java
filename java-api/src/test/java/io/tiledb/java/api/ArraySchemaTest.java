@@ -79,7 +79,8 @@ public class ArraySchemaTest {
     schema.dump();
 
     Array my_dense_array = new Array(ctx, "my_dense_array", schema);
-
+    my_dense_array.close()
+  
 //    Array my_dense_array = new Array(ctx,"my_dense_array");
 
     // Prepare cell buffers
