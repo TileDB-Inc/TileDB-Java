@@ -97,10 +97,10 @@ public class NativeArray implements AutoCloseable {
    */
   public NativeArray(Context ctx, Object buffer, Class javaType) throws TileDBError, UnsupportedEncodingException {
     ctx.deleterAdd(this);
-    this.size = getSize(buffer);
     this.javaType = javaType;
     this.nativeType = Types.getNativeType(javaType);
     this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType).intValue();
+    this.size = getSize(buffer);
     createNativeArrayFromBuffer(buffer);
   }
 
@@ -115,10 +115,10 @@ public class NativeArray implements AutoCloseable {
    */
   public NativeArray(Context ctx, Object buffer, tiledb_datatype_t nativeType) throws TileDBError, UnsupportedEncodingException {
     ctx.deleterAdd(this);
-    this.size = getSize(buffer);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
     this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType).intValue();
+    this.size = getSize(buffer);
     createNativeArrayFromBuffer(buffer);
   }
 
@@ -139,7 +139,7 @@ public class NativeArray implements AutoCloseable {
   }
 
   private int getSize(Object buffer) throws UnsupportedEncodingException, TileDBError {
-    switch(nativeType){
+    switch(this.nativeType){
       case TILEDB_FLOAT32:{
         return ((float[])buffer).length;
       }
@@ -238,7 +238,7 @@ public class NativeArray implements AutoCloseable {
         break;
       }
       default:{
-        throw new TileDBError("Not supported getDomain getType "+nativeType);
+        throw new TileDBError("Not supported getDomain getType "+ nativeType);
       }
     }
   }
