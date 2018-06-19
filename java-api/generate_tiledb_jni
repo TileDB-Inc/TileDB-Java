@@ -105,7 +105,7 @@ cleanup_java() {
   fi
 }
 
-cleanup_java || die "error deleting existing java source files"
+cleanup_java 
 
 cleanup_cxx() {
   if [[ -d ./src/main/c/generated ]]; then
@@ -113,7 +113,7 @@ cleanup_cxx() {
   fi
 }
 
-cleanup_cxx || die "error deleting existing cxx source files"
+cleanup_cxx 
 
 swig -v -java -c++ -package io.tiledb.libtiledb \
                 -outdir src/main/java/io/tiledb/libtiledb \

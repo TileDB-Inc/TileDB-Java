@@ -3,7 +3,7 @@ package io.tiledb.libtiledb;
 public class Utils {
 
   public static int32_tArray newInt32_tArray(int[] array) {
-    int32_tArray ret = new int32_tArray(UtilsJNI.newInt32ArraySet(array), true);
+    int32_tArray ret = new int32_tArray(tiledb.newInt32ArraySet(array), true);
     return ret;
   }
 
@@ -12,137 +12,98 @@ public class Utils {
   }
 
   public static int64_tArray newInt64_tArray(long[] array) {
-    int64_tArray ret = new int64_tArray(UtilsJNI.newInt64ArraySet(array), true);
+    int64_tArray ret = new int64_tArray(tiledb.newInt64ArraySet(array), true);
     return ret;
   }
 
   public static charArray newCharArray(String array) {
-    charArray ret = new charArray(UtilsJNI.newCharArraySet(array), true);
+    charArray ret = new charArray(tiledb.newCharArraySet(array), true);
     return ret;
   }
 
   public static floatArray newFloatArray(float[] array) {
-    floatArray ret = new floatArray(UtilsJNI.newFloatArraySet(array), true);
+    floatArray ret = new floatArray(tiledb.newFloatArraySet(array), true);
     return ret;
   }
 
   public static doubleArray newDoubleArray(double[] array) {
-    doubleArray ret = new doubleArray(UtilsJNI.newDoubleArraySet(array), true);
+    doubleArray ret = new doubleArray(tiledb.newDoubleArraySet(array), true);
     return ret;
   }
 
   public static int8_tArray newInt8_tArray(byte[] array) {
-    int8_tArray ret = new int8_tArray(UtilsJNI.newInt8ArraySet(array), true);
+    int8_tArray ret = new int8_tArray(tiledb.newInt8ArraySet(array), true);
     return ret;
   }
 
   public static uint8_tArray newUint8_tArray(short[] array) {
-    uint8_tArray ret = new uint8_tArray(UtilsJNI.newUint8ArraySet(array), true);
+    uint8_tArray ret = new uint8_tArray(tiledb.newUint8ArraySet(array), true);
     return ret;
   }
 
   public static int16_tArray newInt16_tArray(short[] array) {
-    int16_tArray ret = new int16_tArray(UtilsJNI.newInt16ArraySet(array), true);
+    int16_tArray ret = new int16_tArray(tiledb.newInt16ArraySet(array), true);
     return ret;
   }
 
   public static uint16_tArray newUint16_tArray(int[] array) {
-    uint16_tArray ret = new uint16_tArray(UtilsJNI.newUint16ArraySet(array), true);
+    uint16_tArray ret = new uint16_tArray(tiledb.newUint16ArraySet(array), true);
     return ret;
   }
 
   public static uint32_tArray newUint32_tArray(long[] array) {
-    uint32_tArray ret = new uint32_tArray(UtilsJNI.newUint32ArraySet(array), true);
+    uint32_tArray ret = new uint32_tArray(tiledb.newUint32ArraySet(array), true);
     return ret;
   }
 
   public static uint64_tArray newUint64Array(long[] array) {
-    uint64_tArray ret = new uint64_tArray(UtilsJNI.newUint64ArraySet(array), true);
+    uint64_tArray ret = new uint64_tArray(tiledb.newUint64ArraySet(array), true);
     return ret;
   }
 
 
   public static int[] int32ArrayGet(int32_tArray array, int size) {
-    return UtilsJNI.int32ArrayGet(int32_tArray.getCPtr(array), size);
+    return tiledb.int32ArrayGet(int32_tArray.getCPtr(array), size);
   }
 
   public static long[] int64ArrayGet(int64_tArray array, int size) {
-    return UtilsJNI.int64ArrayGet(int64_tArray.getCPtr(array), size);
+    return tiledb.int64ArrayGet(int64_tArray.getCPtr(array), size);
   }
 
   public static String charArrayGet(charArray array) {
-    return UtilsJNI.charArrayGet(charArray.getCPtr(array));
+    return tiledb.charArrayGet(charArray.getCPtr(array));
   }
 
   public static float[] floatArrayGet(floatArray array, int size) {
-    return UtilsJNI.floatArrayGet(floatArray.getCPtr(array), size);
+    return tiledb.floatArrayGet(floatArray.getCPtr(array), size);
   }
 
   public static double[] doubleArrayGet(doubleArray array, int size) {
-    return UtilsJNI.doubleArrayGet(doubleArray.getCPtr(array), size);
+    return tiledb.doubleArrayGet(doubleArray.getCPtr(array), size);
   }
 
   public static byte[] int8ArrayGet(int8_tArray array, int size) {
-    return UtilsJNI.int8ArrayGet(int8_tArray.getCPtr(array), size);
+    return tiledb.int8ArrayGet(int8_tArray.getCPtr(array), size);
   }
 
   public static short[] uint8ArrayGet(uint8_tArray array, int size) {
-    return UtilsJNI.uint8ArrayGet(uint8_tArray.getCPtr(array), size);
+    return tiledb.uint8ArrayGet(uint8_tArray.getCPtr(array), size);
   }
 
   public static short[] int16ArrayGet(int16_tArray array, int size) {
-    return UtilsJNI.int16ArrayGet(int16_tArray.getCPtr(array), size);
+    return tiledb.int16ArrayGet(int16_tArray.getCPtr(array), size);
   }
 
   public static int[] uint16ArrayGet(uint16_tArray array, int size) {
-    return UtilsJNI.uint16ArrayGet(uint16_tArray.getCPtr(array), size);
+    return tiledb.uint16ArrayGet(uint16_tArray.getCPtr(array), size);
   }
 
   public static long[] uint32ArrayGet(uint32_tArray array, int size) {
-    return UtilsJNI.uint32ArrayGet(uint32_tArray.getCPtr(array), size);
+    return tiledb.uint32ArrayGet(uint32_tArray.getCPtr(array), size);
   }
 
   public static long[] uint64ArrayGet(uint64_tArray array, int size) {
-    return UtilsJNI.uint64ArrayGet(uint64_tArray.getCPtr(array), size);
-  }
-
-
-  public static int sizeOfType(Object array) {
-    Class arrayClass = array.getClass();
-    if(arrayClass.equals(int32_tArray.class)){
-      return UtilsJNI.sizeOfInt32();
-    }
-    else if(arrayClass.equals(int64_tArray.class)){
-      return UtilsJNI.sizeOfInt64();
-    }
-    else if(arrayClass.equals(charArray.class)){
-      return UtilsJNI.sizeOfChar();
-    }
-    else if(arrayClass.equals(floatArray.class)){
-      return UtilsJNI.sizeOfFloat();
-    }
-    else if(arrayClass.equals(doubleArray.class)){
-      return UtilsJNI.sizeOfDouble();
-    }
-    else if(arrayClass.equals(int8_tArray.class)){
-      return UtilsJNI.sizeOfInt8();
-    }
-    else if(arrayClass.equals(uint8_tArray.class)){
-      return UtilsJNI.sizeOfUint8();
-    }
-    else if(arrayClass.equals(int16_tArray.class)){
-      return UtilsJNI.sizeOfInt16();
-    }
-    else if(arrayClass.equals(uint16_tArray.class)){
-      return UtilsJNI.sizeOfUint16();
-    }
-    else if(arrayClass.equals(uint32_tArray.class)){
-      return UtilsJNI.sizeOfUint32();
-    }
-    else if(arrayClass.equals(uint64_tArray.class)){
-      return UtilsJNI.sizeOfUint64();
-    }
-    return -1;
+    return tiledb.uint64ArrayGet(uint64_tArray.getCPtr(array), size);
   }
 
 //	public static uint64_tArray newUint64Array(long[] array){

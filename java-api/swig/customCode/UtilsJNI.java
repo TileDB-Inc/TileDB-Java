@@ -3,30 +3,6 @@ package io.tiledb.libtiledb;
 
 public class UtilsJNI {
 
-  public final static native int sizeOfInt();
-
-  public final static native int sizeOfInt32();
-
-  public final static native int sizeOfInt64();
-
-  public final static native int sizeOfChar();
-
-  public final static native int sizeOfFloat();
-
-  public final static native int sizeOfDouble();
-
-  public final static native int sizeOfInt8();
-
-  public final static native int sizeOfUint8();
-
-  public final static native int sizeOfInt16();
-
-  public final static native int sizeOfUint16();
-
-  public final static native int sizeOfUint32();
-
-  public final static native int sizeOfUint64();
-
   public final static native long newIntArray(int[] array, int size);
 
   public final static native long newIntArraySet(int[] jarg1);
