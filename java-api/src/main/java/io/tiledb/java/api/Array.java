@@ -34,10 +34,11 @@ import java.util.Map;
  * TileDB array class.
  */
 public class Array implements AutoCloseable {
-  private Context ctx;
-  private String uri;
   private SWIGTYPE_p_p_tiledb_array_t arraypp;
   private SWIGTYPE_p_tiledb_array_t arrayp;
+  
+  private Context ctx;
+  private String uri;
   private ArraySchema schema;
   private boolean initialized = false;
 
@@ -59,10 +60,14 @@ public class Array implements AutoCloseable {
   }
 
   private void openArray() throws TileDBError {
-    arraypp = Utils.new_tiledb_array_tpp();
+    arraypp = tiledb.new_tiledb_array_tpp();
     ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, arraypp)); 
-    arrayp = Utils.tiledb_array_tpp_value(arraypp);
-    ctx.handleError(tiledb.tiledb_array_open(ctx.getCtxp(), arrayp, tiledb_query_type_t.TILEDB_READ));
+    arrayp = tiledb.tiledb_array_tpp_value(arraypp);
+    ctx.handleError(
+      tiledb.tiledb_array_open(
+        ctx.getCtxp(), 
+	arrayp, 
+	tiledb_query_type_t.TILEDB_READ));
     initialized = true;
   }
 

@@ -30,9 +30,9 @@ public class TiledbObjectLsWalk {
 
   public static void main(String[] args) {
     // Create TileDB context
-    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
+    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = tiledb.new_tiledb_ctx_tpp();
     tiledb.tiledb_ctx_alloc(null, ctxpp);
-    SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+    SWIGTYPE_p_tiledb_ctx_t ctx = tiledb.tiledb_ctx_tpp_value(ctxpp);
 
     // List children
     System.out.printf("List children:\n");

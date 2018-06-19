@@ -32,9 +32,9 @@ public class TiledbKVWrite {
 
   public static void main(String[] args) throws Exception {
     // Create TileDB context
-    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
+    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = tiledb.new_tiledb_ctx_tpp();
     tiledb.tiledb_ctx_alloc(null, ctxpp);
-    SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+    SWIGTYPE_p_tiledb_ctx_t ctx = tiledb.tiledb_ctx_tpp_value(ctxpp);
 
     // Key-values with three getAttributes
     int key1_[] = {100};
@@ -69,18 +69,17 @@ public class TiledbKVWrite {
     floatArray key4_a3 = Utils.newFloatArray(key4_a3_);
 
     // Open the key-value store
-    SWIGTYPE_p_p_tiledb_kv_t kvpp = Utils.new_tiledb_kv_tpp();
+    SWIGTYPE_p_p_tiledb_kv_t kvpp = tiledb.new_tiledb_kv_tpp();
     tiledb.tiledb_kv_alloc(ctx, "my_kv", kvpp);
-    SWIGTYPE_p_tiledb_kv_t kv = Utils.tiledb_kv_tpp_value(kvpp);
+    SWIGTYPE_p_tiledb_kv_t kv = tiledb.tiledb_kv_tpp_value(kvpp);
     tiledb.tiledb_kv_open(ctx, kv, null, 0);
     // Flush every 100 added items
     tiledb.tiledb_kv_set_max_buffered_items(ctx, kv, new BigInteger("100"));
 
     // Create first key-value item object
-    SWIGTYPE_p_p_tiledb_kv_item_t kv_item1pp = Utils
-        .new_tiledb_kv_item_tpp();
+    SWIGTYPE_p_p_tiledb_kv_item_t kv_item1pp = tiledb.new_tiledb_kv_item_tpp();
     tiledb.tiledb_kv_item_alloc(ctx, kv_item1pp);
-    SWIGTYPE_p_tiledb_kv_item_t kv_item1 = Utils.tiledb_kv_item_tpp_value(kv_item1pp);
+    SWIGTYPE_p_tiledb_kv_item_t kv_item1 = tiledb.tiledb_kv_item_tpp_value(kv_item1pp);
 
     tiledb.tiledb_kv_item_set_key(ctx, kv_item1, PointerUtils.toVoid(key1),
         tiledb_datatype_t.TILEDB_INT32, new BigInteger("4"));
@@ -95,10 +94,9 @@ public class TiledbKVWrite {
         new BigInteger("" + key1_a3_.length * 4));
 
     // Create second key-value item object
-    SWIGTYPE_p_p_tiledb_kv_item_t kv_item2pp = Utils
-        .new_tiledb_kv_item_tpp();
+    SWIGTYPE_p_p_tiledb_kv_item_t kv_item2pp = tiledb.new_tiledb_kv_item_tpp();
     tiledb.tiledb_kv_item_alloc(ctx, kv_item2pp);
-    SWIGTYPE_p_tiledb_kv_item_t kv_item2 = Utils.tiledb_kv_item_tpp_value(kv_item2pp);
+    SWIGTYPE_p_tiledb_kv_item_t kv_item2 = tiledb.tiledb_kv_item_tpp_value(kv_item2pp);
 
     tiledb.tiledb_kv_item_set_key(ctx, kv_item2, PointerUtils.toVoid(key2),
         tiledb_datatype_t.TILEDB_FLOAT32, new BigInteger("4"));
@@ -113,10 +111,9 @@ public class TiledbKVWrite {
         new BigInteger("" + key2_a3_.length * 4));
 
     // Create third key-value item object
-    SWIGTYPE_p_p_tiledb_kv_item_t kv_item3pp = Utils
-        .new_tiledb_kv_item_tpp();
+    SWIGTYPE_p_p_tiledb_kv_item_t kv_item3pp = tiledb.new_tiledb_kv_item_tpp();
     tiledb.tiledb_kv_item_alloc(ctx, kv_item3pp);
-    SWIGTYPE_p_tiledb_kv_item_t kv_item3 = Utils.tiledb_kv_item_tpp_value(kv_item3pp);
+    SWIGTYPE_p_tiledb_kv_item_t kv_item3 = tiledb.tiledb_kv_item_tpp_value(kv_item3pp);
 
     tiledb.tiledb_kv_item_set_key(ctx, kv_item3, PointerUtils.toVoid(key3),
         tiledb_datatype_t.TILEDB_FLOAT64, new BigInteger("16"));
@@ -134,7 +131,7 @@ public class TiledbKVWrite {
     SWIGTYPE_p_p_tiledb_kv_item_t kv_item4pp = Utils
         .new_tiledb_kv_item_tpp();
     tiledb.tiledb_kv_item_alloc(ctx, kv_item4pp);
-    SWIGTYPE_p_tiledb_kv_item_t kv_item4 = Utils.tiledb_kv_item_tpp_value(kv_item4pp);
+    SWIGTYPE_p_tiledb_kv_item_t kv_item4 = tiledb.tiledb_kv_item_tpp_value(kv_item4pp);
 
     tiledb.tiledb_kv_item_set_key(ctx, kv_item4, PointerUtils.toVoid(key4),
         tiledb_datatype_t.TILEDB_CHAR, new BigInteger("5"));

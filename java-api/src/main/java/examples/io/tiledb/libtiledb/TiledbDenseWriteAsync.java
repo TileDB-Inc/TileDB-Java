@@ -30,14 +30,14 @@ public class TiledbDenseWriteAsync {
 
   public static void main(String[] args) throws InterruptedException {
     // Create TileDB context
-    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
+    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = tiledb.new_tiledb_ctx_tpp();
     tiledb.tiledb_ctx_alloc(null, ctxpp);
-    SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+    SWIGTYPE_p_tiledb_ctx_t ctx = tiledb.tiledb_ctx_tpp_value(ctxpp);
 
     // Open array
-    SWIGTYPE_p_p_tiledb_array_t arraypp = Utils.new_tiledb_array_tpp();
+    SWIGTYPE_p_p_tiledb_array_t arraypp = tiledb.new_tiledb_array_tpp();
     tiledb.tiledb_array_alloc(ctx, "my_dense_array", arraypp);
-    SWIGTYPE_p_tiledb_array_t arrayp = Utils.tiledb_array_tpp_value(arraypp);
+    SWIGTYPE_p_tiledb_array_t arrayp = tiledb.tiledb_array_tpp_value(arraypp);
     tiledb.tiledb_array_open(ctx, arrayp, tiledb_query_type_t.TILEDB_WRITE);
 
     // Prepare cell buffers
@@ -68,10 +68,10 @@ public class TiledbDenseWriteAsync {
     uint64_tArray a3_size = Utils.newUint64Array(buffer_a3_size);
 
     // Create query
-    SWIGTYPE_p_p_tiledb_query_t querypp = Utils.new_tiledb_query_tpp();
+    SWIGTYPE_p_p_tiledb_query_t querypp = tildb.new_tiledb_query_tpp();
     tiledb.tiledb_query_alloc(ctx, arrayp,
         tiledb_query_type_t.TILEDB_WRITE, querypp);
-    SWIGTYPE_p_tiledb_query_t query = Utils.tiledb_query_tpp_value(querypp);
+    SWIGTYPE_p_tiledb_query_t query = tiledb.tiledb_query_tpp_value(querypp);
     tiledb.tiledb_query_set_layout(ctx, query,
         tiledb_layout_t.TILEDB_GLOBAL_ORDER);
 	

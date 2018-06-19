@@ -62,30 +62,31 @@ public class Attribute implements AutoCloseable {
 
   private SWIGTYPE_p_tiledb_attribute_t attributep;
   private SWIGTYPE_p_p_tiledb_attribute_t attributepp;
-  private int size;
-  private boolean isArray;
+  
   private Context ctx;
   private String name;
   private tiledb_datatype_t type;
+  private int size;
+  private boolean isArray;
 
   /* Constructor from native object */
   protected Attribute(Context ctx, SWIGTYPE_p_p_tiledb_attribute_t attributepp) throws TileDBError {
     ctx.deleterAdd(this);
-    this.ctx =ctx;
+    this.ctx = ctx;
     this.attributepp = attributepp;
-    this.attributep = Utils.tiledb_attribute_tpp_value(attributepp);
+    this.attributep = tiledb.tiledb_attribute_tpp_value(attributepp);
     getName();
   }
 
   /* Default Constructor */
   public Attribute(Context ctx, String name, Class atrrType) throws TileDBError {
     ctx.deleterAdd(this);
-    this.ctx =ctx;
+    this.ctx = ctx;
     this.name = name;
-    this.attributepp = Utils.new_tiledb_attribute_tpp();
-    type =  Types.getNativeType(atrrType);
+    this.attributepp = tiledb.new_tiledb_attribute_tpp();
+    this.type = Types.getNativeType(atrrType);
     ctx.handleError(tiledb.tiledb_attribute_alloc(ctx.getCtxp(), name, type, attributepp));
-    this.attributep = Utils.tiledb_attribute_tpp_value(attributepp);
+    this.attributep = tiledb.tiledb_attribute_tpp_value(attributepp);
   }
 
   protected SWIGTYPE_p_tiledb_attribute_t getAttributep() {

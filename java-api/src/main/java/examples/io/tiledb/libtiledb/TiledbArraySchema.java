@@ -122,17 +122,15 @@ public class TiledbArraySchema {
 
   public static void main(String[] args) {
     // Create TileDB context
-    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = Utils.new_tiledb_ctx_tpp();
+    SWIGTYPE_p_p_tiledb_ctx_t ctxpp = tiledb.new_tiledb_ctx_tpp();
     tiledb.tiledb_ctx_alloc(null, ctxpp);
-    SWIGTYPE_p_tiledb_ctx_t ctx = Utils.tiledb_ctx_tpp_value(ctxpp);
+    SWIGTYPE_p_tiledb_ctx_t ctx = tiledb.tiledb_ctx_tpp_value(ctxpp);
 
     // Create array schema
-    SWIGTYPE_p_p_tiledb_array_schema_t array_schemapp = Utils
-        .new_tiledb_array_schema_tpp();
+    SWIGTYPE_p_p_tiledb_array_schema_t array_schemapp = tiledb.new_tiledb_array_schema_tpp();
     tiledb.tiledb_array_schema_alloc(ctx,
         tiledb_array_type_t.TILEDB_SPARSE, array_schemapp);
-    SWIGTYPE_p_tiledb_array_schema_t array_schema = Utils
-        .tiledb_array_schema_tpp_value(array_schemapp);
+    SWIGTYPE_p_tiledb_array_schema_t array_schema = tiledb.tiledb_array_schema_tpp_value(array_schemapp);
 
     // Print array schema contents
     System.out.println("First dump:");
@@ -160,47 +158,43 @@ public class TiledbArraySchema {
     uint64_tArray d1_domain = Utils.newUint64Array(d1_domain_);
     long[] d1_extents_ = {10};
     uint64_tArray d1_extent = Utils.newUint64Array(d1_extents_);
-    SWIGTYPE_p_p_tiledb_dimension_t d1pp = Utils
-        .new_tiledb_dimension_tpp();
+    SWIGTYPE_p_p_tiledb_dimension_t d1pp = tiledb.new_tiledb_dimension_tpp();
     tiledb.tiledb_dimension_alloc(ctx, "",
         tiledb_datatype_t.TILEDB_UINT64,
         PointerUtils.toVoid(d1_domain), 
 	PointerUtils.toVoid(d1_extent),
 	d1pp);
-    SWIGTYPE_p_tiledb_dimension_t d1 = Utils.tiledb_dimension_tpp_value(d1pp);
+    SWIGTYPE_p_tiledb_dimension_t d1 = tiledb.tiledb_dimension_tpp_value(d1pp);
 
     long[] d2_domain_ = {101, 10000};
     uint64_tArray d2_domain = Utils.newUint64Array(d2_domain_);
     long[] d2_extents_ = {10};
     uint64_tArray d2_extent = Utils.newUint64Array(d2_extents_);
-    SWIGTYPE_p_p_tiledb_dimension_t d2pp = Utils
-        .new_tiledb_dimension_tpp();
+    SWIGTYPE_p_p_tiledb_dimension_t d2pp = tiledb.new_tiledb_dimension_tpp();
     tiledb.tiledb_dimension_alloc(ctx, "d2",
         tiledb_datatype_t.TILEDB_UINT64,
         PointerUtils.toVoid(d2_domain), 
 	PointerUtils.toVoid(d2_extent),
 	d2pp);
-    SWIGTYPE_p_tiledb_dimension_t d2 = Utils.tiledb_dimension_tpp_value(d2pp);
+    SWIGTYPE_p_tiledb_dimension_t d2 = tiledb.tiledb_dimension_tpp_value(d2pp);
 
     // Create and set getDomain
-    SWIGTYPE_p_p_tiledb_domain_t domainpp = Utils.new_tiledb_domain_tpp();
+    SWIGTYPE_p_p_tiledb_domain_t domainpp = tiledb.new_tiledb_domain_tpp();
     tiledb.tiledb_domain_alloc(ctx, domainpp);
-    SWIGTYPE_p_tiledb_domain_t domain = Utils.tiledb_domain_tpp_value(domainpp);
+    SWIGTYPE_p_tiledb_domain_t domain = tiledb.tiledb_domain_tpp_value(domainpp);
     tiledb.tiledb_domain_add_dimension(ctx, domain, d1);
     tiledb.tiledb_array_schema_set_domain(ctx, array_schema, domain);
 
     // Create and add getAttributes
 
-    SWIGTYPE_p_p_tiledb_attribute_t a1pp = Utils
-        .new_tiledb_attribute_tpp();
+    SWIGTYPE_p_p_tiledb_attribute_t a1pp = tiledb.new_tiledb_attribute_tpp();
     tiledb.tiledb_attribute_alloc(ctx, "",
         tiledb_datatype_t.TILEDB_INT32, a1pp);
-    SWIGTYPE_p_tiledb_attribute_t a1 = Utils.tiledb_attribute_tpp_value(a1pp);
-    SWIGTYPE_p_p_tiledb_attribute_t a2pp = Utils
-        .new_tiledb_attribute_tpp();
+    SWIGTYPE_p_tiledb_attribute_t a1 = tiledb.tiledb_attribute_tpp_value(a1pp);
+    SWIGTYPE_p_p_tiledb_attribute_t a2pp = tiledb.new_tiledb_attribute_tpp();
     tiledb.tiledb_attribute_alloc(ctx, "a2",
         tiledb_datatype_t.TILEDB_FLOAT32, a2pp);
-    SWIGTYPE_p_tiledb_attribute_t a2 = Utils.tiledb_attribute_tpp_value(a2pp);
+    SWIGTYPE_p_tiledb_attribute_t a2 = tiledb.tiledb_attribute_tpp_value(a2pp);
 
     tiledb.tiledb_attribute_set_compressor(ctx, a1,
         tiledb_compressor_t.TILEDB_GZIP, -1);
@@ -269,8 +263,7 @@ public class TiledbArraySchema {
     System.out.printf("\nArray schema attribute names: \n");
     SWIGTYPE_p_unsigned_int nattrp = tiledb.new_uintp();
     tiledb.tiledb_array_schema_get_attribute_num(ctx, array_schema, nattrp);
-    SWIGTYPE_p_p_tiledb_attribute_t attrpp = Utils
-        .new_tiledb_attribute_tpp();
+    SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
     SWIGTYPE_p_p_char attr_namepp = tiledb.new_charpp();
     long nattr = tiledb.uintp_value(nattrp);
     for (long i = 0; i < nattr; i++) {
@@ -278,18 +271,16 @@ public class TiledbArraySchema {
           array_schema, i, attrpp);
 
       tiledb.tiledb_attribute_get_name(ctx,
-          Utils.tiledb_attribute_tpp_value(attrpp), attr_namepp);
+          tiledb.tiledb_attribute_tpp_value(attrpp), attr_namepp);
       System.out.printf("* %s\n", tiledb.charpp_value(attr_namepp));
       tiledb.tiledb_attribute_free(attrpp);
     }
     System.out.printf("\n");
 
     // Get and print getDomain
-    SWIGTYPE_p_p_tiledb_domain_t got_domainpp = Utils
-        .new_tiledb_domain_tpp();
+    SWIGTYPE_p_p_tiledb_domain_t got_domainpp = tiledb.new_tiledb_domain_tpp();
     tiledb.tiledb_array_schema_get_domain(ctx, array_schema, got_domainpp);
-    SWIGTYPE_p_tiledb_domain_t got_domain = Utils
-        .tiledb_domain_tpp_value(got_domainpp);
+    SWIGTYPE_p_tiledb_domain_t got_domain = tiledb.tiledb_domain_tpp_value(got_domainpp);
     tiledb.tiledb_domain_dump_stdout(ctx, got_domain);
 
     // Print the dimension names
@@ -297,12 +288,11 @@ public class TiledbArraySchema {
     SWIGTYPE_p_unsigned_int ndimp = tiledb.new_uintp();
     tiledb.tiledb_domain_get_ndim(ctx, domain, ndimp);
     long ndim = tiledb.uintp_value(ndimp);
-    SWIGTYPE_p_p_tiledb_dimension_t dimpp = Utils
-        .new_tiledb_dimension_tpp();
+    SWIGTYPE_p_p_tiledb_dimension_t dimpp = tiledb.new_tiledb_dimension_tpp();
     SWIGTYPE_p_p_char dim_namepp = tiledb.new_charpp();
     for (long i = 0; i < ndim; i++) {
       tiledb.tiledb_domain_get_dimension_from_index(ctx, domain, i, dimpp);
-      SWIGTYPE_p_tiledb_dimension_t dim = Utils.tiledb_dimension_tpp_value(dimpp);
+      SWIGTYPE_p_tiledb_dimension_t dim = tiledb.tiledb_dimension_tpp_value(dimpp);
       tiledb.tiledb_dimension_get_name(ctx, dim, dim_namepp);
       System.out.printf("* %s\n", tiledb.charpp_value(dim_namepp));
       tiledb.tiledb_dimension_free(dimpp);
