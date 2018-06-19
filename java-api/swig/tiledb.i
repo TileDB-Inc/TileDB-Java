@@ -47,42 +47,6 @@
 %include "arrays_java.i";
 %include "enums.swg"
 
-JAVA_ARRAYS_DECL(int8_t, jbyte, Byte, Int8);
-JAVA_ARRAYS_DECL(uint8_t, jshort, Short, Uint8); 
-JAVA_ARRAYS_DECL(int16_t, jshort, Short, Int16);         
-JAVA_ARRAYS_DECL(uint16_t, jint, Int, Uint16); 
-JAVA_ARRAYS_DECL(int32_t, jint, Int, Int32);          
-JAVA_ARRAYS_DECL(uint32_t, jlong, Long, Uint);     
-JAVA_ARRAYS_DECL(int64_t, jlong, Long, Int64);   
-JAVA_ARRAYS_DECL(uint64_t, jlong, Long, Uint64);  
-
-JAVA_ARRAYS_IMPL(int8_t, jbyte, Byte, Int8);
-JAVA_ARRAYS_IMPL(uint8_t, jshort, Short, Uint8); 
-JAVA_ARRAYS_IMPL(int16_t, jshort, Short, Int16);         
-JAVA_ARRAYS_IMPL(uint16_t, jint, Int, Uint16);   
-JAVA_ARRAYS_IMPL(int32_t, jint, Int, Int32);            
-JAVA_ARRAYS_IMPL(uint32_t, jlong, Long, Uint);     
-JAVA_ARRAYS_IMPL(int64_t, jlong, Long, Int64);    
-JAVA_ARRAYS_IMPL(uint64_t, jlong, Long, Uint64);  
-
-JAVA_ARRAYS_TYPEMAPS(int8_t, byte, jbyte, Int8, "[B");
-JAVA_ARRAYS_TYPEMAPS(uint8_t, short, jshort, Uint8, "[S");
-JAVA_ARRAYS_TYPEMAPS(int16_t, short, jshort, Int16, "[S");
-JAVA_ARRAYS_TYPEMAPS(uint16_t, int, jint, Uint16, "[I");  
-JAVA_ARRAYS_TYPEMAPS(int32_t, int, jint, Int32, "[I");
-JAVA_ARRAYS_TYPEMAPS(uint32_t, long, jlong, Uint32, "[J");
-JAVA_ARRAYS_TYPEMAPS(int64_t, int, jint, Int64, "[I");
-JAVA_ARRAYS_TYPEMAPS(uint64_t, long, jlong, Uint64, "[J");
-
-%apply int8_t[] { int8_t* }
-%apply uint8_t[] { uint8_t* }
-%apply int16_t[] { int16_t* }
-%apply uint16_t[] { uint16_t* }
-%apply int32_t[] { int32_t* }
-%apply uint32_t[] { uint32_t* }
-%apply int64_t[] { int64_t* }
-%apply uint64_t[] { uint64_t* }
-
 %include "cpointer.i"
 %pointer_functions(int, intp);
 %pointer_functions(float, floatp);

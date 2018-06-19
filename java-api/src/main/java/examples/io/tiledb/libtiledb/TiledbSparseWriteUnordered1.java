@@ -26,7 +26,7 @@ package examples.io.tiledb.libtiledb;
 
 import io.tiledb.libtiledb.*;
 
-public class TiledbSparseWriteUnordered2 {
+public class TiledbSparseWriteUnordered1 {
 
   public static void main(String[] args) {
     // Create TileDB context

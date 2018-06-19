@@ -128,8 +128,7 @@ public class TiledbKVWrite {
         new BigInteger("" + key3_a3_.length * 4));
 
     // Create fourth key-value item object
-    SWIGTYPE_p_p_tiledb_kv_item_t kv_item4pp = Utils
-        .new_tiledb_kv_item_tpp();
+    SWIGTYPE_p_p_tiledb_kv_item_t kv_item4pp = tiledb.new_tiledb_kv_item_tpp();
     tiledb.tiledb_kv_item_alloc(ctx, kv_item4pp);
     SWIGTYPE_p_tiledb_kv_item_t kv_item4 = tiledb.tiledb_kv_item_tpp_value(kv_item4pp);
 

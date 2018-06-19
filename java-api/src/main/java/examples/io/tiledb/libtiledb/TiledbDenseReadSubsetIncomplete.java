@@ -50,7 +50,7 @@ public class TiledbDenseReadSubsetIncomplete {
 
     // Create query
     long[] subarray_ = {3, 4, 2, 4};
-    uint64_tArray subarray = tiledb.newUint64Array(subarray_);
+    uint64_tArray subarray = Utils.newUint64Array(subarray_);
     SWIGTYPE_p_p_tiledb_query_t querypp = tiledb.new_tiledb_query_tpp();
     tiledb.tiledb_query_alloc(ctx, arrayp,
         tiledb_query_type_t.TILEDB_READ, querypp);

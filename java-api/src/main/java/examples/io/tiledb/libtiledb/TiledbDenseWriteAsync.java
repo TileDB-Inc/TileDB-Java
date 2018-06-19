@@ -68,7 +68,7 @@ public class TiledbDenseWriteAsync {
     uint64_tArray a3_size = Utils.newUint64Array(buffer_a3_size);
 
     // Create query
-    SWIGTYPE_p_p_tiledb_query_t querypp = tildb.new_tiledb_query_tpp();
+    SWIGTYPE_p_p_tiledb_query_t querypp = tiledb.new_tiledb_query_tpp();
     tiledb.tiledb_query_alloc(ctx, arrayp,
         tiledb_query_type_t.TILEDB_WRITE, querypp);
     SWIGTYPE_p_tiledb_query_t query = tiledb.tiledb_query_tpp_value(querypp);
