@@ -57,10 +57,10 @@ public class TiledbDenseWriteAsync {
         13.2f, 14.1f, 14.2f, 15.1f, 15.2f};
     floatArray a3 = Utils.newFloatArray(buffer_a3);
 
-    long[] buffer_a1_size = {buffer_a1.length * Utils.sizeOfType(a1)};
-    long[] buffer_a2_size = {buffer_a2.length * Utils.sizeOfType(a2)};
-    long[] buffer_var_a2_size = {buffer_var_a2.length() * Utils.sizeOfType(var_a2)};
-    long[]  buffer_a3_size = {buffer_a3.length * Utils.sizeOfType(a3)};
+    long[] buffer_a1_size = {buffer_a1.length * tiledb.sizeOfType(a1)};
+    long[] buffer_a2_size = {buffer_a2.length * tiledb.sizeOfType(a2)};
+    long[] buffer_var_a2_size = {buffer_var_a2.length() * tiledb.sizeOfType(var_a2)};
+    long[]  buffer_a3_size = {buffer_a3.length * tiledb.sizeOfType(a3)};
 
     uint64_tArray a1_size = Utils.newUint64Array(buffer_a1_size);
     uint64_tArray a2_size = Utils.newUint64Array(buffer_a2_size);

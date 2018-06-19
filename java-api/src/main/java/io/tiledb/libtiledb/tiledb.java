@@ -788,6 +788,138 @@ public class tiledb implements tiledbConstants {
     return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_vfs_fh_t(cPtr, false);
   }
 
+  public static int sizeOfInt32() {
+    return tiledbJNI.sizeOfInt32();
+  }
+
+  public static int sizeOfInt64() {
+    return tiledbJNI.sizeOfInt64();
+  }
+
+  public static int sizeOfChar() {
+    return tiledbJNI.sizeOfChar();
+  }
+
+  public static int sizeOfFloat() {
+    return tiledbJNI.sizeOfFloat();
+  }
+
+  public static int sizeOfDouble() {
+    return tiledbJNI.sizeOfDouble();
+  }
+
+  public static int sizeOfInt8() {
+    return tiledbJNI.sizeOfInt8();
+  }
+
+  public static int sizeOfUint8() {
+    return tiledbJNI.sizeOfUint8();
+  }
+
+  public static int sizeOfInt16() {
+    return tiledbJNI.sizeOfInt16();
+  }
+
+  public static int sizeOfUint16() {
+    return tiledbJNI.sizeOfUint16();
+  }
+
+  public static int sizeOfUint32() {
+    return tiledbJNI.sizeOfUint32();
+  }
+
+  public static int sizeOfUint64() {
+    return tiledbJNI.sizeOfUint64();
+  }
+
+  public static long newInt32ArraySet(int[] jarg1) {
+    return tiledbJNI.newInt32ArraySet(jarg1);
+  }
+
+  public static long newInt64ArraySet(long[] jarg1) {
+    return tiledbJNI.newInt64ArraySet(jarg1);
+  }
+
+  public static long newCharArraySet(String jarg1) {
+    return tiledbJNI.newCharArraySet(jarg1);
+  }
+
+  public static long newFloatArraySet(float[] jarg1) {
+    return tiledbJNI.newFloatArraySet(jarg1);
+  }
+
+  public static long newDoubleArraySet(double[] jarg1) {
+    return tiledbJNI.newDoubleArraySet(jarg1);
+  }
+
+  public static long newInt8ArraySet(byte[] jarg1) {
+    return tiledbJNI.newInt8ArraySet(jarg1);
+  }
+
+  public static long newUint8ArraySet(short[] jarg1) {
+    return tiledbJNI.newUint8ArraySet(jarg1);
+  }
+
+  public static long newInt16ArraySet(short[] jarg1) {
+    return tiledbJNI.newInt16ArraySet(jarg1);
+  }
+
+  public static long newUint16ArraySet(int[] jarg1) {
+    return tiledbJNI.newUint16ArraySet(jarg1);
+  }
+
+  public static long newUint32ArraySet(long[] jarg1) {
+    return tiledbJNI.newUint32ArraySet(jarg1);
+  }
+
+  public static long newUint64ArraySet(long[] jarg1) {
+    return tiledbJNI.newUint64ArraySet(jarg1);
+  }
+
+  public static int[] int32ArrayGet(long array, int sz) {
+    return tiledbJNI.int32ArrayGet(array, sz);
+  }
+
+  public static long[] int64ArrayGet(long array, int sz) {
+    return tiledbJNI.int64ArrayGet(array, sz);
+  }
+
+  public static String charArrayGet(long array) {
+    return tiledbJNI.charArrayGet(array);
+  }
+
+  public static float[] floatArrayGet(long array, int size) {
+    return tiledbJNI.floatArrayGet(array, size);
+  }
+
+  public static double[] doubleArrayGet(long array, int size) {
+    return tiledbJNI.doubleArrayGet(array, size);
+  }
+
+  public static byte[] int8ArrayGet(long array, int size) {
+    return tiledbJNI.int8ArrayGet(array, size);
+  }
+
+  public static short[] uint8ArrayGet(long array, int size) {
+    return tiledbJNI.uint8ArrayGet(array, size);
+  }
+
+  public static short[] int16ArrayGet(long array, int size) {
+    return tiledbJNI.int16ArrayGet(array, size);
+  }
+
+  public static int[] uint16ArrayGet(long array, int size) {
+    return tiledbJNI.uint16ArrayGet(array, size);
+  }
+
+  public static long[] uint32ArrayGet(long array, int size) {
+    return tiledbJNI.uint32ArrayGet(array, size);
+  }
+
+  public static long[] uint64ArrayGet(long array, int size) {
+    return tiledbJNI.uint64ArrayGet(array, size);
+  }
+
   public static String tiledb_coords() {
     return tiledbJNI.tiledb_coords();
   }
@@ -1517,6 +1649,36 @@ public class tiledb implements tiledbConstants {
 
   public static int tiledb_object_walk_jc(SWIGTYPE_p_tiledb_ctx_t ctx, String path, tiledb_walk_order_t order, SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int callback, SWIGTYPE_p_void callback_data) {
     return tiledbJNI.tiledb_object_walk_jc(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), path, order.swigValue(), SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int.getCPtr(callback), SWIGTYPE_p_void.getCPtr(callback_data));
+  }
+
+
+  
+  public static int sizeOfType(Object array) {
+    Class arrayClass = array.getClass();
+    if (arrayClass.equals(int32_tArray.class)) {
+      return sizeOfInt32();
+    } else if (arrayClass.equals(int64_tArray.class)) {
+      return sizeOfInt64();
+    } else if (arrayClass.equals(charArray.class)) {
+      return sizeOfChar();
+    } else if (arrayClass.equals(floatArray.class)) {
+      return sizeOfFloat();
+    } else if (arrayClass.equals(doubleArray.class)) {
+      return sizeOfDouble();
+    } else if (arrayClass.equals(int8_tArray.class)) {
+      return sizeOfInt8();
+    } else if (arrayClass.equals(uint8_tArray.class)) {
+      return sizeOfUint8();
+    } else if (arrayClass.equals(int16_tArray.class)) {
+      return sizeOfInt16();
+    } else if (arrayClass.equals(uint16_tArray.class)) {
+      return sizeOfUint16();
+    } else if (arrayClass.equals(uint32_tArray.class)) {
+      return sizeOfUint32();
+    } else if (arrayClass.equals(uint64_tArray.class)) {
+      return sizeOfUint64();
+    }
+    return -1;
   }
 
 }

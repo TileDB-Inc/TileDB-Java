@@ -65,20 +65,20 @@ public class TiledbDenseWriteGlobal1 {
     tiledb.tiledb_query_set_layout(ctx, query,
         tiledb_layout_t.TILEDB_GLOBAL_ORDER);
     
-    long[] buffer_a1_size = {buffer_a1.length * Utils.sizeOfType(a1)};
+    long[] buffer_a1_size = {buffer_a1.length * tiledb.sizeOfType(a1)};
     uint64_tArray a1_size = Utils.newUint64Array(buffer_a1_size);
     tiledb.tiledb_query_set_buffer(ctx, query, "a1",
 	PointerUtils.toVoid(a1), a1_size.cast());
    
-    long[] buffer_a2_size = {buffer_a2.length * Utils.sizeOfType(a2)};
+    long[] buffer_a2_size = {buffer_a2.length * tiledb.sizeOfType(a2)};
     uint64_tArray a2_size = Utils.newUint64Array(buffer_a2_size);
-    long[] buffer_var_a2_size = {buffer_var_a2.length() * Utils.sizeOfType(var_a2)};
+    long[] buffer_var_a2_size = {buffer_var_a2.length() * tiledb.sizeOfType(var_a2)};
     uint64_tArray var_a2_size = Utils.newUint64Array(buffer_var_a2_size);
     tiledb.tiledb_query_set_buffer_var(ctx, query, "a2",
         a2.cast(), a2_size.cast(),
 	PointerUtils.toVoid(var_a2), var_a2_size.cast());
 
-    long[] buffer_a3_size = {buffer_a3.length * Utils.sizeOfType(a3)};
+    long[] buffer_a3_size = {buffer_a3.length * tiledb.sizeOfType(a3)};
     uint64_tArray a3_size = Utils.newUint64Array(buffer_a3_size);
     tiledb.tiledb_query_set_buffer(ctx, query, "a3", 
         PointerUtils.toVoid(a3), a3_size.cast());
