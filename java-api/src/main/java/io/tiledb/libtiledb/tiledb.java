@@ -1276,6 +1276,10 @@ public class tiledb implements tiledbConstants {
     return tiledbJNI.tiledb_array_open(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_t.getCPtr(array), query_type.swigValue());
   }
 
+  public static int tiledb_array_is_open(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_array_t array, SWIGTYPE_p_int is_open) {
+    return tiledbJNI.tiledb_array_is_open(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_t.getCPtr(array), SWIGTYPE_p_int.getCPtr(is_open));
+  }
+
   public static int tiledb_array_reopen(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_array_t array) {
     return tiledbJNI.tiledb_array_reopen(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_t.getCPtr(array));
   }
