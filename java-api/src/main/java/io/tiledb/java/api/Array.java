@@ -42,24 +42,31 @@ public class Array implements AutoCloseable {
   private ArraySchema schema;
   private boolean initialized = false;
 
-  public Array(Context ctx, String uri, ArraySchema schema) throws TileDBError {
-    ctx.deleterAdd(this);
-    create(uri, schema);
-    this.ctx = ctx;
-    this.uri = uri;
-    this.schema = schema;
-    openArray();
-  }
-
-  public Array(Context ctx, String uri) throws TileDBError {
+  /** Construct an Array object, opening the array for reading / writing
+   */ 
+  public Array(Context ctx, String uri, tiledb_query_type_t query_type) throws TileDBError {
     ctx.deleterAdd(this);
     schema = new ArraySchema(ctx, uri);
     this.ctx = ctx;
     this.uri = uri;
-    openArray();
+    openArray(query_type);
+  }
+  
+  /** Construct an Array object, opening the array for reading
+   */
+  public Array(Context ctx, String uri) throws TileDBError {
+     ctx.deleterAdd(this);
+    schema = new ArraySchema(ctx, uri);
+    this.ctx = ctx;
+    this.uri = uri;
+    openArray(tiledb_query_type_t.TILEDB_READ);
   }
 
   private void openArray() throws TileDBError {
+    openArray(tiledb_query_type_t.TILEDB_READ);
+  }
+
+  private void openArray(tiledb_query_type_t query_type) throws TileDBError {
     arraypp = tiledb.new_tiledb_array_tpp();
     ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, arraypp)); 
     arrayp = tiledb.tiledb_array_tpp_value(arraypp);
@@ -67,9 +74,11 @@ public class Array implements AutoCloseable {
       tiledb.tiledb_array_open(
         ctx.getCtxp(), 
 	arrayp, 
-	tiledb_query_type_t.TILEDB_READ));
+	query_type));
     initialized = true;
   }
+
+
 
   /** Consolidates the fragments of an array. **/
   public void consolidate() throws TileDBError {

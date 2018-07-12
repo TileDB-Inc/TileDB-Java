@@ -78,8 +78,7 @@ public class SparseCreate {
 
     // Print array schema contents
     schema.dump();
-
-    Array my_sparse_array = new Array(ctx, "my_sparse_array", schema);
-
+    
+    Array.create("my_sparse_array", schema);
   }
 }

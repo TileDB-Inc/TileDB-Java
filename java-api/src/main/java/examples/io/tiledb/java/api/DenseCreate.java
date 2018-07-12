@@ -74,8 +74,7 @@ public class DenseCreate {
 
     // Print array schema contents
     schema.dump();
-
-    Array my_dense_array = new Array(ctx, "my_dense_array", schema);
-
+		
+    Array.create("my_dense_array", schema);
   }
 }
