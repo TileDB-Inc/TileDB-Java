@@ -81,9 +81,7 @@ public class WriteBigSparseArray {
 
     // Print array schema contents
     schema.dump();
-
-    array = new Array(ctx, "my_big_array", schema);
-
+    Array.create("my_big_array", schema);
   }
 
 

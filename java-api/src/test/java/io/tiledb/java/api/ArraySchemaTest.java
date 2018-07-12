@@ -78,10 +78,10 @@ public class ArraySchemaTest {
     // Print array schema contents
     schema.dump();
 
-    Array my_dense_array = new Array(ctx, "my_dense_array", schema);
-    my_dense_array.close()
+    Array.create("my_dense_array", schema);
+    //my_dense_array.close();
   
-//    Array my_dense_array = new Array(ctx,"my_dense_array");
+    Array my_dense_array = new Array(ctx,"my_dense_array", tiledb_query_type_t.TILEDB_WRITE);
 
     // Prepare cell buffers
     NativeArray a1_data = new NativeArray(
