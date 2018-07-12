@@ -64,7 +64,7 @@ public class Query implements AutoCloseable {
   private HashMap<String, Pair<NativeArray, NativeArray>> var_buffers_;
   private HashMap<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
   private boolean executed;
-
+	
   public Query(Array array, tiledb_query_type_t type) throws TileDBError {
     this.ctx = array.getCtx();
     ctx.deleterAdd(this);
@@ -77,6 +77,10 @@ public class Query implements AutoCloseable {
     this.var_buffers_ = new HashMap<String, Pair<NativeArray, NativeArray>>();
     this.buffer_sizes_ = new HashMap<String, Pair<uint64_tArray, uint64_tArray>>();
     executed = false;
+  }
+
+  public Query(Array array) throws TileDBError {
+      this(array, array.getQueryType());
   }
 
   /** Sets the data layout of the buffers.  */

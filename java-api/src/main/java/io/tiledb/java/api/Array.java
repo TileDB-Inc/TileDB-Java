@@ -40,6 +40,7 @@ public class Array implements AutoCloseable {
   private Context ctx;
   private String uri;
   private ArraySchema schema;
+  private tiledb_query_type_t query_type;
   private boolean initialized = false;
 
   /** Construct an Array object, opening the array for reading / writing
@@ -49,17 +50,14 @@ public class Array implements AutoCloseable {
     schema = new ArraySchema(ctx, uri);
     this.ctx = ctx;
     this.uri = uri;
+    this.query_type = query_type;
     openArray(query_type);
   }
   
   /** Construct an Array object, opening the array for reading
    */
   public Array(Context ctx, String uri) throws TileDBError {
-     ctx.deleterAdd(this);
-    schema = new ArraySchema(ctx, uri);
-    this.ctx = ctx;
-    this.uri = uri;
-    openArray(tiledb_query_type_t.TILEDB_READ);
+    this(ctx, uri, tiledb_query_type_t.TILEDB_READ);
   }
 
   private void openArray() throws TileDBError {
@@ -77,8 +75,6 @@ public class Array implements AutoCloseable {
 	query_type));
     initialized = true;
   }
-
-
 
   /** Consolidates the fragments of an array. **/
   public void consolidate() throws TileDBError {
@@ -191,6 +187,10 @@ public class Array implements AutoCloseable {
 
   public ArraySchema getSchema() {
     return schema;
+  }
+  
+  public tiledb_query_type_t getQueryType() {
+    return query_type;
   }
 
   public SWIGTYPE_p_tiledb_array_t getArrayp() {

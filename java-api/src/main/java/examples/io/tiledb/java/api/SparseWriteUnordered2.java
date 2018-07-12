@@ -72,8 +72,9 @@ public class SparseWriteUnordered2 {
         Long.class);
 
     // Create query
-    Array my_sparse_array = new Array(ctx,"my_sparse_array");
-    Query query = new Query(my_sparse_array, tiledb_query_type_t.TILEDB_WRITE);
+    Array my_sparse_array = new Array(ctx,"my_sparse_array", 
+		    		      tiledb_query_type_t.TILEDB_WRITE);
+    Query query = new Query(my_sparse_array);
     query.setLayout(tiledb_layout_t.TILEDB_UNORDERED);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
