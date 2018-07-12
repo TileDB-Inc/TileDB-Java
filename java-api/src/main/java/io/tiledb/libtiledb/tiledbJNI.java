@@ -380,6 +380,7 @@ public class tiledbJNI {
   public final static native int tiledb_query_get_type(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_alloc(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_array_open(long jarg1, long jarg2, int jarg3);
+  public final static native int tiledb_array_is_open(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_reopen(long jarg1, long jarg2);
   public final static native int tiledb_array_close(long jarg1, long jarg2);
   public final static native void tiledb_array_free(long jarg1);
