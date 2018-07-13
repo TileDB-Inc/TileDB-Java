@@ -21,6 +21,7 @@ Configuration:
 Dependencies:
     Bash
     AwK
+    grep
     Swig
     GCC / Clang C++ compiler
 
@@ -44,14 +45,17 @@ while test $# != 0; do
 done
 
 if [[ ${prefix_dir} == "" ]]; then
-  prefix_dir=$TILEDB_HOME
-#  die "--prefix=PREFIX tiledb install path is required"
+  if [ -z "$TILEDB_HOME" ]; then
+    die "--prefix=PREFIX tiledb install path is required, or environment variable TILEDB_HOME"
+  else
+    prefix_dir=$TILEDB_HOME
+  fi
 fi
 
 # Test if we can find the installed tiledb include directory
 tiledb_include="${prefix_dir}/include/tiledb"
 if [ ! -d ${tiledb_include} ]; then
-  die "${tiledb_header} not found"
+  die "${tiledb_include} not found"
 fi
 
 # Test if we can find the installed tiledb header
@@ -90,11 +94,8 @@ fi
 
 # define the necessary macro contants
 # (removed during preprocessor macro expansion)
-echo '
-#define TILEDB_OK 0
-#define TILEDB_ERR (-1)
-#define TILEDB_OOM (-2)
-' > swig/tiledb_generated.h || die "could not write ./swig/tiledb_generated.h tmp file"
+g++ -dM -E ${tiledb_header} | grep "#define TILEDB" > swig/tiledb_generated.h ||
+  die "could not write ./swig/tiledb_generated.h tmp file"
 
 # remove system headers
 awk '!/#\s*include/ || /tiledb_/ {print}' ${tiledb_header} |
