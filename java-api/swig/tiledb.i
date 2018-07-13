@@ -11,7 +11,6 @@
   }
 %}
 
-#define TILEDB_EXPORT
 #define __attribute__(x)
 
 %{
