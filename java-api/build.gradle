@@ -67,6 +67,11 @@ task installTask(type: Copy) {
     include "libtiledb.jnilib"
 }
 
+task generateJNI(type: Exec) {
+    workingDir = buildDir
+    executable = "../generate_tiledb_jni"
+}
+
 makeTask.dependsOn(cmakeTask)
 //installTask.dependsOn(makeTask)
 assemble.dependsOn(makeTask)
