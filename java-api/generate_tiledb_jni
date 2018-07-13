@@ -1,0 +1,141 @@
+#!/bin/bash
+
+die() {
+  echo "$@" 1>&2; exit 1
+}
+
+arg() {
+  echo "$1" | sed "s/^${2-[^=]*=}//" | sed "s/:/;/g"
+}
+
+usage() {
+  echo '
+Usage: '"$0"' [<options>]
+Options:
+Configuration:
+    --help             print this message
+    --prefix=PREFIX    TileDB installation path prefix
+
+Dependencies:
+    Bash
+    AwK
+    Swig
+    GCC / Clang C++ compiler
+
+Example:
+    ./generate_tiledb_jni --prefix=/usr/local
+'
+
+    exit 10
+}
+
+# parse arguments
+prefix_dir=""
+while test $# != 0; do
+    case "$1" in
+    --prefix=*) dir=`arg "$1"`
+                prefix_dir="$dir";;
+    --help) usage ;;
+    *) die "Unknown option: $1" ;;
+    esac
+    shift
+done
+
+if [[ ${prefix_dir} == "" ]]; then
+  die "--prefix=PREFIX tiledb install path is required"
+fi
+
+# Test if we can find the installed tiledb include directory
+tiledb_include="${prefix_dir}/include/tiledb"
+if [ ! -d ${tiledb_include} ]; then
+  die "${tiledb_header} not found"
+fi
+
+# Test if we can find the installed tiledb header
+tiledb_header="${prefix_dir}/include/tiledb/tiledb.h"
+if [ ! -f ${tiledb_header} ]; then
+  die "${tiledb_header} not found"
+fi
+
+# Check clang compiler
+if [[ x"${CC}" = x"" ]]; then
+    CC=gcc
+fi
+
+if [[ x"${CXX}" = x"" ]]; then
+    CXX=g++
+fi
+
+c_compiler=`which ${CC}`
+cxx_compiler=`which ${CXX}`
+
+if [[ ! -x ${c_compiler} ]]; then
+    die "cannot find c compiler"
+fi
+
+if [[ ! -x ${cxx_compiler} ]]; then
+    die "cannot find cplusplus compiler"
+fi
+
+if [[ ! -x `which awk` ]]; then
+  die "awk command not found in path"
+fi
+
+if [[ ! -x `which swig` ]]; then
+  die "swig wrapper generator not found in path"
+fi
+
+# define the necessary macro contants
+# (removed during preprocessor macro expansion)
+echo '
+#define TILEDB_OK 0
+#define TILEDB_ERR (-1)
+#define TILEDB_OOM (-2)
+' > swig/tiledb_generated.h || die "could not write ./swig/tiledb_generated.h tmp file"
+
+# remove system headers
+awk '!/#\s*include/ || /tiledb_/ {print}' ${tiledb_header} |
+g++ -E -P -nostdinc++ -I "${tiledb_include}" -x c++ - >> swig/tiledb_generated.h ||
+  die "error generating temp combined swig/tiledb_generated.h header for swig generation"
+
+# if existing libtiledb generated source exists, delete it
+cleanup_java() {
+  if [[ -d ./src/main/java/io/tiledb/libtiledb ]]; then
+    rm -r ./src/main/java/io/tiledb/libtiledb/* 
+  fi
+}
+
+cleanup_java 
+
+cleanup_cxx() {
+  if [[ -d ./src/main/c/generated ]]; then
+    rm -r ./src/main/c/generated/* 
+  fi
+}
+
+cleanup_cxx 
+
+swig -v -java -c++ -package io.tiledb.libtiledb \
+                -outdir src/main/java/io/tiledb/libtiledb \
+		-o src/main/c/generated/tiledb_wrap.cxx swig/tiledb.i
+
+cleanup_header() {
+  if [[ -f ./swig/tiledb_generated.h ]]; then
+    rm ./swig/tiledb_generated.h
+  fi
+}
+
+case "$?" in
+0 )
+cleanup_header && echo 'Swig success! src/main/c/generated/tiledb_wrap.cxx';;
+1 )
+cleanup_header && die 'Swig failure!';;
+esac
+
+copy_custom_code() {
+  cp ./swig/customCode/* ./src/main/java/io/tiledb/libtiledb/
+}
+
+copy_custom_code || die "error copying custom java code to io/tiledb/libtiledb"
+
+exit 0
