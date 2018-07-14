@@ -19,6 +19,12 @@ public class tiledbJNI {
     }
   }
 
+  public final static native int tiledb_query_submit_async_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, long jarg2, SWIGTYPE_p_tiledb_query_t jarg2_, Object jarg3);
+  public final static native int tiledb_object_walk_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, int jarg3, Object jarg4);
+  public final static native int tiledb_object_ls_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, Object jarg3);
+  public final static native long java_path_callback();
+  public final static native long java_callback();
+
   public final static native long new_int32_tArray(int jarg1);
   public final static native void delete_int32_tArray(long jarg1);
   public final static native int int32_tArray_getitem(long jarg1, int32_tArray jarg1_, int jarg2);

@@ -9,6 +9,12 @@
       System.exit(1);
     }
   }
+
+  public final static native int tiledb_query_submit_async_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, long jarg2, SWIGTYPE_p_tiledb_query_t jarg2_, Object jarg3);
+  public final static native int tiledb_object_walk_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, int jarg3, Object jarg4);
+  public final static native int tiledb_object_ls_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, Object jarg3);
+  public final static native long java_path_callback();
+  public final static native long java_callback();
 %}
 
 #define __attribute__(x)
@@ -935,7 +941,7 @@ extern "C" {
     return ret;
   }
 
-  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_UtilsJNI_tiledb_1query_1submit_1async(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jobject jarg3) {
+  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1submit_1async_1java(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jobject jarg3) {
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
     tiledb_query_t *arg2 = (tiledb_query_t *) 0 ;
@@ -957,7 +963,7 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_UtilsJNI_tiledb_1object_1walk(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jint jarg3, jobject jarg4) {
+  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1object_1walk_1java(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jint jarg3, jobject jarg4) {
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
     char *arg2 = (char *) 0 ;
@@ -986,7 +992,7 @@ extern "C" {
   }
 
 
-  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_UtilsJNI_tiledb_1object_1ls(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jobject jarg3) {
+  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1object_1ls_1java(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jobject jarg3) {
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
     char *arg2 = (char *) 0 ;

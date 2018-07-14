@@ -159,24 +159,24 @@ public class Utils {
   }
 
   public static SWIGTYPE_p_f_p_void__void java_callback() {
-    long cPtr = UtilsJNI.java_callback();
+    long cPtr = tiledbJNI.java_callback();
     return (cPtr == 0) ? null : new SWIGTYPE_p_f_p_void__void(cPtr, false);
   }
 
   public static SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int java_path_callback() {
-    long cPtr = UtilsJNI.java_path_callback();
+    long cPtr = tiledbJNI.java_path_callback();
     return (cPtr == 0) ? null : new SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int(cPtr, false);
   }
 
   public static int tiledb_object_walk(SWIGTYPE_p_tiledb_ctx_t ctx, String path, tiledb_walk_order_t order, PathCallback callback) {
-    return UtilsJNI.tiledb_object_walk(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, path, order.swigValue(), callback);
+    return tiledbJNI.tiledb_object_walk_java(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, path, order.swigValue(), callback);
   }
 
   public static int tiledb_query_submit_async(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_query_t query, Callback callback) {
-    return UtilsJNI.tiledb_query_submit_async(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, SWIGTYPE_p_tiledb_query_t.getCPtr(query), query, callback);
+    return tiledbJNI.tiledb_query_submit_async_java(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, SWIGTYPE_p_tiledb_query_t.getCPtr(query), query, callback);
   }
 
   public static int tiledb_object_ls(SWIGTYPE_p_tiledb_ctx_t ctx, String path, PathCallback callback) {
-    return UtilsJNI.tiledb_object_ls(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, path, callback);
+    return tiledbJNI.tiledb_object_ls_java(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, path, callback);
   }
 }

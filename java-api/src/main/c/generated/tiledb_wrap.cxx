@@ -2014,7 +2014,7 @@ extern "C" {
     return ret;
   }
 
-  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_UtilsJNI_tiledb_1query_1submit_1async(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jobject jarg3) {
+  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1submit_1async_1java(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jobject jarg3) {
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
     tiledb_query_t *arg2 = (tiledb_query_t *) 0 ;
@@ -2036,7 +2036,7 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_UtilsJNI_tiledb_1object_1walk(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jint jarg3, jobject jarg4) {
+  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1object_1walk_1java(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jint jarg3, jobject jarg4) {
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
     char *arg2 = (char *) 0 ;
@@ -2065,7 +2065,7 @@ extern "C" {
   }
 
 
-  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_UtilsJNI_tiledb_1object_1ls(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jobject jarg3) {
+  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1object_1ls_1java(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jobject jarg3) {
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
     char *arg2 = (char *) 0 ;
