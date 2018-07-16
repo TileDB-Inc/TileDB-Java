@@ -128,7 +128,8 @@ else()
 endif()
 
 add_executable(libtiledb.${LIB_EXTENSION}
-    src/main/c/generated/tiledb_wrap.cxx)
+    src/main/c/generated/tiledb_wrap.cxx
+    src/main/c/custom/tiledb_custom.cxx)
 
 target_link_libraries(libtiledb.${LIB_EXTENSION}
     ${TILEDB_JNI_LIB_DEPENDENCIES})
