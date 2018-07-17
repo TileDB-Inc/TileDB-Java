@@ -59,7 +59,6 @@ public class ConfigExample {
 
     // Assign a config object to a context and VFS
     Context ctx =new Context(config);
-//    VFS vfs = new VFS(config);
 
   }
 }

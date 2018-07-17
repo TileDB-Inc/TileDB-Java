@@ -34,10 +34,10 @@ public class ArrayConsolidateExample {
     // Create TileDB context
     Context ctx = new Context();
 
-    // Consolidate array
-    Array my_dense_array = new Array(ctx,"my_big_array");
-    my_dense_array.consolidate();
-
-    my_dense_array.close();
+//    // Consolidate array
+//    Array my_dense_array = new Array(ctx,"my_big_array");
+//    my_dense_array.consolidate();
+//
+//    my_dense_array.close();
   }
 }

@@ -77,7 +77,7 @@ public class Array implements AutoCloseable {
   }
 
   /** Consolidates the fragments of an array. **/
-  public void consolidate() throws TileDBError {
+  public static void consolidate(Context ctx, String uri) throws TileDBError {
     ctx.handleError(tiledb.tiledb_array_consolidate(ctx.getCtxp(), uri));
   }
 

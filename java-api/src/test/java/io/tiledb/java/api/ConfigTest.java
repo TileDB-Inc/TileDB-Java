@@ -28,18 +28,38 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigTest {
 
   @Test
-  public void testConfig() throws Throwable {
-    Config conf = new Config();
-    conf.set("key", "value");
-    Assert.assertTrue(conf.get("key").equals("value"));
-    conf.set("key", "value1");
-    HashMap<String,String> params = conf.parameters("");
-    Assert.assertTrue(params.containsKey("key"));
-    Assert.assertTrue(params.get("key").equals("value1"));
-    conf.saveToFile("testConf");
+  public void test() throws Exception {
+    Config config = new Config();
+
+    // Print the default config parameters
+    System.out.println( "Default settings:\n");
+    Map<String, String> defaultParams = config.parameters("");
+    for (Map.Entry<String,String> p : defaultParams.entrySet()) {
+      System.out.println( "\"" + p.getKey() + "\" : \"" + p.getValue() + "\"");
+    }
+
+    // Get only the S3 settings
+    for ( Map.Entry<String, String> p : config.parameters("vfs.s3").entrySet()) {
+      Assert.assertTrue(defaultParams.containsKey("vfs.s3"+p.getKey()));
+    }
+
+    // Set values
+    config.set("vfs.s3.connect_timeout_ms", "5000");
+    config.set("vfs.s3.endpoint_override", "localhost:8888");
+
+    // Get values
+    Assert.assertEquals(config.get("vfs.s3.connect_timeout_ms"),"5000");
+    Assert.assertEquals(config.get("vfs.s3.endpoint_override"),"localhost:8888");
+
+    // Assign a config object to a context and VFS
+    Context ctx =new Context(config);
+    Assert.assertEquals(ctx.getConfig().get("vfs.s3.connect_timeout_ms"),"5000");
+
+    config.saveToFile("testConf");
   }
 }
