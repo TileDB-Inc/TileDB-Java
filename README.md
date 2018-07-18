@@ -14,7 +14,7 @@ To build the JNI library run:
 
 `./gradlew assemble`
 
-This will create the TileDB JNI library `java-api/build/tiledb_jni/libtiledbjni.jnilib`. This will also download and build the [TileDB](https://github.com/TileDB-Inc/TileDB) library first, if it is not found installed in a global system path, in which case the native library gets placed in `java-api/build/externals/install/lib/libtiledb.dylib`.
+This will create the TileDB JNI library `build/tiledb_jni/libtiledbjni.jnilib`. This will also download and build the [TileDB](https://github.com/TileDB-Inc/TileDB) library first, if it is not found installed in a global system path, in which case the native library gets placed in `build/externals/install/lib/libtiledb.dylib`.
 
 If you wish to build with a custom version of the native TileDB library, you can define the environment variable `TILEDB_HOME`, e.g.:
 
@@ -34,9 +34,27 @@ You can run the examples located in `src/main/java/examples` using you IDE or fr
 
 To run an example from the terminal use:
 
-`java -cp java-api/build/libs/java-api-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
+`java -cp build/libs/tiledb-java-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
 
 You may need to explitly define the java library path:
 
-`java -Djava.library.path=".:<path/to/TileDB-Java/java-api/build/tiledb_jni>" -cp java-api/build/libs/java-api-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
+`java -Djava.library.path=".:<path/to/TileDB-Java/build/tiledb_jni>" -cp build/libs/tiledb-java-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
 
+## Generate JNI bindings for TileDB C-API
+
+### Dependencies
+
+* Swig (>=3.0)
+
+For OSX swig is available using `brew install swig`
+
+Installation instructions for other operating systems can be found here:
+http://www.swig.org/Doc3.0/Preface.html#Preface_installation
+
+### Genrate bindings
+
+1) Set the ENV variable `TILEDB_HOME` to the install location of TileDB.
+
+2) Generate the JNI code using
+
+`./gradlew generateJNI`
