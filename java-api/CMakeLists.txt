@@ -26,98 +26,49 @@
 # THE SOFTWARE.
 #
 
-project(TileDB_JNI)
-cmake_minimum_required(VERSION 3.2)
+############################################################
+# CMake setup
+############################################################
 
-# Add project cmake modules to CMake module path
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+cmake_minimum_required(VERSION 3.3)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 
-# Default user definitions
-set(TILEDB_VERBOSE False CACHE BOOL "Prints TileDB errors with verbosity")
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+# Default builds the superbuild.
+option(TILEDB_JNI_SUPERBUILD "If true, perform a superbuild (builds all missing dependencies)." ON)
+
+# Set C++11 as required standard for all C++ targets.
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF) # Don't use GNU extensions
+
+############################################################
+# Superbuild setup
+############################################################
+
+# Perform superbuild config and exit.
+if (TILEDB_JNI_SUPERBUILD)
+  project(TileDB-JNI-Superbuild)
+  message(STATUS "Starting TileDB-JNI superbuild.")
+  include("cmake/TileDB-JNI-Superbuild.cmake")
+  message(STATUS "Install prefix is ${CMAKE_INSTALL_PREFIX}")
+  # Stop processing this file here.
+  return()
 endif()
 
-# Only for Mac OS X warnings
-if(APPLE)
-  set(CMAKE_MACOSX_RPATH 1)
-endif()
+project(TileDB-JNI)
+message(STATUS "Starting TileDB-JNI regular build.")
 
-set(TILEDB_JNI_LIB_DEPENDENCIES)
+# Paths to locate the installed external projects.
+set(TILEDB_JNI_EP_SOURCE_DIR "${TILEDB_JNI_EP_BASE}/src")
+set(TILEDB_JNI_EP_INSTALL_PREFIX "${TILEDB_JNI_EP_BASE}/install")
+
+############################################################
+# TileDB-JNI shared library target
+############################################################
 
 # Find required library dependencies
+find_package(TileDB_EP REQUIRED)
 find_package(JNI REQUIRED)
-if (JNI_FOUND)
-    message(STATUS "Found JNI header file: ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2}")
-    message(STATUS "Found JNI library: ${JAVA_JVM_LIBRARY}")
-endif()
-include_directories(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
-set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${JAVA_JVM_LIBRARY})
-
-find_package(TILEDB REQUIRED)
-include_directories(${LIBTILEDB_INCLUDE_DIR})
-set(TILEDB_JNI_LIB_DEPENDENCIES ${TILEDB_JNI_LIB_DEPENDENCIES} ${LIBTILEDB_LIBRARY})
-
-include_directories(swig)
-
-# On Windows, set a variable for the dependency install location.
-# Defaults to install in the same TileDB installation location.
-if (WIN32)
-  set(TILEDB_DEPENDENCY_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
-  add_definitions(DTILEDB_MSVC_EXPORTS)
-endif()
-
-# Set C++ 2011 flag
-include(CheckCXXCompilerFlag)
-
-# Set support for C++ 2011. MSVC does not allow you to enforce a standard pre-C++14.
-if (NOT WIN32)
-  CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-  if(COMPILER_SUPPORTS_CXX11)
-    message(STATUS "Compiler supports C++ 2011.")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  else()
-    message(FATAL_ERROR
-        "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-  endif()
-endif()
-
-# Set compiler flags
-if (WIN32)
-  # We disable some warnings that are not present in gcc/clang -Wall:
-  #   C4101: unreferenced local variable
-  #   C4244: conversion warning of floating point to integer type.
-  #   C4456: local variable hiding previous local variable
-  #   C4457: local variable hiding function parameter
-  #   C4702: unreachable code
-  #   C4996: deprecation warning about e.g. sscanf.
-  set(MSVC_DISABLE_WARNINGS "/wd4101 /wd4244 /wd4456 /wd4457 /wd4702 /wd4996")
-  # Note: MSVC has the behavior of -fvisibility=hidden by default (you must
-  # explicitly export all symbols you want exported).
-  set(CMAKE_CXX_FLAGS_DEBUG "/DDEBUG /Od /Zi /W4 /WX ${MSVC_DISABLE_WARNINGS}")
-  set(CMAKE_CXX_FLAGS_RELEASE "/DNDEBUG /Ox /W4 /WX ${MSVC_DISABLE_WARNINGS}")
-  # Disable GDI (which we don't need, and causes some macro
-  # re-definition issues if wingdi.h is included)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DNOGDI")
-  # Add /MPn flag from CMake invocation (if defined).
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MSVC_MP_FLAG}")
-else()
-  set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -O0 -g3 -ggdb3 -gdwarf-3 -fvisibility=hidden -fPIC")
-  set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -fvisibility=hidden -fPIC")
-  set(CMAKE_CXX_FLAGS_COVERAGE "-DDEBUG -g3 -gdwarf-3 --coverage -fPIC")
-  set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -shared" )
-  if(NOT APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-literal-suffix")
-  endif()
-endif()
-
-if(TILEDB_VERBOSE)
-  add_definitions(-DTILEDB_VERBOSE)
-  message(STATUS "The TileDB library is compiled with verbosity.")
-endif()
-
-# Enable testing
-#enable_testing()
 
 if (WIN32)
   set(LIB_EXTENSION dll)
@@ -127,9 +78,22 @@ else()
   set(LIB_EXTENSION so)
 endif()
 
-add_executable(libtiledb.${LIB_EXTENSION}
+add_library(tiledbjni SHARED
     src/main/c/generated/tiledb_wrap.cxx
-    src/main/c/custom/tiledb_custom.cxx)
+    src/main/c/custom/tiledb_custom.cxx
+)
 
-target_link_libraries(libtiledb.${LIB_EXTENSION}
-    ${TILEDB_JNI_LIB_DEPENDENCIES})
+target_include_directories(tiledbjni
+  PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/swig"
+    "${JAVA_INCLUDE_PATH}"
+    "${JAVA_INCLUDE_PATH2}"
+)
+
+target_link_libraries(tiledbjni
+  PRIVATE
+    TileDB::tiledb_shared
+    ${JAVA_JVM_LIBRARY}
+)
+
+set_target_properties(tiledbjni PROPERTIES SUFFIX ".${LIB_EXTENSION}")

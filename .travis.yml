@@ -1,5 +1,4 @@
 dist: trusty
-sudo: required
 
 language: java
 jdk:
@@ -9,20 +8,6 @@ notifications:
   email: false
 
 install:
-  - mkdir build
-  - pushd ./build # . -> ./build
-  - git clone https://github.com/TileDB-Inc/TileDB
-  - pushd TileDB # ./build -> ./build/TileDB
-  - git checkout 1.3.0
-  - mkdir build
-  - pushd ./build  # ./build/TileDB/build
-  - ../bootstrap
-  - make -j4
-  - make -C tiledb install
-  - popd # ./build/TileDB/build -> ./build/TileDB
-  - export TILEDB_HOME=$PWD/dist
-  - popd # ./build/TileDB -> ./build
-  - popd # ./build -> .
   # Build and install extension module
   - ./gradlew assemble test
 

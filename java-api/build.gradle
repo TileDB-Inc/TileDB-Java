@@ -59,6 +59,7 @@ task cmakeTask(type: Exec) {
 task makeTask(type: Exec) {
     workingDir = buildDir
     executable = "make"
+    args "-j2"
 }
 
 task installTask(type: Copy) {
@@ -77,7 +78,7 @@ makeTask.dependsOn(cmakeTask)
 assemble.dependsOn(makeTask)
 
 test {
-    systemProperty "java.library.path", buildDir
+    systemProperty "java.library.path", new File(buildDir, "tiledb_jni")
     testLogging {
         showStandardStreams = true
     }
