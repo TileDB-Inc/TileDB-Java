@@ -29,16 +29,57 @@ apply plugin : 'org.ysb33r.doxygen'
 doxygen {
     generate_html true
 
-    source new File(projectDir,'java-api/src/main/java/io/tiledb/java')
+    source new File(projectDir,'src/main/java/io/tiledb/java')
 }
 
-//copy tiledb.h to swig/
-//fix tiledb.h
-//swig -java -c++ -package io.tiledb.libtiledb -outdir src/main/java/io/tiledb/libtiledb -o src/main/c/generated/tiledb_wrap.cxx swig/tiledb.i
-//charpArray_setitem
-//ary[index]= new char[sizeof(value)];
-//strcpy(ary[index], value);
-//tiledbJNI
-//static {
-//    System.loadLibrary("tiledb");
-//}
+sourceSets {
+    main {
+        java {
+            srcDir 'src/java'
+        }
+    }
+    test {
+        java {
+            srcDir 'test/java'
+        }
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task cmakeTask(type: Exec) {
+    workingDir = buildDir
+    executable = "cmake"
+    args  ".."
+}
+
+
+task makeTask(type: Exec) {
+    workingDir = buildDir
+    executable = "make"
+    args "-j2"
+}
+
+task installTask(type: Copy) {
+    from buildDir
+    into "~/Library/Java/Extensions/"
+    include "libtiledb.jnilib"
+}
+
+task generateJNI(type: Exec) {
+    workingDir = buildDir
+    executable = "../generate_tiledb_jni"
+}
+
+makeTask.dependsOn(cmakeTask)
+//installTask.dependsOn(makeTask)
+assemble.dependsOn(makeTask)
+
+test {
+    systemProperty "java.library.path", new File(buildDir, "tiledb_jni")
+    testLogging {
+        showStandardStreams = true
+    }
+}
