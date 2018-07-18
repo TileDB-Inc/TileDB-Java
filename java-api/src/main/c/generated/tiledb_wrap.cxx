@@ -1197,9 +1197,6 @@ static tiledb_vfs_fh_t* tiledb_vfs_fh_tpp_value(tiledb_vfs_fh_t* *obj) {
 }
 
 
-
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif

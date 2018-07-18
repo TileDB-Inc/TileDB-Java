@@ -12,7 +12,7 @@ public class tiledbJNI {
 
   static {
     try {
-      System.loadLibrary("tiledb");
+      System.loadLibrary("tiledbjni");
     } catch (UnsatisfiedLinkError e) {
       System.err.println("Native code library failed to load. \n" + e);
       System.exit(1);
