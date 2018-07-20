@@ -26,6 +26,18 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_compressor_t;
 
+/**
+ * Represents a compression scheme. Composed of a compression algorithm + a
+ * compression level. A compression level of -1 indicates the default
+ * level.
+ *
+ * **Example:**
+ *
+ * @code{.java}
+ * Attribute a1 = new Attribute(ctx, "a1", Integer.class);
+ * a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
+ * @endcode
+ */
 public class Compressor {
   private tiledb_compressor_t compressor;
   private int level;
@@ -38,28 +50,49 @@ public class Compressor {
         '}';
   }
 
+  /**
+   * Create a compressor with a given algorithm and level.
+   *
+   * @param compressor Enumerated compression algorithm.
+   * @param level Compression level (-1 for the compression algorithm's
+   * default).
+   */
   public Compressor(tiledb_compressor_t compressor, int level) {
     this.compressor = compressor;
     this.level = level;
   }
 
+  /**
+   *
+   * @return The Enumerated compressor algortihm.
+   */
   public tiledb_compressor_t getCompressor() {
     return compressor;
   }
 
+  /**
+   * Sets the compressor algorithm.
+   * @param compressor Enumerated compression algorithm.
+   */
   public void setCompressor(tiledb_compressor_t compressor) {
     this.compressor = compressor;
   }
 
+  /**
+   *
+   * @return The compression level.
+   */
   public int getLevel() {
     return level;
   }
 
+  /**
+   * Sets the compression level
+   * @param level Compression level (-1 for the compression algorithm's
+   * default).
+   */
   public void setLevel(int level) {
     this.level = level;
   }
 
-  public void free() {
-
-  }
 }

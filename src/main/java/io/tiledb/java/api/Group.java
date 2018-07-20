@@ -36,7 +36,6 @@ public class Group {
    *
    * @param ctx The TileDB context.
    * @param uri The group URI.
-   * @return void
    */
   public Group(Context ctx, String uri) throws TileDBError {
     this.ctx = ctx;

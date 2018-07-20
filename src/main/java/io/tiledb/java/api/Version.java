@@ -50,17 +50,26 @@ public class Version {
     tiledb.delete_intp(revp);
   }
 
-  /** Returns the major number. */
+  /**
+   *
+   * @return The major number.
+   */
   public int getMajor() {
     return major;
   }
 
-  /** Returns the minor number. */
+  /**
+   *
+   * @return The minor number.
+   */
   public int getMinor() {
     return minor;
   }
 
-  /** Returns the revision number. */
+  /**
+   *
+   * @return The revision number.
+   */
   public int getRevision() {
     return rev;
   }

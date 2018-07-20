@@ -31,40 +31,37 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Represents the getDomain of an array.
+ * Represents the domain of an array.
  *
  * @details
  * A Domain defines the set of Dimension objects for a given array. The
- * properties of a Domain derive from the underlying getDimensions. A
+ * properties of a Domain derive from the underlying dimensions. A
  * Domain is a component of an ArraySchema.
  *
- * @note The dimension can only be signed or unsigned integral types.
+ * @note The dimension can only be integral types, as well as floating point for sparse array domains.
  *
  * **Example:**
  *
- * @code{.cpp}
- *
- * tiledb::Context ctx;
- * tiledb::Domain getDomain;
+ * @code{.java}
+ * Context ctx = new Context();
+ * Domain domain = new Domain(ctx);
  *
  * // Note the dimension bounds are inclusive.
- * auto d1 = tiledb::Dimension::create<int>(ctx, "d1", {-10, 10});
- * auto d2 = tiledb::Dimension::create<uint64_t>(ctx, "d2", {1, 10});
- * auto d3 = tiledb::Dimension::create<int>(ctx, "d3", {-100, 100});
+ * Dimension<Integer> d1 = new Dimension<Integer>(ctx, "d1", Integer.class, new Pair<Integer, Integer>(-10, 10), 1);
+ * Dimension<Long> d2 = new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(1l, 10l), 1l);
+ * Dimension<Integer> d3 = new Dimension<Integer>(ctx, "d3", Integer.class, new Pair<Integer, Integer>(-100, 100), 10);
  *
- * getDomain.addDimension(d1);
- * getDomain.addDimension(d2);
- * getDomain.addDimension(d3); // Invalid, all dims must be same getType
+ * domain.addDimension(d1);
+ * domain.addDimension(d2); // Throws error, all dims must be same type
+ * domain.addDimension(d3);
  *
- * getDomain.getCellNum(); // (10 - -10 + 1) * (10 - 1 + 1) = 210 max cells
- * getDomain.getType(); // TILEDB_UINT64, determined from the getDimensions
- * getDomain.getRank(); // 2, d1 and d2
+ * domain.getType(); // TILEDB_INT32, determined from the dimensions
+ * domain.getRank(); // 2, d1 and d3
  *
- * tiledb::ArraySchema schema(ctx, TILEDB_DENSE);
- * schema.setDomain(getDomain); // Set the array's getDomain
+ * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
+ * schema.setDomain(domain); // Set the array's domain
  *
  * @endcode
- *
  **/
 public class Domain implements AutoCloseable {
   private SWIGTYPE_p_p_tiledb_domain_t domainpp;
@@ -109,12 +106,16 @@ public class Domain implements AutoCloseable {
 //
 //  }
 
-  /** Dumps the getDomain in an ASCII representation to stdout. */
+  /** Dumps the Domain in an ASCII representation to stdout. */
   public void dump() throws TileDBError {
     ctx.handleError(tiledb.tiledb_domain_dump_stdout(ctx.getCtxp(), domainp));
   }
 
-  /** Returns the domain getType. */
+  /**
+   *
+   * @return The domain Enumerated type.
+   * @throws TileDBError
+   */
   public tiledb_datatype_t getType() throws TileDBError {
     SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
     ctx.handleError(tiledb.tiledb_domain_get_type(ctx.getCtxp(), domainp, typep));
@@ -123,7 +124,11 @@ public class Domain implements AutoCloseable {
     return type;
   }
 
-  /** Get the rank (number of dimensions) **/
+  /**
+   *
+   * @return The rank of the domain (number of dimensions)
+   * @throws TileDBError
+   */
   public long getRank() throws TileDBError {
     SWIGTYPE_p_unsigned_int np = tiledb.new_uintp();
     ctx.handleError(tiledb.tiledb_domain_get_ndim(ctx.getCtxp(), domainp, np));
@@ -132,7 +137,11 @@ public class Domain implements AutoCloseable {
     return rank;
   }
 
-  /** Returns the current set of dimensions in domain. */
+  /**
+   *
+   * @return A List containing the Dimensions in domain.
+   * @throws TileDBError
+   */
   public List<Dimension> getDimensions() throws TileDBError {
     if(dimensions==null){
       long rank = getRank();
@@ -148,16 +157,24 @@ public class Domain implements AutoCloseable {
     return dimensions;
   }
 
-  /** Adds a new dimension to the domain. */
-  public void addDimension(Dimension d) throws TileDBError {
+  /**
+   * Adds a new dimension to the domain.
+   * @param dimension The Dimension object to be added.
+   * @throws TileDBError
+   */
+  public void addDimension(Dimension dimension) throws TileDBError {
     if(dimensions==null){
       dimensions = new ArrayList<Dimension>();
     }
-    dimensions.add(d);
-    ctx.handleError(tiledb.tiledb_domain_add_dimension(ctx.getCtxp(), domainp, d.getDimensionp()));
+    dimensions.add(dimension);
+    ctx.handleError(tiledb.tiledb_domain_add_dimension(ctx.getCtxp(), domainp, dimension.getDimensionp()));
   }
 
-  /** Add multiple Dimensions. **/
+  /**
+   * Adds multiple Dimensions.
+   * @param dims A list of Dimension objects to be added.
+   * @throws TileDBError
+   */
   public void addDimensions(Collection<Dimension> dims) throws TileDBError {
     for (Dimension d : dims) {
       addDimension(d);
