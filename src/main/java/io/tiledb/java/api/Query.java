@@ -83,12 +83,20 @@ public class Query implements AutoCloseable {
       this(array, array.getQueryType());
   }
 
-  /** Sets the data layout of the buffers.  */
+  /**
+   * Sets the data layout of the buffers.
+   * @param layout The order to be set.
+   * @throws TileDBError
+   */
   public void setLayout(tiledb_layout_t layout) throws TileDBError {
     ctx.handleError(tiledb.tiledb_query_set_layout(ctx.getCtxp(), queryp, layout));
   }
 
-  /** Returns the query status. */
+  /**
+   *
+   * @return The query Status.
+   * @throws TileDBError
+   */
   public Status getQueryStatus() throws TileDBError {
     SWIGTYPE_p_tiledb_query_status_t statusp = tiledb.new_tiledb_query_status_tp();
     ctx.handleError(tiledb.tiledb_query_get_status(ctx.getCtxp(), queryp, statusp));
@@ -99,7 +107,7 @@ public class Query implements AutoCloseable {
 
   /**
    * Submits the query. Call will block until query is complete.
-   * @return
+   * @return The query Status.
    * @throws TileDBError
    */
   public Status submit() throws TileDBError {
@@ -109,15 +117,21 @@ public class Query implements AutoCloseable {
     return getQueryStatus();
   }
 
-  /** Submit an async query (non-blocking). */
+  /**
+   * Submit an async query (non-blocking).
+   *
+   * @throws TileDBError
+   */
   public void submitAsync() throws TileDBError {
     submitAsync(new DefaultCallback());
   }
 
   /**
+   *
    * Submit an async query, with callback.
    *
    * @param callback Callback function.
+   * @throws TileDBError
    */
   public void submitAsync(Callback callback) throws TileDBError {
     prepareSubmission();
@@ -130,7 +144,7 @@ public class Query implements AutoCloseable {
    * Sets a subarray, defined in the order dimensions were added.
    * Coordinates are inclusive.
    *
-   * @param subarray
+   * @param subarray The targeted subarray.
    * @throws TileDBError
    */
   public void setSubarray(NativeArray subarray) throws TileDBError {
@@ -142,8 +156,8 @@ public class Query implements AutoCloseable {
 
   /**
    * Sets a buffer for a fixed-sized attribute.
-   * @param attr
-   * @param buffer
+   * @param attr The attribute name.
+   * @param buffer NativeBuffer to be used for the attribute values.
    * @throws TileDBError
    */
   public void setBuffer(String attr, NativeArray buffer) throws TileDBError {
@@ -193,18 +207,24 @@ public class Query implements AutoCloseable {
     buffer_sizes_.put(attr, buffer_sizes);
   }
 
-  /** Set the coordinate buffer for sparse arrays **/
+  /**
+   * Set the coordinate buffer
+   * @param buffer A NativeArray to be used for the coordinates.
+   * @throws TileDBError
+   */
   public void setCoordinates(NativeArray buffer) throws TileDBError {
     setBuffer(tiledb.tiledb_coords(), buffer);
   }
 
   /**
-   * Returns the number of elements in the result buffers. This is a map
+   *
+   * @return Tthe number of elements in the result buffers. This is a map
    * from the attribute name to a pair of values.
    *
    * The first is number of elements for var size attributes, and the second
    * is number of elements in the data buffer. For fixed sized attributes
    * (and coordinates), the first is always 0.
+   * @throws TileDBError
    */
   public HashMap<String, Pair<Long, Long>> resultBufferElements() throws TileDBError {
     HashMap<String, Pair<Long, Long>> result = new HashMap<String, Pair<Long, Long>>();

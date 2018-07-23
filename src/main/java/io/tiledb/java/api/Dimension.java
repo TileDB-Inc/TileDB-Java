@@ -26,6 +26,21 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
+
+/**
+ * Describes one dimension of an Array. The dimension consists
+ * of a type, lower and upper bound, and tile-extent describing
+ * the memory ordering. Dimensions are added to a Domain.
+ *
+ * **Example:**
+ * @code{.java}
+ * Context ctx = new Context();
+ * Domain domain = new Domain(ctx);
+ * // Create a dimension with inclusive domain [0,1000] and tile extent 100.
+ * Dimension<Integer> d = new Dimension<Integer>(ctx, "d", Integer.class, new Pair<Integer, Integer>(0, 1000), 100);
+ * domain.addDimension(d);
+ * @endcode
+ **/
 public class Dimension<T> implements AutoCloseable {
   private SWIGTYPE_p_p_tiledb_dimension_t dimensionpp;
   private SWIGTYPE_p_tiledb_dimension_t dimensionp;
@@ -47,7 +62,7 @@ public class Dimension<T> implements AutoCloseable {
    *
    * @param ctx The TileDB context.
    * @param name The dimension name.
-   * @param domain The dimension domain.
+   * @param domain The dimension domain (A Pair containing the lower and upper bound).
    * @param extent The tile extent on the dimension.
    */
   public Dimension( Context ctx, String name, Class<T> type, Pair<T,T> domain, T extent) throws Exception {
@@ -82,7 +97,11 @@ public class Dimension<T> implements AutoCloseable {
     return dimensionp;
   }
 
-  /** Returns the name of the dimension. */
+  /**
+   *
+   * @return The name of the dimension.
+   * @throws TileDBError
+   */
   public String getName() throws TileDBError {
     if(name==null){
       SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
@@ -93,7 +112,11 @@ public class Dimension<T> implements AutoCloseable {
     return name;
   }
 
-  /** Returns the dimension datatype. */
+  /**
+   *
+   * @return The dimension datatype.
+   * @throws TileDBError
+   */
   public tiledb_datatype_t getType() throws TileDBError {
     if (type == null) {
       SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
@@ -104,7 +127,11 @@ public class Dimension<T> implements AutoCloseable {
     return type;
   }
 
-  /** Returns the domain of the dimension. **/
+  /**
+   *
+   * @return The domain of the dimension (A Pair containing the lower and upper bound).
+   * @throws TileDBError
+   */
   public Pair<T, T> getDomain() throws TileDBError {
     if (domain == null) {
       getType();
@@ -116,13 +143,21 @@ public class Dimension<T> implements AutoCloseable {
     return domain;
   }
 
-  /** Returns a string representation of the domain. */
+  /**
+   *
+   * @return A string representation of the domain.
+   * @throws TileDBError
+   */
   public String domainToStr() throws TileDBError {
     Pair<T, T> d = getDomain();
     return "(" + d.getFirst() + ", " + d.getSecond() + ")";
   }
 
-  /** Returns the tile extent of the dimension. */
+  /**
+   *
+   * @return The tile extent of the dimension.
+   * @throws TileDBError
+   */
   public T getTileExtent() throws TileDBError {
     getType();
     SWIGTYPE_p_p_void tileExtent = tiledb.new_voidpArray(1);
@@ -131,7 +166,11 @@ public class Dimension<T> implements AutoCloseable {
     return (T) tileExtentBuffer.getItem(0);
   }
 
-  /** Returns a string representation of the extent. */
+  /**
+   *
+   * @return A string representation of the extent.
+   * @throws TileDBError
+   */
   public String tileExtentToStr() throws TileDBError {
     return getTileExtent().toString();
   }

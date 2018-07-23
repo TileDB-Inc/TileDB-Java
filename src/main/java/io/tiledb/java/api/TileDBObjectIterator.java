@@ -54,13 +54,13 @@ public class TileDBObjectIterator {
 
   /**
    * Constructor with all fields
-   * @param ctx
-   * @param group
-   * @param array
-   * @param kv
-   * @param recursive
-   * @param walkOrder
-   * @param root
+   * @param ctx The TileDB context.
+   * @param group If `true`, groups will be considered.
+   * @param array If `true`, arrays will be considered.
+   * @param kv If `true`, key-values will be considered.
+   * @param recursive If `true`, the object will be listed for all nested folders.
+   * @param walkOrder The walk order.
+   * @param root The root directory where the iteration will begin.
    */
   public TileDBObjectIterator(Context ctx, boolean group, boolean array, boolean kv, boolean recursive, tiledb_walk_order_t walkOrder, String root) {
     this.ctx = ctx;

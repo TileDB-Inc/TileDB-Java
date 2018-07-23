@@ -31,25 +31,54 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.*;
 
 
+/**
+ * A TileDB context wraps a TileDB storage manager "instance."
+ * Most objects and functions will require a Context.
+ *
+ * Internal error handling is also defined by the Context; the default error
+ * handler throws a TileDBError with a specific message.
+ *
+ * **Example:**
+ *
+ * @code{.java}
+ * Context ctx = new Context();
+ * // Use ctx when creating other objects:
+ * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
+ *
+ * // Set a custom error handler:
+ * ctx.setErrorHandler(new MyContextCallback());
+ *
+ * //Context custom callback class example
+ * private static class MyContextCallback extends ContextCallback {
+ *   @Override
+ *   public void call(String msg) throws TileDBError {
+ *     System.out.println("Callback error message: "+msg);
+ *   }
+ * }
+ * @endcode
+ *
+ */
 public class Context implements AutoCloseable {
 
   private SWIGTYPE_p_p_tiledb_ctx_t ctxpp;
   private SWIGTYPE_p_tiledb_ctx_t ctxp;
-  
+
   private Config config;
   private ContextCallback errorHandler;
 
   private Deleter deleter;
 
   /**
-   * Constructor.
+   * Constructor. Creates a TileDB Context with default configuration.
+   * @throws TileDBError if construction fails
    */
   public Context() throws TileDBError {
     createContext(new Config());
   }
 
   /**
-   * Constructor with config parameter.
+   * Constructor. Creates a TileDB context with the given configuration.
+   * @throws TileDBError if construction fails
    */
   public Context(Config config) throws TileDBError {
     createContext(config);
@@ -59,13 +88,14 @@ public class Context implements AutoCloseable {
    * Sets the error handler using a subclass of ContextCallback. If none is set,
    * `ContextCallback` is used. The callback accepts an error
    *  message.
+   * @throws TileDBError if construction fails
    */
   public void setErrorHandler(ContextCallback errorHandler) {
     this.errorHandler = errorHandler;
   }
 
   /**
-   * Error handler for the TileDB C API calls. Throws an exception
+   * Error handler for the TileDB C API (JNI) calls. Throws an exception
    * in case of error.
    *
    * @param rc If != TILEDB_OK, call error handler
@@ -136,15 +166,23 @@ public class Context implements AutoCloseable {
     this.ctxp = ctxp;
   }
 
+  /**
+   *
+   * @return A Config object containing all configuration values of the Context.
+   */
   public Config getConfig() {
     return config;
   }
 
+  /**
+   * Sets the Context Config.
+   * @param config The Config object to be set.
+   */
   public void setConfig(Config config) {
     this.config = config;
   }
 
-  public void deleterAdd(AutoCloseable object) {
+  protected void deleterAdd(AutoCloseable object) {
     deleter.add(object);
   }
 

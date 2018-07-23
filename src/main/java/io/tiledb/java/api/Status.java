@@ -28,6 +28,9 @@ import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_query_status_t;
 import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.tiledb_query_status_t;
 
+/**
+ * Enumeration for Query status.
+ */
 public enum Status {
   FAILED, COMPLETE, INPROGRESS, INCOMPLETE, UNDEF;
 

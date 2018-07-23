@@ -24,6 +24,9 @@
 
 package io.tiledb.java.api;
 
+/**
+ * TileDB Exception class.
+ */
 public class TileDBError extends Exception {
   public TileDBError(String s) {
     super(s);

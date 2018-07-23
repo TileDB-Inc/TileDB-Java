@@ -24,8 +24,32 @@
 
 package io.tiledb.java.api;
 
+/**
+ * Java Callback class used to throw exceptions on native method errors.
+ *
+ * **Example:**
+ *
+ * @code{.java}
+ * Context ctx = new Context();
+ *
+ * // Set a custom error handler:
+ * ctx.setErrorHandler(new MyContextCallback());
+ *
+ * //Context custom callback class example
+ * private static class MyContextCallback extends ContextCallback {
+ *   @Override
+ *   public void call(String msg) throws TileDBError {
+ *     System.out.println("Callback error message: "+msg);
+ *   }
+ * }
+ * @endcode
+ */
 public class ContextCallback {
-  /** The default error handler callback. */
+  /**
+   * The default error handler callback.
+   * @param msg Error message from native tiledb (JNI) opperation.
+   * @throws TileDBError
+   */
   public void call(String msg) throws TileDBError {
     throw new TileDBError(msg);
   }
