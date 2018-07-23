@@ -47,12 +47,14 @@ public class QuickstartDenseTest {
     if (arrayDir.exists())
       TileDBObject.remove(ctx, arrayURI);
 
+    Stats.enable();
     arrayCreate();
     arrayWrite();
     arrayRead();
     arrayReadIncomplete();
     arrayReadAsync();
 
+    Stats.dump();
   }
 
 

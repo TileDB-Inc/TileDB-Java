@@ -1624,6 +1624,10 @@ public class tiledb implements tiledbConstants {
     return tiledbJNI.tiledb_array_schema_dump_stdout(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_schema_t.getCPtr(array_schema));
   }
 
+  public static int tiledb_stats_dump_stdout() {
+    return tiledbJNI.tiledb_stats_dump_stdout();
+  }
+
   public static SWIGTYPE_p_void derefVoid(SWIGTYPE_p_p_void in) {
     long cPtr = tiledbJNI.derefVoid(SWIGTYPE_p_p_void.getCPtr(in));
     return (cPtr == 0) ? null : new SWIGTYPE_p_void(cPtr, false);

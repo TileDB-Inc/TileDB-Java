@@ -81,6 +81,12 @@ extern "C" {
       fflush(stdout);
       return ret;
     };
+
+    TILEDB_EXPORT int tiledb_stats_dump_stdout(){
+      int ret = tiledb_stats_dump(stdout);
+      fflush(stdout);
+      return ret;
+    };
     
     TILEDB_EXPORT void * derefVoid(void** in){
     	return *in;
