@@ -111,6 +111,11 @@ public class Domain implements AutoCloseable {
     ctx.handleError(tiledb.tiledb_domain_dump_stdout(ctx.getCtxp(), domainp));
   }
 
+  /** Dumps the Domain in an ASCII representation to stdout. */
+  public void dump(String filename) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_domain_dump_file(ctx.getCtxp(), domainp, filename));
+  }
+
   /**
    *
    * @return The domain Enumerated type.
