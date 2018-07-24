@@ -32,7 +32,14 @@ public class Stats {
   }
 
   /**
-   * Dump all statistics counters to to some output (e.g., file or stdout).
+   * Dump all statistics counters to a file
+   */
+  public static void dump(String filename) throws TileDBError {
+    check_error(tiledb.tiledb_stats_dump_file(filename), "error dumping stats");
+  }
+
+  /**
+   * Dump all statistics counters to stdout.
    */
   public static void dump() throws TileDBError {
     check_error(tiledb.tiledb_stats_dump_stdout(), "error dumping stats");

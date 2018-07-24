@@ -87,6 +87,77 @@ extern "C" {
       fflush(stdout);
       return ret;
     };
+
+    TILEDB_EXPORT int tiledb_dimension_dump_file(
+    	tiledb_ctx_t* ctx, const tiledb_dimension_t* dim, const char* filename){
+      FILE *out = (fopen(filename, "w"));
+      if(out == NULL)
+        return TILEDB_ERR;
+
+      int ret = tiledb_dimension_dump(ctx, dim, out);
+      fclose(out);
+
+      return ret;
+    };
+
+    TILEDB_EXPORT int tiledb_kv_schema_dump_file(
+    	tiledb_ctx_t* ctx, const tiledb_kv_schema_t* kv_schema, const char* filename){
+      FILE *out = (fopen(filename, "w"));
+      if(out == NULL)
+        return TILEDB_ERR;
+
+      int ret = tiledb_kv_schema_dump(ctx, kv_schema, out);
+      fclose(out);
+
+      return ret;
+    };
+
+    TILEDB_EXPORT int tiledb_attribute_dump_file(
+    	tiledb_ctx_t* ctx, const tiledb_attribute_t* attr, const char* filename){
+      FILE *out = (fopen(filename, "w"));
+      if(out == NULL)
+        return TILEDB_ERR;
+
+      int ret = tiledb_attribute_dump(ctx, attr, out);
+      fclose(out);
+
+      return ret;
+    };
+
+    TILEDB_EXPORT int tiledb_domain_dump_file(
+    	tiledb_ctx_t* ctx, const tiledb_domain_t* domain, const char* filename){
+      FILE *out = (fopen(filename, "w"));
+      if(out == NULL)
+        return TILEDB_ERR;
+
+      int ret = tiledb_domain_dump(ctx, domain, out);
+      fclose(out);
+
+      return ret;
+    };
+
+    TILEDB_EXPORT int tiledb_array_schema_dump_file(
+    	tiledb_ctx_t* ctx, const tiledb_array_schema_t* array_schema, const char* filename){
+      FILE *out = (fopen(filename, "w"));
+      if(out == NULL)
+        return TILEDB_ERR;
+
+      int ret = tiledb_array_schema_dump(ctx, array_schema, out);
+      fclose(out);
+
+      return ret;
+    };
+
+    TILEDB_EXPORT int tiledb_stats_dump_file(const char* filename){
+      FILE *out = (fopen(filename, "w"));
+      if(out == NULL)
+        return TILEDB_ERR;
+
+      int ret = tiledb_stats_dump(out);
+      fclose(out);
+
+      return ret;
+    };
     
     TILEDB_EXPORT void * derefVoid(void** in){
     	return *in;

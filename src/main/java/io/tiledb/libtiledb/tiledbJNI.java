@@ -474,6 +474,12 @@ public class tiledbJNI {
   public final static native int tiledb_domain_dump_stdout(long jarg1, long jarg2);
   public final static native int tiledb_array_schema_dump_stdout(long jarg1, long jarg2);
   public final static native int tiledb_stats_dump_stdout();
+  public final static native int tiledb_dimension_dump_file(long jarg1, long jarg2, String jarg3);
+  public final static native int tiledb_kv_schema_dump_file(long jarg1, long jarg2, String jarg3);
+  public final static native int tiledb_attribute_dump_file(long jarg1, long jarg2, String jarg3);
+  public final static native int tiledb_domain_dump_file(long jarg1, long jarg2, String jarg3);
+  public final static native int tiledb_array_schema_dump_file(long jarg1, long jarg2, String jarg3);
+  public final static native int tiledb_stats_dump_file(String jarg1);
   public final static native long derefVoid(long jarg1);
   public final static native void print_upon_completion(long jarg1);
   public final static native int print_path(String jarg1, int jarg2, long jarg3);
