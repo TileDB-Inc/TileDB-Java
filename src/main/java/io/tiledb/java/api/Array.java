@@ -137,8 +137,8 @@ public class Array implements AutoCloseable {
    *
    * @throws TileDBError
    */
-  public void consolidate() throws TileDBError {
-    ctx.handleError(tiledb.tiledb_array_consolidate(ctx.getCtxp(), uri));
+  public static void consolidate(Context ctx, String arrayUri) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_array_consolidate(ctx.getCtxp(), arrayUri));
   }
 
   /**

@@ -36,7 +36,6 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 public class QuickstartDenseTest {
 
-
   private Context ctx;
   private String arrayURI = "my_dense_array";
 
@@ -91,8 +90,6 @@ public class QuickstartDenseTest {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    // Print array schema contents
-    schema.dump();
 
     Array.create(arrayURI, schema);
   }
@@ -266,7 +263,7 @@ public class QuickstartDenseTest {
     query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
     long[] subarray = {1l, 4l, 1l, 4l};
     query.setSubarray(new NativeArray(ctx, subarray, Long.class));
-    query.setBuffer("a1", new NativeArray(ctx, 34, Integer.class));
+    query.setBuffer("a1", new NativeArray(ctx, 4, Integer.class));
 
     // Loop until the query is completed
 

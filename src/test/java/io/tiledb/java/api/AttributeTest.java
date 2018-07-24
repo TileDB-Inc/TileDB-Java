@@ -31,7 +31,7 @@ import org.junit.Test;
 public class AttributeTest {
 
   @Test
-  public void testArraySchema() throws Throwable {
+  public void testArraySchema() throws Exception {
     Context ctx = new Context();
     Attribute a = new Attribute(ctx, "a1", Long.class);
     System.out.println(a.getName());
