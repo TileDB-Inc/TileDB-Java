@@ -90,9 +90,6 @@ public class QuickstartSparseTest {
       e.printStackTrace();
     }
 
-    // Print array schema contents
-    schema.dump();
-
     Array.create(arrayURI, schema);
   }
 
