@@ -75,15 +75,11 @@ public class TileDBObject {
    *
    * @param old_uri The path to the old object.
    * @param new_uri The path to the new object.
-   * @param force If set to `true` the move will be forced and overwrite
-   *     an existing `new_uri` object. Otherwise, the function will throw
-   *     an error.
    */
   public static void move(
       Context ctx,
       String old_uri,
-      String new_uri,
-      boolean force) throws TileDBError {
+      String new_uri) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_object_move(ctx.getCtxp(), old_uri, new_uri));
   }

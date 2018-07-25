@@ -44,13 +44,13 @@ public class TileDBObjectMove {
     Context ctx = new Context();
 
     // Rename a valid group and array
-    TileDBObject.move(ctx, "my_group", "my_group_2", true);
+    TileDBObject.move(ctx, "my_group", "my_group_2");
     TileDBObject.move(
-        ctx, "my_dense_array", "my_group_2/dense_arrays/my_dense_array", false);
+        ctx, "my_dense_array", "my_group_2/dense_arrays/my_dense_array");
 
     // Rename an invalid path
     try {
-      TileDBObject.move(ctx, "invalid_path", "path", false);
+      TileDBObject.move(ctx, "invalid_path", "path");
     } catch (TileDBError e) {
       System.out.println( "Failed to move invalid path");
     }
