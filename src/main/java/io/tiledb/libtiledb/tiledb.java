@@ -1624,6 +1624,34 @@ public class tiledb implements tiledbConstants {
     return tiledbJNI.tiledb_array_schema_dump_stdout(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_schema_t.getCPtr(array_schema));
   }
 
+  public static int tiledb_stats_dump_stdout() {
+    return tiledbJNI.tiledb_stats_dump_stdout();
+  }
+
+  public static int tiledb_dimension_dump_file(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_dimension_t dim, String filename) {
+    return tiledbJNI.tiledb_dimension_dump_file(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_dimension_t.getCPtr(dim), filename);
+  }
+
+  public static int tiledb_kv_schema_dump_file(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_kv_schema_t kv_schema, String filename) {
+    return tiledbJNI.tiledb_kv_schema_dump_file(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_kv_schema_t.getCPtr(kv_schema), filename);
+  }
+
+  public static int tiledb_attribute_dump_file(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_attribute_t attr, String filename) {
+    return tiledbJNI.tiledb_attribute_dump_file(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_attribute_t.getCPtr(attr), filename);
+  }
+
+  public static int tiledb_domain_dump_file(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_domain_t domain, String filename) {
+    return tiledbJNI.tiledb_domain_dump_file(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_domain_t.getCPtr(domain), filename);
+  }
+
+  public static int tiledb_array_schema_dump_file(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_array_schema_t array_schema, String filename) {
+    return tiledbJNI.tiledb_array_schema_dump_file(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_array_schema_t.getCPtr(array_schema), filename);
+  }
+
+  public static int tiledb_stats_dump_file(String filename) {
+    return tiledbJNI.tiledb_stats_dump_file(filename);
+  }
+
   public static SWIGTYPE_p_void derefVoid(SWIGTYPE_p_p_void in) {
     long cPtr = tiledbJNI.derefVoid(SWIGTYPE_p_p_void.getCPtr(in));
     return (cPtr == 0) ? null : new SWIGTYPE_p_void(cPtr, false);

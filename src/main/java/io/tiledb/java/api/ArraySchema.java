@@ -127,6 +127,14 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
+   * Dumps the array schema in an ASCII representation to a file.
+   * @throws TileDBError
+   */
+  public void dump(String filename) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_array_schema_dump_file(ctx.getCtxp(), schemap, filename));
+  }
+
+  /**
    * @return The array type.
    * @throws TileDBError
    */
