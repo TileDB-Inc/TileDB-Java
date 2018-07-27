@@ -24,10 +24,14 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.*;
-
 import java.util.HashSet;
 import java.util.Random;
+
+import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
+import static io.tiledb.java.api.CompressorType.TILEDB_GZIP;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class WriteBigSparseArray {
   private static Array array;
@@ -61,12 +65,12 @@ public class WriteBigSparseArray {
 
     // Create and add getAttributes
     Attribute a1 = new Attribute(ctx,"a1",Integer.class);
-    a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
+    a1.setCompressor(new Compressor(TILEDB_GZIP, -1));
 
     // Create array schema
-    ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
-    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
     schema.setCapacity(100);
     schema.setDomain(domain);
     schema.addAttribute(a1);
@@ -110,8 +114,8 @@ public class WriteBigSparseArray {
         Long.class);
 
     // Create query
-    Query query = new Query(array, tiledb_query_type_t.TILEDB_WRITE);
-    query.setLayout(tiledb_layout_t.TILEDB_UNORDERED);
+    Query query = new Query(array, TILEDB_WRITE);
+    query.setLayout(TILEDB_UNORDERED);
     query.setBuffer("a1", a1_data);
     query.setCoordinates(coords_buff);
 

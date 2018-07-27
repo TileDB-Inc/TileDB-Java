@@ -24,58 +24,58 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.*;
-
 import java.math.BigInteger;
+
+import static io.tiledb.java.api.Datatype.*;
 
 public class Types {
 
-  public static tiledb_datatype_t getNativeType(Class atrrType) throws TileDBError {
+  public static Datatype getNativeType(Class atrrType) throws TileDBError {
     if(atrrType.equals(int[].class)) {
-      return tiledb_datatype_t.TILEDB_INT32;
+      return TILEDB_INT32;
     } else if(atrrType.equals(long[].class)) {
-      return tiledb_datatype_t.TILEDB_UINT64;
+      return TILEDB_UINT64;
     } else if(atrrType.equals(char[].class)) {
-      return tiledb_datatype_t.TILEDB_CHAR;
+      return TILEDB_CHAR;
     } else if(atrrType.equals(float[].class)) {
-      return tiledb_datatype_t.TILEDB_FLOAT32;
+      return TILEDB_FLOAT32;
     } else if(atrrType.equals(double[].class)) {
-      return tiledb_datatype_t.TILEDB_FLOAT64;
+      return TILEDB_FLOAT64;
     } else if(atrrType.equals(byte[].class)) {
-      return tiledb_datatype_t.TILEDB_INT8;
+      return TILEDB_INT8;
     } else if(atrrType.equals(short[].class)) {
-      return tiledb_datatype_t.TILEDB_INT16;
+      return TILEDB_INT16;
     } else if(atrrType.equals(boolean[].class)) {
-      return tiledb_datatype_t.TILEDB_INT8;
+      return TILEDB_INT8;
     } else if(atrrType.equals(BigInteger[].class)) {
-      return tiledb_datatype_t.TILEDB_UINT64;
+      return TILEDB_UINT64;
     } else if(atrrType.equals(Integer.class)) {
-      return tiledb_datatype_t.TILEDB_INT32;
+      return TILEDB_INT32;
     } else if(atrrType.equals(Long.class)) {
-      return tiledb_datatype_t.TILEDB_UINT64;
+      return TILEDB_UINT64;
     } else if(atrrType.equals(Character.class)) {
-      return tiledb_datatype_t.TILEDB_CHAR;
+      return TILEDB_CHAR;
     } else if(atrrType.equals(String.class)) {
-      return tiledb_datatype_t.TILEDB_CHAR;
+      return TILEDB_CHAR;
     } else if(atrrType.equals(Float.class)) {
-      return tiledb_datatype_t.TILEDB_FLOAT32;
+      return TILEDB_FLOAT32;
     } else if(atrrType.equals(Double.class)) {
-      return tiledb_datatype_t.TILEDB_FLOAT64;
+      return TILEDB_FLOAT64;
     } else if(atrrType.equals(Byte.class)) {
-      return tiledb_datatype_t.TILEDB_INT8;
+      return TILEDB_INT8;
     } else if(atrrType.equals(Short.class)) {
-      return tiledb_datatype_t.TILEDB_INT16;
+      return TILEDB_INT16;
     } else if(atrrType.equals(Boolean.class)) {
-      return tiledb_datatype_t.TILEDB_INT8;
+      return TILEDB_INT8;
     } else if(atrrType.equals(BigInteger.class)) {
-      return tiledb_datatype_t.TILEDB_UINT64;
+      return TILEDB_UINT64;
     } else {
-//      return tiledb_datatype_t.TILEDB_INT8;
+//      return TILEDB_INT8;
       throw new TileDBError("Not supported getType: "+atrrType);
     }
   }
 
-  public static Class getJavaType(tiledb_datatype_t type) throws TileDBError {
+  public static Class getJavaType(Datatype type) throws TileDBError {
     switch(type) {
       case TILEDB_FLOAT32: {
         return Float.class;
@@ -116,7 +116,7 @@ public class Types {
     }
   }
 
-  public static boolean typeCheck(tiledb_datatype_t first, tiledb_datatype_t second) throws TileDBError {
+  public static boolean typeCheck(Datatype first, Datatype second) throws TileDBError {
     if(first.equals(second)){
       return true;
     }

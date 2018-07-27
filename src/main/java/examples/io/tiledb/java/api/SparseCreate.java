@@ -31,9 +31,10 @@ package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb;
-import io.tiledb.libtiledb.tiledb_array_type_t;
-import io.tiledb.libtiledb.tiledb_compressor_t;
-import io.tiledb.libtiledb.tiledb_layout_t;
+
+import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
+import static io.tiledb.java.api.CompressorType.*;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 
 public class SparseCreate {
   public static void main(String[] args) throws Exception {
@@ -54,14 +55,14 @@ public class SparseCreate {
     a2.setCellValNum(tiledb.tiledb_var_num());
     Attribute a3 = new Attribute(ctx,"a3",Float.class);
     a3.setCellValNum(2);
-    a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
-    a2.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
-    a3.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_ZSTD, -1));
+    a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
+    a2.setCompressor(new Compressor(TILEDB_GZIP, -1));
+    a3.setCompressor(new Compressor(TILEDB_ZSTD, -1));
 
     // Create array schema
-    ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
-    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
     schema.setCapacity(2);
     schema.setDomain(domain);
     schema.addAttribute(a1);

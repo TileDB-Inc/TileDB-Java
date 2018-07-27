@@ -38,12 +38,12 @@ package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
 
 public class SparseReadOrderedSubarray {
   public static void main(String[] args) throws Exception {
@@ -56,8 +56,8 @@ public class SparseReadOrderedSubarray {
     HashMap<String, Pair<Long,Long>> max_sizes = my_sparse_array.maxBufferElements(subarray);
 
     // Create query
-    Query query = new Query(my_sparse_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    Query query = new Query(my_sparse_array, TILEDB_READ);
+    query.setLayout(TILEDB_ROW_MAJOR);
     query.setSubarray(subarray);
     query.setBuffer("a1",
         new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));

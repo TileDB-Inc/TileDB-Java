@@ -26,6 +26,8 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
+import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
+
 /**
  * Describes an Attribute of an Array cell.
  *
@@ -46,11 +48,11 @@ import io.tiledb.libtiledb.*;
  * Attribute a3 = new Attribute(ctx,"a3",Float.class);
  *
  * // Change compression scheme
- * a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
- * a2.setCellValNum(tiledb.tiledb_var_num()); // Variable sized character attribute (String)
+ * a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
+ * a2.setCellValNum(TILEDB_VAR_NUM); // Variable sized character attribute (String)
  * a3.setCellValNum(2); // 2 floats stored per cell
  *
- * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_DENSE);
+ * ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
  * schema.setDomain(domain);
  * schema.addAttribute(a1);
  * schema.addAttribute(a2);
@@ -64,7 +66,7 @@ public class Attribute implements AutoCloseable {
   
   private Context ctx;
   private String name;
-  private tiledb_datatype_t type;
+  private Datatype type;
   private int size;
   private boolean isArray;
 
@@ -93,7 +95,7 @@ public class Attribute implements AutoCloseable {
     this.name = name;
     this.attributepp = tiledb.new_tiledb_attribute_tpp();
     this.type = Types.getNativeType(atrrType);
-    ctx.handleError(tiledb.tiledb_attribute_alloc(ctx.getCtxp(), name, type, attributepp));
+    ctx.handleError(tiledb.tiledb_attribute_alloc(ctx.getCtxp(), name, type.toSwigEnum(), attributepp));
     this.attributep = tiledb.tiledb_attribute_tpp_value(attributepp);
   }
 
@@ -121,11 +123,11 @@ public class Attribute implements AutoCloseable {
    * @return The Attribute Enumerated datatype (C type).
    * @throws TileDBError
    */
-  public tiledb_datatype_t getType() throws TileDBError {
+  public Datatype getType() throws TileDBError {
     if(type==null){
       SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
       ctx.handleError(tiledb.tiledb_attribute_get_type(ctx.getCtxp(), attributep, typep));
-      type = tiledb.tiledb_datatype_tp_value(typep);
+      type = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
       tiledb.delete_tiledb_datatype_tp(typep);
     }
     return type;
@@ -165,12 +167,12 @@ public class Attribute implements AutoCloseable {
    * @throws TileDBError
    */
   public boolean isVar() throws TileDBError {
-    return getCellValNum() == tiledb.tiledb_var_num();
+    return getCellValNum() == TILEDB_VAR_NUM;
   }
 
   /**
    * Sets the number of Attribute values per cell.
-   * @param size The number of values per cell. Use tiledb.tiledb_var_num() for variable length.
+   * @param size The number of values per cell. Use TILEDB_VAR_NUM for variable length.
    * @throws TileDBError
    */
   public void setCellValNum(long size) throws TileDBError {
@@ -187,7 +189,9 @@ public class Attribute implements AutoCloseable {
     SWIGTYPE_p_int level = tiledb.new_intp();
     ctx.handleError(
         tiledb.tiledb_attribute_get_compressor(ctx.getCtxp(), attributep, compressor, level));
-    Compressor cmp = new Compressor(tiledb.tiledb_compressor_tp_value(compressor), tiledb.intp_value(level));
+    Compressor cmp = new Compressor(
+        CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressor)),
+        tiledb.intp_value(level));
     tiledb.delete_intp(level);
     tiledb.delete_tiledb_compressor_tp(compressor);
     return cmp;
@@ -200,7 +204,7 @@ public class Attribute implements AutoCloseable {
    */
   public void setCompressor(Compressor compressor) throws TileDBError {
     ctx.handleError(tiledb.tiledb_attribute_set_compressor(
-        ctx.getCtxp(), attributep, compressor.getCompressor(), compressor.getLevel()));
+        ctx.getCtxp(), attributep, compressor.getCompressor().toSwigEnum(), compressor.getLevel()));
   }
 
   /**
@@ -210,7 +214,7 @@ public class Attribute implements AutoCloseable {
   @Override
   public String toString() {
     try {
-      return "Attr<" + getName() + ',' + getType() + ',' + ((getCellValNum() == tiledb.tiledb_var_num()) ? "VAR" : getCellValNum()) + '>';
+      return "Attr<" + getName() + ',' + getType() + ',' + ((getCellValNum() == TILEDB_VAR_NUM) ? "VAR" : getCellValNum()) + '>';
     } catch (TileDBError tileDBError) {
       tileDBError.printStackTrace();
     }

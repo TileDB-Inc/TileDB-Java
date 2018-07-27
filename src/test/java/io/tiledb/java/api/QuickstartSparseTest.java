@@ -32,6 +32,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
+import static io.tiledb.java.api.CompressorType.*;
+import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+
 @SuppressWarnings("ALL")
 public class QuickstartSparseTest {
 
@@ -68,14 +75,14 @@ public class QuickstartSparseTest {
     a2.setCellValNum(tiledb.tiledb_var_num());
     Attribute a3 = new Attribute(ctx,"a3",Float.class);
     a3.setCellValNum(2);
-    a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
-    a2.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
-    a3.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_ZSTD, -1));
+    a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
+    a2.setCompressor(new Compressor(TILEDB_GZIP, -1));
+    a3.setCompressor(new Compressor(TILEDB_ZSTD, -1));
 
     // Create array schema
-    ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
-    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
     schema.setCapacity(2);
     schema.setDomain(domain);
     schema.addAttribute(a1);
@@ -137,9 +144,9 @@ public class QuickstartSparseTest {
         Long.class);
 
     // Create query
-    Array my_sparse_array = new Array(ctx, arrayURI, tiledb_query_type_t.TILEDB_WRITE);
+    Array my_sparse_array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(my_sparse_array);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);
@@ -167,8 +174,8 @@ public class QuickstartSparseTest {
     }
 
     // Create query
-    Query query = new Query(my_sparse_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    Query query = new Query(my_sparse_array, TILEDB_READ);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setSubarray(subarray);
     query.setBuffer("a1",
         new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));

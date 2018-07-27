@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.tiledb.java.api.QueryType.*;
+
 
 /**
  * Class representing a TileDB array object.
@@ -58,7 +60,7 @@ public class Array implements AutoCloseable {
   private Context ctx;
   private String uri;
   private ArraySchema schema;
-  private tiledb_query_type_t query_type;
+  private QueryType query_type;
   private boolean initialized = false;
 
   /**
@@ -70,7 +72,7 @@ public class Array implements AutoCloseable {
    * @code{.java}
    * // Open the array for reading
    * Context ctx = new Context();
-   * Array array new Array(ctx, "s3://bucket-name/array-name", tiledb_query_type_t.TILEDB_READ);
+   * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ);
    * @endcode
    *
    * @param ctx TileDB context.
@@ -78,7 +80,7 @@ public class Array implements AutoCloseable {
    * @param query_type Query type to open the array for.
    * @throws TileDBError
    */
-  public Array(Context ctx, String uri, tiledb_query_type_t query_type) throws TileDBError {
+  public Array(Context ctx, String uri, QueryType query_type) throws TileDBError {
     ctx.deleterAdd(this);
     schema = new ArraySchema(ctx, uri);
     this.ctx = ctx;
@@ -103,14 +105,14 @@ public class Array implements AutoCloseable {
    * @throws TileDBError
    */
   public Array(Context ctx, String uri) throws TileDBError {
-    this(ctx, uri, tiledb_query_type_t.TILEDB_READ);
+    this(ctx, uri, TILEDB_READ);
   }
 
   private void openArray() throws TileDBError {
-    openArray(tiledb_query_type_t.TILEDB_READ);
+    openArray(TILEDB_READ);
   }
 
-  private void openArray(tiledb_query_type_t query_type) throws TileDBError {
+  private void openArray(QueryType query_type) throws TileDBError {
     arraypp = tiledb.new_tiledb_array_tpp();
     ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, arraypp)); 
     arrayp = tiledb.tiledb_array_tpp_value(arraypp);
@@ -118,7 +120,7 @@ public class Array implements AutoCloseable {
       tiledb.tiledb_array_open(
         ctx.getCtxp(), 
 	arrayp, 
-	query_type));
+	query_type.toSwigEnum()));
     initialized = true;
   }
 
@@ -221,7 +223,7 @@ public class Array implements AutoCloseable {
 		new Pair(off_nbytes.getitem(0).longValue() / 
 			 tiledb.tiledb_offset_size().longValue(),
 			 val_nbytes.getitem(0).longValue() / 
-		     	 tiledb.tiledb_datatype_size(a.getValue().getType()).longValue()));
+		     	 tiledb.tiledb_datatype_size(a.getValue().getType().toSwigEnum()).longValue()));
       } else {
         ctx.handleError(tiledb.tiledb_array_max_buffer_size(
 	  ctx.getCtxp(),
@@ -231,7 +233,7 @@ public class Array implements AutoCloseable {
 	  val_nbytes.cast()));
 	ret.put(a.getKey(), 
 		new Pair(0l, val_nbytes.getitem(0).longValue() /
-			     tiledb.tiledb_datatype_size(a.getValue().getType()).longValue()));
+			     tiledb.tiledb_datatype_size(a.getValue().getType().toSwigEnum()).longValue()));
       } 
     }
     if (schema.isSparse()) {
@@ -243,7 +245,7 @@ public class Array implements AutoCloseable {
 	  val_nbytes.cast()));
   	ret.put(tiledb.tiledb_coords(),
           	new Pair(0l, val_nbytes.getitem(0).longValue() / 
-			     tiledb.tiledb_datatype_size(schema.getDomain().getType()).longValue()));
+			     tiledb.tiledb_datatype_size(schema.getDomain().getType().toSwigEnum()).longValue()));
 
     } 
     off_nbytes.delete();
@@ -277,7 +279,7 @@ public class Array implements AutoCloseable {
    *
    * @return The query type that the array was opened for.
    */
-  public tiledb_query_type_t getQueryType() {
+  public QueryType getQueryType() {
     return query_type;
   }
 

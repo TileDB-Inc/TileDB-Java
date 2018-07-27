@@ -25,8 +25,9 @@
 package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
+
+import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class DenseWriteGlobal2 {
   public static void main(String[] args) throws Exception {
@@ -55,9 +56,9 @@ public class DenseWriteGlobal2 {
 
 
     // Create query
-    Array my_dense_array = new Array(ctx,"my_dense_array", tiledb_query_type_t.TILEDB_WRITE);
+    Array my_dense_array = new Array(ctx,"my_dense_array", TILEDB_WRITE);
     Query query = new Query(my_dense_array);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);

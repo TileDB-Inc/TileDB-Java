@@ -39,7 +39,7 @@ import java.math.BigInteger;
 
 public class NativeArray implements AutoCloseable {
   private Class javaType;
-  private tiledb_datatype_t nativeType;
+  private Datatype nativeType;
   private int nativeTypeSize;
   private floatArray floatArray;
   private doubleArray doubleArray;
@@ -61,12 +61,12 @@ public class NativeArray implements AutoCloseable {
    * @param nativeType
    * @throws TileDBError
    */
-  public NativeArray(Context ctx, int size, tiledb_datatype_t nativeType) throws TileDBError {
+  public NativeArray(Context ctx, int size, Datatype nativeType) throws TileDBError {
     ctx.deleterAdd(this);
     this.size = size;
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
-    this.nativeTypeSize = tiledb.tiledb_datatype_size(nativeType).intValue();
+    this.nativeTypeSize = tiledb.tiledb_datatype_size(nativeType.toSwigEnum()).intValue();
     allocateEmptyArray();
   }
 
@@ -82,7 +82,7 @@ public class NativeArray implements AutoCloseable {
     this.size = size;
     this.javaType = javaType;
     this.nativeType = Types.getNativeType(javaType);
-    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType).intValue();
+    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
     allocateEmptyArray();
   }
 
@@ -99,7 +99,7 @@ public class NativeArray implements AutoCloseable {
     ctx.deleterAdd(this);
     this.javaType = javaType;
     this.nativeType = Types.getNativeType(javaType);
-    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType).intValue();
+    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
     this.size = getSize(buffer);
     createNativeArrayFromBuffer(buffer);
   }
@@ -113,28 +113,28 @@ public class NativeArray implements AutoCloseable {
    * @throws TileDBError
    * @throws UnsupportedEncodingException
    */
-  public NativeArray(Context ctx, Object buffer, tiledb_datatype_t nativeType) throws TileDBError, UnsupportedEncodingException {
+  public NativeArray(Context ctx, Object buffer, Datatype nativeType) throws TileDBError, UnsupportedEncodingException {
     ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
-    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType).intValue();
+    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
     this.size = getSize(buffer);
     createNativeArrayFromBuffer(buffer);
   }
 
-  protected NativeArray(Context ctx, tiledb_datatype_t nativeType, SWIGTYPE_p_p_void pointer) throws TileDBError {
+  protected NativeArray(Context ctx, Datatype nativeType, SWIGTYPE_p_p_void pointer) throws TileDBError {
     ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
-    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType).intValue();
+    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
     createNativeArrayFromVoidPointer(pointer);
   }
 
-  protected NativeArray(Context ctx, tiledb_datatype_t nativeType, SWIGTYPE_p_void pointer) throws TileDBError {
+  protected NativeArray(Context ctx, Datatype nativeType, SWIGTYPE_p_void pointer) throws TileDBError {
     ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
-    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType).intValue();
+    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
     createNativeArrayFromVoidPointer(pointer);
   }
 
@@ -591,7 +591,7 @@ public class NativeArray implements AutoCloseable {
     return ((String) buffer).getBytes("UTF-8");
   }
 
-  protected tiledb_datatype_t getNativeType() {
+  protected Datatype getNativeType() {
     return nativeType;
   }
 

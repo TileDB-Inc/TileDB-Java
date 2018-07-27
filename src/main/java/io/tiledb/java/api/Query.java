@@ -27,10 +27,10 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.*;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import static io.tiledb.java.api.Datatype.TILEDB_UINT64;
 
 /**
  * Construct and execute read/write queries on a tiledb Array.
@@ -40,9 +40,9 @@ import java.util.Map;
  *
  * **Example:**
  *
- * @code{.cpp}
- * Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_WRITE);
- * query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+ * @code{.java}
+ * Query query = new Query(my_dense_array, TILEDB_WRITE);
+ * query.setLayout(TILEDB_GLOBAL_ORDER);
  * query.setBuffer("a1", a1_data);
  * NativeArray a1_data = new NativeArray(ctx, new int[] {1,2,3,4}, Integer.class);
  * query.setBuffer("a1", a1_data);
@@ -53,7 +53,7 @@ public class Query implements AutoCloseable {
   
   private Context ctx;
   private Array array;
-  private tiledb_query_type_t type;
+  private QueryType type;
    
   private SWIGTYPE_p_p_tiledb_query_t querypp;
   private SWIGTYPE_p_tiledb_query_t queryp;
@@ -65,13 +65,13 @@ public class Query implements AutoCloseable {
   private HashMap<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
   private boolean executed;
 	
-  public Query(Array array, tiledb_query_type_t type) throws TileDBError {
+  public Query(Array array, QueryType type) throws TileDBError {
     this.ctx = array.getCtx();
     ctx.deleterAdd(this);
     this.type = type;
     this.array = array;
     this.querypp = tiledb.new_tiledb_query_tpp();
-    ctx.handleError(tiledb.tiledb_query_alloc(ctx.getCtxp(), array.getArrayp(), type, this.querypp));
+    ctx.handleError(tiledb.tiledb_query_alloc(ctx.getCtxp(), array.getArrayp(), type.toSwigEnum(), this.querypp));
     this.queryp = tiledb.tiledb_query_tpp_value(querypp);
     this.buffers_ = new HashMap<String, NativeArray>();
     this.var_buffers_ = new HashMap<String, Pair<NativeArray, NativeArray>>();
@@ -88,8 +88,8 @@ public class Query implements AutoCloseable {
    * @param layout The order to be set.
    * @throws TileDBError
    */
-  public void setLayout(tiledb_layout_t layout) throws TileDBError {
-    ctx.handleError(tiledb.tiledb_query_set_layout(ctx.getCtxp(), queryp, layout));
+  public void setLayout(Layout layout) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_query_set_layout(ctx.getCtxp(), queryp, layout.toSwigEnum()));
   }
 
   /**
@@ -97,12 +97,12 @@ public class Query implements AutoCloseable {
    * @return The query Status.
    * @throws TileDBError
    */
-  public Status getQueryStatus() throws TileDBError {
+  public QueryStatus getQueryStatus() throws TileDBError {
     SWIGTYPE_p_tiledb_query_status_t statusp = tiledb.new_tiledb_query_status_tp();
     ctx.handleError(tiledb.tiledb_query_get_status(ctx.getCtxp(), queryp, statusp));
-    Status status = Status.toStatus(statusp);
+    tiledb_query_status_t status = tiledb.tiledb_query_status_tp_value(statusp);
     tiledb.delete_tiledb_query_status_tp(statusp);
-    return status;
+    return QueryStatus.fromSwigEnum(status);
   }
 
   /**
@@ -110,7 +110,7 @@ public class Query implements AutoCloseable {
    * @return The query Status.
    * @throws TileDBError
    */
-  public Status submit() throws TileDBError {
+  public QueryStatus submit() throws TileDBError {
     prepareSubmission();
     ctx.handleError(tiledb.tiledb_query_submit(ctx.getCtxp(), queryp));
     executed = true;
@@ -162,7 +162,7 @@ public class Query implements AutoCloseable {
    */
   public void setBuffer(String attr, NativeArray buffer) throws TileDBError {
     HashMap<String, Attribute> schemaAttributes = array.getSchema().getAttributes();
-    tiledb_datatype_t attribute_datatype;
+    Datatype attribute_datatype;
     if(schemaAttributes.containsKey(attr)){
       attribute_datatype = schemaAttributes.get(attr).getType();
       Types.typeCheck(attribute_datatype, buffer.getNativeType());
@@ -194,7 +194,7 @@ public class Query implements AutoCloseable {
     if (attr.equals(tiledb.tiledb_coords())) {
       throw new TileDBError("Cannot set coordinate buffer as variable sized.");
     }
-    if(!offsets.getNativeType().equals(tiledb_datatype_t.TILEDB_UINT64))
+    if(!offsets.getNativeType().equals(TILEDB_UINT64))
       throw new TileDBError("Buffer offsets should be of getType TILEDB_UINT64 or Long. Found getType: "
           + offsets.getNativeType());
     Pair<uint64_tArray, uint64_tArray> buffer_sizes = 

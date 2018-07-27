@@ -45,7 +45,7 @@ public class Dimension<T> implements AutoCloseable {
   private SWIGTYPE_p_p_tiledb_dimension_t dimensionpp;
   private SWIGTYPE_p_tiledb_dimension_t dimensionp;
   private Context ctx;
-  private tiledb_datatype_t type;
+  private Datatype type;
   private String name;
   private Pair<T,T> domain;
 
@@ -85,7 +85,7 @@ public class Dimension<T> implements AutoCloseable {
       tiledb.tiledb_dimension_alloc(
         ctx.getCtxp(), 
         name, 
-        this.type,
+        this.type.toSwigEnum(),
 	      domainBuffer.toVoidPointer(), 
         tileExtent.toVoidPointer(), 
         dimensionpp));
@@ -117,11 +117,11 @@ public class Dimension<T> implements AutoCloseable {
    * @return The dimension datatype.
    * @throws TileDBError
    */
-  public tiledb_datatype_t getType() throws TileDBError {
+  public Datatype getType() throws TileDBError {
     if (type == null) {
       SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
       ctx.handleError(tiledb.tiledb_dimension_get_type(ctx.getCtxp(), dimensionp, typep));
-      type = tiledb.tiledb_datatype_tp_value(typep);
+      type = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
       tiledb.delete_tiledb_datatype_tp(typep);
     }
     return type;

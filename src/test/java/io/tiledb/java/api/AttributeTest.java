@@ -25,8 +25,9 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb;
-import io.tiledb.libtiledb.tiledb_compressor_t;
 import org.junit.Test;
+
+import static io.tiledb.java.api.CompressorType.TILEDB_GZIP;
 
 public class AttributeTest {
 
@@ -36,7 +37,7 @@ public class AttributeTest {
     Attribute a = new Attribute(ctx, "a1", Long.class);
     System.out.println(a.getName());
     System.out.println(a.getType());
-    a.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, 1));
+    a.setCompressor(new Compressor(TILEDB_GZIP, 1));
 
     a.setCellValNum(tiledb.tiledb_var_num());
     System.out.println(a.getCellValNum());

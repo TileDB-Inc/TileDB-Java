@@ -26,11 +26,13 @@ package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.Callback;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
 
 import java.util.Arrays;
 import java.util.HashMap;
+
+import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.QueryStatus.TILEDB_INPROGRESS;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
 
 public class DenseReadAsync {
 
@@ -48,8 +50,8 @@ public class DenseReadAsync {
 
 
     // Create query
-    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    Query query = new Query(my_dense_array, TILEDB_READ);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer("a1",
         new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));
     query.setBuffer("a2",
@@ -63,11 +65,11 @@ public class DenseReadAsync {
 
     // Wait for query to complete
     System.out.printf("Query in progress\n");
-    Status status;
+    QueryStatus status;
     do {
       // Wait till query is done
       status = query.getQueryStatus();
-    } while (status == Status.INPROGRESS);
+    } while (status == TILEDB_INPROGRESS);
 
     // Print cell values (assumes all getAttributes are read)
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();

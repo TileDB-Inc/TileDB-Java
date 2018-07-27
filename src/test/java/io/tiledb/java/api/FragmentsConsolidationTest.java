@@ -1,13 +1,15 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb;
-import io.tiledb.libtiledb.tiledb_array_type_t;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.HashMap;
+
+import static io.tiledb.java.api.ArrayType.*;
+import static io.tiledb.java.api.Layout.*;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class FragmentsConsolidationTest {
   private Context ctx;
@@ -42,9 +44,9 @@ public class FragmentsConsolidationTest {
     // Create and add getAttributes
     Attribute a = new Attribute(ctx, "a", Integer.class);
 
-    ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_DENSE);
-    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
     schema.setDomain(domain);
     schema.addAttribute(a);
 
@@ -64,9 +66,9 @@ public class FragmentsConsolidationTest {
         Integer.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, tiledb_query_type_t.TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(array);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
     query.setSubarray(subarray);
     // Submit query
@@ -88,9 +90,9 @@ public class FragmentsConsolidationTest {
         Integer.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, tiledb_query_type_t.TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(array);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
     query.setSubarray(subarray);
     // Submit query
@@ -112,9 +114,9 @@ public class FragmentsConsolidationTest {
         Integer.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, tiledb_query_type_t.TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(array);
-    query.setLayout(tiledb_layout_t.TILEDB_UNORDERED);
+    query.setLayout(TILEDB_UNORDERED);
     query.setBuffer("a", data);
     query.setCoordinates(coords);
     // Submit query
@@ -126,14 +128,14 @@ public class FragmentsConsolidationTest {
 
   private void arrayRead() throws Exception {
 
-    Array array = new Array(ctx, arrayURI, tiledb_query_type_t.TILEDB_READ);
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
 
     // Calcuate maximum buffer sizes for the query results per attribute
     NativeArray subarray = new NativeArray(ctx, new int[]{1, 4, 1, 4}, Integer.class);
 
     // Create query
-    Query query = new Query(array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    Query query = new Query(array, TILEDB_READ);
+    query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a",
         new NativeArray(ctx, 16,Integer.class));
     query.setCoordinates(new NativeArray(ctx, 32, Integer.class));

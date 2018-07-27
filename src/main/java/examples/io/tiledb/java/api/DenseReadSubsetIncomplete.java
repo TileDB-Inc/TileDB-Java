@@ -25,8 +25,10 @@
 package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
+
+import static io.tiledb.java.api.Layout.TILEDB_COL_MAJOR;
+import static io.tiledb.java.api.QueryStatus.TILEDB_INCOMPLETE;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
 
 public class DenseReadSubsetIncomplete {
   public static void main(String[] args) throws Exception {
@@ -36,8 +38,8 @@ public class DenseReadSubsetIncomplete {
     Array my_dense_array = new Array(ctx, "my_dense_array");
 
     // Create query
-    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_COL_MAJOR);
+    Query query = new Query(my_dense_array, TILEDB_READ);
+    query.setLayout(TILEDB_COL_MAJOR);
     long[] subarray = {1l, 4l, 1l, 4l};
     query.setSubarray(new NativeArray(ctx, subarray, Long.class));
     query.setBuffer("a1", new NativeArray(ctx, 34, Integer.class));
@@ -53,6 +55,6 @@ public class DenseReadSubsetIncomplete {
       for (int i =0; i< a1_buff.length; i++){
         System.out.println(a1_buff[i]);
       }
-    } while (query.getQueryStatus() == Status.INCOMPLETE);
+    } while (query.getQueryStatus() == TILEDB_INCOMPLETE);
   }
 }
