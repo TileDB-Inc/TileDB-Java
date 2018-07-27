@@ -37,6 +37,8 @@ import io.tiledb.java.api.TileDBObject;
 import io.tiledb.java.api.TileDBObjectIterator;
 import io.tiledb.libtiledb.tiledb_walk_order_t;
 
+import static io.tiledb.java.api.TileDBWalkOrderEnum.TILEDB_POSTORDER;
+
 public class ObjectLsWalk {
   public static void main (String[] args) throws TileDBError {
     // Create TileDB context
@@ -55,7 +57,7 @@ public class ObjectLsWalk {
       System.out.println(object);
 
     System.out.println( "\nPostorder traversal: ");
-    obj_iter.setRecursive(tiledb_walk_order_t.TILEDB_POSTORDER);
+    obj_iter.setRecursive(TILEDB_POSTORDER);
     for (TileDBObject object : obj_iter.getAllObjects())
       System.out.println(object);
 

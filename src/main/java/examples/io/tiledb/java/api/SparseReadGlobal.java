@@ -44,6 +44,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_READ;
+
 public class SparseReadGlobal {
   public static void main(String[] args) throws Exception {
     // Create TileDB context
@@ -64,8 +67,8 @@ public class SparseReadGlobal {
     }
 
     // Create query
-    Query query = new Query(my_sparse_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    Query query = new Query(my_sparse_array, TILEDB_READ);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setSubarray(subarray);
     query.setBuffer("a1",
         new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));

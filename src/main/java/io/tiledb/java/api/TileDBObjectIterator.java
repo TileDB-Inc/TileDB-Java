@@ -29,6 +29,8 @@ import io.tiledb.libtiledb.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.tiledb.java.api.TileDBWalkOrderEnum.*;
+
 /**
  * Enables listing TileDB objects in a directory or walking recursively an
  * entire directory tree.
@@ -36,7 +38,7 @@ import java.util.List;
 public class TileDBObjectIterator {
   private final Context ctx;
   private boolean group = true, array = true, kv = true, recursive = false;
-  private tiledb_walk_order_t walkOrder = tiledb_walk_order_t.TILEDB_PREORDER;
+  private TileDBWalkOrderEnum walkOrder = TILEDB_PREORDER;
   private String root = ".";
 
   /**
@@ -62,7 +64,7 @@ public class TileDBObjectIterator {
    * @param walkOrder The walk order.
    * @param root The root directory where the iteration will begin.
    */
-  public TileDBObjectIterator(Context ctx, boolean group, boolean array, boolean kv, boolean recursive, tiledb_walk_order_t walkOrder, String root) {
+  public TileDBObjectIterator(Context ctx, boolean group, boolean array, boolean kv, boolean recursive, TileDBWalkOrderEnum walkOrder, String root) {
     this.ctx = ctx;
     this.group = group;
     this.array = array;
@@ -93,7 +95,7 @@ public class TileDBObjectIterator {
    *
    * @param walkOrder The walk order.
    */
-  public void setRecursive(tiledb_walk_order_t walkOrder){
+  public void setRecursive(TileDBWalkOrderEnum walkOrder){
     recursive = true;
     setWalkOrder(walkOrder);
   }
@@ -104,7 +106,7 @@ public class TileDBObjectIterator {
    */
   public void setRecursive(){
     recursive = true;
-    setWalkOrder(tiledb_walk_order_t.TILEDB_PREORDER);
+    setWalkOrder(TILEDB_PREORDER);
   }
 
   /** Disables recursive traversal. */
@@ -136,7 +138,7 @@ public class TileDBObjectIterator {
     this.kv = kv;
   }
 
-  public tiledb_walk_order_t getWalkOrder() {
+  public TileDBWalkOrderEnum getWalkOrder() {
     return walkOrder;
   }
 
@@ -144,7 +146,7 @@ public class TileDBObjectIterator {
     ObjectGetter objectGetter = new ObjectGetter();
     if (recursive) {
       ctx.handleError(
-          Utils.tiledb_object_walk(ctx.getCtxp(), root, walkOrder, objectGetter));
+          Utils.tiledb_object_walk(ctx.getCtxp(), root, walkOrder.toSwigEnum(), objectGetter));
     } else {
       ctx.handleError(
           Utils.tiledb_object_ls(ctx.getCtxp(), root, objectGetter));
@@ -152,7 +154,7 @@ public class TileDBObjectIterator {
     return objectGetter.getObjects();
   }
 
-  public void setWalkOrder(tiledb_walk_order_t walkOrder) {
+  public void setWalkOrder(TileDBWalkOrderEnum walkOrder) {
     this.walkOrder = walkOrder;
   }
 
@@ -176,7 +178,12 @@ public class TileDBObjectIterator {
       if ((type == tiledb_object_t.TILEDB_ARRAY && array) ||
           (type == tiledb_object_t.TILEDB_GROUP && group) ||
           (type == tiledb_object_t.TILEDB_KEY_VALUE && kv)) {
-        TileDBObject object = new TileDBObject(ctx, path, type);
+        TileDBObject object = null;
+        try {
+          object = new TileDBObject(ctx, path, TileDBObjectEnum.fromSwigEnum(type));
+        } catch (TileDBError tileDBError) {
+          tileDBError.printStackTrace();
+        }
         objects.add(object);
       }
       // Always iterate till the end

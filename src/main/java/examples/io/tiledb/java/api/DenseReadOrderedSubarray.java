@@ -31,6 +31,9 @@ import io.tiledb.libtiledb.tiledb_query_type_t;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_READ;
+
 public class DenseReadOrderedSubarray {
   public static void main(String[] args) throws Exception {
     // Create TileDB context
@@ -42,8 +45,8 @@ public class DenseReadOrderedSubarray {
     HashMap<String, Pair<Long,Long>> max_sizes = my_dense_array.maxBufferElements(subarray);
 
     // Create query
-    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    Query query = new Query(my_dense_array, TILEDB_READ);
+    query.setLayout(TILEDB_ROW_MAJOR);
     query.setSubarray(subarray);
     query.setBuffer("a1",
         new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));

@@ -58,7 +58,7 @@ import java.util.List;
  * domain.getType(); // TILEDB_INT32, determined from the dimensions
  * domain.getRank(); // 2, d1 and d3
  *
- * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
+ * ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
  * schema.setDomain(domain); // Set the array's domain
  *
  * @endcode
@@ -121,12 +121,12 @@ public class Domain implements AutoCloseable {
    * @return The domain Enumerated type.
    * @throws TileDBError
    */
-  public tiledb_datatype_t getType() throws TileDBError {
+  public TileDBDatatypeEnum getType() throws TileDBError {
     SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
     ctx.handleError(tiledb.tiledb_domain_get_type(ctx.getCtxp(), domainp, typep));
     tiledb_datatype_t type = tiledb.tiledb_datatype_tp_value(typep);
     tiledb.delete_tiledb_datatype_tp(typep);
-    return type;
+    return TileDBDatatypeEnum.fromSwigEnum(type);
   }
 
   /**

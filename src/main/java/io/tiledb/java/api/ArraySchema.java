@@ -31,6 +31,9 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.tiledb.java.api.TileDBArrayTypeEnum.TILEDB_DENSE;
+import static io.tiledb.java.api.TileDBArrayTypeEnum.TILEDB_SPARSE;
+
 /**
  * Schema describing an array.
  *
@@ -46,7 +49,7 @@ import java.util.Map;
  * **Example:**
  * @code{.java}
  * Context ctx = new Context();
- * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
+ * ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
  *
  * // Create a Domain
  * Domain<Integer> domain = new Domain<Integer>(ctx);
@@ -58,9 +61,9 @@ import java.util.Map;
  * schema.addAttribute(a1);
  *
  * // Specify tile memory layout
- * schema.setTileOrder(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+ * schema.setTileOrder(TILEDB_GLOBAL_ORDER);
  * // Specify cell memory layout within each tile
- * schema.setCellOrder(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+ * schema.setCellOrder(TILEDB_GLOBAL_ORDER);
  * schema.setCapacity(10); // For sparse, set capacity of each tile
  *
  * Array my_dense_array = new Array(ctx, "my_array", schema); // Make array with schema
@@ -81,18 +84,18 @@ public class ArraySchema implements AutoCloseable {
    * **Example:**
    * @code{.java}
    * Context ctx = new Context();
-   * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
+   * ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
    * @endcode
    *
    * @param ctx TileDB context
    * @param type Array type, sparse or dense.
    * @throws TileDBError
    */
-  public ArraySchema(Context ctx, tiledb_array_type_t type) throws TileDBError {
+  public ArraySchema(Context ctx, TileDBArrayTypeEnum type) throws TileDBError {
     ctx.deleterAdd(this);
     this.ctx = ctx;
     schemapp = tiledb.new_tiledb_array_schema_tpp();
-    ctx.handleError(tiledb.tiledb_array_schema_alloc(ctx.getCtxp(), type, schemapp));
+    ctx.handleError(tiledb.tiledb_array_schema_alloc(ctx.getCtxp(), type.toSwigEnum(), schemapp));
     schemap = tiledb.tiledb_array_schema_tpp_value(schemapp);
   }
 
@@ -138,13 +141,13 @@ public class ArraySchema implements AutoCloseable {
    * @return The array type.
    * @throws TileDBError
    */
-  public tiledb_array_type_t getArrayType() throws TileDBError {
+  public TileDBArrayTypeEnum getArrayType() throws TileDBError {
     SWIGTYPE_p_tiledb_array_type_t typep = tiledb.new_tiledb_array_type_tp();
     ctx.handleError(
         tiledb.tiledb_array_schema_get_array_type(ctx.getCtxp(), schemap, typep));
     tiledb_array_type_t type = tiledb.tiledb_array_type_tp_value(typep);
     tiledb.delete_tiledb_array_type_tp(typep);
-    return type;
+    return TileDBArrayTypeEnum.fromSwigEnum(type);
   }
 
   /**
@@ -153,7 +156,7 @@ public class ArraySchema implements AutoCloseable {
    * @throws TileDBError
    */
   public boolean isSparse() throws TileDBError {
-    return getArrayType() == tiledb_array_type_t.TILEDB_SPARSE;
+    return getArrayType() == TILEDB_SPARSE;
   }
 
   /**
@@ -186,13 +189,13 @@ public class ArraySchema implements AutoCloseable {
    * @return The tile layout order.
    * @throws TileDBError
    */
-  public tiledb_layout_t getTileOrder() throws TileDBError {
+  public TileDBLayoutEnum getTileOrder() throws TileDBError {
     SWIGTYPE_p_tiledb_layout_t layoutpp = tiledb.new_tiledb_layout_tp();
     ctx.handleError(
         tiledb.tiledb_array_schema_get_tile_order(ctx.getCtxp(), schemap, layoutpp));
     tiledb_layout_t layout = tiledb.tiledb_layout_tp_value(layoutpp);
     tiledb.delete_tiledb_layout_tp(layoutpp);
-    return layout;
+    return TileDBLayoutEnum.fromSwigEnum(layout);
   }
 
   /**
@@ -201,9 +204,9 @@ public class ArraySchema implements AutoCloseable {
    * @param layout Tile order to set.
    * @throws TileDBError
    */
-  public void setTileOrder(tiledb_layout_t layout) throws TileDBError {
+  public void setTileOrder(TileDBLayoutEnum layout) throws TileDBError {
     ctx.handleError(
-        tiledb.tiledb_array_schema_set_tile_order(ctx.getCtxp(), schemap, layout));
+        tiledb.tiledb_array_schema_set_tile_order(ctx.getCtxp(), schemap, layout.toSwigEnum()));
   }
 
   /**
@@ -213,7 +216,7 @@ public class ArraySchema implements AutoCloseable {
    * @param cell_layout Cell order.
    * @throws TileDBError
    */
-  public void setOrder(tiledb_layout_t tile_layout, tiledb_layout_t cell_layout) throws TileDBError {
+  public void setOrder(TileDBLayoutEnum tile_layout, TileDBLayoutEnum cell_layout) throws TileDBError {
     setTileOrder(tile_layout);
     setCellOrder(cell_layout);
   }
@@ -223,13 +226,13 @@ public class ArraySchema implements AutoCloseable {
    * @return The cell order.
    * @throws TileDBError
    */
-  public tiledb_layout_t getCellOrder() throws TileDBError {
+  public TileDBLayoutEnum getCellOrder() throws TileDBError {
     SWIGTYPE_p_tiledb_layout_t layoutpp = tiledb.new_tiledb_layout_tp();
     ctx.handleError(
         tiledb.tiledb_array_schema_get_cell_order(ctx.getCtxp(), schemap, layoutpp));
     tiledb_layout_t layout = tiledb.tiledb_layout_tp_value(layoutpp);
     tiledb.delete_tiledb_layout_tp(layoutpp);
-    return layout;
+    return TileDBLayoutEnum.fromSwigEnum(layout);
   }
 
   /**
@@ -238,9 +241,9 @@ public class ArraySchema implements AutoCloseable {
    * @param layout Cell order to set.
    * @throws TileDBError
    */
-  public void setCellOrder(tiledb_layout_t layout) throws TileDBError {
+  public void setCellOrder(TileDBLayoutEnum layout) throws TileDBError {
     ctx.handleError(
-        tiledb.tiledb_array_schema_set_cell_order(ctx.getCtxp(), schemap, layout));
+        tiledb.tiledb_array_schema_set_cell_order(ctx.getCtxp(), schemap, layout.toSwigEnum()));
   }
 
   /**
@@ -253,7 +256,9 @@ public class ArraySchema implements AutoCloseable {
     SWIGTYPE_p_int levelp = tiledb.new_intp();
     ctx.handleError(tiledb.tiledb_array_schema_get_coords_compressor(
         ctx.getCtxp(), schemap, compressorp, levelp));
-    Compressor compressor = new Compressor(tiledb.tiledb_compressor_tp_value(compressorp), tiledb.intp_value(levelp));
+    Compressor compressor = new Compressor(
+        TileDBCompressorEnum.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressorp)),
+        tiledb.intp_value(levelp));
     tiledb.delete_tiledb_compressor_tp(compressorp);
     tiledb.delete_intp(levelp);
     return compressor;
@@ -266,8 +271,8 @@ public class ArraySchema implements AutoCloseable {
    * **Example:**
    * @code{.java}
    * Context ctx = new Context();
-   * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
-   * schema.setCoordsCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
+   * ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+   * schema.setCoordsCompressor(new Compressor(TILEDB_GZIP, -1));
    * @endcode
    *
    * @param compressor Compressor to use
@@ -275,7 +280,7 @@ public class ArraySchema implements AutoCloseable {
    */
   public void setCoordsCompressor(Compressor compressor) throws TileDBError {
     ctx.handleError(tiledb.tiledb_array_schema_set_coords_compressor(
-        ctx.getCtxp(), schemap, compressor.getCompressor(), compressor.getLevel()));
+        ctx.getCtxp(), schemap, compressor.getCompressor().toSwigEnum(), compressor.getLevel()));
   }
 
   /**
@@ -288,7 +293,9 @@ public class ArraySchema implements AutoCloseable {
     SWIGTYPE_p_int levelp = tiledb.new_intp();
     ctx.handleError(tiledb.tiledb_array_schema_get_offsets_compressor(
         ctx.getCtxp(), schemap, compressorp, levelp));
-    Compressor compressor = new Compressor(tiledb.tiledb_compressor_tp_value(compressorp), tiledb.intp_value(levelp));
+    Compressor compressor = new Compressor(
+        TileDBCompressorEnum.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressorp)),
+        tiledb.intp_value(levelp));
     tiledb.delete_tiledb_compressor_tp(compressorp);
     tiledb.delete_intp(levelp);
     return compressor;
@@ -300,8 +307,8 @@ public class ArraySchema implements AutoCloseable {
    * **Example:**
    * @code{.java}
    * Context ctx = new Context();
-   * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
-   * schema.setOffsetsCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
+   * ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+   * schema.setOffsetsCompressor(new Compressor(TILEDB_GZIP, -1));
    * @endcode
    *
    * @param compressor Compressor to use
@@ -309,7 +316,7 @@ public class ArraySchema implements AutoCloseable {
    */
   public void setOffsetsCompressor(Compressor compressor) throws TileDBError {
     ctx.handleError(tiledb.tiledb_array_schema_set_offsets_compressor(
-        ctx.getCtxp(), schemap, compressor.getCompressor(), compressor.getLevel()));
+        ctx.getCtxp(), schemap, compressor.getCompressor().toSwigEnum(), compressor.getLevel()));
   }
 
   /**
@@ -329,7 +336,7 @@ public class ArraySchema implements AutoCloseable {
    * **Example:**
    * @code{.java}
    * Context ctx = new Context();
-   * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
+   * ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
    * // Create a Domain
    * Domain domain = new Domain(ctx);
    * domain.addDimension(...);
@@ -349,7 +356,7 @@ public class ArraySchema implements AutoCloseable {
    * **Example:**
    * @code{.java}
    * Context ctx = new Context();
-   * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
+   * ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
    * Attribute attr = new Attribute(ctx, "a", Integer.class);
    * schema.addAttribute(attr);
    * @endcode
@@ -472,8 +479,8 @@ public class ArraySchema implements AutoCloseable {
    * @param type The type to be printed.
    * @return A String representation of the type.
    */
-  public String toString(tiledb_array_type_t type) {
-    return type == tiledb_array_type_t.TILEDB_DENSE ? "DENSE" : "SPARSE";
+  public String toString(TileDBArrayTypeEnum type) {
+    return type == TILEDB_DENSE ? "DENSE" : "SPARSE";
   }
 
   /**

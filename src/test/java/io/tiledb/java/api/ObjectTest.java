@@ -7,6 +7,10 @@ import org.junit.Test;
 
 import java.io.File;
 
+import static io.tiledb.java.api.TileDBArrayTypeEnum.*;
+import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.TileDBWalkOrderEnum.TILEDB_POSTORDER;
+
 public class ObjectTest {
   private Context ctx;
 
@@ -39,13 +43,13 @@ public class ObjectTest {
     Group group3 = new Group(ctx, "my_group/sparse_arrays");
 
     // Create arrays
-    createArray("my_group/dense_arrays/array_A", tiledb_array_type_t.TILEDB_DENSE);
-    createArray("my_group/dense_arrays/array_B", tiledb_array_type_t.TILEDB_DENSE);
-    createArray("my_group/sparse_arrays/array_C", tiledb_array_type_t.TILEDB_SPARSE);
-    createArray("my_group/sparse_arrays/array_D", tiledb_array_type_t.TILEDB_SPARSE);
+    createArray("my_group/dense_arrays/array_A", TILEDB_DENSE);
+    createArray("my_group/dense_arrays/array_B", TILEDB_DENSE);
+    createArray("my_group/sparse_arrays/array_C", TILEDB_SPARSE);
+    createArray("my_group/sparse_arrays/array_D", TILEDB_SPARSE);
   }
 
-  private void createArray(String arrayURI, tiledb_array_type_t type) throws Exception {
+  private void createArray(String arrayURI, TileDBArrayTypeEnum type) throws Exception {
     Dimension<Integer> rows = new Dimension<Integer>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
     Dimension<Integer> cols = new Dimension<Integer>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
     Domain domain = new Domain(ctx);
@@ -53,8 +57,8 @@ public class ObjectTest {
     domain.addDimension(cols);
     Attribute a = new Attribute(ctx, "a", Integer.class);
     ArraySchema schema = new ArraySchema(ctx, type);
-    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
     schema.setDomain(domain);
     schema.addAttribute(a);
     Array.create(arrayURI, schema);
@@ -74,7 +78,7 @@ public class ObjectTest {
       System.out.println(object);
 
     System.out.println( "\nPostorder traversal: ");
-    obj_iter.setRecursive(tiledb_walk_order_t.TILEDB_POSTORDER);
+    obj_iter.setRecursive(TILEDB_POSTORDER);
     for (TileDBObject object : obj_iter.getAllObjects())
       System.out.println(object);
   }

@@ -33,6 +33,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.tiledb.java.api.TileDBArrayTypeEnum.*;
+import static io.tiledb.java.api.TileDBCompressorEnum.*;
+import static io.tiledb.java.api.TileDBLayoutEnum.*;
+import static io.tiledb.java.api.TileDBQueryTypeEnum.*;
+
 @SuppressWarnings("ALL")
 public class QuickstartDenseTest {
 
@@ -73,13 +78,13 @@ public class QuickstartDenseTest {
     a2.setCellValNum(tiledb.tiledb_var_num());
     Attribute a3 = new Attribute(ctx, "a3", Float.class);
     a3.setCellValNum(2);
-    a1.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ4, -1));
-    a2.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
-    a3.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_ZSTD, -1));
+    a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
+    a2.setCompressor(new Compressor(TILEDB_GZIP, -1));
+    a3.setCompressor(new Compressor(TILEDB_ZSTD, -1));
 
-    ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_DENSE);
-    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
     schema.setDomain(domain);
     schema.addAttribute(a1);
     schema.addAttribute(a2);
@@ -96,7 +101,7 @@ public class QuickstartDenseTest {
 
   public void arrayWrite() throws Exception {
   
-    Array my_dense_array = new Array(ctx,arrayURI, tiledb_query_type_t.TILEDB_WRITE);
+    Array my_dense_array = new Array(ctx,arrayURI, TILEDB_WRITE);
 
     // Prepare cell buffers
     NativeArray a1_data = new NativeArray(
@@ -132,8 +137,8 @@ public class QuickstartDenseTest {
         Float.class);
 
     // Create query
-    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_WRITE);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    Query query = new Query(my_dense_array, TILEDB_WRITE);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);
@@ -162,8 +167,8 @@ public class QuickstartDenseTest {
     }
 
     // Create query
-    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    Query query = new Query(my_dense_array, TILEDB_READ);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setSubarray(subarray);
     query.setBuffer("a1",
         new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));
@@ -210,8 +215,8 @@ public class QuickstartDenseTest {
 
 
     // Create query
-    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    Query query = new Query(my_dense_array, TILEDB_READ);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer("a1",
         new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(),Integer.class));
     query.setBuffer("a2",
@@ -225,11 +230,11 @@ public class QuickstartDenseTest {
 
     // Wait for query to complete
     System.out.printf("Query in progress\n");
-    Status status;
+    TileDBQueryStatusEnum status;
     do {
       // Wait till query is done
       status = query.getQueryStatus();
-    } while (status == Status.INPROGRESS);
+    } while (status == TileDBQueryStatusEnum.TILEDB_INPROGRESS);
 
     // Print cell values (assumes all getAttributes are read)
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
@@ -259,8 +264,8 @@ public class QuickstartDenseTest {
     Array my_dense_array = new Array(ctx, arrayURI);
 
     // Create query
-    Query query = new Query(my_dense_array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    Query query = new Query(my_dense_array, TILEDB_READ);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     long[] subarray = {1l, 4l, 1l, 4l};
     query.setSubarray(new NativeArray(ctx, subarray, Long.class));
     query.setBuffer("a1", new NativeArray(ctx, 4, Integer.class));
@@ -276,7 +281,7 @@ public class QuickstartDenseTest {
       for (int i =0; i< a1_buff.length; i++){
         System.out.println(a1_buff[i]);
       }
-    } while (query.getQueryStatus() == Status.INCOMPLETE);
+    } while (query.getQueryStatus() == TileDBQueryStatusEnum.TILEDB_INCOMPLETE);
   }
 
   private static class ReadCallback implements Callback {

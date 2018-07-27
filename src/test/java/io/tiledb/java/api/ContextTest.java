@@ -27,6 +27,8 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.tiledb_filesystem_t;
 import org.junit.Test;
 
+import static io.tiledb.java.api.TileDBFilesystemEnum.*;
+
 public class ContextTest {
 
   @Test
@@ -34,8 +36,8 @@ public class ContextTest {
     Context ctx = new Context();
     ctx.setErrorHandler(new Handler());
 
-    System.out.println("HDFS: "+ctx.isSupportedFs(tiledb_filesystem_t.TILEDB_HDFS));
-    System.out.println("S3: "+ctx.isSupportedFs(tiledb_filesystem_t.TILEDB_S3));
+    System.out.println("HDFS: "+ctx.isSupportedFs(TILEDB_HDFS));
+    System.out.println("S3: "+ctx.isSupportedFs(TILEDB_S3));
   }
 
   private class Handler extends ContextCallback{

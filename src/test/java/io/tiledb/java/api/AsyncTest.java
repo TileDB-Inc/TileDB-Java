@@ -7,6 +7,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static io.tiledb.java.api.TileDBArrayTypeEnum.TILEDB_SPARSE;
+import static io.tiledb.java.api.TileDBLayoutEnum.*;
+import static io.tiledb.java.api.TileDBQueryTypeEnum.*;
+
 public class AsyncTest {
   private Context ctx;
   private String arrayURI = "async";
@@ -36,9 +40,9 @@ public class AsyncTest {
     // Create and add getAttributes
     Attribute a = new Attribute(ctx, "a", Integer.class);
 
-    ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
-    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
     schema.setDomain(domain);
     schema.addAttribute(a);
 
@@ -58,9 +62,9 @@ public class AsyncTest {
         Integer.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, tiledb_query_type_t.TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(array);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer("a", data);
     query.setCoordinates(coords_buff);
     // Submit query
@@ -68,11 +72,11 @@ public class AsyncTest {
 
     // Wait for query to complete
     System.out.printf("Write query in progress\n");
-    Status status;
+    TileDBQueryStatusEnum status;
     do {
       // Wait till query is done
       status = query.getQueryStatus();
-    } while (status == Status.INPROGRESS);
+    } while (status == TileDBQueryStatusEnum.TILEDB_INPROGRESS);
     query.close();
   }
 
@@ -86,8 +90,8 @@ public class AsyncTest {
 
 
     // Create query
-    Query query = new Query(array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    Query query = new Query(array, TILEDB_READ);
+    query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a",
         new NativeArray(ctx, max_sizes.get("a").getSecond().intValue(),Integer.class));
     query.setCoordinates(new NativeArray(ctx, max_sizes.get(tiledb.tiledb_coords()).getSecond().intValue(), Integer.class));
@@ -97,11 +101,11 @@ public class AsyncTest {
 
     // Wait for query to complete
     System.out.printf("Read query in progress\n");
-    Status status;
+    TileDBQueryStatusEnum status;
     do {
       // Wait till query is done
       status = query.getQueryStatus();
-    } while (status == Status.INPROGRESS);
+    } while (status == TileDBQueryStatusEnum.TILEDB_INPROGRESS);
 
     // Print cell values (assumes all getAttributes are read)
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();

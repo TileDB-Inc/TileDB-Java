@@ -28,6 +28,9 @@ import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb_layout_t;
 import io.tiledb.libtiledb.tiledb_query_type_t;
 
+import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_WRITE;
+
 public class DenseWriteSubarray {
   public static void main(String[] args) throws Exception {
 
@@ -54,9 +57,9 @@ public class DenseWriteSubarray {
         Float.class);
 
     // Create query
-    Array my_dense_array = new Array(ctx,"my_dense_array", tiledb_query_type_t.TILEDB_WRITE);
+    Array my_dense_array = new Array(ctx,"my_dense_array", TILEDB_WRITE);
     Query query = new Query(my_dense_array);
-    query.setLayout(tiledb_layout_t.TILEDB_GLOBAL_ORDER);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setSubarray(new NativeArray(ctx, new long[] {3, 4, 3, 4}, Long.class));
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);

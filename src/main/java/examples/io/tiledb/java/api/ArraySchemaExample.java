@@ -32,18 +32,22 @@ import io.tiledb.libtiledb.tiledb_layout_t;
 import java.util.List;
 import java.util.Map;
 
+import static io.tiledb.java.api.TileDBArrayTypeEnum.*;
+import static io.tiledb.java.api.TileDBCompressorEnum.*;
+import static io.tiledb.java.api.TileDBLayoutEnum.*;
+
 public class ArraySchemaExample {
   public static void main(String[] args) throws Exception {
     // Create TileDB context
     Context ctx = new Context();
 
     // Create array schema
-    ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
     schema.setCapacity(10);
-    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(tiledb_layout_t.TILEDB_COL_MAJOR);
-    schema.setCoordsCompressor(new Compressor(tiledb_compressor_t.TILEDB_ZSTD, 4));
-    schema.setOffsetsCompressor(new Compressor(tiledb_compressor_t.TILEDB_BLOSC_LZ, 5));
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_COL_MAJOR);
+    schema.setCoordsCompressor(new Compressor(TILEDB_ZSTD, 4));
+    schema.setOffsetsCompressor(new Compressor(TILEDB_BLOSC_LZ, 5));
 
     // Create getDimensions
     Dimension<Integer> d1 = new Dimension<Integer>(ctx, "d1", Integer.class, new Pair<Integer, Integer>(1, 1000), 10);
@@ -59,7 +63,7 @@ public class ArraySchemaExample {
     Attribute a1 = new Attribute(ctx, "a1", Integer.class);
     a1.setCellValNum(3);
     Attribute a2 = new Attribute(ctx, "a2", Float.class);
-    a2.setCompressor(new Compressor(tiledb_compressor_t.TILEDB_GZIP, -1));
+    a2.setCompressor(new Compressor(TILEDB_GZIP, -1));
     schema.addAttribute(a1);
     schema.addAttribute(a2);
 
@@ -74,12 +78,12 @@ public class ArraySchemaExample {
     // Print from getters
     System.out.println("\nFrom getters:"
         + "\n- Array getType: "
-        + ((schema.getArrayType() == tiledb_array_type_t.TILEDB_DENSE) ? "dense" : "sparse")
+        + ((schema.getArrayType() == TILEDB_DENSE) ? "dense" : "sparse")
         + "\n- Cell order: "
-        + (schema.getCellOrder() == tiledb_layout_t.TILEDB_ROW_MAJOR ? "row-major" :
+        + (schema.getCellOrder() == TILEDB_ROW_MAJOR ? "row-major" :
         "col-major")
         + "\n- Tile order: "
-        + (schema.getTileOrder() == tiledb_layout_t.TILEDB_ROW_MAJOR ? "row-major" :
+        + (schema.getTileOrder() == TILEDB_ROW_MAJOR ? "row-major" :
         "col-major")
         + "\n- Capacity: " + schema.getCapacity()
         + "\n- Coordinates compressor: " + schema.getCoordsCompressor()

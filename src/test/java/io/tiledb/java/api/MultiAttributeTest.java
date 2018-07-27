@@ -9,6 +9,11 @@ import org.junit.Test;
 import java.io.File;
 import java.util.HashMap;
 
+import static io.tiledb.java.api.TileDBArrayTypeEnum.TILEDB_DENSE;
+import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_READ;
+import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_WRITE;
+
 public class MultiAttributeTest {
   private Context ctx;
   private String arrayURI = "multi_attribute";
@@ -41,9 +46,9 @@ public class MultiAttributeTest {
     Attribute a2 = new Attribute(ctx, "a2", Float.class);
     a2.setCellValNum(2);
 
-    ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_DENSE);
-    schema.setTileOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
     schema.setDomain(domain);
     schema.addAttribute(a1);
     schema.addAttribute(a2);
@@ -68,9 +73,9 @@ public class MultiAttributeTest {
         Float.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, tiledb_query_type_t.TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(array);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a1", a1);
     query.setBuffer("a2", a2);
     // Submit query
@@ -81,14 +86,14 @@ public class MultiAttributeTest {
 
   private void arrayRead() throws Exception {
 
-    Array array = new Array(ctx, arrayURI, tiledb_query_type_t.TILEDB_READ);
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
 
     // Slice only rows 1, 2 and cols 2, 3, 4
     NativeArray subarray = new NativeArray(ctx, new int[]{1, 2, 2, 4}, Integer.class);
 
     // Create query
-    Query query = new Query(array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    Query query = new Query(array, TILEDB_READ);
+    query.setLayout(TILEDB_ROW_MAJOR);
 
     // Prepare the vector that will hold the result
     // (of size 6 elements for "a1" and 12 elements for "a2" since
@@ -114,14 +119,14 @@ public class MultiAttributeTest {
 
   private void arrayReadSubselect() throws Exception {
 
-    Array array = new Array(ctx, arrayURI, tiledb_query_type_t.TILEDB_READ);
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
 
     // Slice only rows 1, 2 and cols 2, 3, 4
     NativeArray subarray = new NativeArray(ctx, new int[]{1, 2, 2, 4}, Integer.class);
 
     // Create query
-    Query query = new Query(array, tiledb_query_type_t.TILEDB_READ);
-    query.setLayout(tiledb_layout_t.TILEDB_ROW_MAJOR);
+    Query query = new Query(array, TILEDB_READ);
+    query.setLayout(TILEDB_ROW_MAJOR);
 
     // Prepare the query - subselect over "a1" only
     query.setSubarray(subarray);
