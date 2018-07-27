@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_filesystem_t;
 
-public enum TileDBFilesystemEnum {
+public enum Filesystem {
   TILEDB_HDFS,
   TILEDB_S3;
 
@@ -17,7 +17,7 @@ public enum TileDBFilesystemEnum {
     }
   }
 
-  protected static TileDBFilesystemEnum fromSwigEnum(tiledb_filesystem_t e) throws TileDBError{
+  protected static Filesystem fromSwigEnum(tiledb_filesystem_t e) throws TileDBError{
     switch (e){
       case TILEDB_HDFS:
         return TILEDB_HDFS;

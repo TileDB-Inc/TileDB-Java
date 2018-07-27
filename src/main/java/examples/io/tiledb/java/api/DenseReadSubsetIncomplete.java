@@ -25,12 +25,10 @@
 package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
 
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_COL_MAJOR;
-import static io.tiledb.java.api.TileDBQueryStatusEnum.TILEDB_INCOMPLETE;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_READ;
+import static io.tiledb.java.api.Layout.TILEDB_COL_MAJOR;
+import static io.tiledb.java.api.QueryStatus.TILEDB_INCOMPLETE;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
 
 public class DenseReadSubsetIncomplete {
   public static void main(String[] args) throws Exception {

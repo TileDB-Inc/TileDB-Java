@@ -10,7 +10,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb;
 
-public interface TileDBConstants {
+public interface Constants {
   public final static int TILEDB_ERR = (-1);
   public final static int TILEDB_OK = 0;
   public final static int TILEDB_OOM = (-2);

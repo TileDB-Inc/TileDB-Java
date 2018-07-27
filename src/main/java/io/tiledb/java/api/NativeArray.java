@@ -39,7 +39,7 @@ import java.math.BigInteger;
 
 public class NativeArray implements AutoCloseable {
   private Class javaType;
-  private TileDBDatatypeEnum nativeType;
+  private Datatype nativeType;
   private int nativeTypeSize;
   private floatArray floatArray;
   private doubleArray doubleArray;
@@ -61,7 +61,7 @@ public class NativeArray implements AutoCloseable {
    * @param nativeType
    * @throws TileDBError
    */
-  public NativeArray(Context ctx, int size, TileDBDatatypeEnum nativeType) throws TileDBError {
+  public NativeArray(Context ctx, int size, Datatype nativeType) throws TileDBError {
     ctx.deleterAdd(this);
     this.size = size;
     this.javaType = Types.getJavaType(nativeType);
@@ -113,7 +113,7 @@ public class NativeArray implements AutoCloseable {
    * @throws TileDBError
    * @throws UnsupportedEncodingException
    */
-  public NativeArray(Context ctx, Object buffer, TileDBDatatypeEnum nativeType) throws TileDBError, UnsupportedEncodingException {
+  public NativeArray(Context ctx, Object buffer, Datatype nativeType) throws TileDBError, UnsupportedEncodingException {
     ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
@@ -122,7 +122,7 @@ public class NativeArray implements AutoCloseable {
     createNativeArrayFromBuffer(buffer);
   }
 
-  protected NativeArray(Context ctx, TileDBDatatypeEnum nativeType, SWIGTYPE_p_p_void pointer) throws TileDBError {
+  protected NativeArray(Context ctx, Datatype nativeType, SWIGTYPE_p_p_void pointer) throws TileDBError {
     ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
@@ -130,7 +130,7 @@ public class NativeArray implements AutoCloseable {
     createNativeArrayFromVoidPointer(pointer);
   }
 
-  protected NativeArray(Context ctx, TileDBDatatypeEnum nativeType, SWIGTYPE_p_void pointer) throws TileDBError {
+  protected NativeArray(Context ctx, Datatype nativeType, SWIGTYPE_p_void pointer) throws TileDBError {
     ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
@@ -591,7 +591,7 @@ public class NativeArray implements AutoCloseable {
     return ((String) buffer).getBytes("UTF-8");
   }
 
-  protected TileDBDatatypeEnum getNativeType() {
+  protected Datatype getNativeType() {
     return nativeType;
   }
 

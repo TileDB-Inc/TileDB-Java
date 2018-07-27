@@ -26,17 +26,13 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_object_t;
-import io.tiledb.libtiledb.Utils;
 import io.tiledb.libtiledb.tiledb;
-import io.tiledb.libtiledb.tiledb_object_t;
-
-import static io.tiledb.libtiledb.tiledb_object_t.*;
 
 /** Represents a TileDB object: array, group, key-value, or none (invalid). */
 public class TileDBObject {
 
   private final Context ctx;
-  private TileDBObjectEnum type;
+  private TileDBObjectType type;
   private String uri;
 
   /**
@@ -50,11 +46,11 @@ public class TileDBObject {
     ctx.handleError(tiledb.tiledb_object_type(ctx.getCtxp(), uri, typep));
     this.uri = uri;
     this.ctx = ctx;
-    this.type = TileDBObjectEnum.fromSwigEnum(tiledb.tiledb_object_tp_value(typep));
+    this.type = TileDBObjectType.fromSwigEnum(tiledb.tiledb_object_tp_value(typep));
     tiledb.delete_tiledb_object_tp(typep);
   }
 
-  protected TileDBObject(Context ctx, String uri, TileDBObjectEnum type){
+  protected TileDBObject(Context ctx, String uri, TileDBObjectType type){
     this.ctx = ctx;
     this.uri = uri;
     this.type = type;
@@ -110,7 +106,7 @@ public class TileDBObject {
   }
 
   /** Returns the object type. */
-  public TileDBObjectEnum getType(){
+  public TileDBObjectType getType(){
     return type;
   }
 

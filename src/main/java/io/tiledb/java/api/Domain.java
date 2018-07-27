@@ -121,12 +121,12 @@ public class Domain implements AutoCloseable {
    * @return The domain Enumerated type.
    * @throws TileDBError
    */
-  public TileDBDatatypeEnum getType() throws TileDBError {
+  public Datatype getType() throws TileDBError {
     SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
     ctx.handleError(tiledb.tiledb_domain_get_type(ctx.getCtxp(), domainp, typep));
     tiledb_datatype_t type = tiledb.tiledb_datatype_tp_value(typep);
     tiledb.delete_tiledb_datatype_tp(typep);
-    return TileDBDatatypeEnum.fromSwigEnum(type);
+    return Datatype.fromSwigEnum(type);
   }
 
   /**

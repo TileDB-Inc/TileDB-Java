@@ -24,15 +24,13 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.*;
-
 import java.math.BigInteger;
 
-import static io.tiledb.java.api.TileDBDatatypeEnum.*;
+import static io.tiledb.java.api.Datatype.*;
 
 public class Types {
 
-  public static TileDBDatatypeEnum getNativeType(Class atrrType) throws TileDBError {
+  public static Datatype getNativeType(Class atrrType) throws TileDBError {
     if(atrrType.equals(int[].class)) {
       return TILEDB_INT32;
     } else if(atrrType.equals(long[].class)) {
@@ -77,7 +75,7 @@ public class Types {
     }
   }
 
-  public static Class getJavaType(TileDBDatatypeEnum type) throws TileDBError {
+  public static Class getJavaType(Datatype type) throws TileDBError {
     switch(type) {
       case TILEDB_FLOAT32: {
         return Float.class;
@@ -118,7 +116,7 @@ public class Types {
     }
   }
 
-  public static boolean typeCheck(TileDBDatatypeEnum first, TileDBDatatypeEnum second) throws TileDBError {
+  public static boolean typeCheck(Datatype first, Datatype second) throws TileDBError {
     if(first.equals(second)){
       return true;
     }

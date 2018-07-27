@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_query_status_t;
 
-public enum TileDBQueryStatusEnum {
+public enum QueryStatus {
   TILEDB_FAILED,
   TILEDB_COMPLETED,
   TILEDB_INPROGRESS,
@@ -26,7 +26,7 @@ public enum TileDBQueryStatusEnum {
     }
   }
 
-  protected static TileDBQueryStatusEnum fromSwigEnum(tiledb_query_status_t e) throws TileDBError{
+  protected static QueryStatus fromSwigEnum(tiledb_query_status_t e) throws TileDBError{
     switch (e){
       case TILEDB_FAILED:
         return TILEDB_FAILED;

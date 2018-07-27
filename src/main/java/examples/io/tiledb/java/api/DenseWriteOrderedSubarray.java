@@ -25,11 +25,9 @@
 package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
 
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_ROW_MAJOR;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_WRITE;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class DenseWriteOrderedSubarray {
   public static void main(String[] args) throws Exception {

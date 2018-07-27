@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_query_type_t;
 
-public enum TileDBQueryTypeEnum {
+public enum QueryType {
   TILEDB_READ,
   TILEDB_WRITE;
 
@@ -17,7 +17,7 @@ public enum TileDBQueryTypeEnum {
     }
   }
 
-  protected static TileDBQueryTypeEnum fromSwigEnum(tiledb_query_type_t e) throws TileDBError{
+  protected static QueryType fromSwigEnum(tiledb_query_type_t e) throws TileDBError{
     switch (e){
       case TILEDB_READ:
         return TILEDB_READ;

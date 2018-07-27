@@ -25,16 +25,13 @@
 package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb_array_type_t;
-import io.tiledb.libtiledb.tiledb_compressor_t;
-import io.tiledb.libtiledb.tiledb_layout_t;
 
 import java.util.List;
 import java.util.Map;
 
-import static io.tiledb.java.api.TileDBArrayTypeEnum.*;
-import static io.tiledb.java.api.TileDBCompressorEnum.*;
-import static io.tiledb.java.api.TileDBLayoutEnum.*;
+import static io.tiledb.java.api.ArrayType.*;
+import static io.tiledb.java.api.CompressorType.*;
+import static io.tiledb.java.api.Layout.*;
 
 public class ArraySchemaExample {
   public static void main(String[] args) throws Exception {

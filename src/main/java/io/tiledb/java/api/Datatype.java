@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_datatype_t;
 
-public enum TileDBDatatypeEnum {
+public enum Datatype {
   TILEDB_INT32,
   TILEDB_INT64,
   TILEDB_FLOAT32,
@@ -45,7 +45,7 @@ public enum TileDBDatatypeEnum {
     }
   }
 
-  protected static TileDBDatatypeEnum fromSwigEnum(tiledb_datatype_t e) throws TileDBError{
+  protected static Datatype fromSwigEnum(tiledb_datatype_t e) throws TileDBError{
     switch (e){
       case TILEDB_INT32:
         return TILEDB_INT32;

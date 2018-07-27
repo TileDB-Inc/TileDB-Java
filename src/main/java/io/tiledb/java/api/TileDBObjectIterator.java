@@ -29,7 +29,7 @@ import io.tiledb.libtiledb.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.tiledb.java.api.TileDBWalkOrderEnum.*;
+import static io.tiledb.java.api.WalkOrder.*;
 
 /**
  * Enables listing TileDB objects in a directory or walking recursively an
@@ -38,7 +38,7 @@ import static io.tiledb.java.api.TileDBWalkOrderEnum.*;
 public class TileDBObjectIterator {
   private final Context ctx;
   private boolean group = true, array = true, kv = true, recursive = false;
-  private TileDBWalkOrderEnum walkOrder = TILEDB_PREORDER;
+  private WalkOrder walkOrder = TILEDB_PREORDER;
   private String root = ".";
 
   /**
@@ -64,7 +64,7 @@ public class TileDBObjectIterator {
    * @param walkOrder The walk order.
    * @param root The root directory where the iteration will begin.
    */
-  public TileDBObjectIterator(Context ctx, boolean group, boolean array, boolean kv, boolean recursive, TileDBWalkOrderEnum walkOrder, String root) {
+  public TileDBObjectIterator(Context ctx, boolean group, boolean array, boolean kv, boolean recursive, WalkOrder walkOrder, String root) {
     this.ctx = ctx;
     this.group = group;
     this.array = array;
@@ -95,7 +95,7 @@ public class TileDBObjectIterator {
    *
    * @param walkOrder The walk order.
    */
-  public void setRecursive(TileDBWalkOrderEnum walkOrder){
+  public void setRecursive(WalkOrder walkOrder){
     recursive = true;
     setWalkOrder(walkOrder);
   }
@@ -138,7 +138,7 @@ public class TileDBObjectIterator {
     this.kv = kv;
   }
 
-  public TileDBWalkOrderEnum getWalkOrder() {
+  public WalkOrder getWalkOrder() {
     return walkOrder;
   }
 
@@ -154,7 +154,7 @@ public class TileDBObjectIterator {
     return objectGetter.getObjects();
   }
 
-  public void setWalkOrder(TileDBWalkOrderEnum walkOrder) {
+  public void setWalkOrder(WalkOrder walkOrder) {
     this.walkOrder = walkOrder;
   }
 
@@ -180,7 +180,7 @@ public class TileDBObjectIterator {
           (type == tiledb_object_t.TILEDB_KEY_VALUE && kv)) {
         TileDBObject object = null;
         try {
-          object = new TileDBObject(ctx, path, TileDBObjectEnum.fromSwigEnum(type));
+          object = new TileDBObject(ctx, path, TileDBObjectType.fromSwigEnum(type));
         } catch (TileDBError tileDBError) {
           tileDBError.printStackTrace();
         }

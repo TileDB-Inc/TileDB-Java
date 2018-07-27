@@ -35,9 +35,8 @@ import io.tiledb.java.api.Context;
 import io.tiledb.java.api.TileDBError;
 import io.tiledb.java.api.TileDBObject;
 import io.tiledb.java.api.TileDBObjectIterator;
-import io.tiledb.libtiledb.tiledb_walk_order_t;
 
-import static io.tiledb.java.api.TileDBWalkOrderEnum.TILEDB_POSTORDER;
+import static io.tiledb.java.api.WalkOrder.TILEDB_POSTORDER;
 
 public class ObjectLsWalk {
   public static void main (String[] args) throws TileDBError {

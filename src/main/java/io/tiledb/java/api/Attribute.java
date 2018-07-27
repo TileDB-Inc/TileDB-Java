@@ -26,7 +26,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
-import static io.tiledb.java.api.TileDBConstants.TILEDB_VAR_NUM;
+import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 
 /**
  * Describes an Attribute of an Array cell.
@@ -66,7 +66,7 @@ public class Attribute implements AutoCloseable {
   
   private Context ctx;
   private String name;
-  private TileDBDatatypeEnum type;
+  private Datatype type;
   private int size;
   private boolean isArray;
 
@@ -123,11 +123,11 @@ public class Attribute implements AutoCloseable {
    * @return The Attribute Enumerated datatype (C type).
    * @throws TileDBError
    */
-  public TileDBDatatypeEnum getType() throws TileDBError {
+  public Datatype getType() throws TileDBError {
     if(type==null){
       SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
       ctx.handleError(tiledb.tiledb_attribute_get_type(ctx.getCtxp(), attributep, typep));
-      type = TileDBDatatypeEnum.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
+      type = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
       tiledb.delete_tiledb_datatype_tp(typep);
     }
     return type;
@@ -190,7 +190,7 @@ public class Attribute implements AutoCloseable {
     ctx.handleError(
         tiledb.tiledb_attribute_get_compressor(ctx.getCtxp(), attributep, compressor, level));
     Compressor cmp = new Compressor(
-        TileDBCompressorEnum.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressor)),
+        CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressor)),
         tiledb.intp_value(level));
     tiledb.delete_intp(level);
     tiledb.delete_tiledb_compressor_tp(compressor);

@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_vfs_mode_t;
 
-public enum TileDBVFSModeEnum {
+public enum VFSMode {
   TILEDB_VFS_READ,
   TILEDB_VFS_WRITE,
   TILEDB_VFS_APPEND;
@@ -20,7 +20,7 @@ public enum TileDBVFSModeEnum {
     }
   }
 
-  protected static TileDBVFSModeEnum fromSwigEnum(tiledb_vfs_mode_t e) throws TileDBError{
+  protected static VFSMode fromSwigEnum(tiledb_vfs_mode_t e) throws TileDBError{
     switch (e){
       case TILEDB_VFS_READ:
         return TILEDB_VFS_READ;

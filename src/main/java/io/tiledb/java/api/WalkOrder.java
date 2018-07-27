@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_walk_order_t;
 
-public enum TileDBWalkOrderEnum {
+public enum WalkOrder {
   TILEDB_PREORDER,
   TILEDB_POSTORDER;
 
@@ -17,7 +17,7 @@ public enum TileDBWalkOrderEnum {
     }
   }
 
-  protected static TileDBWalkOrderEnum fromSwigEnum(tiledb_walk_order_t e) throws TileDBError{
+  protected static WalkOrder fromSwigEnum(tiledb_walk_order_t e) throws TileDBError{
     switch (e){
       case TILEDB_PREORDER:
         return TILEDB_PREORDER;

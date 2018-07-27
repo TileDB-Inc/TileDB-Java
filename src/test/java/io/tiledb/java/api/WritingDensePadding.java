@@ -1,18 +1,14 @@
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.tiledb;
-import io.tiledb.libtiledb.tiledb_array_type_t;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.HashMap;
 
-import static io.tiledb.java.api.TileDBArrayTypeEnum.TILEDB_DENSE;
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_ROW_MAJOR;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_READ;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_WRITE;
+import static io.tiledb.java.api.ArrayType.TILEDB_DENSE;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class WritingDensePadding {
   private Context ctx;

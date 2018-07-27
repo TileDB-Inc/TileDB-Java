@@ -24,16 +24,14 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.*;
-
 import java.util.HashSet;
 import java.util.Random;
 
-import static io.tiledb.java.api.TileDBArrayTypeEnum.TILEDB_SPARSE;
-import static io.tiledb.java.api.TileDBCompressorEnum.TILEDB_GZIP;
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_ROW_MAJOR;
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_UNORDERED;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_WRITE;
+import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
+import static io.tiledb.java.api.CompressorType.TILEDB_GZIP;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class WriteBigSparseArray {
   private static Array array;

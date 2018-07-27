@@ -37,15 +37,13 @@ package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_GLOBAL_ORDER;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_READ;
+import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
 
 public class SparseReadGlobal {
   public static void main(String[] args) throws Exception {

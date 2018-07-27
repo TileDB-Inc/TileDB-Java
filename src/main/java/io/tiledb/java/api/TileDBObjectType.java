@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_object_t;
 
-public enum TileDBObjectEnum {
+public enum TileDBObjectType {
   TILEDB_INVALID,
   TILEDB_GROUP,
   TILEDB_ARRAY,
@@ -23,7 +23,7 @@ public enum TileDBObjectEnum {
     }
   }
 
-  protected static TileDBObjectEnum fromSwigEnum(tiledb_object_t e) throws TileDBError{
+  protected static TileDBObjectType fromSwigEnum(tiledb_object_t e) throws TileDBError{
     switch (e){
       case TILEDB_INVALID:
         return TILEDB_INVALID;

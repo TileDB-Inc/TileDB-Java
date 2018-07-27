@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_array_type_t;
 
-public enum TileDBArrayTypeEnum {
+public enum ArrayType {
   TILEDB_DENSE,
   TILEDB_SPARSE;
 
@@ -17,7 +17,7 @@ public enum TileDBArrayTypeEnum {
     }
   }
 
-  protected static TileDBArrayTypeEnum fromSwigEnum(tiledb_array_type_t e) throws TileDBError{
+  protected static ArrayType fromSwigEnum(tiledb_array_type_t e) throws TileDBError{
     switch (e){
       case TILEDB_DENSE:
         return TILEDB_DENSE;

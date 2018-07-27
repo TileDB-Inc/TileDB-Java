@@ -24,7 +24,6 @@
 
 package io.tiledb.java.api;
 
-import examples.io.tiledb.java.api.DenseReadAsync;
 import io.tiledb.libtiledb.*;
 import org.junit.Test;
 
@@ -33,10 +32,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.tiledb.java.api.TileDBArrayTypeEnum.*;
-import static io.tiledb.java.api.TileDBCompressorEnum.*;
-import static io.tiledb.java.api.TileDBLayoutEnum.*;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.*;
+import static io.tiledb.java.api.ArrayType.*;
+import static io.tiledb.java.api.CompressorType.*;
+import static io.tiledb.java.api.Layout.*;
+import static io.tiledb.java.api.QueryType.*;
 
 @SuppressWarnings("ALL")
 public class QuickstartDenseTest {
@@ -230,11 +229,11 @@ public class QuickstartDenseTest {
 
     // Wait for query to complete
     System.out.printf("Query in progress\n");
-    TileDBQueryStatusEnum status;
+    QueryStatus status;
     do {
       // Wait till query is done
       status = query.getQueryStatus();
-    } while (status == TileDBQueryStatusEnum.TILEDB_INPROGRESS);
+    } while (status == QueryStatus.TILEDB_INPROGRESS);
 
     // Print cell values (assumes all getAttributes are read)
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
@@ -281,7 +280,7 @@ public class QuickstartDenseTest {
       for (int i =0; i< a1_buff.length; i++){
         System.out.println(a1_buff[i]);
       }
-    } while (query.getQueryStatus() == TileDBQueryStatusEnum.TILEDB_INCOMPLETE);
+    } while (query.getQueryStatus() == QueryStatus.TILEDB_INCOMPLETE);
   }
 
   private static class ReadCallback implements Callback {

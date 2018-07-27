@@ -4,12 +4,11 @@ import io.tiledb.libtiledb.*;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 
-import static io.tiledb.java.api.TileDBArrayTypeEnum.TILEDB_SPARSE;
-import static io.tiledb.java.api.TileDBLayoutEnum.*;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.*;
+import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
+import static io.tiledb.java.api.Layout.*;
+import static io.tiledb.java.api.QueryType.*;
 
 public class AsyncTest {
   private Context ctx;
@@ -72,11 +71,11 @@ public class AsyncTest {
 
     // Wait for query to complete
     System.out.printf("Write query in progress\n");
-    TileDBQueryStatusEnum status;
+    QueryStatus status;
     do {
       // Wait till query is done
       status = query.getQueryStatus();
-    } while (status == TileDBQueryStatusEnum.TILEDB_INPROGRESS);
+    } while (status == QueryStatus.TILEDB_INPROGRESS);
     query.close();
   }
 
@@ -101,11 +100,11 @@ public class AsyncTest {
 
     // Wait for query to complete
     System.out.printf("Read query in progress\n");
-    TileDBQueryStatusEnum status;
+    QueryStatus status;
     do {
       // Wait till query is done
       status = query.getQueryStatus();
-    } while (status == TileDBQueryStatusEnum.TILEDB_INPROGRESS);
+    } while (status == QueryStatus.TILEDB_INPROGRESS);
 
     // Print cell values (assumes all getAttributes are read)
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();

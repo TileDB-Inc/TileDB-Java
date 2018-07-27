@@ -25,10 +25,9 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb;
-import io.tiledb.libtiledb.tiledb_compressor_t;
 import org.junit.Test;
 
-import static io.tiledb.java.api.TileDBCompressorEnum.TILEDB_GZIP;
+import static io.tiledb.java.api.CompressorType.TILEDB_GZIP;
 
 public class AttributeTest {
 

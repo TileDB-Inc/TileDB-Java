@@ -132,7 +132,7 @@ public class Context implements AutoCloseable {
   /**
    * Checks if the filesystem backend is supported.
    */
-  public boolean isSupportedFs(TileDBFilesystemEnum fs) throws TileDBError {
+  public boolean isSupportedFs(Filesystem fs) throws TileDBError {
     SWIGTYPE_p_int ret = tiledb.new_intp();
     tiledb.tiledb_ctx_is_supported_fs(ctxp, fs.toSwigEnum(), ret);
     return tiledb.intp_value(ret) != 0;

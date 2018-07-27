@@ -25,12 +25,10 @@
 package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
 
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_GLOBAL_ORDER;
-import static io.tiledb.java.api.TileDBQueryStatusEnum.TILEDB_INPROGRESS;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_WRITE;
+import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.QueryStatus.TILEDB_INPROGRESS;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class DenseWriteAsync {
   public static void main(String[] args) throws Exception {
@@ -83,7 +81,7 @@ public class DenseWriteAsync {
 
     // Wait for query to complete
     System.out.printf("Query in progress\n");
-    TileDBQueryStatusEnum status;
+    QueryStatus status;
     do {
       // Wait till query is done
       status = query.getQueryStatus();

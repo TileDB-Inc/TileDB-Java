@@ -27,12 +27,10 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.*;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static io.tiledb.java.api.TileDBDatatypeEnum.TILEDB_UINT64;
+import static io.tiledb.java.api.Datatype.TILEDB_UINT64;
 
 /**
  * Construct and execute read/write queries on a tiledb Array.
@@ -55,7 +53,7 @@ public class Query implements AutoCloseable {
   
   private Context ctx;
   private Array array;
-  private TileDBQueryTypeEnum type;
+  private QueryType type;
    
   private SWIGTYPE_p_p_tiledb_query_t querypp;
   private SWIGTYPE_p_tiledb_query_t queryp;
@@ -67,7 +65,7 @@ public class Query implements AutoCloseable {
   private HashMap<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
   private boolean executed;
 	
-  public Query(Array array, TileDBQueryTypeEnum type) throws TileDBError {
+  public Query(Array array, QueryType type) throws TileDBError {
     this.ctx = array.getCtx();
     ctx.deleterAdd(this);
     this.type = type;
@@ -90,7 +88,7 @@ public class Query implements AutoCloseable {
    * @param layout The order to be set.
    * @throws TileDBError
    */
-  public void setLayout(TileDBLayoutEnum layout) throws TileDBError {
+  public void setLayout(Layout layout) throws TileDBError {
     ctx.handleError(tiledb.tiledb_query_set_layout(ctx.getCtxp(), queryp, layout.toSwigEnum()));
   }
 
@@ -99,12 +97,12 @@ public class Query implements AutoCloseable {
    * @return The query Status.
    * @throws TileDBError
    */
-  public TileDBQueryStatusEnum getQueryStatus() throws TileDBError {
+  public QueryStatus getQueryStatus() throws TileDBError {
     SWIGTYPE_p_tiledb_query_status_t statusp = tiledb.new_tiledb_query_status_tp();
     ctx.handleError(tiledb.tiledb_query_get_status(ctx.getCtxp(), queryp, statusp));
     tiledb_query_status_t status = tiledb.tiledb_query_status_tp_value(statusp);
     tiledb.delete_tiledb_query_status_tp(statusp);
-    return TileDBQueryStatusEnum.fromSwigEnum(status);
+    return QueryStatus.fromSwigEnum(status);
   }
 
   /**
@@ -112,7 +110,7 @@ public class Query implements AutoCloseable {
    * @return The query Status.
    * @throws TileDBError
    */
-  public TileDBQueryStatusEnum submit() throws TileDBError {
+  public QueryStatus submit() throws TileDBError {
     prepareSubmission();
     ctx.handleError(tiledb.tiledb_query_submit(ctx.getCtxp(), queryp));
     executed = true;
@@ -164,7 +162,7 @@ public class Query implements AutoCloseable {
    */
   public void setBuffer(String attr, NativeArray buffer) throws TileDBError {
     HashMap<String, Attribute> schemaAttributes = array.getSchema().getAttributes();
-    TileDBDatatypeEnum attribute_datatype;
+    Datatype attribute_datatype;
     if(schemaAttributes.containsKey(attr)){
       attribute_datatype = schemaAttributes.get(attr).getType();
       Types.typeCheck(attribute_datatype, buffer.getNativeType());

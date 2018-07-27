@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_layout_t;
 
-public enum TileDBLayoutEnum {
+public enum Layout {
   TILEDB_ROW_MAJOR,
   TILEDB_COL_MAJOR,
   TILEDB_GLOBAL_ORDER,
@@ -23,7 +23,7 @@ public enum TileDBLayoutEnum {
     }
   }
 
-  protected static TileDBLayoutEnum fromSwigEnum(tiledb_layout_t e) throws TileDBError{
+  protected static Layout fromSwigEnum(tiledb_layout_t e) throws TileDBError{
     switch (e){
       case TILEDB_ROW_MAJOR:
         return TILEDB_ROW_MAJOR;

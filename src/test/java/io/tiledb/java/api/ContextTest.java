@@ -24,10 +24,9 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.tiledb_filesystem_t;
 import org.junit.Test;
 
-import static io.tiledb.java.api.TileDBFilesystemEnum.*;
+import static io.tiledb.java.api.Filesystem.*;
 
 public class ContextTest {
 

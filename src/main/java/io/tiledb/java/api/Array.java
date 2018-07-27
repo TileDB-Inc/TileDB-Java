@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.tiledb.java.api.TileDBQueryTypeEnum.*;
+import static io.tiledb.java.api.QueryType.*;
 
 
 /**
@@ -60,7 +60,7 @@ public class Array implements AutoCloseable {
   private Context ctx;
   private String uri;
   private ArraySchema schema;
-  private TileDBQueryTypeEnum query_type;
+  private QueryType query_type;
   private boolean initialized = false;
 
   /**
@@ -80,7 +80,7 @@ public class Array implements AutoCloseable {
    * @param query_type Query type to open the array for.
    * @throws TileDBError
    */
-  public Array(Context ctx, String uri, TileDBQueryTypeEnum query_type) throws TileDBError {
+  public Array(Context ctx, String uri, QueryType query_type) throws TileDBError {
     ctx.deleterAdd(this);
     schema = new ArraySchema(ctx, uri);
     this.ctx = ctx;
@@ -112,7 +112,7 @@ public class Array implements AutoCloseable {
     openArray(TILEDB_READ);
   }
 
-  private void openArray(TileDBQueryTypeEnum query_type) throws TileDBError {
+  private void openArray(QueryType query_type) throws TileDBError {
     arraypp = tiledb.new_tiledb_array_tpp();
     ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, arraypp)); 
     arrayp = tiledb.tiledb_array_tpp_value(arraypp);
@@ -279,7 +279,7 @@ public class Array implements AutoCloseable {
    *
    * @return The query type that the array was opened for.
    */
-  public TileDBQueryTypeEnum getQueryType() {
+  public QueryType getQueryType() {
     return query_type;
   }
 

@@ -38,11 +38,9 @@ import io.tiledb.java.api.Array;
 import io.tiledb.java.api.Context;
 import io.tiledb.java.api.NativeArray;
 import io.tiledb.java.api.Query;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_query_type_t;
 
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_UNORDERED;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_WRITE;
+import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class SparseWriteUnordered2 {
   public static void main(String[] args) throws Exception {

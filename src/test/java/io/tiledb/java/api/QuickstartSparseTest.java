@@ -32,12 +32,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.tiledb.java.api.TileDBArrayTypeEnum.TILEDB_SPARSE;
-import static io.tiledb.java.api.TileDBCompressorEnum.*;
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_GLOBAL_ORDER;
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_ROW_MAJOR;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_READ;
-import static io.tiledb.java.api.TileDBQueryTypeEnum.TILEDB_WRITE;
+import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
+import static io.tiledb.java.api.CompressorType.*;
+import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 @SuppressWarnings("ALL")
 public class QuickstartSparseTest {

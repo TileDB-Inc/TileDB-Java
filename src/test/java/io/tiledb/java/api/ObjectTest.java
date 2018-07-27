@@ -1,15 +1,12 @@
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.tiledb_array_type_t;
-import io.tiledb.libtiledb.tiledb_layout_t;
-import io.tiledb.libtiledb.tiledb_walk_order_t;
 import org.junit.Test;
 
 import java.io.File;
 
-import static io.tiledb.java.api.TileDBArrayTypeEnum.*;
-import static io.tiledb.java.api.TileDBLayoutEnum.TILEDB_ROW_MAJOR;
-import static io.tiledb.java.api.TileDBWalkOrderEnum.TILEDB_POSTORDER;
+import static io.tiledb.java.api.ArrayType.*;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.WalkOrder.TILEDB_POSTORDER;
 
 public class ObjectTest {
   private Context ctx;
@@ -49,7 +46,7 @@ public class ObjectTest {
     createArray("my_group/sparse_arrays/array_D", TILEDB_SPARSE);
   }
 
-  private void createArray(String arrayURI, TileDBArrayTypeEnum type) throws Exception {
+  private void createArray(String arrayURI, ArrayType type) throws Exception {
     Dimension<Integer> rows = new Dimension<Integer>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
     Dimension<Integer> cols = new Dimension<Integer>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
     Domain domain = new Domain(ctx);

@@ -2,7 +2,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb_compressor_t;
 
-public enum TileDBCompressorEnum {
+public enum CompressorType {
   TILEDB_NO_COMPRESSION,
   TILEDB_GZIP,
   TILEDB_ZSTD,
@@ -51,7 +51,7 @@ public enum TileDBCompressorEnum {
     }
   }
 
-  protected static TileDBCompressorEnum fromSwigEnum(tiledb_compressor_t e) throws TileDBError{
+  protected static CompressorType fromSwigEnum(tiledb_compressor_t e) throws TileDBError{
     switch (e){
       case TILEDB_NO_COMPRESSION:
         return TILEDB_NO_COMPRESSION;

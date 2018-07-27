@@ -37,7 +37,7 @@ package io.tiledb.java.api;
  * @endcode
  */
 public class Compressor {
-  private TileDBCompressorEnum compressor;
+  private CompressorType compressor;
   private int level;
 
   @Override
@@ -55,7 +55,7 @@ public class Compressor {
    * @param level Compression level (-1 for the compression algorithm's
    * default).
    */
-  public Compressor(TileDBCompressorEnum compressor, int level) {
+  public Compressor(CompressorType compressor, int level) {
     this.compressor = compressor;
     this.level = level;
   }
@@ -64,7 +64,7 @@ public class Compressor {
    *
    * @return The Enumerated compressor algortihm.
    */
-  public TileDBCompressorEnum getCompressor() {
+  public CompressorType getCompressor() {
     return compressor;
   }
 
@@ -72,7 +72,7 @@ public class Compressor {
    * Sets the compressor algorithm.
    * @param compressor Enumerated compression algorithm.
    */
-  public void setCompressor(TileDBCompressorEnum compressor) {
+  public void setCompressor(CompressorType compressor) {
     this.compressor = compressor;
   }
 
