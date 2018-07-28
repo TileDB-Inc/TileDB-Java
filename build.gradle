@@ -1,5 +1,5 @@
 group 'io.tiledb'
-version '1.0-SNAPSHOT'
+version '0.1.0'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -25,6 +25,7 @@ buildscript {
 }
 
 apply plugin : 'org.ysb33r.doxygen'
+apply plugin : 'maven-publish'
 
 doxygen {
     generate_html true
@@ -47,6 +48,15 @@ sourceSets {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 }
 
 task cmakeTask(type: Exec) {
