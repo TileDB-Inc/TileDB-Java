@@ -1,5 +1,6 @@
 package io.tiledb.java.api;
 
+import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.tiledb_datatype_t;
 
 public enum Datatype {
@@ -15,6 +16,9 @@ public enum Datatype {
   TILEDB_UINT32,
   TILEDB_UINT64;
 
+  public int getNativeSize() throws TileDBError {
+    return tiledb.tiledb_datatype_size(this.toSwigEnum()).intValue();
+  }
 
   protected tiledb_datatype_t toSwigEnum() throws TileDBError {
     switch (this){
