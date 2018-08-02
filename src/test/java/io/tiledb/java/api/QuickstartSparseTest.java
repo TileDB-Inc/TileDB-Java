@@ -24,14 +24,18 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.*;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.tiledb.libtiledb.*;
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
 import static io.tiledb.java.api.CompressorType.*;
 import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
@@ -42,22 +46,30 @@ import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 @SuppressWarnings("ALL")
 public class QuickstartSparseTest {
 
-
   private Context ctx;
   private String arrayURI = "my_sparse_array";
 
+  @Before
+  public void setup() throws Exception {
+    ctx = new Context();
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
+  @After
+  public void teardown() throws Exception {
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
   @Test
   public void testQuickstartSparse() throws Exception {
-    ctx = new Context();
-    File arrayDir = new File(arrayURI);
-    if (arrayDir.exists())
-      TileDBObject.remove(ctx, arrayURI);
-
     arrayCreate();
     arrayWrite();
     arrayRead();
   }
-
 
   public void arrayCreate() throws Exception {
     // Create getDimensions

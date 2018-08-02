@@ -2,8 +2,12 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.tiledb;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import java.util.HashMap;
 
 import static io.tiledb.java.api.ArrayType.*;
@@ -15,19 +19,32 @@ public class FragmentsConsolidationTest {
   private Context ctx;
   private String arrayURI = "fragments_consolidation";
 
+  @Before
+  public void setup() throws Exception {
+    ctx = new Context();
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
+  @After
+  public void teardown() throws Exception {
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
   @Test
   public void test() throws Exception {
-    ctx = new Context();
-    File arrayDir = new File(arrayURI);
-    if (arrayDir.exists())
-      TileDBObject.remove(ctx, arrayURI);
+    // create array
     arrayCreate();
+    // updates
     arrayWrite1();
     arrayWrite2();
     arrayWrite3();
-
-    Array.consolidate(ctx,arrayURI);
-
+    // consolidate
+    Array.consolidate(ctx, arrayURI);
+    // verify consolidation
     arrayRead();
   }
 
@@ -95,6 +112,7 @@ public class FragmentsConsolidationTest {
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
     query.setSubarray(subarray);
+
     // Submit query
     query.submit();
     query.close();

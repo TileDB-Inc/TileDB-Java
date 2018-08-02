@@ -2,8 +2,11 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
@@ -14,17 +17,27 @@ public class AsyncTest {
   private Context ctx;
   private String arrayURI = "async";
 
+  @Before
+  public void setup() throws Exception {
+    ctx = new Context();
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
+  @After
+  public void teardown() throws Exception {
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
   @Test
   public void test() throws Exception {
-    ctx = new Context();
-    File arrayDir = new File(arrayURI);
-    if (arrayDir.exists())
-      TileDBObject.remove(ctx, arrayURI);
     arrayCreate();
     arrayWrite();
     arrayRead();
   }
-
 
   public void arrayCreate() throws Exception {
     // Create getDimensions
