@@ -1,16 +1,36 @@
 package io.tiledb.java.api;
 
-import examples.io.tiledb.java.api.Error;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import examples.io.tiledb.java.api.Error;
 
 public class ErrorTest {
 
+  private Context ctx;
+
+  @Before
+  public void setup() throws Exception {
+    ctx = new Context();
+    if (Files.exists(Paths.get("my_group"))) {
+      TileDBObject.remove(ctx, "my_group");
+    }
+  }
+
+  @After
+  public void teardown() throws Exception {
+    if (Files.exists(Paths.get("my_group"))) {
+      TileDBObject.remove(ctx, "my_group");
+    }
+  }
+
   @Test
   public void test() throws Exception {
-    // Create TileDB context
-    Context ctx = new Context();
-
     // Catch an error
     try {
       Group group = new Group(ctx, "my_group");

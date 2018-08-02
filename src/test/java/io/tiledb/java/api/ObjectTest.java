@@ -1,8 +1,11 @@
 package io.tiledb.java.api;
 
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
@@ -11,16 +14,28 @@ import static io.tiledb.java.api.WalkOrder.TILEDB_POSTORDER;
 public class ObjectTest {
   private Context ctx;
 
+  @Before
+  public void setup() throws Exception {
+    ctx = new Context();
+    if (Files.exists(Paths.get("my_group"))) {
+      TileDBObject.remove(ctx, "my_group");
+    }
+    if (Files.exists(Paths.get("my_group2")))
+      TileDBObject.remove(ctx, "my_group2");
+  }
+
+  @After
+  public void teardown() throws Exception {
+    if (Files.exists(Paths.get("my_group"))) {
+      TileDBObject.remove(ctx, "my_group");
+    }
+    if (Files.exists(Paths.get("my_group2"))) {
+      TileDBObject.remove(ctx, "my_group2");
+    }
+  }
+
   @Test
   public void test() throws Exception {
-    ctx = new Context();
-    File dir = new File("my_group");
-    if (dir.exists())
-      TileDBObject.remove(ctx, "my_group");
-    dir = new File("my_group2");
-    if (dir.exists())
-      TileDBObject.remove(ctx, "my_group2");
-
     createHierarchy();
     listObjects("my_group");
     moveRemoveObject();  // Renames `my_group` to `my_group_2`

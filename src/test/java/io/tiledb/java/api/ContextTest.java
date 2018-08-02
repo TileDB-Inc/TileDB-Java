@@ -35,8 +35,8 @@ public class ContextTest {
     Context ctx = new Context();
     ctx.setErrorHandler(new Handler());
 
-    System.out.println("HDFS: "+ctx.isSupportedFs(TILEDB_HDFS));
-    System.out.println("S3: "+ctx.isSupportedFs(TILEDB_S3));
+    System.out.println("HDFS: " + ctx.isSupportedFs(TILEDB_HDFS));
+    System.out.println("S3: " + ctx.isSupportedFs(TILEDB_S3));
   }
 
   private class Handler extends ContextCallback{

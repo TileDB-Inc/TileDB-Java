@@ -1,8 +1,12 @@
 package io.tiledb.java.api;
 
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import java.util.HashMap;
 
 import static io.tiledb.java.api.ArrayType.TILEDB_DENSE;
@@ -14,12 +18,23 @@ public class WritingDensePadding {
   private Context ctx;
   private String arrayURI = "writing_dense_padding";
 
+  @Before
+  public void setup() throws Exception {
+    ctx = new Context();
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
+  @After
+  public void teardown() throws Exception {
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
   @Test
   public void test() throws Exception {
-    ctx = new Context();
-    File arrayDir = new File(arrayURI);
-    if (arrayDir.exists())
-      TileDBObject.remove(ctx, arrayURI);
     arrayCreate();
     arrayWrite();
     arrayRead();

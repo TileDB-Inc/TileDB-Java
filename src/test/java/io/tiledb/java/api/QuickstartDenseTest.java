@@ -24,14 +24,18 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.*;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.tiledb.libtiledb.*;
 import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.CompressorType.*;
 import static io.tiledb.java.api.Layout.*;
@@ -43,23 +47,29 @@ public class QuickstartDenseTest {
   private Context ctx;
   private String arrayURI = "my_dense_array";
 
+  @Before
+  public void setup() throws Exception {
+    ctx = new Context();
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
+  @After
+  public void teardown() throws Exception {
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
   @Test
   public void testQuickstartDense() throws Exception {
-    ctx = new Context();
-    File arrayDir = new File(arrayURI);
-    if (arrayDir.exists())
-      TileDBObject.remove(ctx, arrayURI);
-
-    Stats.enable();
     arrayCreate();
     arrayWrite();
     arrayRead();
     arrayReadIncomplete();
     arrayReadAsync();
-
-    Stats.dump();
   }
-
 
   public void arrayCreate() throws Exception {
     // Create getDimensions
