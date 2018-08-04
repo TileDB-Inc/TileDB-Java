@@ -35,18 +35,20 @@ public class ErrorTest {
     try {
       Group group = new Group(ctx, "my_group");
       group = new Group(ctx, "my_group");
-      Assert.fail("Exception not thrown");
+      Assert.fail("TileDBError not thrown");
     } catch (TileDBError e) {
-      System.out.println( "TileDB exception: " + e.toString());
+    } catch (Exception e) {
+      Assert.fail("TileDBError not thrown");
     }
 
     // Set a different error handler
     ctx.setErrorHandler(new Error.CustomCallback());
     try {
       Group group = new Group(ctx, "my_group");
-      Assert.fail("Exception not thrown");
+      Assert.fail("TileDBError not thrown");
     } catch (TileDBError e) {
-      System.out.println( "TileDB exception: " + e.toString());
+    } catch (Exception e) {
+      Assert.fail("TileDBError not thrown");
     }
   }
 

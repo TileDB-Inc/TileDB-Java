@@ -215,10 +215,19 @@ public class Query implements AutoCloseable {
   public void setCoordinates(NativeArray buffer) throws TileDBError {
     setBuffer(tiledb.tiledb_coords(), buffer);
   }
+ 
+  /**
+   * Get the coordinate result buffer
+   * @return The query result coordinate buffer.
+   * @throws TileDBError
+   **/  
+  public Object getCoordinates() throws TileDBError {
+    return getBuffer(tiledb.tiledb_coords());
+  } 
 
   /**
    *
-   * @return Tthe number of elements in the result buffers. This is a map
+   * @return The number of elements in the result buffers. This is a map
    * from the attribute name to a pair of values.
    *
    * The first is number of elements for var size attributes, and the second

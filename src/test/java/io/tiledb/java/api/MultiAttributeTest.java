@@ -3,6 +3,7 @@ package io.tiledb.java.api;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import org.junit.Assert;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -119,13 +120,19 @@ public class MultiAttributeTest {
     query.submit();
 
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
+
     byte[] a1 = (byte[]) query.getBuffer("a1");
     float[] a2 = (float[]) query.getBuffer("a2");
-    for (int i =0; i < 6; i++){
-      System.out.println("a1: " + (char) a1[i] + ", a2: (" + a2[2 * i ] + ", " + a2[2 * i + 1] + ") ");
-    }
+
     query.close();
     array.close();
+
+    Assert.assertArrayEquals(a1, new byte[]{'b', 'c', 'd', 'f', 'g', 'h'});
+
+    float[] expected_a2 = new float[]{1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f};
+    for (int i = 0; i < a2.length; i++) {
+      Assert.assertEquals(a2[i], expected_a2[i], 0.01f);
+    }
   }
 
   private void arrayReadSubselect() throws Exception {
@@ -151,11 +158,9 @@ public class MultiAttributeTest {
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
     byte[] a1 = (byte[]) query.getBuffer("a1");
-
-    for (int i =0; i < 6; i++){
-      System.out.println("a1: " + (char) a1[i] );
-    }
     query.close();
     array.close();
+
+    Assert.assertArrayEquals(a1, new byte[]{'b', 'c', 'd','f', 'g', 'h'});
   }
 }

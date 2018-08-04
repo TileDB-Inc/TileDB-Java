@@ -4,6 +4,7 @@ import io.tiledb.libtiledb.*;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import org.junit.Assert;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,6 +17,7 @@ import static io.tiledb.java.api.QueryType.*;
 public class AsyncTest {
   private Context ctx;
   private String arrayURI = "async";
+  private boolean callbackCalled = false;
 
   @Before
   public void setup() throws Exception {
@@ -80,10 +82,9 @@ public class AsyncTest {
     query.setBuffer("a", data);
     query.setCoordinates(coords_buff);
     // Submit query
-    query.submitAsync(new ReadCallback("Callback: Write query completed"));
+    query.submitAsync();
 
     // Wait for query to complete
-    System.out.printf("Write query in progress\n");
     QueryStatus status;
     do {
       // Wait till query is done
@@ -109,10 +110,9 @@ public class AsyncTest {
     query.setCoordinates(new NativeArray(ctx, max_sizes.get(tiledb.tiledb_coords()).getSecond().intValue(), Integer.class));
 
     // Submit query with callback
-    query.submitAsync(new ReadCallback("Callback: Read query completed"));
+    query.submitAsync(new ReadCallback());
 
     // Wait for query to complete
-    System.out.printf("Read query in progress\n");
     QueryStatus status;
     do {
       // Wait till query is done
@@ -123,23 +123,23 @@ public class AsyncTest {
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
     int[] data = (int[]) query.getBuffer("a");
-    int[] coords = (int[]) query.getBuffer(tiledb.tiledb_coords());
+    int[] coords = (int[]) query.getCoordinates();
 
-    for (int i =0; i< data.length; i++){
-      System.out.println("Cell (" + coords[2 * i] + ", " + coords[2 * i + 1] + ") has data " + data[i]);
-    }
+    query.close();
+    array.close();
+
+    Assert.assertTrue(callbackCalled);
+    Assert.assertArrayEquals(coords, new int[]{1, 1, 2, 1, 2, 2, 4, 3});
+    Assert.assertArrayEquals(data, new int[]{1, 2, 3, 4});
   }
 
-  private static class ReadCallback implements Callback {
+  private class ReadCallback implements Callback {
 
-    private final String data;
-
-    public ReadCallback(String data) {
-      this.data = data;
+    public ReadCallback() {
     }
 
     public void call() {
-      System.out.println(data);
+      callbackCalled = true;
     }
   }
 }

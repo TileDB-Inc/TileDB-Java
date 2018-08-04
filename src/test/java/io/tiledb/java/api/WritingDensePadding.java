@@ -3,6 +3,7 @@ package io.tiledb.java.api;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import org.junit.Assert;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -108,11 +109,14 @@ public class WritingDensePadding {
 
     int[] data = (int[]) query.getBuffer("a");
 
-    for (int i =0; i< data.length; i++){
-      System.out.println(data[i]);
-    }
-
     query.close();
     array.close();
+
+    int[] expected = new int[]{-2147483648, -2147483648, -2147483648, -2147483648,
+    	                                 1,           2, -2147483648, -2147483648,
+    				         3,           4, -2147483648, -2147483648,
+    			       -2147483648, -2147483648, -2147483648, -2147483648};
+
+    Assert.assertArrayEquals(data, expected);
   }
 }

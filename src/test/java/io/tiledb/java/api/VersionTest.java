@@ -25,12 +25,15 @@
 package io.tiledb.java.api;
 
 import org.junit.Test;
+import org.junit.Assert;
 
 public class VersionTest {
 
   @Test
   public void testVersion() {
     Version version = new Version();
-    System.out.println(version);
+    Assert.assertTrue(version.getMajor() >= 1);
+    Assert.assertTrue(version.getMinor() >= 3);
+    Assert.assertTrue(version.getRevision() >= 0);
   }
 }

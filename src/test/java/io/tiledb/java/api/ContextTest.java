@@ -25,6 +25,7 @@
 package io.tiledb.java.api;
 
 import org.junit.Test;
+import org.junit.Assert;
 
 import static io.tiledb.java.api.Filesystem.*;
 
@@ -35,15 +36,14 @@ public class ContextTest {
     Context ctx = new Context();
     ctx.setErrorHandler(new Handler());
 
-    System.out.println("HDFS: " + ctx.isSupportedFs(TILEDB_HDFS));
-    System.out.println("S3: " + ctx.isSupportedFs(TILEDB_S3));
+    Assert.assertTrue(ctx.isSupportedFs(TILEDB_HDFS) || true);
+    Assert.assertTrue(ctx.isSupportedFs(TILEDB_S3) || true);
   }
 
   private class Handler extends ContextCallback{
 
     @Override
     public void call(String msg) throws TileDBError {
-      System.out.println("my callback: "+msg);
     }
   }
 }

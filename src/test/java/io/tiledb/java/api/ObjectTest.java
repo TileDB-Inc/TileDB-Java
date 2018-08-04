@@ -3,13 +3,17 @@ package io.tiledb.java.api;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import org.junit.Assert;
+
+import java.util.List;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import io.tiledb.java.api.WalkOrder;
+
 import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
-import static io.tiledb.java.api.WalkOrder.TILEDB_POSTORDER;
 
 public class ObjectTest {
   private Context ctx;
@@ -37,9 +41,33 @@ public class ObjectTest {
   @Test
   public void test() throws Exception {
     createHierarchy();
-    listObjects("my_group");
+
+    listTest("my_group", new String[]{"my_group/dense_arrays",
+	                              "my_group/sparse_arrays"});
+
+    listPreorderTest("my_group", new String[]{"my_group/dense_arrays",
+	                                      "my_group/dense_arrays/array_A",
+	                                      "my_group/dense_arrays/array_B",
+	                                      "my_group/sparse_arrays",
+	                                      "my_group/sparse_arrays/array_C",
+	                                      "my_group/sparse_arrays/array_D"});
+
+    listPostorderTest("my_group", new String[]{"my_group/dense_arrays/array_A",
+	                                       "my_group/dense_arrays/array_B",
+					       "my_group/dense_arrays",
+	                                       "my_group/sparse_arrays/array_C",
+	                                       "my_group/sparse_arrays/array_D",
+	                                       "my_group/sparse_arrays"});
+
     moveRemoveObject();  // Renames `my_group` to `my_group_2`
-    listObjects("my_group2");
+
+    listTest("my_group2", new String[]{"my_group2/sparse_arrays"});
+
+    listPreorderTest("my_group2", new String[]{"my_group2/sparse_arrays",
+	    				       "my_group2/sparse_arrays/array_D"});
+
+    listPostorderTest("my_group2", new String[]{"my_group2/sparse_arrays/array_D",
+	                                        "my_group2/sparse_arrays"});
   }
 
   private void moveRemoveObject() throws Exception {
@@ -76,22 +104,30 @@ public class ObjectTest {
     Array.create(arrayURI, schema);
   }
 
-  private void listObjects(String uri) throws Exception {
-    // List children
-    System.out.println( "Listing hierarchy: ");
+  private void assertUriEndsWith(List<TileDBObject> objs, String[] expected) throws Exception {
+    Assert.assertEquals(objs.size(), expected.length);
+    for (int i = 0; i < expected.length; i++) {
+       Assert.assertTrue(objs.get(i).getUri().endsWith(expected[i]));
+    }
+  }
+
+  private void listTest(String uri, String[] expected) throws Exception {
     TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, uri);
-    for (TileDBObject object : obj_iter.getAllObjects())
-      System.out.println(object);
+    List<TileDBObject> objs = obj_iter.getAllObjects();
+    assertUriEndsWith(objs, expected);
+  }
 
-    // Walk in a path with a pre- and post-order traversal
-    System.out.println( "\nPreorder traversal: ");
-    obj_iter.setRecursive(); // Default order is preorder
-    for (TileDBObject object : obj_iter.getAllObjects())
-      System.out.println(object);
+  private void listPreorderTest(String uri, String[] expected) throws Exception {
+    TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, uri);
+    obj_iter.setRecursive(WalkOrder.TILEDB_PREORDER);
+    List<TileDBObject> objs = obj_iter.getAllObjects();
+    assertUriEndsWith(objs, expected);
+  }
 
-    System.out.println( "\nPostorder traversal: ");
-    obj_iter.setRecursive(TILEDB_POSTORDER);
-    for (TileDBObject object : obj_iter.getAllObjects())
-      System.out.println(object);
+  private void listPostorderTest(String uri, String[] expected) throws Exception {
+    TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, uri);
+    obj_iter.setRecursive(WalkOrder.TILEDB_POSTORDER);
+    List<TileDBObject> objs = obj_iter.getAllObjects();
+    assertUriEndsWith(objs, expected);
   }
 }

@@ -42,11 +42,8 @@ public class ConfigTest {
     Config config = new Config();
 
     // Print the default config parameters
-    System.out.println( "Default settings:\n");
-    Map<String, String> defaultParams = config.parameters("");
-    for (Map.Entry<String,String> p : defaultParams.entrySet()) {
-      System.out.println( "\"" + p.getKey() + "\" : \"" + p.getValue() + "\"");
-    }
+    Map<String, String> defaultParams = config.parameters();
+    Assert.assertTrue(defaultParams.size() > 0);
 
     // Get only the S3 settings
     for ( Map.Entry<String, String> p : config.parameters("vfs.s3").entrySet()) {
@@ -62,10 +59,14 @@ public class ConfigTest {
     Assert.assertEquals(config.get("vfs.s3.endpoint_override"), "localhost:8888");
 
     // Assign a config object to a context and VFS
-    Context ctx =new Context(config);
-    Assert.assertEquals(ctx.getConfig().get("vfs.s3.connect_timeout_ms"), "5000");
+    Context ctx = new Context(config);
+    Config ctxConfig = ctx.getConfig();
+    Assert.assertEquals(ctxConfig.get("vfs.s3.connect_timeout_ms"), "5000");
 
     String configPath = temp.getRoot().getAbsolutePath() + temp.getRoot().pathSeparator + "testConfig";
-    config.saveToFile(configPath);
+    ctxConfig.saveToFile(configPath);
+
+    Config loadConfig = new Config(configPath);
+    Assert.assertEquals(loadConfig.get("vfs.s3.connect_timeout_ms"), "5000");
   }
 }
