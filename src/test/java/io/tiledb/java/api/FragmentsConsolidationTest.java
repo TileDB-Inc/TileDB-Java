@@ -1,9 +1,9 @@
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.tiledb;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import org.junit.Assert;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -155,7 +155,7 @@ public class FragmentsConsolidationTest {
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a",
-        new NativeArray(ctx, 16,Integer.class));
+        new NativeArray(ctx, 16, Integer.class));
     query.setCoordinates(new NativeArray(ctx, 32, Integer.class));
 
     // Submit query
@@ -164,13 +164,17 @@ public class FragmentsConsolidationTest {
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
     int[] data = (int[]) query.getBuffer("a");
-    int[] coords = (int[]) query.getBuffer(tiledb.tiledb_coords());
-
-    for (int i =0; i< data.length; i++){
-      System.out.println("Cell (" + coords[2 * i] + ", " + coords[2 * i + 1] + ") has data " + data[i]);
-    }
-
+    int[] coords = (int[]) query.getCoordinates();
     query.close();
     array.close();
+
+    Assert.assertArrayEquals(coords, new int[]{1, 1, 1, 2, 1, 3, 1, 4,
+	                                       2, 1, 2, 2, 2, 3, 2, 4,
+					       3, 1, 3, 2, 3, 3, 3, 4,
+					       4, 1, 4, 2, 4, 3, 4, 4});
+    Assert.assertArrayEquals(data, new int[]{        201,           2,           3,           4,
+	    			                       5,         101,         102,           8,
+				             -2147483648,         103,         104,         202,
+				             -2147483648, -2147483648, -2147483648, -2147483648});
   }
 }

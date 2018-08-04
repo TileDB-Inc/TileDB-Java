@@ -224,6 +224,16 @@ public class Config implements AutoCloseable {
     int rc = tiledb.tiledb_config_unset(configp, parameter, errorpp);
     checkConfigError(rc, errorpp);
   }
+   
+  /**
+   * Returns config parameters.
+   * @return HashMap containing all parameters as key/value pairs.
+   * @throws TileDBError
+   */
+
+  public HashMap<String, String> parameters() throws TileDBError {
+    return parameters("");
+  }
 
   /**
    * Returns all config parameters starting with a prefix.
