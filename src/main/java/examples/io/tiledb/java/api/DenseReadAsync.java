@@ -25,7 +25,6 @@
 package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.Callback;
 
 import java.util.Arrays;
 import java.util.HashMap;

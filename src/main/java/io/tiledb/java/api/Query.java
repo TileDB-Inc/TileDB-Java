@@ -26,6 +26,8 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
+import io.tiledb.java.api.Callback;
+
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;

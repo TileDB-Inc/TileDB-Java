@@ -32,7 +32,6 @@ import java.util.Map;
 
 import static io.tiledb.java.api.QueryType.*;
 
-
 /**
  * Class representing a TileDB array object.
  *
@@ -240,7 +239,7 @@ public class Array implements AutoCloseable {
 	ctx.handleError(tiledb.tiledb_array_max_buffer_size(
 	  ctx.getCtxp(),
 	  arrayp, 
-	  tiledb.tiledb_coords(), 
+	  tiledb.tiledb_coords(),
 	  subarray.toVoidPointer(), 
 	  val_nbytes.cast()));
   	ret.put(tiledb.tiledb_coords(),

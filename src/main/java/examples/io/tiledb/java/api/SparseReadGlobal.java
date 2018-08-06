@@ -44,6 +44,7 @@ import java.util.Map;
 
 import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
+import static io.tiledb.java.api.Constants.TILEDB_COORDS;
 
 public class SparseReadGlobal {
   public static void main(String[] args) throws Exception {
@@ -75,7 +76,7 @@ public class SparseReadGlobal {
         new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
     query.setBuffer("a3",
         new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
-    query.setCoordinates(new NativeArray(ctx, max_sizes.get(tiledb.tiledb_coords()).getSecond().intValue(), Long.class));
+    query.setCoordinates(new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
 
     // Submit query
     System.out.println("Query submitted: " + query.submit() );
@@ -86,23 +87,23 @@ public class SparseReadGlobal {
     long[] a2_offsets = (long[]) query.getVarBuffer("a2");
     byte[] a2_data = (byte[]) query.getBuffer("a2");
     float[] a3_buff = (float[]) query.getBuffer("a3");
-    long[] coords = (long[]) query.getBuffer(tiledb.tiledb_coords());
+    long[] coords = (long[]) query.getBuffer(TILEDB_COORDS);
 
 
     System.out.println("Result num: " + a1_buff.length );
-    System.out.println(String.format("%8s",tiledb.tiledb_coords()) +
-            String.format("%9s","a1") +
-            String.format("%11s","a2") +
-            String.format("%11s","a3[0]") +
-            String.format("%10s","a3[1]"));
+    System.out.println(String.format("%8s", TILEDB_COORDS) +
+            String.format("%9s", "a1") +
+            String.format("%11s", "a2") +
+            String.format("%11s", "a3[0]") +
+            String.format("%10s", "a3[1]"));
 
     for (int i =0; i< a1_buff.length; i++){
       int end = (i==a1_buff.length-1)? a2_data.length : (int) a2_offsets[i+1];
       System.out.println(String.format("%8s","(" + coords[2*i] + ", " + coords[2*i+1] + ")")+
-          String.format("%9s",a1_buff[i]) +
-          String.format("%11s",new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end)))+
-          String.format("%11s",a3_buff[2*i])+
-          String.format("%10s",a3_buff[2*i+1])
+          String.format("%9s", a1_buff[i]) +
+          String.format("%11s", new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end)))+
+          String.format("%11s", a3_buff[2*i])+
+          String.format("%10s", a3_buff[2*i+1])
       );
     }
   }

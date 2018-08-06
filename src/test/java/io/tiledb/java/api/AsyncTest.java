@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
+import static io.tiledb.java.api.Constants.TILEDB_COORDS;
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
@@ -107,7 +108,7 @@ public class AsyncTest {
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a",
         new NativeArray(ctx, max_sizes.get("a").getSecond().intValue(),Integer.class));
-    query.setCoordinates(new NativeArray(ctx, max_sizes.get(tiledb.tiledb_coords()).getSecond().intValue(), Integer.class));
+    query.setCoordinates(new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Integer.class));
 
     // Submit query with callback
     query.submitAsync(new ReadCallback());

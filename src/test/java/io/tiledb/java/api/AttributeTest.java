@@ -31,6 +31,8 @@ import org.junit.Assert;
 import io.tiledb.java.api.CompressorType;
 import io.tiledb.java.api.Datatype;
 
+import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
+
 public class AttributeTest {
 
   @Test
@@ -42,7 +44,7 @@ public class AttributeTest {
 
     Assert.assertEquals(a.getName(), "a1");
     Assert.assertEquals(a.getType(), Datatype.TILEDB_UINT64);
-    Assert.assertEquals(a.getCellValNum(), tiledb.tiledb_var_num());
+    Assert.assertEquals(a.getCellValNum(), TILEDB_VAR_NUM);
     Assert.assertEquals(a.getCompressor().getCompressor(), CompressorType.TILEDB_GZIP);
     Assert.assertEquals(a.getCompressor().getLevel(), 1);
   }
