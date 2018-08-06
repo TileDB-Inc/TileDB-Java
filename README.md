@@ -18,7 +18,7 @@ This will create the TileDB JNI library `build/tiledb_jni/libtiledbjni.jnilib`. 
 
 If you wish to build with a custom version of the native TileDB library, you can define the environment variable `TILEDB_HOME`, e.g.:
 
-`TILEDB_HOME=/path/to/TileDB/dist ./gradlew assemble`
+`env TILEDB_HOME=/path/to/TileDB/dist ./gradlew assemble`
 
 Before running the Java code you should copy the `libtiledbjni.dylib` file into your system library path, or add the build folder in your `LD_LIBRARY_PATH` ENV variable.
 
@@ -57,4 +57,4 @@ http://www.swig.org/Doc3.0/Preface.html#Preface_installation
 
 2) Generate the JNI code using
 
-`./gradlew generateJNI`
+`env TILEDB_HOME=/path/to/TileDB/dist ./gradlew generateJNI`
