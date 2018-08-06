@@ -36,9 +36,10 @@ import java.math.BigInteger;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
-import io.tiledb.libtiledb.*;
+import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
+import static io.tiledb.java.api.Constants.TILEDB_COORDS;
+
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
 import static io.tiledb.java.api.CompressorType.*;
 import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
@@ -87,7 +88,7 @@ public class QuickstartSparseTest {
     // Create and add getAttributes
     Attribute a1 = new Attribute(ctx,"a1",Integer.class);
     Attribute a2 = new Attribute(ctx,"a2",String.class);
-    a2.setCellValNum(tiledb.tiledb_var_num());
+    a2.setCellValNum(TILEDB_VAR_NUM);
     Attribute a3 = new Attribute(ctx,"a3",Float.class);
     a3.setCellValNum(2);
     a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
@@ -206,7 +207,7 @@ public class QuickstartSparseTest {
     query.setBuffer("a3",
         new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
     query.setCoordinates(
-	new NativeArray(ctx, max_sizes.get(tiledb.tiledb_coords()).getSecond().intValue(), Long.class));
+	new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
 
     // Submit query
     query.submit();
@@ -218,7 +219,7 @@ public class QuickstartSparseTest {
     long[] a2_offsets = (long[]) query.getVarBuffer("a2");
     byte[] a2_data = (byte[]) query.getBuffer("a2");
     float[] a3_buff = (float[]) query.getBuffer("a3");
-    long[] coords = (long[]) query.getBuffer(tiledb.tiledb_coords());
+    long[] coords = (long[]) query.getBuffer(TILEDB_COORDS);
 
     // check coords
     Assert.assertArrayEquals(coords, new long[]{1, 1, 1, 2, 1, 4, 2, 3, 3, 1, 4, 2, 3, 3, 3, 4});

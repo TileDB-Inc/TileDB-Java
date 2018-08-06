@@ -36,13 +36,15 @@ import java.math.BigInteger;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
-import io.tiledb.libtiledb.*;
+import io.tiledb.java.api.Callback;
+
 import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.CompressorType.*;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
+
+import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 
 @SuppressWarnings("ALL")
 public class QuickstartDenseTest {
@@ -88,7 +90,7 @@ public class QuickstartDenseTest {
     // Create and add getAttributes
     Attribute a1 = new Attribute(ctx, "a1", Integer.class);
     Attribute a2 = new Attribute(ctx, "a2", Character.class);
-    a2.setCellValNum(tiledb.tiledb_var_num());
+    a2.setCellValNum(TILEDB_VAR_NUM);
     Attribute a3 = new Attribute(ctx, "a3", Float.class);
     a3.setCellValNum(2);
     a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));

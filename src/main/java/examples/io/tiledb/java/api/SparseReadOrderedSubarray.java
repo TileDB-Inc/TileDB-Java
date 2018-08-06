@@ -42,6 +42,7 @@ import io.tiledb.libtiledb.tiledb;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static io.tiledb.java.api.Constants.TILEDB_COORDS;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 
@@ -65,7 +66,7 @@ public class SparseReadOrderedSubarray {
         new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
         new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
     query.setBuffer("a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
-    query.setCoordinates(new NativeArray(ctx, max_sizes.get(tiledb.tiledb_coords()).getSecond().intValue(), Long.class));
+    query.setCoordinates(new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
 
     // Submit query
     System.out.println("Query submitted: " + query.submit() );
@@ -76,10 +77,10 @@ public class SparseReadOrderedSubarray {
     long[] a2_offsets = (long[]) query.getVarBuffer("a2");
     byte[] a2_data = (byte[]) query.getBuffer("a2");
     float[] a3_buff = (float[]) query.getBuffer("a3");
-    long[] coords = (long[]) query.getBuffer(tiledb.tiledb_coords());
+    long[] coords = (long[]) query.getBuffer(TILEDB_COORDS);
 
     System.out.println("Result num: " + a1_buff.length );
-    System.out.println(String.format("%8s",tiledb.tiledb_coords()) +
+    System.out.println(String.format("%8s", TILEDB_COORDS) +
             String.format("%9s","a1") +
             String.format("%11s","a2") +
             String.format("%11s","a3[0]") +

@@ -27,6 +27,7 @@ package examples.io.tiledb.java.api;
 import io.tiledb.java.api.*;
 import io.tiledb.libtiledb.tiledb;
 
+import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.ArrayType.TILEDB_DENSE;
 import static io.tiledb.java.api.CompressorType.*;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
@@ -49,7 +50,7 @@ public class DenseCreate {
     // Create and add getAttributes
     Attribute a1 = new Attribute(ctx,"a1",Integer.class);
     Attribute a2 = new Attribute(ctx,"a2",String.class);
-    a2.setCellValNum(tiledb.tiledb_var_num());
+    a2.setCellValNum(TILEDB_VAR_NUM);
     Attribute a3 = new Attribute(ctx,"a3",Float.class);
     a3.setCellValNum(2);
     a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
@@ -65,13 +66,8 @@ public class DenseCreate {
     schema.addAttribute(a2);
     schema.addAttribute(a3);
 
-
     // Check array schema
-    try {
-      schema.check();
-    }catch (Exception e){
-      e.printStackTrace();
-    }
+    schema.check();
 
     // Print array schema contents
     schema.dump();
