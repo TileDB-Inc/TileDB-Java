@@ -72,19 +72,12 @@ task makeTask(type: Exec) {
     args "-j2"
 }
 
-task installTask(type: Copy) {
-    from buildDir
-    into "~/Library/Java/Extensions/"
-    include "libtiledb.jnilib"
-}
-
 task generateJNI(type: Exec) {
     workingDir = buildDir
     executable = "../generate_tiledb_jni"
 }
 
 makeTask.dependsOn(cmakeTask)
-//installTask.dependsOn(makeTask)
 assemble.dependsOn(makeTask)
 
 test {
