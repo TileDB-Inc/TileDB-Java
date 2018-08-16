@@ -1,8 +1,22 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.ysb33r.gradle:doxygen:0.3.2'
+    }
+}
+
+plugins {
+  id 'java-library'
+  id 'maven-publish'
+  id 'signing'
+}
+
 group 'io.tiledb'
 version '0.1.0'
 
-apply plugin: 'java'
-apply plugin: 'idea'
+apply plugin: 'org.ysb33r.doxygen'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -13,24 +27,6 @@ repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
-}
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.ysb33r.gradle:doxygen:0.3.2'
-    }
-}
-
-apply plugin : 'org.ysb33r.doxygen'
-apply plugin : 'maven-publish'
-
-doxygen {
-    generate_html true
-
-    source new File(projectDir,'src/main/java/io/tiledb/java')
 }
 
 sourceSets {
@@ -46,17 +42,75 @@ sourceSets {
     }
 }
 
+doxygen {
+    generate_html true
+    source new File(projectDir,'src/main/java/io/tiledb/java')
+}
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task sourcesJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
 }
 
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            artifactId = 'tiledb-java'
             from components.java
+            artifact sourcesJar
+            //artifact javadocJar
+            pom {
+                name = 'TileDB-Java'
+                description = 'Java interface to the TileDB storage manager'
+	        url = 'https://github.com/TileDB-Inc/TileDB-Java'
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://raw.githubusercontent.com/TileDB-Inc/TileDB-Java/master/LICENSE'
+                   }
+                }
+                developers {
+                    developer {
+                        id = 'tiledb-inc'
+                        name = 'TileDB, Inc.'
+                        email = 'help@tiledb.io'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/TileDB-Inc/TileDB-Java.git'
+                    developerConnection = 'scm:git:ssh://github.com/TileDB-Inc/TileDB-Java.git'
+                    url = 'https://github.com/TileDB-Inc/TileDB-Java'
+                }
+            }
         }
     }
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            def releasesRepoUrl = "$buildDir/repos/releases"
+            def snapshotsRepoUrl = "$buildDir/repos/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+//signing {
+//    sign publishing.publications.mavenJava
+//}
+
+task generateJNI(type: Exec) {
+    workingDir = buildDir
+    executable = "../generate_tiledb_jni"
 }
 
 task cmakeTask(type: Exec) {
@@ -65,24 +119,25 @@ task cmakeTask(type: Exec) {
     args  ".."
 }
 
-
 task makeTask(type: Exec) {
     workingDir = buildDir
     executable = "make"
     args "-j2"
 }
 
-task generateJNI(type: Exec) {
-    workingDir = buildDir
-    executable = "../generate_tiledb_jni"
-}
-
 makeTask.dependsOn(cmakeTask)
 assemble.dependsOn(makeTask)
+test.dependsOn(assemble)
 
 test {
     systemProperty "java.library.path", new File(buildDir, "tiledb_jni")
     testLogging {
         showStandardStreams = true
+    }
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html4', true)
     }
 }
