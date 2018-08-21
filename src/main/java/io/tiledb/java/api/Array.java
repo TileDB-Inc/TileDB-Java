@@ -293,7 +293,7 @@ public class Array implements AutoCloseable {
   public void close() throws TileDBError {
     if(initialized) {
       initialized = false;
-      tiledb.tiledb_array_close(ctx.getCtxp(), arrayp);
+//      tiledb.tiledb_array_close(ctx.getCtxp(), arrayp);
       tiledb.tiledb_array_free(arraypp);
       if(schema!=null)
         schema.close();
