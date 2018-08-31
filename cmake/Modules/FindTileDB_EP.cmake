@@ -42,7 +42,7 @@ if (NOT TILEDB_FOUND)
     ExternalProject_Add(ep_tiledb
       PREFIX "externals"
       GIT_REPOSITORY "https://github.com/TileDB-Inc/TileDB"
-      GIT_TAG "1.3.0"
+      GIT_TAG "dev"
       CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${TILEDB_JNI_EP_INSTALL_PREFIX}
       UPDATE_COMMAND ""
