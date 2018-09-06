@@ -29,12 +29,10 @@ package io.tiledb.java.api;
  * compression level. A compression level of -1 indicates the default
  * level.
  *
- * **Example:**
- *
- * @code{.java}
- * Attribute a1 = new Attribute(ctx, "a1", Integer.class);
- * a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
- * @endcode
+ * <pre><b>Example:</b>
+ *   Attribute a1 = new Attribute(ctx, "a1", Integer.class);
+ *   a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
+ * </pre>
  */
 public class Compressor {
   private CompressorType compressor;
@@ -51,9 +49,8 @@ public class Compressor {
   /**
    * Create a compressor with a given algorithm and level.
    *
-   * @param compressor Enumerated compression algorithm.
-   * @param level Compression level (-1 for the compression algorithm's
-   * default).
+   * @param compressor CompressorType algorithm enum
+   * @param level Compression level (-1 for compressor default).
    */
   public Compressor(CompressorType compressor, int level) {
     this.compressor = compressor;
@@ -62,7 +59,7 @@ public class Compressor {
 
   /**
    *
-   * @return The Enumerated compressor algortihm.
+   * @return CompressorType algorithm enum
    */
   public CompressorType getCompressor() {
     return compressor;
@@ -70,7 +67,8 @@ public class Compressor {
 
   /**
    * Sets the compressor algorithm.
-   * @param compressor Enumerated compression algorithm.
+   *
+   * @param compressor CompressorType algorithm enum
    */
   public void setCompressor(CompressorType compressor) {
     this.compressor = compressor;
@@ -78,7 +76,7 @@ public class Compressor {
 
   /**
    *
-   * @return The compression level.
+   * @return The compression level int
    */
   public int getLevel() {
     return level;
@@ -86,6 +84,7 @@ public class Compressor {
 
   /**
    * Sets the compression level
+   *
    * @param level Compression level (-1 for the compression algorithm's
    * default).
    */

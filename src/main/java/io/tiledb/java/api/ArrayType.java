@@ -18,7 +18,7 @@ public enum ArrayType {
   }
 
   protected static ArrayType fromSwigEnum(tiledb_array_type_t e) throws TileDBError{
-    switch (e){
+    switch (e) {
       case TILEDB_DENSE:
         return TILEDB_DENSE;
       case TILEDB_SPARSE:

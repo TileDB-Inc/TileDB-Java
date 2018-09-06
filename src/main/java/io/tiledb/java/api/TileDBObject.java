@@ -28,7 +28,9 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_object_t;
 import io.tiledb.libtiledb.tiledb;
 
-/** Represents a TileDB object: array, group, key-value, or none (invalid). */
+/**
+ * Represents a TileDB object: array, group, key-value, or none (invalid).
+ */
 public class TileDBObject {
 
   private final Context ctx;
@@ -40,6 +42,7 @@ public class TileDBObject {
    *
    * @param ctx The TileDB context
    * @param uri The path to the object.
+   * @exception TileDBError A TileDB exception
    */
   public TileDBObject(Context ctx, String uri) throws TileDBError {
     SWIGTYPE_p_tiledb_object_t typep = tiledb.new_tiledb_object_tp();
@@ -57,10 +60,11 @@ public class TileDBObject {
   }
 
   /**
-   * Deletes a tiledb object.
+   * Deletes a TileDB object.
    *
    * @param ctx The TileDB context
    * @param uri The path to the object to be deleted.
+   * @exception TileDBError A TileDB exception
    */
   public static void remove(Context ctx, String uri) throws TileDBError {
     ctx.handleError(tiledb.tiledb_object_remove(ctx.getCtxp(), uri));
@@ -69,8 +73,10 @@ public class TileDBObject {
   /**
    * Moves/renames a tiledb object.
    *
+   * @param ctx The TileDB context.
    * @param old_uri The path to the old object.
    * @param new_uri The path to the new object.
+   * @exception TileDBError A TileDB exception
    */
   public static void move(
       Context ctx,
@@ -81,8 +87,7 @@ public class TileDBObject {
   }
 
   /**
-   * Returns a string representation of the object, including its type
-   * and URI.
+   * Returns a string representation of the object, including its type and URI.
    */
   @Override
   public String toString() {
@@ -105,13 +110,21 @@ public class TileDBObject {
     return ret;
   }
 
-  /** Returns the object type. */
+  /**
+   * Returns the object type.
+   *
+   * @return a tiledb object type enum
+   */
   public TileDBObjectType getType(){
     return type;
   }
 
-  /** Returns the object uri. */
-  public String getUri(){
+  /**
+   * Returns the object Uri String.
+   *
+   * @return uri String
+   */
+  public String getUri() {
     return uri;
   }
 }
