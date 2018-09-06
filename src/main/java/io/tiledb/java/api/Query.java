@@ -35,21 +35,17 @@ import java.util.Map;
 import static io.tiledb.java.api.Datatype.TILEDB_UINT64;
 
 /**
- * Construct and execute read/write queries on a tiledb Array.
+ * Construct and execute read/write queries on a TileDB Array.
  *
- * @details
- * See examples for more usage details.
- *
- * **Example:**
- *
- * @code{.java}
- * Query query = new Query(my_dense_array, TILEDB_WRITE);
- * query.setLayout(TILEDB_GLOBAL_ORDER);
- * query.setBuffer("a1", a1_data);
- * NativeArray a1_data = new NativeArray(ctx, new int[] {1,2,3,4}, Integer.class);
- * query.setBuffer("a1", a1_data);
- * query.submit();
- * @endcode
+ *<b>Example:</b>
+ * <pre>{@code
+ *   Query query = new Query(my_dense_array, TILEDB_WRITE);
+ *   query.setLayout(TILEDB_GLOBAL_ORDER);
+ *   query.setBuffer("a1", a1_data);
+ *   NativeArray a1_data = new NativeArray(ctx, new int[] {1,2,3,4}, Integer.class);
+ *   query.setBuffer("a1", a1_data);
+ *   query.submit();
+ * }</pre>
  */
 public class Query implements AutoCloseable {
   
@@ -66,7 +62,7 @@ public class Query implements AutoCloseable {
   private HashMap<String, Pair<NativeArray, NativeArray>> var_buffers_;
   private HashMap<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
   private boolean executed;
-	
+
   public Query(Array array, QueryType type) throws TileDBError {
     this.ctx = array.getCtx();
     ctx.deleterAdd(this);
@@ -87,8 +83,9 @@ public class Query implements AutoCloseable {
 
   /**
    * Sets the data layout of the buffers.
-   * @param layout The order to be set.
-   * @throws TileDBError
+   *
+   * @param layout The layout order to be set.
+   * @exception TileDBError A TileDB exception
    */
   public void setLayout(Layout layout) throws TileDBError {
     ctx.handleError(tiledb.tiledb_query_set_layout(ctx.getCtxp(), queryp, layout.toSwigEnum()));
@@ -97,7 +94,7 @@ public class Query implements AutoCloseable {
   /**
    *
    * @return The query Status.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public QueryStatus getQueryStatus() throws TileDBError {
     SWIGTYPE_p_tiledb_query_status_t statusp = tiledb.new_tiledb_query_status_tp();
@@ -109,8 +106,9 @@ public class Query implements AutoCloseable {
 
   /**
    * Submits the query. Call will block until query is complete.
+   *
    * @return The query Status.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public QueryStatus submit() throws TileDBError {
     prepareSubmission();
@@ -122,7 +120,7 @@ public class Query implements AutoCloseable {
   /**
    * Submit an async query (non-blocking).
    *
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public void submitAsync() throws TileDBError {
     submitAsync(new DefaultCallback());
@@ -133,7 +131,7 @@ public class Query implements AutoCloseable {
    * Submit an async query, with callback.
    *
    * @param callback Callback function.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public void submitAsync(Callback callback) throws TileDBError {
     prepareSubmission();
@@ -147,7 +145,7 @@ public class Query implements AutoCloseable {
    * Coordinates are inclusive.
    *
    * @param subarray The targeted subarray.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public void setSubarray(NativeArray subarray) throws TileDBError {
     Types.typeCheck(subarray.getNativeType(), array.getSchema().getDomain().getType());
@@ -158,9 +156,10 @@ public class Query implements AutoCloseable {
 
   /**
    * Sets a buffer for a fixed-sized attribute.
+   *
    * @param attr The attribute name.
    * @param buffer NativeBuffer to be used for the attribute values.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public void setBuffer(String attr, NativeArray buffer) throws TileDBError {
     HashMap<String, Attribute> schemaAttributes = array.getSchema().getAttributes();
@@ -187,10 +186,10 @@ public class Query implements AutoCloseable {
   /**
    * Sets a buffer for a variable-sized getAttribute.
    *
-   * @tparam Vec buffer type. Should always be a vector of the attribute rype.
    * @param attr Attribute name
    * @param offsets Offsets where a new element begins in the data buffer.
    * @param buffer Buffer vector with elements of the attribute type.
+   * @exception TileDBError A TileDB exception
    **/
   public void setBuffer(String attr, NativeArray offsets, NativeArray buffer) throws TileDBError {
     if (attr.equals(tiledb.tiledb_coords())) {
@@ -211,8 +210,9 @@ public class Query implements AutoCloseable {
 
   /**
    * Set the coordinate buffer
+   *
    * @param buffer A NativeArray to be used for the coordinates.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public void setCoordinates(NativeArray buffer) throws TileDBError {
     setBuffer(tiledb.tiledb_coords(), buffer);
@@ -220,8 +220,9 @@ public class Query implements AutoCloseable {
  
   /**
    * Get the coordinate result buffer
+   *
    * @return The query result coordinate buffer.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    **/  
   public Object getCoordinates() throws TileDBError {
     return getBuffer(tiledb.tiledb_coords());
@@ -235,7 +236,7 @@ public class Query implements AutoCloseable {
    * The first is number of elements for var size attributes, and the second
    * is number of elements in the data buffer. For fixed sized attributes
    * (and coordinates), the first is always 0.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public HashMap<String, Pair<Long, Long>> resultBufferElements() throws TileDBError {
     HashMap<String, Pair<Long, Long>> result = new HashMap<String, Pair<Long, Long>>();
@@ -264,7 +265,7 @@ public class Query implements AutoCloseable {
     return result;
   }
 
-  /** Clears all attribute b uffers. */
+  /** Clears all attribute buffers. */
   public void resetBuffers(){
     buffers_.clear();
     var_buffers_.clear();
@@ -308,10 +309,11 @@ public class Query implements AutoCloseable {
   }
 
   /**
-   * Return a Java primitive array as a copy of the attribute buffer
+   * Return a Java primitive array object as a copy of the attribute buffer
+   *
    * @param attr attribute name
-   * @return
-   * @throws TileDBError
+   * @return A Java array
+   * @exception TileDBError A TileDB exception
    */
   public Object getBuffer(String attr) throws TileDBError {
     if (buffers_.containsKey(attr)) {
@@ -331,9 +333,10 @@ public class Query implements AutoCloseable {
 
   /**
    * Return an array containing offsets for a variable attribute buffer
+   *
    * @param attr attribute name
-   * @return
-   * @throws TileDBError
+   * @return A Java long[] array
+   * @throws TileDBError A TileDB exception
    */
   public long[] getVarBuffer(String attr) throws TileDBError {
     if (!var_buffers_.containsKey(attr)) {
@@ -362,7 +365,7 @@ public class Query implements AutoCloseable {
   }
 
   /**
-   * Delete the native object.
+   * Free's native TileDB resources associated with the Query object
    */
   public void close() throws TileDBError {
     if (queryp != null) {

@@ -34,10 +34,14 @@ import static io.tiledb.java.api.WalkOrder.*;
 /**
  * Enables listing TileDB objects in a directory or walking recursively an
  * entire directory tree.
+ *
  */
 public class TileDBObjectIterator {
   private final Context ctx;
-  private boolean group = true, array = true, kv = true, recursive = false;
+  private boolean group = true;
+  private boolean array = true;
+  private boolean kv = true;
+  private boolean recursive = false;
   private WalkOrder walkOrder = TILEDB_PREORDER;
   private String root = ".";
 
@@ -55,7 +59,8 @@ public class TileDBObjectIterator {
   }
 
   /**
-   * Constructor with all fields
+   * Constructs a TileDB Object Iterator, allowing to subselect over certain TileDB object types
+   *
    * @param ctx The TileDB context.
    * @param group If `true`, groups will be considered.
    * @param array If `true`, arrays will be considered.

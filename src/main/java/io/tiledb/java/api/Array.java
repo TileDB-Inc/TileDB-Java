@@ -35,49 +35,45 @@ import static io.tiledb.java.api.QueryType.*;
 /**
  * Class representing a TileDB array object.
  *
- * @details
  * An Array object represents array data in TileDB at some persisted location,
  * e.g. on disk, in an S3 bucket, etc. Once an array has been opened for reading
- * or writing, interact with the data through Query objects.
+ * or writing, interact with the data through {@link Query} objects.
  *
- * **Example:**
- *
- * @code{.java}
- * Context ctx = new Context();
- *
- * // Create an ArraySchema, add attributes, domain, etc.
- * ArraySchema schema = new ArraySchema(...);
- *
- * // Create empty array named "my_array" on persistent storage.
- * Array.create("my_array", schema);
- * @endcode
+ * <pre><b>Example:</b>
+ * {@code
+ *   // Create an ArraySchema, add attributes, domain, etc.
+ *   Context ctx = new Context();
+ *   ArraySchema schema = new ArraySchema(...);
+ *   // Create empty array named "my_array" on persistent storage.
+ *   Array.create("my_array", schema);
+ * }
+ * </pre>
  */
 public class Array implements AutoCloseable {
-  private SWIGTYPE_p_p_tiledb_array_t arraypp;
-  private SWIGTYPE_p_tiledb_array_t arrayp;
-  
+
   private Context ctx;
   private String uri;
   private ArraySchema schema;
   private QueryType query_type;
   private boolean initialized = false;
 
+  private SWIGTYPE_p_tiledb_array_t arrayp;
+  private SWIGTYPE_p_p_tiledb_array_t arraypp;
+
   /**
-   * Constructor. This opens the array for the given query type.
-   * The close method closes the array.
+   * Constructs an Array object, opening the array for the given query type.
    *
-   * **Example:**
-   *
-   * @code{.java}
-   * // Open the array for reading
+   * <pre><b>Example:</b>
+   * {@code
    * Context ctx = new Context();
    * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ);
-   * @endcode
+   * }
+   * </pre>
    *
-   * @param ctx TileDB context.
-   * @param uri The array URI.
+   * @param ctx TileDB context
+   * @param uri The array URI
    * @param query_type Query type to open the array for.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public Array(Context ctx, String uri, QueryType query_type) throws TileDBError {
     ctx.deleterAdd(this);
@@ -89,70 +85,68 @@ public class Array implements AutoCloseable {
   }
 
   /**
-   * Constructor. This opens the array for reading.
-   * The close method closes the array.
+   * Constructs an Array object opening the array for reading.
    *
-   * **Example:**
+   * <pre><b>Example:</b>
+   * {@code
+   *   Context ctx = new Context();
+   *   Array array new Array(ctx, "s3://bucket-name/array-name");
+   * }
+   * </pre>
    *
-   * @code{.java}
-   * Context ctx = new Context();
-   * Array array new Array(ctx, "s3://bucket-name/array-name");
-   * @endcode
-   *
-   * @param ctx TileDB context.
-   * @param uri The array URI.
-   * @throws TileDBError
+   * @param ctx TileDB context
+   * @param uri The array URI
+   * @exception TileDBError A TileDB exception
    */
   public Array(Context ctx, String uri) throws TileDBError {
     this(ctx, uri, TILEDB_READ);
   }
 
-  private void openArray() throws TileDBError {
-    openArray(TILEDB_READ);
-  }
-
-  private void openArray(QueryType query_type) throws TileDBError {
+  private synchronized void openArray(QueryType query_type) throws TileDBError {
     arraypp = tiledb.new_tiledb_array_tpp();
     ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, arraypp)); 
     arrayp = tiledb.tiledb_array_tpp_value(arraypp);
     ctx.handleError(
       tiledb.tiledb_array_open(
         ctx.getCtxp(), 
-	arrayp, 
-	query_type.toSwigEnum()));
+	    arrayp,
+        query_type.toSwigEnum()));
     initialized = true;
   }
 
   /**
    * Consolidates the fragments of an array into a single fragment.
    *
-   * You must first finalize all queries to the array before consolidation can
-   * begin (as consolidation temporarily acquires an exclusive lock on the
-   * array).
+   * All queries to the array before consolidation must be finalized before consolidation can begin.
+   * Consolidation temporarily aquires an exclusive lock on the array when finalizing the resulting merged fragment.
    *
-   * **Example:**
-   * @code{.java}
-   * Context ctx = new Context();
-   * Array.consolidate(ctx, "s3://bucket-name/array-name");
-   * @endcode
+   * <pre><b>Example:</b>
+   * {@code
+   *   Context ctx = new Context();
+   *   Array.consolidate(ctx, "s3://bucket-name/array-name");
+   * }
+   * </pre>
    *
-   * @throws TileDBError
+   * @param ctx TileDB context object
+   * @param uri TileDB URI string
+   * @exception TileDBError A TileDB exception
    */
   public static void consolidate(Context ctx, String uri) throws TileDBError {
     ctx.handleError(tiledb.tiledb_array_consolidate(ctx.getCtxp(), uri));
   }
 
   /**
-   * Creates a new TileDB array given an input schema.
+   * Creates a persisted TileDB array given an input {@link ArraySchema}
    *
-   * **Example:**
-   * @code{.cpp}
-   * Array.create("my_array", schema);
-   * @endcode
+   * <pre><b>Example:</b>
+   * {@code
+   *   Array.create("my_array", schema);
+   * }
+   * </pre>
    *
-   * @param uri The array URI.
-   * @param schema The array schema.
-   * @throws TileDBError
+   * @param uri The array URI string
+   * @param schema The TileDB ArraySchema
+   * @exception TileDBError A TileDB exception
    */
   public static void create(String uri, ArraySchema schema) throws TileDBError {
     Context ctx = schema.getCtx();
@@ -161,29 +155,27 @@ public class Array implements AutoCloseable {
   }
 
   /**
-   * Get the non-empty getDomain of an array. This returns the bounding
-   * coordinates for each dimension.
+   * Get the non-empty domain of an array, returning the bounding coordinates for each dimension.
    *
-   * @return A HashMap of dimension names with a {lower, upper} pair. Inclusive.
+   * @return A HashMap of dimension names and (lower, upper) inclusive bounding coordinate range pair.
    *         Empty HashMap if the array has no data.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public HashMap<String, Pair> nonEmptyDomain() throws TileDBError {
     HashMap<String, Pair> ret = new HashMap<String, Pair>();
-
     SWIGTYPE_p_int emptyp = tiledb.new_intp();
     List<Dimension> dimensions = schema.getDomain().getDimensions();
-    NativeArray buffer = new NativeArray(ctx,2*dimensions.size(), schema.getDomain().getType());
+    NativeArray buffer = new NativeArray(ctx,2 * dimensions.size(), schema.getDomain().getType());
     ctx.handleError(tiledb.tiledb_array_get_non_empty_domain(
         ctx.getCtxp(), arrayp, buffer.toVoidPointer(), emptyp));
-    if(tiledb.intp_value(emptyp)==1){
+    if (tiledb.intp_value(emptyp) ==  1) {
       return ret;
     }
     tiledb.delete_intp(emptyp);
-    int i=0;
-    for (Dimension d : dimensions){
-      ret.put(d.getName(), new Pair(buffer.getItem(i), buffer.getItem(i+1)));
-      i+=2;
+    int i = 0;
+    for (Dimension d : dimensions) {
+      ret.put(d.getName(), new Pair(buffer.getItem(i), buffer.getItem(i + 1)));
+      i += 2;
     }
     return ret;
   }
@@ -191,38 +183,38 @@ public class Array implements AutoCloseable {
   /**
    * Compute an upper bound on the buffer elements needed to read a subarray.
    *
-   * @param subarray Targeted subarray.
-   * @return The maximum number of elements for each array getAttribute (plus
-   *     coordinates for sparse arrays).
-   *     Note that two numbers are returned per getAttribute. The first
+   * @param subarray Domain subarray
+   * @return The maximum number of elements for each array attribute.
+   *     If the Array is sparse, max number of coordinates are also returned.
+   *     Note that two numbers are returned per attribute. The first
    *     is the maximum number of elements in the offset buffer
-   *     (0 for fixed-sized getAttributes and coordinates),
-   *     and the second is the maximum number of elements of the value buffer.
-   * @throws TileDBError
+   *     (0 for fixed-sized attributes and coordinates),
+   *     the second is the maximum number of elements of the value buffer.
+   * @throws TileDBError A TileDB exception
    */
   public HashMap<String,Pair<Long,Long>> maxBufferElements(NativeArray subarray) throws TileDBError {
 
     Types.typeCheck(subarray.getNativeType(), schema.getDomain().getType());
-    
+
     uint64_tArray off_nbytes = new uint64_tArray(1);
     uint64_tArray val_nbytes = new uint64_tArray(1);
 
     HashMap<String, Pair<Long,Long>> ret = new HashMap<String, Pair<Long,Long>>();
-    
+
     for(Map.Entry<String, Attribute> a : schema.getAttributes().entrySet()) {
       if (a.getValue().isVar()) {
       	ctx.handleError(tiledb.tiledb_array_max_buffer_size_var(
-	  ctx.getCtxp(),
-	  arrayp, 
-          a.getKey(),
-	  subarray.toVoidPointer(), 
-	  off_nbytes.cast(), 
-	  val_nbytes.cast()));
+      	        ctx.getCtxp(),
+	            arrayp,
+                a.getKey(),
+	            subarray.toVoidPointer(),
+	            off_nbytes.cast(),
+	            val_nbytes.cast()));
 	ret.put(a.getKey(),
-		new Pair(off_nbytes.getitem(0).longValue() / 
-			 tiledb.tiledb_offset_size().longValue(),
-			 val_nbytes.getitem(0).longValue() / 
-		     	 tiledb.tiledb_datatype_size(a.getValue().getType().toSwigEnum()).longValue()));
+		new Pair(off_nbytes.getitem(0).longValue() /
+                   tiledb.tiledb_offset_size().longValue(),
+                 val_nbytes.getitem(0).longValue() /
+		     	   tiledb.tiledb_datatype_size(a.getValue().getType().toSwigEnum()).longValue()));
       } else {
         ctx.handleError(tiledb.tiledb_array_max_buffer_size(
 	  ctx.getCtxp(),
@@ -254,21 +246,23 @@ public class Array implements AutoCloseable {
 
   /**
    *
-   * @return The context of the array
+   * @return The TileDB Context object associated with the Array instance.
    */
   public Context getCtx() {
     return ctx;
   }
 
   /**
-   * @return The URI of the array
+   *
+   * @return The URI string of the array
    */
   public String getUri() {
-    return uri; }
+    return uri;
+  }
 
   /**
    *
-   * @return The schema of the array using an ArraySchema object.
+   * @return The TileDB ArraySchema of the Array instance.
    */
   public ArraySchema getSchema() {
     return schema;
@@ -276,29 +270,34 @@ public class Array implements AutoCloseable {
 
   /**
    *
-   * @return The query type that the array was opened for.
+   * @return The TileDB QueryType enum value that the Array instance.
    */
   public QueryType getQueryType() {
     return query_type;
   }
 
+  /**
+   *
+   * @return SWIG tiledb_array_t pointer wrapper object.
+   */
   protected SWIGTYPE_p_tiledb_array_t getArrayp() {
     return arrayp;
   }
 
   /**
-   * Delete the native objects and closes the array.
-   * @throws TileDBError
+   * Free's the native objects and closes the Array.
    */
-  public void close() throws TileDBError {
-    if(initialized) {
+  public synchronized void close() {
+    if (initialized) {
       initialized = false;
       tiledb.tiledb_array_close(ctx.getCtxp(), arrayp);
       tiledb.tiledb_array_free(arraypp);
-      if(schema!=null)
+      if (schema != null) {
         schema.close();
+      }
     }
   }
+
 
   @Override
   protected void finalize() throws Throwable {

@@ -27,15 +27,17 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.tiledb;
 
 public class Group {
-  private final String uri;
+
   private final Context ctx;
+  private final String uri;
 
   /**
-   * Creates a new group. A Group is a logical grouping of Objects on the
-   * storage system (a directory).
+   * Creates a new group. A Group is a logical grouping of TileDB objects on the
+   * storage system with the sample path prefix.
    *
    * @param ctx The TileDB context.
    * @param uri The group URI.
+   * @exception TileDBError A TileDB exception
    */
   public Group(Context ctx, String uri) throws TileDBError {
     this.ctx = ctx;

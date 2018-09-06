@@ -36,6 +36,7 @@ import io.tiledb.libtiledb.*;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 
 public class NativeArray implements AutoCloseable {
   private Class javaType;
@@ -56,10 +57,11 @@ public class NativeArray implements AutoCloseable {
 
   /**
    * Creates an empty native array using a native datatype and a provided size
-   * @param ctx
-   * @param size
-   * @param nativeType
-   * @throws TileDBError
+   *
+   * @param ctx A TileDB context
+   * @param size Number of array elements
+   * @param nativeType A TileDB datatype
+   * @exception TileDBError A TileDB exception
    */
   public NativeArray(Context ctx, int size, Datatype nativeType) throws TileDBError {
     ctx.deleterAdd(this);
@@ -72,10 +74,10 @@ public class NativeArray implements AutoCloseable {
 
   /**
    * Creates an empty native array using a java datatype and a provided size
-   * @param ctx
-   * @param size
-   * @param javaType
-   * @throws TileDBError
+   * @param ctx A TileDB context
+   * @param size Number of array elements
+   * @param javaType A Java scalar type class
+   * @exception TileDBError A TileDB exception
    */
   public NativeArray(Context ctx, int size, Class javaType) throws TileDBError {
     ctx.deleterAdd(this);
@@ -87,15 +89,15 @@ public class NativeArray implements AutoCloseable {
   }
 
   /**
-   * Creates a native array using a java datatype. It takes as input a Java buffer (i.e long[], int[]) and
-   * copies its values to the C native array.
-   * @param ctx
-   * @param buffer
-   * @param javaType
-   * @throws TileDBError
-   * @throws UnsupportedEncodingException
+   * Creates a native array using a java datatype.
+   * It takes as input a Java buffer (i.e long[], int[]) and copies its values to the C native array.
+   *
+   * @param ctx A TileDB context
+   * @param buffer A Java array
+   * @param javaType A Java scalar type class
+   * @exception TileDBError A TileDB exception
    */
-  public NativeArray(Context ctx, Object buffer, Class javaType) throws TileDBError, UnsupportedEncodingException {
+  public NativeArray(Context ctx, Object buffer, Class javaType) throws TileDBError {
     ctx.deleterAdd(this);
     this.javaType = javaType;
     this.nativeType = Types.getNativeType(javaType);
@@ -107,13 +109,12 @@ public class NativeArray implements AutoCloseable {
   /**
    * Creates a native array using a native datatype. It takes as input a Java buffer (i.e long[], int[]) and
    * copies its values to the C native array.
-   * @param ctx
-   * @param buffer
-   * @param nativeType
-   * @throws TileDBError
-   * @throws UnsupportedEncodingException
+   * @param ctx A TileDB context
+   * @param buffer A Java array
+   * @param nativeType A TileDB datatype
+   * @exception TileDBError A TileDB exception
    */
-  public NativeArray(Context ctx, Object buffer, Datatype nativeType) throws TileDBError, UnsupportedEncodingException {
+  public NativeArray(Context ctx, Object buffer, Datatype nativeType) throws TileDBError {
     ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
@@ -138,7 +139,7 @@ public class NativeArray implements AutoCloseable {
     createNativeArrayFromVoidPointer(pointer);
   }
 
-  private int getSize(Object buffer) throws UnsupportedEncodingException, TileDBError {
+  private int getSize(Object buffer) throws TileDBError {
     switch(this.nativeType){
       case TILEDB_FLOAT32:{
         return ((float[])buffer).length;
@@ -174,12 +175,12 @@ public class NativeArray implements AutoCloseable {
         return stringToBytes(buffer).length;
       }
       default:{
-        throw new TileDBError("Not supported getDomain getType " + nativeType);
+        throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
       }
     }
   }
 
-  private void createNativeArrayFromBuffer(Object buffer) throws TileDBError, UnsupportedEncodingException {
+  private void createNativeArrayFromBuffer(Object buffer) throws TileDBError {
     switch(nativeType){
       case TILEDB_FLOAT32:{
         size = ((float[])buffer).length;
@@ -238,7 +239,7 @@ public class NativeArray implements AutoCloseable {
         break;
       }
       default:{
-        throw new TileDBError("Not supported getDomain getType "+ nativeType);
+        throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
       }
     }
   }
@@ -290,16 +291,17 @@ public class NativeArray implements AutoCloseable {
         break;
       }
       default: {
-        throw new TileDBError("Not supported native array getType " + nativeType);
+        throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
       }
     }
   }
 
   /**
    * Returns the item on index position of the native array.
-   * @param index
-   * @return
-   * @throws TileDBError
+   *
+   * @param index Index of array scalar to return
+   * @return item A Java scalar
+   * @exception TileDBError A TileDB exception
    */
   public Object getItem(int index) throws TileDBError {
     switch (nativeType) {
@@ -337,18 +339,19 @@ public class NativeArray implements AutoCloseable {
         return int8_tArray.getitem(index);
       }
       default: {
-        throw new TileDBError("Not supported getDomain getType " + nativeType);
+        throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
       }
     }
   }
 
   /**
    * Sets the item on index position of the native array.
-   * @param index
-   * @param value
-   * @throws Exception
+   *
+   * @param index array index
+   * @param value array value to set at index
+   * @exception TileDBError A TileDB exception
    */
-  public void setItem(int index, Object value) throws Exception {
+  public void setItem(int index, Object value) throws TileDBError {
     switch (nativeType) {
       case TILEDB_FLOAT32: {
         floatArray.setitem(index, (float) value);
@@ -398,7 +401,7 @@ public class NativeArray implements AutoCloseable {
         break;
       }
       default: {
-        throw new TileDBError("Not supported getDomain getType " + nativeType);
+        throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
       }
     }
   }
@@ -439,16 +442,17 @@ public class NativeArray implements AutoCloseable {
         return PointerUtils.toVoid(int8_tArray);
       }
       default: {
-        throw new TileDBError("Not supported getDomain getType " + nativeType);
+        throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
       }
     }
   }
 
   /**
    * Return a Java array (i.e. int[], long[]) that is a copy of the native array values with the given size.
-   * @param elements
-   * @return
-   * @throws TileDBError
+   *
+   * @param elements number of elements to return
+   * @return A java array
+   * @exception TileDBError A TileDB exception
    */
   public Object toJavaArray(int elements) throws TileDBError {
     switch (nativeType) {
@@ -486,7 +490,7 @@ public class NativeArray implements AutoCloseable {
         return Utils.int8ArrayGet(int8_tArray,elements);
       }
       default: {
-        throw new TileDBError("Not supported getDomain getType " + nativeType);
+        throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
       }
     }
   }
@@ -534,7 +538,7 @@ public class NativeArray implements AutoCloseable {
         break;
       }
       default: {
-        throw new TileDBError("Not supported getDomain getType " + nativeType);
+        throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
       }
     }
   }
@@ -582,13 +586,13 @@ public class NativeArray implements AutoCloseable {
         break;
       }
       default: {
-        throw new TileDBError("Not supported getDomain getType " + nativeType);
+        throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
       }
     }
   }
 
-  private byte[] stringToBytes(Object buffer) throws UnsupportedEncodingException {
-    return ((String) buffer).getBytes("UTF-8");
+  private byte[] stringToBytes(Object buffer)  {
+    return ((String) buffer).getBytes(StandardCharsets.UTF_8);
   }
 
   protected Datatype getNativeType() {
@@ -612,9 +616,9 @@ public class NativeArray implements AutoCloseable {
   }
 
   /**
-   * Delete the native object.
+   * Free's NativeArray off heap allocated resources
    */
-  public void close() throws TileDBError {
+  public void close() {
     if(floatArray != null){
       floatArray.delete();
     }

@@ -26,30 +26,38 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
+import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec;
+
 
 /**
  * Describes one dimension of an Array. The dimension consists
  * of a type, lower and upper bound, and tile-extent describing
  * the memory ordering. Dimensions are added to a Domain.
  *
- * **Example:**
- * @code{.java}
- * Context ctx = new Context();
- * Domain domain = new Domain(ctx);
- * // Create a dimension with inclusive domain [0,1000] and tile extent 100.
- * Dimension<Integer> d = new Dimension<Integer>(ctx, "d", Integer.class, new Pair<Integer, Integer>(0, 1000), 100);
- * domain.addDimension(d);
- * @endcode
+ * <b>Example:</b>
+ * <pre>{@code
+ *   Context ctx = new Context();
+ *   Domain domain = new Domain(ctx);
+ *   // Create a dimension with inclusive domain [0,1000] and tile extent 100.
+ *   Dimension<Integer> d = new Dimension<Integer>(ctx, "d", Integer.class, new Pair<Integer, Integer>(0, 1000), 100);
+ *   domain.addDimension(d);
+ * }</pre>
  **/
 public class Dimension<T> implements AutoCloseable {
-  private SWIGTYPE_p_p_tiledb_dimension_t dimensionpp;
-  private SWIGTYPE_p_tiledb_dimension_t dimensionp;
   private Context ctx;
   private Datatype type;
   private String name;
   private Pair<T,T> domain;
 
-  /** Constructor from native object **/
+  private SWIGTYPE_p_tiledb_dimension_t dimensionp;
+  private SWIGTYPE_p_p_tiledb_dimension_t dimensionpp;
+
+  /**
+   * Constructor from native object
+   *
+   * @param ctx A TileDB context
+   * @param dimensionpp A Swig wrapper object to a tiledb_dimension_t pointer
+   */
   protected Dimension(Context ctx, SWIGTYPE_p_p_tiledb_dimension_t dimensionpp) {
     ctx.deleterAdd(this);
     this.ctx = ctx;
@@ -62,14 +70,16 @@ public class Dimension<T> implements AutoCloseable {
    *
    * @param ctx The TileDB context.
    * @param name The dimension name.
+   * @param type The Dimension Java scalar type class
    * @param domain The dimension domain (A Pair containing the lower and upper bound).
    * @param extent The tile extent on the dimension.
+   * @exception TileDBError A TileDB exception
    */
-  public Dimension( Context ctx, String name, Class<T> type, Pair<T,T> domain, T extent) throws Exception {
+  public Dimension( Context ctx, String name, Class<T> type, Pair<T,T> domain, T extent) throws TileDBError {
     createImpl(ctx, name, type,domain,extent);
   }
 
-  private void createImpl(Context ctx, String name, Class<T> type, Pair<T,T> domain, T extent) throws Exception {
+  private void createImpl(Context ctx, String name, Class<T> type, Pair<T,T> domain, T extent) throws TileDBError {
     this.ctx = ctx;
     dimensionpp = tiledb.new_tiledb_dimension_tpp();
     this.type =  Types.getNativeType(type);
@@ -99,8 +109,8 @@ public class Dimension<T> implements AutoCloseable {
 
   /**
    *
-   * @return The name of the dimension.
-   * @throws TileDBError
+   * @return The String name of the dimension.
+   * @throws TileDBError A TileDB exception
    */
   public String getName() throws TileDBError {
     if(name==null){
@@ -115,7 +125,7 @@ public class Dimension<T> implements AutoCloseable {
   /**
    *
    * @return The dimension datatype.
-   * @throws TileDBError
+   * @throws TileDBError A TileDB exception
    */
   public Datatype getType() throws TileDBError {
     if (type == null) {
@@ -130,7 +140,7 @@ public class Dimension<T> implements AutoCloseable {
   /**
    *
    * @return The domain of the dimension (A Pair containing the lower and upper bound).
-   * @throws TileDBError
+   * @throws TileDBError A TileDB exception
    */
   public Pair<T, T> getDomain() throws TileDBError {
     if (domain == null) {
@@ -146,7 +156,7 @@ public class Dimension<T> implements AutoCloseable {
   /**
    *
    * @return A string representation of the domain.
-   * @throws TileDBError
+   * @throws TileDBError A TileDB exception
    */
   public String domainToStr() throws TileDBError {
     Pair<T, T> d = getDomain();
@@ -156,7 +166,7 @@ public class Dimension<T> implements AutoCloseable {
   /**
    *
    * @return The tile extent of the dimension.
-   * @throws TileDBError
+   * @throws TileDBError A TileDB exception
    */
   public T getTileExtent() throws TileDBError {
     getType();
@@ -169,15 +179,14 @@ public class Dimension<T> implements AutoCloseable {
   /**
    *
    * @return A string representation of the extent.
-   * @throws TileDBError
+   * @throws TileDBError A TileDB exception
    */
   public String tileExtentToStr() throws TileDBError {
     return getTileExtent().toString();
   }
 
-
   /**
-   * Delete the native object.
+   * Free's native TileDB resources associated with the Dimension object
    */
   public void close() throws TileDBError {
     if(dimensionp!=null)

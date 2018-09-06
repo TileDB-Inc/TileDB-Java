@@ -29,8 +29,11 @@ import io.tiledb.libtiledb.SWIGTYPE_p_long_long;
 import io.tiledb.libtiledb.SWIGTYPE_p_p_char;
 import io.tiledb.libtiledb.tiledb;
 
-/**  TileDB version. Format: `major_minor_rev`.*/
+/**
+ * TileDB version. (major, minor, revision)
+ */
 public class Version {
+
   private int major;
   private int minor;
   private int rev;
@@ -38,7 +41,7 @@ public class Version {
   /**
    * Constructor for TileDB library version object
    */
-  public Version(){
+  public Version() {
     SWIGTYPE_p_int majorp = tiledb.new_intp(), minorp = tiledb.new_intp(), revp = tiledb
         .new_intp();
     tiledb.tiledb_version(majorp, minorp, revp);
@@ -76,6 +79,6 @@ public class Version {
 
   /** Prints version to string. */
   public String toString(){
-    return "TileDB v"+major+"."+minor+"."+rev;
+    return "TileDB v" + major + "." + minor + "." + rev;
   }
 }

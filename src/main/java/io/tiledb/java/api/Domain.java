@@ -31,43 +31,41 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Represents the domain of an array.
+ * Represents the domain of an array. <br>
  *
- * @details
  * A Domain defines the set of Dimension objects for a given array. The
  * properties of a Domain derive from the underlying dimensions. A
- * Domain is a component of an ArraySchema.
+ * Domain is a component of an ArraySchema. <br>
  *
- * @note The dimension can only be integral types, as well as floating point for sparse array domains.
+ * <b>Note:</b> The dimension can only be integral types, as well as floating point for sparse array domains.
  *
- * **Example:**
+ * <b>Example:</b>
+ * <pre>{@code
+ *   Context ctx = new Context();
+ *   Domain domain = new Domain(ctx);
  *
- * @code{.java}
- * Context ctx = new Context();
- * Domain domain = new Domain(ctx);
+ *   // Note the dimension bounds are inclusive.
+ *   Dimension<Integer> d1 = new Dimension<Integer>(ctx, "d1", Integer.class, new Pair<Integer, Integer>(-10, 10), 1);
+ *   Dimension<Long> d2 = new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(1l, 10l), 1l);
+ *   Dimension<Integer> d3 = new Dimension<Integer>(ctx, "d3", Integer.class, new Pair<Integer, Integer>(-100, 100), 10);
  *
- * // Note the dimension bounds are inclusive.
- * Dimension<Integer> d1 = new Dimension<Integer>(ctx, "d1", Integer.class, new Pair<Integer, Integer>(-10, 10), 1);
- * Dimension<Long> d2 = new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(1l, 10l), 1l);
- * Dimension<Integer> d3 = new Dimension<Integer>(ctx, "d3", Integer.class, new Pair<Integer, Integer>(-100, 100), 10);
+ *   domain.addDimension(d1);
+ *   domain.addDimension(d2); // Throws error, all dims must be same type
+ *   domain.addDimension(d3);
  *
- * domain.addDimension(d1);
- * domain.addDimension(d2); // Throws error, all dims must be same type
- * domain.addDimension(d3);
+ *   domain.getType(); // TILEDB_INT32, determined from the dimensions
+ *   domain.getRank(); // 2, d1 and d3
  *
- * domain.getType(); // TILEDB_INT32, determined from the dimensions
- * domain.getRank(); // 2, d1 and d3
- *
- * ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
- * schema.setDomain(domain); // Set the array's domain
- *
- * @endcode
+ *   ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+ *   schema.setDomain(domain); // Set the array's domain
+ * }</pre>
  **/
 public class Domain implements AutoCloseable {
-  private SWIGTYPE_p_p_tiledb_domain_t domainpp;
-  private SWIGTYPE_p_tiledb_domain_t domainp;
   private Context ctx;
   private List<Dimension> dimensions;
+
+  private SWIGTYPE_p_p_tiledb_domain_t domainpp;
+  private SWIGTYPE_p_tiledb_domain_t domainp;
 
   protected Domain(Context ctx, SWIGTYPE_p_p_tiledb_domain_t domainpp) {
     ctx.deleterAdd(this);
@@ -106,12 +104,21 @@ public class Domain implements AutoCloseable {
 //
 //  }
 
-  /** Dumps the Domain in an ASCII representation to stdout. */
+  /**
+   * Dumps the Domain in an ASCII representation to stdout.
+   *
+   * @exception TileDBError A TileDB exception
+   */
   public void dump() throws TileDBError {
     ctx.handleError(tiledb.tiledb_domain_dump_stdout(ctx.getCtxp(), domainp));
   }
 
-  /** Dumps the Domain in an ASCII representation to stdout. */
+  /**
+   * Dumps the Domain in an ASCII representation to stdout.
+   *
+   * @param filename A string filename
+   * @exception TileDBError A TileDB exception
+   */
   public void dump(String filename) throws TileDBError {
     ctx.handleError(tiledb.tiledb_domain_dump_file(ctx.getCtxp(), domainp, filename));
   }
@@ -119,7 +126,7 @@ public class Domain implements AutoCloseable {
   /**
    *
    * @return The domain Enumerated type.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public Datatype getType() throws TileDBError {
     SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
@@ -132,7 +139,7 @@ public class Domain implements AutoCloseable {
   /**
    *
    * @return The rank of the domain (number of dimensions)
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public long getRank() throws TileDBError {
     SWIGTYPE_p_unsigned_int np = tiledb.new_uintp();
@@ -145,7 +152,7 @@ public class Domain implements AutoCloseable {
   /**
    *
    * @return A List containing the Dimensions in domain.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public List<Dimension> getDimensions() throws TileDBError {
     if(dimensions==null){
@@ -164,8 +171,9 @@ public class Domain implements AutoCloseable {
 
   /**
    * Adds a new dimension to the domain.
+   *
    * @param dimension The Dimension object to be added.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public void addDimension(Dimension dimension) throws TileDBError {
     if(dimensions==null){
@@ -177,8 +185,9 @@ public class Domain implements AutoCloseable {
 
   /**
    * Adds multiple Dimensions.
+   *
    * @param dims A list of Dimension objects to be added.
-   * @throws TileDBError
+   * @exception TileDBError A TileDB exception
    */
   public void addDimensions(Collection<Dimension> dims) throws TileDBError {
     for (Dimension d : dims) {
@@ -187,7 +196,7 @@ public class Domain implements AutoCloseable {
   }
 
   /**
-   * Delete the native object.
+   * Free's native TileDB resources associated with the Domain object
    */
   public void close() throws TileDBError {
     if(domainp!=null)

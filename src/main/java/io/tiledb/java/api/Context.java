@@ -32,31 +32,28 @@ import io.tiledb.libtiledb.*;
 
 
 /**
- * A TileDB context wraps a TileDB storage manager "instance."
- * Most objects and functions will require a Context.
+ * A TileDB context wraps a TileDB storage manager instance.
+ * Most objects and functions will require a Context. <br>
  *
  * Internal error handling is also defined by the Context; the default error
- * handler throws a TileDBError with a specific message.
+ * handler throws a TileDBError with a specific message. <br>
  *
- * **Example:**
+ * <pre><b>Example:</b>
+ *   Context ctx = new Context();
+ *   // Use ctx when creating other objects:
+ *   ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
  *
- * @code{.java}
- * Context ctx = new Context();
- * // Use ctx when creating other objects:
- * ArraySchema schema = new ArraySchema(ctx, tiledb_array_type_t.TILEDB_SPARSE);
+ *   // Set a custom error handler:
+ *   ctx.setErrorHandler(new MyContextCallback());
  *
- * // Set a custom error handler:
- * ctx.setErrorHandler(new MyContextCallback());
- *
- * //Context custom callback class example
- * private static class MyContextCallback extends ContextCallback {
- *   @Override
- *   public void call(String msg) throws TileDBError {
- *     System.out.println("Callback error message: "+msg);
+ *   //Context custom callback class example
+ *   private static class MyContextCallback extends ContextCallback {
+ *     {@literal @Override}
+ *     public void call(String msg) throws TileDBError {
+ *       System.out.println("Callback error message: " + msg);
+ *     }
  *   }
- * }
- * @endcode
- *
+ * </pre>
  */
 public class Context implements AutoCloseable {
 
@@ -78,6 +75,8 @@ public class Context implements AutoCloseable {
 
   /**
    * Constructor. Creates a TileDB context with the given configuration.
+   *
+   * @param config A TileDB Config object
    * @throws TileDBError if construction fails
    */
   public Context(Config config) throws TileDBError {
@@ -86,9 +85,9 @@ public class Context implements AutoCloseable {
 
   /**
    * Sets the error handler using a subclass of ContextCallback. If none is set,
-   * `ContextCallback` is used. The callback accepts an error
-   *  message.
-   * @throws TileDBError if construction fails
+   * ContextCallback is used. The callback accepts an error message.
+   *
+   * @param errorHandler A custom ContextCallback error handler
    */
   public void setErrorHandler(ContextCallback errorHandler) {
     this.errorHandler = errorHandler;
@@ -99,6 +98,7 @@ public class Context implements AutoCloseable {
    * in case of error.
    *
    * @param rc If != TILEDB_OK, call error handler
+   * @exception TileDBError A TileDB exception
    */
   public void handleError(int rc) throws TileDBError {
     // Do nothing if there is no error
@@ -131,6 +131,10 @@ public class Context implements AutoCloseable {
 
   /**
    * Checks if the filesystem backend is supported.
+   *
+   * @param fs TileDB filesystem enum
+   * @return true if the filesystem is supported, false otherwise
+   * @exception TileDBError A TileDB exception
    */
   public boolean isSupportedFs(Filesystem fs) throws TileDBError {
     SWIGTYPE_p_int ret = tiledb.new_intp();
