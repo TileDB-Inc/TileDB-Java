@@ -75,15 +75,17 @@ public class Domain implements AutoCloseable {
   }
 
   public Domain(Context ctx) throws TileDBError {
+    SWIGTYPE_p_p_tiledb_domain_t _domainpp = tiledb.new_tiledb_domain_tpp();
+    try {
+      ctx.handleError(tiledb.tiledb_domain_alloc(ctx.getCtxp(), _domainpp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_domain_tpp(_domainpp);
+      throw err;
+    }
     ctx.deleterAdd(this);
     this.ctx = ctx;
-    domainpp = tiledb.new_tiledb_domain_tpp();
-    ctx.handleError(tiledb.tiledb_domain_alloc(ctx.getCtxp(), domainpp));
-    this.domainp = tiledb.tiledb_domain_tpp_value(domainpp);
-  }
-
-  protected SWIGTYPE_p_p_tiledb_domain_t getDomainpp() {
-    return domainpp;
+    this.domainp = tiledb.tiledb_domain_tpp_value(_domainpp);
+    this.domainpp = _domainpp;
   }
 
   protected SWIGTYPE_p_tiledb_domain_t getDomainp() {
@@ -130,7 +132,12 @@ public class Domain implements AutoCloseable {
    */
   public Datatype getType() throws TileDBError {
     SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
-    ctx.handleError(tiledb.tiledb_domain_get_type(ctx.getCtxp(), domainp, typep));
+    try {
+      ctx.handleError(tiledb.tiledb_domain_get_type(ctx.getCtxp(), domainp, typep));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_datatype_tp(typep);
+      throw err;
+    }
     tiledb_datatype_t type = tiledb.tiledb_datatype_tp_value(typep);
     tiledb.delete_tiledb_datatype_tp(typep);
     return Datatype.fromSwigEnum(type);
@@ -143,7 +150,12 @@ public class Domain implements AutoCloseable {
    */
   public long getRank() throws TileDBError {
     SWIGTYPE_p_unsigned_int np = tiledb.new_uintp();
-    ctx.handleError(tiledb.tiledb_domain_get_ndim(ctx.getCtxp(), domainp, np));
+    try {
+      ctx.handleError(tiledb.tiledb_domain_get_ndim(ctx.getCtxp(), domainp, np));
+    } catch (TileDBError err) {
+      tiledb.delete_uintp(np);
+      throw err;
+    }
     long rank = tiledb.uintp_value(np);
     tiledb.delete_uintp(np);
     return rank;
@@ -155,13 +167,17 @@ public class Domain implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public List<Dimension> getDimensions() throws TileDBError {
-    if(dimensions==null){
+    if (dimensions == null){
       long rank = getRank();
       dimensions = new ArrayList<Dimension>();
       for (long i=0; i<rank; i++){
         SWIGTYPE_p_p_tiledb_dimension_t dimpp = tiledb.new_tiledb_dimension_tpp();
-        ctx.handleError(
-            tiledb.tiledb_domain_get_dimension_from_index(ctx.getCtxp(), domainp, i, dimpp));
+        try {
+          ctx.handleError(tiledb.tiledb_domain_get_dimension_from_index(ctx.getCtxp(), domainp, i, dimpp));
+        } catch (TileDBError err) {
+          tiledb.delete_tiledb_dimension_tpp(dimpp);
+          throw err;
+        }
         Dimension dim = new Dimension(ctx, dimpp);
         dimensions.add(dim);
       }

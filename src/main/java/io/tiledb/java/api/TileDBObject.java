@@ -46,7 +46,12 @@ public class TileDBObject {
    */
   public TileDBObject(Context ctx, String uri) throws TileDBError {
     SWIGTYPE_p_tiledb_object_t typep = tiledb.new_tiledb_object_tp();
-    ctx.handleError(tiledb.tiledb_object_type(ctx.getCtxp(), uri, typep));
+    try {
+      ctx.handleError(tiledb.tiledb_object_type(ctx.getCtxp(), uri, typep));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_object_tp(typep);
+      throw err;
+    }
     this.uri = uri;
     this.ctx = ctx;
     this.type = TileDBObjectType.fromSwigEnum(tiledb.tiledb_object_tp_value(typep));

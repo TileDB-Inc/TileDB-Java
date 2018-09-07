@@ -110,6 +110,7 @@ public class Context implements AutoCloseable {
     rc = tiledb.tiledb_ctx_get_last_error(ctxp, errorpp);
     if (rc != tiledb.TILEDB_OK) {
       tiledb.tiledb_error_free(errorpp);
+      tiledb.delete_tiledb_error_tpp(errorpp);
       errorHandler.call("[TileDB::JavaAPI] Error: Non-retrievable error occurred");
     }
 
@@ -119,11 +120,13 @@ public class Context implements AutoCloseable {
     String msg = tiledb.charpp_value(msgpp);
     if (rc != tiledb.TILEDB_OK) {
       tiledb.tiledb_error_free(errorpp);
+      tiledb.delete_tiledb_error_tpp(errorpp);
       errorHandler.call("[TileDB::JavaAPI] Error: Non-retrievable error occurred");
     }
 
     // Clean up
     tiledb.tiledb_error_free(errorpp);
+    tiledb.delete_tiledb_error_tpp(errorpp);
 
     // Throw exception
     errorHandler.call(msg);
@@ -139,35 +142,28 @@ public class Context implements AutoCloseable {
   public boolean isSupportedFs(Filesystem fs) throws TileDBError {
     SWIGTYPE_p_int ret = tiledb.new_intp();
     tiledb.tiledb_ctx_is_supported_fs(ctxp, fs.toSwigEnum(), ret);
-    return tiledb.intp_value(ret) != 0;
+    boolean isSupported = tiledb.intp_value(ret) != 0;
+    tiledb.delete_intp(ret);
+    return isSupported;
   }
 
 
   private void createContext(Config config) throws TileDBError {
-    ctxpp = tiledb.new_tiledb_ctx_tpp();
-    if (tiledb.tiledb_ctx_alloc(config.getConfigp(), ctxpp) != tiledb.TILEDB_OK)
+    SWIGTYPE_p_p_tiledb_ctx_t _ctxpp = tiledb.new_tiledb_ctx_tpp();
+    if (tiledb.tiledb_ctx_alloc(config.getConfigp(), _ctxpp) != tiledb.TILEDB_OK) {
+      tiledb.delete_tiledb_ctx_tpp(_ctxpp);
       throw new TileDBError("[TileDB::JavaAPI] Error: Failed to create context");
-    ctxp = tiledb.tiledb_ctx_tpp_value(ctxpp);
+    }
+    this.ctxpp = _ctxpp;
+    this.ctxp = tiledb.tiledb_ctx_tpp_value(_ctxpp);
     this.config = config;
-    errorHandler = new ContextCallback();
-    deleter = new Deleter();
+    this.errorHandler = new ContextCallback();
+    this.deleter = new Deleter();
     Runtime.getRuntime().addShutdownHook(deleter);
-  }
-
-  protected SWIGTYPE_p_p_tiledb_ctx_t getCtxpp() {
-    return ctxpp;
-  }
-
-  protected void setCtxpp(SWIGTYPE_p_p_tiledb_ctx_t ctxpp) {
-    this.ctxpp = ctxpp;
   }
 
   protected SWIGTYPE_p_tiledb_ctx_t getCtxp() {
     return ctxp;
-  }
-
-  protected void setCtxp(SWIGTYPE_p_tiledb_ctx_t ctxp) {
-    this.ctxp = ctxp;
   }
 
   /**
@@ -176,14 +172,6 @@ public class Context implements AutoCloseable {
    */
   public Config getConfig() {
     return config;
-  }
-
-  /**
-   * Sets the Context Config.
-   * @param config The Config object to be set.
-   */
-  public void setConfig(Config config) {
-    this.config = config;
   }
 
   protected void deleterAdd(AutoCloseable object) {
@@ -195,9 +183,9 @@ public class Context implements AutoCloseable {
    */
   public void close() throws TileDBError {
     deleter.run();
-    if(config!=null)
+    if(config != null)
       config.close();
-    if(ctxp!=null) {
+    if(ctxp != null) {
       tiledb.tiledb_ctx_free(ctxpp);
     }
   }
