@@ -91,8 +91,7 @@ public class Array implements AutoCloseable {
    * {@code
    *   Context ctx = new Context();
    *   Array array new Array(ctx, "s3://bucket-name/array-name");
-   * }
-   * </pre>
+   * }</pre>
    *
    * @param ctx TileDB context
    * @param uri The array URI
@@ -103,14 +102,17 @@ public class Array implements AutoCloseable {
   }
 
   private synchronized void openArray(QueryType query_type) throws TileDBError {
-    arraypp = tiledb.new_tiledb_array_tpp();
-    ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, arraypp)); 
-    arrayp = tiledb.tiledb_array_tpp_value(arraypp);
-    ctx.handleError(
-      tiledb.tiledb_array_open(
-        ctx.getCtxp(), 
-	    arrayp,
-        query_type.toSwigEnum()));
+    SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
+    ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
+    SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
+    try {
+      ctx.handleError(tiledb.tiledb_array_open(ctx.getCtxp(), _arrayp, query_type.toSwigEnum()));
+    } catch (Exception e) {
+      tiledb.delete_tiledb_array_tpp(_arraypp);
+      throw e;
+    }
+    arraypp = _arraypp;
+    arrayp = _arrayp;
     initialized = true;
   }
 
@@ -163,15 +165,18 @@ public class Array implements AutoCloseable {
    */
   public HashMap<String, Pair> nonEmptyDomain() throws TileDBError {
     HashMap<String, Pair> ret = new HashMap<String, Pair>();
-    SWIGTYPE_p_int emptyp = tiledb.new_intp();
     List<Dimension> dimensions = schema.getDomain().getDimensions();
-    NativeArray buffer = new NativeArray(ctx,2 * dimensions.size(), schema.getDomain().getType());
-    ctx.handleError(tiledb.tiledb_array_get_non_empty_domain(
-        ctx.getCtxp(), arrayp, buffer.toVoidPointer(), emptyp));
-    if (tiledb.intp_value(emptyp) ==  1) {
-      return ret;
+    NativeArray buffer = new NativeArray(ctx, 2 * dimensions.size(), schema.getDomain().getType());
+    SWIGTYPE_p_int emptyp = tiledb.new_intp();
+    try {
+        ctx.handleError(tiledb.tiledb_array_get_non_empty_domain(
+                ctx.getCtxp(), arrayp, buffer.toVoidPointer(), emptyp));
+        if (tiledb.intp_value(emptyp) == 1) {
+            return ret;
+        }
+    } finally {
+        tiledb.delete_intp(emptyp);
     }
-    tiledb.delete_intp(emptyp);
     int i = 0;
     for (Dimension d : dimensions) {
       ret.put(d.getName(), new Pair(buffer.getItem(i), buffer.getItem(i + 1)));

@@ -64,16 +64,23 @@ public class Query implements AutoCloseable {
   private boolean executed;
 
   public Query(Array array, QueryType type) throws TileDBError {
-    this.ctx = array.getCtx();
+    Context _ctx = array.getCtx();
+    SWIGTYPE_p_p_tiledb_query_t _querypp = tiledb.new_tiledb_query_tpp();
+    try {
+      _ctx.handleError(tiledb.tiledb_query_alloc(_ctx.getCtxp(), array.getArrayp(), type.toSwigEnum(), _querypp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_query_tpp(_querypp);
+      throw err;
+    }
+    this.ctx = _ctx;
     ctx.deleterAdd(this);
     this.type = type;
     this.array = array;
-    this.querypp = tiledb.new_tiledb_query_tpp();
-    ctx.handleError(tiledb.tiledb_query_alloc(ctx.getCtxp(), array.getArrayp(), type.toSwigEnum(), this.querypp));
-    this.queryp = tiledb.tiledb_query_tpp_value(querypp);
-    this.buffers_ = new HashMap<String, NativeArray>();
-    this.var_buffers_ = new HashMap<String, Pair<NativeArray, NativeArray>>();
-    this.buffer_sizes_ = new HashMap<String, Pair<uint64_tArray, uint64_tArray>>();
+    this.querypp = _querypp;
+    this.queryp = tiledb.tiledb_query_tpp_value(_querypp);
+    this.buffers_ = new HashMap<>();
+    this.var_buffers_ = new HashMap<>();
+    this.buffer_sizes_ = new HashMap<>();
     executed = false;
   }
 
@@ -98,7 +105,12 @@ public class Query implements AutoCloseable {
    */
   public QueryStatus getQueryStatus() throws TileDBError {
     SWIGTYPE_p_tiledb_query_status_t statusp = tiledb.new_tiledb_query_status_tp();
-    ctx.handleError(tiledb.tiledb_query_get_status(ctx.getCtxp(), queryp, statusp));
+    try {
+      ctx.handleError(tiledb.tiledb_query_get_status(ctx.getCtxp(), queryp, statusp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_query_status_tp(statusp);
+      throw err;
+    }
     tiledb_query_status_t status = tiledb.tiledb_query_status_tp_value(statusp);
     tiledb.delete_tiledb_query_status_tp(statusp);
     return QueryStatus.fromSwigEnum(status);

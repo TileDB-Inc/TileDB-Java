@@ -40,8 +40,8 @@ public class Group {
    * @exception TileDBError A TileDB exception
    */
   public Group(Context ctx, String uri) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_group_create(ctx.getCtxp(), uri));
     this.ctx = ctx;
     this.uri = uri;
-    ctx.handleError(tiledb.tiledb_group_create(ctx.getCtxp(), uri));
   }
 }

@@ -26,6 +26,8 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
+import javax.xml.crypto.Data;
+
 import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 
 /**
@@ -68,7 +70,6 @@ public class Attribute implements AutoCloseable {
   private SWIGTYPE_p_tiledb_attribute_t attributep;
   private SWIGTYPE_p_p_tiledb_attribute_t attributepp;
 
-
   /**
    *
    * Construct an attribute with a name and type. `cellValNum` will
@@ -76,26 +77,51 @@ public class Attribute implements AutoCloseable {
    *
    * @param ctx TileDB Context
    * @param name Name of the Attribute
-   * @param atrrType Java type of the Attribute
+   * @param attrType Java type of the Attribute
    * @exception TileDBError A TileDB exception
    */
-  public Attribute(Context ctx, String name, Class atrrType) throws TileDBError {
+  public Attribute(Context ctx, String name, Class attrType) throws TileDBError {
+    SWIGTYPE_p_p_tiledb_attribute_t _attributepp = tiledb.new_tiledb_attribute_tpp();
+    Datatype _type = Types.getNativeType(attrType);
+    try {
+      ctx.handleError(tiledb.tiledb_attribute_alloc(ctx.getCtxp(), name, _type.toSwigEnum(), _attributepp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_attribute_tpp(_attributepp);
+      throw err;
+    }
     ctx.deleterAdd(this);
     this.ctx = ctx;
     this.name = name;
-    this.attributepp = tiledb.new_tiledb_attribute_tpp();
-    this.type = Types.getNativeType(atrrType);
-    ctx.handleError(tiledb.tiledb_attribute_alloc(ctx.getCtxp(), name, type.toSwigEnum(), attributepp));
-    this.attributep = tiledb.tiledb_attribute_tpp_value(attributepp);
+    this.type = _type;
+    this.attributep = tiledb.tiledb_attribute_tpp_value(_attributepp);
+    this.attributepp = _attributepp;
   }
 
   /* Constructor from native object */
   protected Attribute(Context ctx, SWIGTYPE_p_p_tiledb_attribute_t attributepp) throws TileDBError {
+    SWIGTYPE_p_tiledb_attribute_t _attributep = tiledb.tiledb_attribute_tpp_value(attributepp);
+    SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
+    SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
+    String _name;
+    Datatype _type;
+    try {
+      ctx.handleError(tiledb.tiledb_attribute_get_name(ctx.getCtxp(), _attributep, namepp));
+      ctx.handleError(tiledb.tiledb_attribute_get_type(ctx.getCtxp(), _attributep, typep));
+      _name = tiledb.charpp_value(namepp);
+      _type = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
+      tiledb.delete_charpp(namepp);
+      tiledb.delete_tiledb_datatype_tp(typep);
+    } catch (TileDBError err) {
+      tiledb.delete_charpp(namepp);
+      tiledb.delete_tiledb_datatype_tp(typep);
+      throw err;
+    }
     ctx.deleterAdd(this);
     this.ctx = ctx;
+    this.name = _name;
+    this.type = _type;
     this.attributepp = attributepp;
     this.attributep = tiledb.tiledb_attribute_tpp_value(attributepp);
-    getName();
   }
 
   protected SWIGTYPE_p_tiledb_attribute_t getAttributep() {
@@ -105,30 +131,16 @@ public class Attribute implements AutoCloseable {
   /**
    *
    * @return The name of the Attribute.
-   * @exception TileDBError A TileDB exception
    */
-  public String getName() throws TileDBError {
-    if(name==null){
-      SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
-      ctx.handleError(tiledb.tiledb_attribute_get_name(ctx.getCtxp(), attributep, namepp));
-      name = tiledb.charpp_value(namepp);
-      tiledb.delete_charpp(namepp);
-    }
+  public String getName() {
     return name;
   }
 
   /**
    *
    * @return The Attribute Enumerated datatype (C type).
-   * @exception TileDBError A TileDB exception
    */
-  public Datatype getType() throws TileDBError {
-    if(type==null){
-      SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
-      ctx.handleError(tiledb.tiledb_attribute_get_type(ctx.getCtxp(), attributep, typep));
-      type = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
-      tiledb.delete_tiledb_datatype_tp(typep);
-    }
+  public Datatype getType() {
     return type;
   }
 
@@ -139,7 +151,12 @@ public class Attribute implements AutoCloseable {
    */
   public long getCellSize() throws TileDBError {
     SWIGTYPE_p_unsigned_long_long sizep = tiledb.new_ullp();
-    ctx.handleError(tiledb.tiledb_attribute_get_cell_size(ctx.getCtxp(), attributep, sizep));
+    try {
+      ctx.handleError(tiledb.tiledb_attribute_get_cell_size(ctx.getCtxp(), attributep, sizep));
+    } catch (TileDBError err) {
+      tiledb.delete_ullp(sizep);
+      throw err;
+    }
     long size = tiledb.ullp_value(sizep).longValue();
     tiledb.delete_ullp(sizep);
     return size;
@@ -154,7 +171,12 @@ public class Attribute implements AutoCloseable {
    */
   public long getCellValNum() throws TileDBError {
     SWIGTYPE_p_unsigned_int sizep = tiledb.new_uintp();
-    ctx.handleError(tiledb.tiledb_attribute_get_cell_val_num(ctx.getCtxp(), attributep, sizep));
+    try {
+      ctx.handleError(tiledb.tiledb_attribute_get_cell_val_num(ctx.getCtxp(), attributep, sizep));
+    } catch (TileDBError err) {
+      tiledb.delete_uintp(sizep);
+      throw err;
+    }
     long size = tiledb.uintp_value(sizep);
     tiledb.delete_uintp(sizep);
     return size;
@@ -186,11 +208,16 @@ public class Attribute implements AutoCloseable {
   public Compressor getCompressor() throws TileDBError {
     SWIGTYPE_p_tiledb_compressor_t compressor = tiledb.new_tiledb_compressor_tp();
     SWIGTYPE_p_int level = tiledb.new_intp();
-    ctx.handleError(
-        tiledb.tiledb_attribute_get_compressor(ctx.getCtxp(), attributep, compressor, level));
-    Compressor cmp = new Compressor(
-        CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressor)),
-        tiledb.intp_value(level));
+    Compressor cmp;
+    try {
+      ctx.handleError(tiledb.tiledb_attribute_get_compressor(ctx.getCtxp(), attributep, compressor, level));
+      cmp = new Compressor(CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressor)),
+                           tiledb.intp_value(level));
+    } catch (TileDBError err) {
+      tiledb.delete_intp(level);
+      tiledb.delete_tiledb_compressor_tp(compressor);
+      throw err;
+    }
     tiledb.delete_intp(level);
     tiledb.delete_tiledb_compressor_tp(compressor);
     return cmp;
@@ -214,8 +241,8 @@ public class Attribute implements AutoCloseable {
   public String toString() {
     try {
       return "Attr<" + getName() + ',' + getType() + ',' + ((getCellValNum() == TILEDB_VAR_NUM) ? "VAR" : getCellValNum()) + '>';
-    } catch (TileDBError tileDBError) {
-      tileDBError.printStackTrace();
+    } catch (TileDBError err) {
+      err.printStackTrace();
     }
     return "";
   }
