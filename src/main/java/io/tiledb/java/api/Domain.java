@@ -182,7 +182,8 @@ public class Domain implements AutoCloseable {
         dimensions.add(dim);
       }
     }
-    return dimensions;
+    // return shallow copy of dimensions
+    return new ArrayList<>(dimensions);
   }
 
   /**
@@ -214,10 +215,10 @@ public class Domain implements AutoCloseable {
   /**
    * Free's native TileDB resources associated with the Domain object
    */
-  public void close() throws TileDBError {
-    if(domainp!=null)
+  public void close() {
+    if(domainp!=null) {
       tiledb.tiledb_domain_free(domainpp);
-
+    }
     if(dimensions!=null) {
       for (Dimension d : dimensions) {
         d.close();

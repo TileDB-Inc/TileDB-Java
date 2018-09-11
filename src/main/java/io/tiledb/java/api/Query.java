@@ -187,7 +187,7 @@ public class Query implements AutoCloseable {
     }
     Pair<uint64_tArray, uint64_tArray> buffer_sizes = 
       new Pair<uint64_tArray, uint64_tArray>(new uint64_tArray(1), 
-		                             new uint64_tArray(1));
+		                                     new uint64_tArray(1));
     buffer_sizes.getFirst().setitem(0, BigInteger.valueOf(0l));
     buffer_sizes.getSecond().setitem(0, BigInteger.valueOf(buffer.getNBytes()));
     
@@ -211,8 +211,8 @@ public class Query implements AutoCloseable {
       throw new TileDBError("Buffer offsets should be of getType TILEDB_UINT64 or Long. Found getType: "
           + offsets.getNativeType());
     Pair<uint64_tArray, uint64_tArray> buffer_sizes = 
-      new Pair<uint64_tArray, uint64_tArray>(new uint64_tArray(1), 
-		                             new uint64_tArray(1));
+      new Pair<uint64_tArray, uint64_tArray>(new uint64_tArray(1),
+                  new uint64_tArray(1));
     buffer_sizes.getFirst().setitem(0, BigInteger.valueOf(offsets.getNBytes()));
     buffer_sizes.getSecond().setitem(0, BigInteger.valueOf(buffer.getNBytes()));
     
@@ -381,6 +381,7 @@ public class Query implements AutoCloseable {
    */
   public void close() throws TileDBError {
     if (queryp != null) {
+      ctx.handleError(tiledb.tiledb_query_finalize(ctx.getCtxp(), queryp));
       for (Pair<uint64_tArray, uint64_tArray> size_pair: buffer_sizes_.values()) {
         size_pair.getFirst().delete();
         size_pair.getSecond().delete();
@@ -389,13 +390,12 @@ public class Query implements AutoCloseable {
         buffer.close();
       }
       for (Pair<NativeArray, NativeArray> var_buffer: var_buffers_.values()) {
-	var_buffer.getFirst().close();
-	var_buffer.getSecond().close();
+        var_buffer.getFirst().close();
+        var_buffer.getSecond().close();
       }
       if (subarray != null) {
         subarray.close();
       }
-      ctx.handleError(tiledb.tiledb_query_finalize(ctx.getCtxp(), queryp));
       tiledb.tiledb_query_free(querypp);
       queryp = null;
     }

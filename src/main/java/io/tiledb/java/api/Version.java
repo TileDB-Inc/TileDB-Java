@@ -42,8 +42,9 @@ public class Version {
    * Constructor for TileDB library version object
    */
   public Version() {
-    SWIGTYPE_p_int majorp = tiledb.new_intp(), minorp = tiledb.new_intp(), revp = tiledb
-        .new_intp();
+    SWIGTYPE_p_int majorp = tiledb.new_intp();
+    SWIGTYPE_p_int minorp = tiledb.new_intp();
+    SWIGTYPE_p_int revp = tiledb.new_intp();
     tiledb.tiledb_version(majorp, minorp, revp);
     this.major = tiledb.intp_value(majorp);
     this.minor = tiledb.intp_value(minorp);
