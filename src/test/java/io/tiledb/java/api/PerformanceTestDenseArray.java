@@ -25,14 +25,7 @@
 package io.tiledb.java.api;
 
 import org.junit.Test;
-
 import java.io.File;
-import java.util.*;
-
-import static io.tiledb.java.api.ArrayType.TILEDB_DENSE;
-import static io.tiledb.java.api.CompressorType.TILEDB_BLOSC_SNAPPY;
-import static io.tiledb.java.api.QueryType.TILEDB_READ;
-import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class PerformanceTestDenseArray {
   private Context ctx;
@@ -92,15 +85,15 @@ public class PerformanceTestDenseArray {
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
     Attribute id = new Attribute(ctx,"id",Integer.class);
-    ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
+    ArraySchema schema = new ArraySchema(ctx, ArrayType.TILEDB_DENSE);
     schema.setDomain(domain);
     schema.addAttribute(id);
     Array.create(arrayURI, schema);
   }
 
   public void write(int offset) throws Exception {
-    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
-    Query query = new Query(array, TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, QueryType.TILEDB_WRITE);
+    Query query = new Query(array, QueryType.TILEDB_WRITE);
     d = new int[max/10];
     for (int k = offset; k< offset+max/10; k++){
       d[k-offset]=k;
@@ -119,7 +112,7 @@ public class PerformanceTestDenseArray {
   private void read() throws Exception {
     Array array = new Array(ctx, arrayURI);
     // Create query
-    Query query = new Query(array, TILEDB_READ);
+    Query query = new Query(array, QueryType.TILEDB_READ);
     query.setBuffer("id",
         new NativeArray(ctx, (int)max,Integer.class));
     query.submit();

@@ -26,6 +26,7 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
+import javax.xml.crypto.Data;
 import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec;
 
 
@@ -115,7 +116,12 @@ public class Dimension<T> implements AutoCloseable {
   public String getName() throws TileDBError {
     if(name==null){
       SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
-      ctx.handleError(tiledb.tiledb_dimension_get_name(ctx.getCtxp(), dimensionp, namepp));
+      try {
+        ctx.handleError(tiledb.tiledb_dimension_get_name(ctx.getCtxp(), dimensionp, namepp));
+      } catch (TileDBError err) {
+        tiledb.delete_charpp(namepp);
+        throw err;
+      }
       name = tiledb.charpp_value(namepp);
       tiledb.delete_charpp(namepp);
     }
@@ -130,7 +136,12 @@ public class Dimension<T> implements AutoCloseable {
   public Datatype getType() throws TileDBError {
     if (type == null) {
       SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
-      ctx.handleError(tiledb.tiledb_dimension_get_type(ctx.getCtxp(), dimensionp, typep));
+      try {
+        ctx.handleError(tiledb.tiledb_dimension_get_type(ctx.getCtxp(), dimensionp, typep));
+      } catch (TileDBError err) {
+        tiledb.delete_tiledb_datatype_tp(typep);
+        throw err;
+      }
       type = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
       tiledb.delete_tiledb_datatype_tp(typep);
     }
@@ -144,10 +155,14 @@ public class Dimension<T> implements AutoCloseable {
    */
   public Pair<T, T> getDomain() throws TileDBError {
     if (domain == null) {
-      getType();
       SWIGTYPE_p_p_void domainpp = tiledb.new_voidpArray(1);
-      ctx.handleError(tiledb.tiledb_dimension_get_domain(ctx.getCtxp(), dimensionp, domainpp));
-      NativeArray domainBuffer = new NativeArray(ctx, type, domainpp);
+      try {
+        ctx.handleError(tiledb.tiledb_dimension_get_domain(ctx.getCtxp(), dimensionp, domainpp));
+      } catch (TileDBError err) {
+        tiledb.delete_voidpArray(domainpp);
+        throw err;
+      }
+      NativeArray domainBuffer = new NativeArray(ctx, getType(), domainpp);
       domain = new Pair<T,T>((T) domainBuffer.getItem(0), (T) domainBuffer.getItem(1));
     }
     return domain;
@@ -171,8 +186,13 @@ public class Dimension<T> implements AutoCloseable {
   public T getTileExtent() throws TileDBError {
     getType();
     SWIGTYPE_p_p_void tileExtent = tiledb.new_voidpArray(1);
-    ctx.handleError(tiledb.tiledb_dimension_get_tile_extent(ctx.getCtxp(), dimensionp, tileExtent));
-    NativeArray tileExtentBuffer = new NativeArray(ctx, type, tileExtent);
+    try {
+      ctx.handleError(tiledb.tiledb_dimension_get_tile_extent(ctx.getCtxp(), dimensionp, tileExtent));
+    } catch (TileDBError err) {
+      tiledb.delete_voidpArray(tileExtent);
+      throw err;
+    }
+    NativeArray tileExtentBuffer = new NativeArray(ctx, getType(), tileExtent);
     return (T) tileExtentBuffer.getItem(0);
   }
 
@@ -188,9 +208,10 @@ public class Dimension<T> implements AutoCloseable {
   /**
    * Free's native TileDB resources associated with the Dimension object
    */
-  public void close() throws TileDBError {
-    if(dimensionp!=null)
+  public void close() {
+    if (dimensionp!=null) {
       tiledb.tiledb_dimension_free(dimensionpp);
+    }
   }
 
   @Override

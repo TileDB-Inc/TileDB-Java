@@ -286,8 +286,7 @@ public class ArraySchema implements AutoCloseable {
     SWIGTYPE_p_tiledb_compressor_t compressorp = tiledb.new_tiledb_compressor_tp();
     SWIGTYPE_p_int levelp = tiledb.new_intp();
     try {
-      ctx.handleError(tiledb.tiledb_array_schema_get_coords_compressor(
-              ctx.getCtxp(), schemap, compressorp, levelp));
+      ctx.handleError(tiledb.tiledb_array_schema_get_coords_compressor(ctx.getCtxp(), schemap, compressorp, levelp));
     } catch (TileDBError err) {
       tiledb.delete_tiledb_compressor_tp(compressorp);
       tiledb.delete_intp(levelp);

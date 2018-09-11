@@ -8,7 +8,7 @@ public enum VFSMode {
   TILEDB_VFS_APPEND;
 
   protected tiledb_vfs_mode_t toSwigEnum() throws TileDBError {
-    switch (this){
+    switch (this) {
       case TILEDB_VFS_READ:
         return tiledb_vfs_mode_t.TILEDB_VFS_READ;
       case TILEDB_VFS_WRITE:
@@ -21,7 +21,7 @@ public enum VFSMode {
   }
 
   protected static VFSMode fromSwigEnum(tiledb_vfs_mode_t e) throws TileDBError{
-    switch (e){
+    switch (e) {
       case TILEDB_VFS_READ:
         return TILEDB_VFS_READ;
       case TILEDB_VFS_WRITE:
