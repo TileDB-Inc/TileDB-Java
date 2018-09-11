@@ -9,5 +9,5 @@
 package io.tiledb.libtiledb;
 
 public interface Callback {
-  void call();
+  public void call();
 }

@@ -13,6 +13,6 @@ public interface tiledbConstants {
   public final static int TILEDB_OK = 0;
   public final static int TILEDB_OOM = (-2);
   public final static int TILEDB_VERSION_MAJOR = 1;
-  public final static int TILEDB_VERSION_MINOR = 3;
+  public final static int TILEDB_VERSION_MINOR = 4;
   public final static int TILEDB_VERSION_PATCH = 0;
 }
