@@ -1,6 +1,5 @@
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.*;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
