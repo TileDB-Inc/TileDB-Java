@@ -24,15 +24,21 @@
 
 package io.tiledb.java.api;
 
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 import org.junit.Test;
+
 import java.io.File;
 
 public class PerformanceTestDenseArray {
+
   private Context ctx;
-  private String arrayURI = "performance_test";
   private int max;
   int[] d;
   private NativeArray id_data;
+
+  @Rule
+  public TemporaryFolder temp = new TemporaryFolder();
 
   @Test
   public void test() throws Exception {
@@ -41,15 +47,14 @@ public class PerformanceTestDenseArray {
       double sumRead =0, sumWrite =0;
       for (int i= 0; i <= iterations; i++) {
         ctx = new Context();
-        File arrayDir = new File(arrayURI);
-        if (arrayDir.exists())
-          TileDBObject.remove(ctx, arrayURI);
-        create();
+        File arrayDir = temp.newFolder();
+        String arrayURI = arrayDir.toString();
+        create(arrayURI);
         long start = System.nanoTime();
         for(int k = 1 ; k <=max; k+=max/10 )
-          write(k);
+          write(arrayURI, k);
         long write = System.nanoTime();
-        read();
+        read(arrayURI);
         long read = System.nanoTime();
         sumWrite += (double) (write - start) / 1000000;
         sumRead += (double) (read - write) / 1000000;
@@ -80,7 +85,7 @@ public class PerformanceTestDenseArray {
     }
   }
 
-  public void create() throws Exception {
+  public void create(String arrayURI) throws Exception {
     Dimension<Integer> d1 = new Dimension<Integer>(ctx,"d1",Integer.class, new Pair<Integer, Integer>(1, max),max/10);
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
@@ -91,7 +96,7 @@ public class PerformanceTestDenseArray {
     Array.create(arrayURI, schema);
   }
 
-  public void write(int offset) throws Exception {
+  public void write(String arrayURI, int offset) throws Exception {
     Array array = new Array(ctx, arrayURI, QueryType.TILEDB_WRITE);
     Query query = new Query(array, QueryType.TILEDB_WRITE);
     d = new int[max/10];
@@ -109,7 +114,7 @@ public class PerformanceTestDenseArray {
     array.close();
   }
 
-  private void read() throws Exception {
+  private void read(String arrayURI) throws Exception {
     Array array = new Array(ctx, arrayURI);
     // Create query
     Query query = new Query(array, QueryType.TILEDB_READ);
