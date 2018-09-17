@@ -6,8 +6,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Assert;
 
-import java.io.File;
-
 public class ArrayTest {
 
   private Context ctx;
