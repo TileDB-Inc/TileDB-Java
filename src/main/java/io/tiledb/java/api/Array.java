@@ -143,6 +143,30 @@ public class Array implements AutoCloseable {
   }
 
   /**
+   * Checks if a given URI is an existing TileDB array object
+   *
+   * @param ctx TileDB context object
+   * @param uri TileDB URI array string
+   * @return true if the uri is an array object, false otherwise
+   * @throws TileDBError
+   */
+  public static boolean exists(Context ctx, String uri) throws TileDBError {
+    SWIGTYPE_p_tiledb_object_t objtypep = tiledb.new_tiledb_object_tp();
+    try {
+      ctx.handleError(tiledb.tiledb_object_type(ctx.getCtxp(), uri, objtypep));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_object_tp(objtypep);
+      throw err;
+    }
+    TileDBObjectType objtype = TileDBObjectType.fromSwigEnum(tiledb.tiledb_object_tp_value(objtypep));
+    tiledb.delete_tiledb_object_tp(objtypep);
+    if (objtype == TileDBObjectType.TILEDB_ARRAY) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Creates a persisted TileDB array given an input {@link ArraySchema}
    *
    * <pre><b>Example:</b>
