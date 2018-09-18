@@ -8,6 +8,19 @@
 
 package io.tiledb.libtiledb;
 
-public interface Callback {
-  public void call();
+public class SWIGTYPE_p_p_tiledb_filter_t {
+  private transient long swigCPtr;
+
+  protected SWIGTYPE_p_p_tiledb_filter_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+    swigCPtr = cPtr;
+  }
+
+  protected SWIGTYPE_p_p_tiledb_filter_t() {
+    swigCPtr = 0;
+  }
+
+  protected static long getCPtr(SWIGTYPE_p_p_tiledb_filter_t obj) {
+    return (obj == null) ? 0 : obj.swigCPtr;
+  }
 }
+
