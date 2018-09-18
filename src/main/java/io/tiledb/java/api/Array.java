@@ -55,7 +55,6 @@ public class Array implements AutoCloseable {
   private String uri;
   private ArraySchema schema;
   private QueryType query_type;
-  private boolean initialized = false;
 
   private SWIGTYPE_p_tiledb_array_t arrayp;
   private SWIGTYPE_p_p_tiledb_array_t arraypp;
@@ -76,12 +75,12 @@ public class Array implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Array(Context ctx, String uri, QueryType query_type) throws TileDBError {
-    ctx.deleterAdd(this);
-    schema = new ArraySchema(ctx, uri);
+    openArray(ctx, uri, query_type);
     this.ctx = ctx;
     this.uri = uri;
     this.query_type = query_type;
-    openArray(query_type);
+    this.schema = new ArraySchema(ctx, uri);
+    this.ctx.deleterAdd(this);
   }
 
   /**
@@ -101,7 +100,7 @@ public class Array implements AutoCloseable {
     this(ctx, uri, TILEDB_READ);
   }
 
-  private synchronized void openArray(QueryType query_type) throws TileDBError {
+  private synchronized void openArray(Context ctx, String uri, QueryType query_type) throws TileDBError {
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
       ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
@@ -116,9 +115,15 @@ public class Array implements AutoCloseable {
       tiledb.delete_tiledb_array_tpp(_arraypp);
       throw err;
     }
-    arraypp = _arraypp;
-    arrayp = _arrayp;
-    initialized = true;
+    this.arraypp = _arraypp;
+    this.arrayp = _arrayp;
+  }
+
+  private void checkIsOpen() throws TileDBError {
+    if (arrayp == null) {
+      throw new TileDBError("TileDB Array " + uri + " is closed");
+    }
+    return;
   }
 
   /**
@@ -193,6 +198,7 @@ public class Array implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public HashMap<String, Pair> nonEmptyDomain() throws TileDBError {
+    checkIsOpen();
     HashMap<String, Pair> ret = new HashMap<String, Pair>();
     List<Dimension> dimensions = schema.getDomain().getDimensions();
     NativeArray buffer = new NativeArray(ctx, 2 * dimensions.size(), schema.getDomain().getType());
@@ -227,6 +233,8 @@ public class Array implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public HashMap<String,Pair<Long,Long>> maxBufferElements(NativeArray subarray) throws TileDBError {
+
+    checkIsOpen();
 
     Types.typeCheck(subarray.getNativeType(), schema.getDomain().getType());
 
@@ -336,10 +344,11 @@ public class Array implements AutoCloseable {
    * Free's the native objects and closes the Array.
    */
   public synchronized void close() {
-    if (initialized) {
+    if (arrayp != null && arraypp != null) {
       tiledb.tiledb_array_close(ctx.getCtxp(), arrayp);
       tiledb.tiledb_array_free(arraypp);
-      initialized = false;
+      arrayp = null;
+      arraypp = null;
       if (schema != null) {
         schema.close();
       }
