@@ -291,10 +291,4 @@ public class Config implements AutoCloseable {
       tiledb.tiledb_config_free(configpp);
     }
   }
-
-  @Override
-  protected void finalize() throws Throwable {
-    close();
-    super.finalize();
-  }
 }

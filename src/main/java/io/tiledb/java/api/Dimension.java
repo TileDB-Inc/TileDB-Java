@@ -86,7 +86,7 @@ public class Dimension<T> implements AutoCloseable {
     this.type =  Types.getNativeType(type);
     this.name =name;
     this.domain = domain;
-    NativeArray domainBuffer = new NativeArray(ctx,2,this.type);
+    NativeArray domainBuffer = new NativeArray(ctx,2, this.type);
     domainBuffer.setItem(0, (Object) domain.getFirst());
     domainBuffer.setItem(1, (Object) domain.getSecond());
     NativeArray tileExtent = new NativeArray(ctx,1,this.type);
@@ -164,6 +164,7 @@ public class Dimension<T> implements AutoCloseable {
       }
       NativeArray domainBuffer = new NativeArray(ctx, getType(), domainpp);
       domain = new Pair<T,T>((T) domainBuffer.getItem(0), (T) domainBuffer.getItem(1));
+
     }
     return domain;
   }
@@ -213,11 +214,4 @@ public class Dimension<T> implements AutoCloseable {
       tiledb.tiledb_dimension_free(dimensionpp);
     }
   }
-
-  @Override
-  protected void finalize() throws Throwable {
-    close();
-    super.finalize();
-  }
-
 }

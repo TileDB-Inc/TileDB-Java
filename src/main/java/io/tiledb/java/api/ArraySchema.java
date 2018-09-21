@@ -445,8 +445,14 @@ public class ArraySchema implements AutoCloseable {
         throw err;
       }
       long nattr = tiledb.uintp_value(nattrp);
+      tiledb.delete_uintp(nattrp);
       for (long i = 0; i < nattr; ++i) {
-        ctx.handleError(tiledb.tiledb_array_schema_get_attribute_from_index(ctx.getCtxp(), schemap, i, attrpp));
+        try {
+          ctx.handleError(tiledb.tiledb_array_schema_get_attribute_from_index(ctx.getCtxp(), schemap, i, attrpp));
+        } catch (TileDBError err) {
+          tiledb.delete_tiledb_attribute_tpp(attrpp);
+          throw err;
+        }
         Attribute attr = new Attribute(ctx, attrpp);
         attributes.put(attr.getName(), attr);
       }
@@ -559,11 +565,5 @@ public class ArraySchema implements AutoCloseable {
         e.getValue().close();
       }
     }
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    close();
-    super.finalize();
   }
 }
