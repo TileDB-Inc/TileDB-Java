@@ -68,7 +68,6 @@ public class Domain implements AutoCloseable {
   private SWIGTYPE_p_tiledb_domain_t domainp;
 
   protected Domain(Context ctx, SWIGTYPE_p_p_tiledb_domain_t domainpp) {
-    ctx.deleterAdd(this);
     this.ctx = ctx;
     this.domainpp = domainpp;
     this.domainp = tiledb.tiledb_domain_tpp_value(domainpp);
@@ -82,7 +81,6 @@ public class Domain implements AutoCloseable {
       tiledb.delete_tiledb_domain_tpp(_domainpp);
       throw err;
     }
-    ctx.deleterAdd(this);
     this.ctx = ctx;
     this.domainp = tiledb.tiledb_domain_tpp_value(_domainpp);
     this.domainpp = _domainpp;

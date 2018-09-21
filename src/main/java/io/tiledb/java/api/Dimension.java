@@ -60,7 +60,6 @@ public class Dimension<T> implements AutoCloseable {
    * @param dimensionpp A Swig wrapper object to a tiledb_dimension_t pointer
    */
   protected Dimension(Context ctx, SWIGTYPE_p_p_tiledb_dimension_t dimensionpp) {
-    //ctx.deleterAdd(this);
     this.ctx = ctx;
     this.dimensionpp = dimensionpp;
     this.dimensionp = tiledb.tiledb_dimension_tpp_value(dimensionpp);

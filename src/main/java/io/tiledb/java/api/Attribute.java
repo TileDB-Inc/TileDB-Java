@@ -89,7 +89,6 @@ public class Attribute implements AutoCloseable {
       tiledb.delete_tiledb_attribute_tpp(_attributepp);
       throw err;
     }
-    ctx.deleterAdd(this);
     this.ctx = ctx;
     this.name = name;
     this.type = _type;
@@ -116,7 +115,6 @@ public class Attribute implements AutoCloseable {
       tiledb.delete_tiledb_datatype_tp(typep);
       throw err;
     }
-    ctx.deleterAdd(this);
     this.ctx = ctx;
     this.name = _name;
     this.type = _type;
