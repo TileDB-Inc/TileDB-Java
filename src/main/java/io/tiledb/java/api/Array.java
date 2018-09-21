@@ -80,7 +80,6 @@ public class Array implements AutoCloseable {
     this.uri = uri;
     this.query_type = query_type;
     this.schema = new ArraySchema(ctx, uri);
-    this.ctx.deleterAdd(this);
   }
 
   /**

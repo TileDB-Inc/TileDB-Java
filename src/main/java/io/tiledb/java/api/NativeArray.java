@@ -64,7 +64,6 @@ public class NativeArray implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public NativeArray(Context ctx, int size, Datatype nativeType) throws TileDBError {
-    ctx.deleterAdd(this);
     this.size = size;
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
@@ -80,7 +79,6 @@ public class NativeArray implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public NativeArray(Context ctx, int size, Class javaType) throws TileDBError {
-    ctx.deleterAdd(this);
     this.size = size;
     this.javaType = javaType;
     this.nativeType = Types.getNativeType(javaType);
@@ -98,7 +96,6 @@ public class NativeArray implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public NativeArray(Context ctx, Object buffer, Class javaType) throws TileDBError {
-    ctx.deleterAdd(this);
     this.javaType = javaType;
     this.nativeType = Types.getNativeType(javaType);
     this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
@@ -115,7 +112,6 @@ public class NativeArray implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public NativeArray(Context ctx, Object buffer, Datatype nativeType) throws TileDBError {
-    ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
     this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
@@ -124,7 +120,6 @@ public class NativeArray implements AutoCloseable {
   }
 
   protected NativeArray(Context ctx, Datatype nativeType, SWIGTYPE_p_p_void pointer) throws TileDBError {
-    ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
     this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
@@ -132,7 +127,6 @@ public class NativeArray implements AutoCloseable {
   }
 
   protected NativeArray(Context ctx, Datatype nativeType, SWIGTYPE_p_void pointer) throws TileDBError {
-    ctx.deleterAdd(this);
     this.javaType = Types.getJavaType(nativeType);
     this.nativeType = nativeType;
     this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();

@@ -73,7 +73,6 @@ public class Query implements AutoCloseable {
       throw err;
     }
     this.ctx = _ctx;
-    ctx.deleterAdd(this);
     this.type = type;
     this.array = array;
     this.querypp = _querypp;

@@ -103,7 +103,6 @@ public class ArraySchema implements AutoCloseable {
       tiledb.delete_tiledb_array_schema_tpp(_schemapp);
       throw err;
     }
-    ctx.deleterAdd(this);
     this.ctx = ctx;
     this.schemap = tiledb.tiledb_array_schema_tpp_value(_schemapp);
     this.schemapp = _schemapp;
@@ -131,7 +130,6 @@ public class ArraySchema implements AutoCloseable {
       tiledb.delete_tiledb_array_schema_tpp(_schemapp);
       throw err;
     }
-    ctx.deleterAdd(this);
     this.ctx = ctx;
     this.schemap = tiledb.tiledb_array_schema_tpp_value(_schemapp);
     this.schemapp = _schemapp;

@@ -63,8 +63,6 @@ public class Context implements AutoCloseable {
   private Config config;
   private ContextCallback errorHandler;
 
-  private Deleter deleter;
-
   /**
    * Constructor. Creates a TileDB Context with default configuration.
    * @throws TileDBError if construction fails
@@ -158,8 +156,6 @@ public class Context implements AutoCloseable {
     this.ctxp = tiledb.tiledb_ctx_tpp_value(_ctxpp);
     this.config = config;
     this.errorHandler = new ContextCallback();
-    this.deleter = new Deleter();
-    Runtime.getRuntime().addShutdownHook(deleter);
   }
 
   protected SWIGTYPE_p_tiledb_ctx_t getCtxp() {
@@ -174,19 +170,17 @@ public class Context implements AutoCloseable {
     return config;
   }
 
-  protected void deleterAdd(AutoCloseable object) {
-    deleter.add(object);
-  }
-
   /**
    * Close the context and delete all native objects. Should be called always to cleanup the context
    */
   public void close() {
-    deleter.run();
-    if(config != null)
-      config.close();
     if(ctxp != null) {
       tiledb.tiledb_ctx_free(ctxpp);
+      ctxp = null;
+      ctxpp = null;
+    }
+    if(config != null) {
+      config.close();
     }
   }
 }
