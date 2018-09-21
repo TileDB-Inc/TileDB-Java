@@ -181,18 +181,12 @@ public class Context implements AutoCloseable {
   /**
    * Close the context and delete all native objects. Should be called always to cleanup the context
    */
-  public void close() throws TileDBError {
+  public void close() {
     deleter.run();
     if(config != null)
       config.close();
     if(ctxp != null) {
       tiledb.tiledb_ctx_free(ctxpp);
     }
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    close();
-    super.finalize();
   }
 }

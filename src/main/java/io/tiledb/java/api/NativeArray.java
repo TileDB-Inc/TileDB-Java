@@ -650,10 +650,4 @@ public class NativeArray implements AutoCloseable {
       uint64_tArray.delete();
     }
   }
-
-  @Override
-  protected void finalize() throws Throwable {
-    close();
-    super.finalize();
-  }
 }

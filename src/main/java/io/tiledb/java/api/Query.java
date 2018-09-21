@@ -400,10 +400,4 @@ public class Query implements AutoCloseable {
       queryp = null;
     }
   }
-
-  @Override
-  protected void finalize() throws Throwable {
-    close();
-    super.finalize();
-  }
 }
