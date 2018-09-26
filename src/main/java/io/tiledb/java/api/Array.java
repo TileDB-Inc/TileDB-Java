@@ -278,22 +278,21 @@ public class Array implements AutoCloseable {
                      tiledb.tiledb_datatype_size(a.getValue().getType().toSwigEnum()).longValue()));
       }
     }
-    if (schema.isSparse()) {
-      try {
-        ctx.handleError(tiledb.tiledb_array_max_buffer_size(
-                ctx.getCtxp(),
-                arrayp,
-                tiledb.tiledb_coords(),
-                subarray.toVoidPointer(),
-                val_nbytes.cast()));
-      } catch (TileDBError err) {
-        val_nbytes.delete();
-      }
-      ret.put(tiledb.tiledb_coords(),
-            new Pair(0l, val_nbytes.getitem(0).longValue() /
-                 tiledb.tiledb_datatype_size(schema.getDomain().getType().toSwigEnum()).longValue()));
+    // Add coordinates
+    try {
+      ctx.handleError(tiledb.tiledb_array_max_buffer_size(
+              ctx.getCtxp(),
+              arrayp,
+              tiledb.tiledb_coords(),
+              subarray.toVoidPointer(),
+              val_nbytes.cast()));
+    } catch (TileDBError err) {
+      val_nbytes.delete();
+    }
+    ret.put(tiledb.tiledb_coords(),
+          new Pair(0l, val_nbytes.getitem(0).longValue() /
+               tiledb.tiledb_datatype_size(schema.getDomain().getType().toSwigEnum()).longValue()));
 
-    } 
     off_nbytes.delete();
     val_nbytes.delete();
     return ret;
