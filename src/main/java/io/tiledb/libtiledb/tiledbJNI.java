@@ -571,27 +571,27 @@ public class tiledbJNI {
 
   public static final native long newUint64ArraySet(long[] jarg1);
 
-  public static final native int[] int32ArrayGet(long jarg1, int jarg2);
+  public static final native int[] int32ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native long[] int64ArrayGet(long jarg1, int jarg2);
+  public static final native long[] int64ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native String charArrayGet(long jarg1);
+  public static final native String charArrayGet(long jarg1, int jarg2);
 
-  public static final native float[] floatArrayGet(long jarg1, int jarg2);
+  public static final native float[] floatArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native double[] doubleArrayGet(long jarg1, int jarg2);
+  public static final native double[] doubleArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native byte[] int8ArrayGet(long jarg1, int jarg2);
+  public static final native byte[] int8ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native short[] uint8ArrayGet(long jarg1, int jarg2);
+  public static final native short[] uint8ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native short[] int16ArrayGet(long jarg1, int jarg2);
+  public static final native short[] int16ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native int[] uint16ArrayGet(long jarg1, int jarg2);
+  public static final native int[] uint16ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native long[] uint32ArrayGet(long jarg1, int jarg2);
+  public static final native long[] uint32ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native long[] uint64ArrayGet(long jarg1, int jarg2);
+  public static final native long[] uint64ArrayGet(long jarg1, int jarg2, int jarg3);
 
   public static final native String tiledb_coords();
 

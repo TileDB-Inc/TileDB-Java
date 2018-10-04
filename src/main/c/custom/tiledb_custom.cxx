@@ -688,8 +688,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jintArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int32ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jintArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int32ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     int32_t *arr = *(int32_t **)&array;
+    arr = arr + pos;
     jintArray jresult = jenv->NewIntArray(sz);
     if (!jresult)
       return NULL;
@@ -711,8 +712,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jlongArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int64ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jlongArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int64ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     int64_t *arr = *(int64_t **)&array;
+    arr = arr + pos;
     jlongArray jresult = jenv->NewLongArray(sz);
     if (!jresult)
       return NULL;
@@ -739,8 +741,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jstring JNICALL Java_io_tiledb_libtiledb_tiledbJNI_charArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jstring JNICALL Java_io_tiledb_libtiledb_tiledbJNI_charArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     char *arr = *(char **)&array;
+    arr = arr + pos;
     jstring jresult = jenv->NewStringUTF(arr);
     if (!jresult)
       return NULL;
@@ -760,8 +763,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jfloatArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_floatArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jfloatArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_floatArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     float *arr = *(float **)&array;
+    arr = arr + pos;
     jfloatArray jresult = jenv->NewFloatArray(sz);
     if (!jresult)
       return NULL;
@@ -783,8 +787,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jdoubleArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_doubleArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jdoubleArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_doubleArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     double *arr = *(double **)&array;
+    arr = arr + pos;
     jdoubleArray jresult = jenv->NewDoubleArray(sz);
     if (!jresult)
       return NULL;
@@ -806,8 +811,9 @@ extern "C" {
   }
 
 
-  JNIEXPORT jbyteArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int8ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jbyteArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int8ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     int8_t *arr = *(int8_t **)&array;
+    arr = arr + pos;
     jbyteArray jresult = jenv->NewByteArray(sz);
     if (!jresult)
       return NULL;
@@ -828,8 +834,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jshortArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint8ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jshortArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint8ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     uint8_t *arr = *(uint8_t **)&array;
+    arr = arr + pos;
     jshortArray jresult = jenv->NewShortArray(sz);
     if (!jresult)
       return NULL;
@@ -854,8 +861,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jshortArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int16ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jshortArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int16ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     int16_t *arr = *(int16_t **)&array;
+    arr = arr + pos;
     jshortArray jresult = jenv->NewShortArray(sz);
     if (!jresult)
       return NULL;
@@ -876,8 +884,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jintArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint16ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jintArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint16ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     uint16_t *arr = *(uint16_t **)&array;
+    arr = arr + pos;
     jintArray jresult = jenv->NewIntArray(sz);
     if (!jresult)
       return NULL;
@@ -902,8 +911,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jlongArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint32ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jlongArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint32ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     uint32_t *arr = *(uint32_t **)&array;
+    arr = arr + pos;
     jlongArray jresult = jenv->NewLongArray(sz);
     if (!jresult)
       return NULL;
@@ -929,8 +939,9 @@ extern "C" {
     return jresult;
   }
 
-  JNIEXPORT jlongArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint64ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint sz) {
+  JNIEXPORT jlongArray JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint64ArrayGet(JNIEnv *jenv, jobject obj, jlong array, jint pos, jint sz) {
     uint64_t *arr = *(uint64_t **)&array;
+    arr = arr + pos;
     jlongArray jresult = jenv->NewLongArray(sz);
     if (!jresult)
       return NULL;

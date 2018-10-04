@@ -61,48 +61,48 @@ public class Utils {
     return ret;
   }
 
-  public static int[] int32ArrayGet(int32_tArray array, int size) {
-    return tiledb.int32ArrayGet(int32_tArray.getCPtr(array), size);
+  public static int[] int32ArrayGet(int32_tArray array, int pos, int size) {
+    return tiledb.int32ArrayGet(int32_tArray.getCPtr(array), pos, size);
   }
 
-  public static long[] int64ArrayGet(int64_tArray array, int size) {
-    return tiledb.int64ArrayGet(int64_tArray.getCPtr(array), size);
+  public static long[] int64ArrayGet(int64_tArray array, int pos, int size) {
+    return tiledb.int64ArrayGet(int64_tArray.getCPtr(array), pos, size);
   }
 
-  public static String charArrayGet(charArray array) {
-    return tiledb.charArrayGet(charArray.getCPtr(array));
+  public static String charArrayGet(charArray array, int pos) {
+    return tiledb.charArrayGet(charArray.getCPtr(array), pos);
   }
 
-  public static float[] floatArrayGet(floatArray array, int size) {
-    return tiledb.floatArrayGet(floatArray.getCPtr(array), size);
+  public static float[] floatArrayGet(floatArray array, int pos, int size) {
+    return tiledb.floatArrayGet(floatArray.getCPtr(array), pos, size);
   }
 
-  public static double[] doubleArrayGet(doubleArray array, int size) {
-    return tiledb.doubleArrayGet(doubleArray.getCPtr(array), size);
+  public static double[] doubleArrayGet(doubleArray array, int pos, int size) {
+    return tiledb.doubleArrayGet(doubleArray.getCPtr(array), pos, size);
   }
 
-  public static byte[] int8ArrayGet(int8_tArray array, int size) {
-    return tiledb.int8ArrayGet(int8_tArray.getCPtr(array), size);
+  public static byte[] int8ArrayGet(int8_tArray array, int pos, int size) {
+    return tiledb.int8ArrayGet(int8_tArray.getCPtr(array), pos, size);
   }
 
-  public static short[] uint8ArrayGet(uint8_tArray array, int size) {
-    return tiledb.uint8ArrayGet(uint8_tArray.getCPtr(array), size);
+  public static short[] uint8ArrayGet(uint8_tArray array, int pos, int size) {
+    return tiledb.uint8ArrayGet(uint8_tArray.getCPtr(array), pos, size);
   }
 
-  public static short[] int16ArrayGet(int16_tArray array, int size) {
-    return tiledb.int16ArrayGet(int16_tArray.getCPtr(array), size);
+  public static short[] int16ArrayGet(int16_tArray array, int pos, int size) {
+    return tiledb.int16ArrayGet(int16_tArray.getCPtr(array), pos, size);
   }
 
-  public static int[] uint16ArrayGet(uint16_tArray array, int size) {
-    return tiledb.uint16ArrayGet(uint16_tArray.getCPtr(array), size);
+  public static int[] uint16ArrayGet(uint16_tArray array, int pos, int size) {
+    return tiledb.uint16ArrayGet(uint16_tArray.getCPtr(array), pos, size);
   }
 
-  public static long[] uint32ArrayGet(uint32_tArray array, int size) {
-    return tiledb.uint32ArrayGet(uint32_tArray.getCPtr(array), size);
+  public static long[] uint32ArrayGet(uint32_tArray array, int pos, int size) {
+    return tiledb.uint32ArrayGet(uint32_tArray.getCPtr(array), pos, size);
   }
 
-  public static long[] uint64ArrayGet(uint64_tArray array, int size) {
-    return tiledb.uint64ArrayGet(uint64_tArray.getCPtr(array), size);
+  public static long[] uint64ArrayGet(uint64_tArray array, int pos, int size) {
+    return tiledb.uint64ArrayGet(uint64_tArray.getCPtr(array), pos, size);
   }
 
   //	public static uint64_tArray newUint64Array(long[] array){
