@@ -40,7 +40,7 @@ import io.tiledb.java.api.TileDBError;
 
 public class GroupCreate {
 
-  public static void main (String[] args) throws TileDBError {
+  public static void main(String[] args) throws TileDBError {
     Context ctx = new Context();
     Group group1 = new Group(ctx, "my_group");
     Group group2 = new Group(ctx, "my_group/dense_arrays");

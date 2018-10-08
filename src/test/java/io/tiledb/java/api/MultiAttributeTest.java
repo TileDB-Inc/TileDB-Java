@@ -1,19 +1,17 @@
 package io.tiledb.java.api;
 
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Assert;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import java.util.HashMap;
-
 import static io.tiledb.java.api.ArrayType.TILEDB_DENSE;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class MultiAttributeTest {
   private Context ctx;
@@ -44,8 +42,10 @@ public class MultiAttributeTest {
 
   public void arrayCreate() throws Exception {
     // The array will be 4x4 with dimensions "rows" and "cols", with domain [1,4].
-    Dimension<Integer> rows = new Dimension<Integer>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
-    Dimension<Integer> cols = new Dimension<Integer>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+    Dimension<Integer> rows =
+        new Dimension<Integer>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+    Dimension<Integer> cols =
+        new Dimension<Integer>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
 
     // Create and set getDomain
     Domain domain = new Domain(ctx);
@@ -70,19 +70,17 @@ public class MultiAttributeTest {
 
   public void arrayWrite() throws Exception {
     // Prepare cell buffers
-    NativeArray a1 = new NativeArray(
-        ctx,
-        "abcdefghijklmnop",
-        String.class);
-    NativeArray a2 = new NativeArray(
-        ctx,
-        new float[]{
-            0.1f,  0.2f,  1.1f,  1.2f,  2.1f,  2.2f,  3.1f,  3.2f,
-            4.1f,  4.2f,  5.1f,  5.2f,  6.1f,  6.2f,  7.1f,  7.2f,
-            8.1f,  8.2f,  9.1f,  9.2f,  10.1f, 10.2f, 11.1f, 11.2f,
-            12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
-        },
-        Float.class);
+    NativeArray a1 = new NativeArray(ctx, "abcdefghijklmnop", String.class);
+    NativeArray a2 =
+        new NativeArray(
+            ctx,
+            new float[] {
+              0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
+              4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f,
+              8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f,
+              12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+            },
+            Float.class);
 
     // Create query
     Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
@@ -101,7 +99,7 @@ public class MultiAttributeTest {
     Array array = new Array(ctx, arrayURI, TILEDB_READ);
 
     // Slice only rows 1, 2 and cols 2, 3, 4
-    NativeArray subarray = new NativeArray(ctx, new int[]{1, 2, 2, 4}, Integer.class);
+    NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Integer.class);
 
     // Create query
     Query query = new Query(array, TILEDB_READ);
@@ -111,10 +109,8 @@ public class MultiAttributeTest {
     // (of size 6 elements for "a1" and 12 elements for "a2" since
     // it stores two floats per cell)
     query.setSubarray(subarray);
-    query.setBuffer("a1",
-        new NativeArray(ctx, 6, Character.class));
-    query.setBuffer("a2",
-        new NativeArray(ctx, 12, Float.class));
+    query.setBuffer("a1", new NativeArray(ctx, 6, Character.class));
+    query.setBuffer("a2", new NativeArray(ctx, 12, Float.class));
 
     // Submit query
     query.submit();
@@ -127,9 +123,10 @@ public class MultiAttributeTest {
     query.close();
     array.close();
 
-    Assert.assertArrayEquals(a1, new byte[]{'b', 'c', 'd', 'f', 'g', 'h'});
+    Assert.assertArrayEquals(a1, new byte[] {'b', 'c', 'd', 'f', 'g', 'h'});
 
-    float[] expected_a2 = new float[]{1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f};
+    float[] expected_a2 =
+        new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f};
     for (int i = 0; i < a2.length; i++) {
       Assert.assertEquals(a2[i], expected_a2[i], 0.01f);
     }
@@ -140,7 +137,7 @@ public class MultiAttributeTest {
     Array array = new Array(ctx, arrayURI, TILEDB_READ);
 
     // Slice only rows 1, 2 and cols 2, 3, 4
-    NativeArray subarray = new NativeArray(ctx, new int[]{1, 2, 2, 4}, Integer.class);
+    NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Integer.class);
 
     // Create query
     Query query = new Query(array, TILEDB_READ);
@@ -148,8 +145,7 @@ public class MultiAttributeTest {
 
     // Prepare the query - subselect over "a1" only
     query.setSubarray(subarray);
-    query.setBuffer("a1",
-        new NativeArray(ctx, 6, Character.class));
+    query.setBuffer("a1", new NativeArray(ctx, 6, Character.class));
 
     // Submit query
     query.submit();
@@ -161,6 +157,6 @@ public class MultiAttributeTest {
     query.close();
     array.close();
 
-    Assert.assertArrayEquals(a1, new byte[]{'b', 'c', 'd','f', 'g', 'h'});
+    Assert.assertArrayEquals(a1, new byte[] {'b', 'c', 'd', 'f', 'g', 'h'});
   }
 }

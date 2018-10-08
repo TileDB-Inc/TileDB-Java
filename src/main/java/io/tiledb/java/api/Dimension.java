@@ -26,29 +26,25 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
-import javax.xml.crypto.Data;
-import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec;
-
-
 /**
- * Describes one dimension of an Array. The dimension consists
- * of a type, lower and upper bound, and tile-extent describing
- * the memory ordering. Dimensions are added to a Domain.
+ * Describes one dimension of an Array. The dimension consists of a type, lower and upper bound, and
+ * tile-extent describing the memory ordering. Dimensions are added to a Domain.
  *
- * <b>Example:</b>
+ * <p><b>Example:</b>
+ *
  * <pre>{@code
- *   Context ctx = new Context();
- *   Domain domain = new Domain(ctx);
- *   // Create a dimension with inclusive domain [0,1000] and tile extent 100.
- *   Dimension<Integer> d = new Dimension<Integer>(ctx, "d", Integer.class, new Pair<Integer, Integer>(0, 1000), 100);
- *   domain.addDimension(d);
+ * Context ctx = new Context();
+ * Domain domain = new Domain(ctx);
+ * // Create a dimension with inclusive domain [0,1000] and tile extent 100.
+ * Dimension<Integer> d = new Dimension<Integer>(ctx, "d", Integer.class, new Pair<Integer, Integer>(0, 1000), 100);
+ * domain.addDimension(d);
  * }</pre>
- **/
+ */
 public class Dimension<T> implements AutoCloseable {
   private Context ctx;
   private Datatype type;
   private String name;
-  private Pair<T,T> domain;
+  private Pair<T, T> domain;
 
   private SWIGTYPE_p_tiledb_dimension_t dimensionp;
   private SWIGTYPE_p_p_tiledb_dimension_t dimensionpp;
@@ -75,45 +71,45 @@ public class Dimension<T> implements AutoCloseable {
    * @param extent The tile extent on the dimension.
    * @exception TileDBError A TileDB exception
    */
-  public Dimension( Context ctx, String name, Class<T> type, Pair<T,T> domain, T extent) throws TileDBError {
-    createImpl(ctx, name, type,domain,extent);
+  public Dimension(Context ctx, String name, Class<T> type, Pair<T, T> domain, T extent)
+      throws TileDBError {
+    createImpl(ctx, name, type, domain, extent);
   }
 
-  private void createImpl(Context ctx, String name, Class<T> type, Pair<T,T> domain, T extent) throws TileDBError {
+  private void createImpl(Context ctx, String name, Class<T> type, Pair<T, T> domain, T extent)
+      throws TileDBError {
     this.ctx = ctx;
     dimensionpp = tiledb.new_tiledb_dimension_tpp();
-    this.type =  Types.getNativeType(type);
-    this.name =name;
+    this.type = Types.getNativeType(type);
+    this.name = name;
     this.domain = domain;
-    NativeArray domainBuffer = new NativeArray(ctx,2, this.type);
+    NativeArray domainBuffer = new NativeArray(ctx, 2, this.type);
     domainBuffer.setItem(0, (Object) domain.getFirst());
     domainBuffer.setItem(1, (Object) domain.getSecond());
-    NativeArray tileExtent = new NativeArray(ctx,1,this.type);
+    NativeArray tileExtent = new NativeArray(ctx, 1, this.type);
     tileExtent.setItem(0, (Object) extent);
-//    SWIGTYPE_p_void tile_extent = Types.createNativeArrayExtent(this.getType, extent);
+    //    SWIGTYPE_p_void tile_extent = Types.createNativeArrayExtent(this.getType, extent);
     ctx.handleError(
-      tiledb.tiledb_dimension_alloc(
-        ctx.getCtxp(), 
-        name, 
-        this.type.toSwigEnum(),
-	      domainBuffer.toVoidPointer(), 
-        tileExtent.toVoidPointer(), 
-        dimensionpp));
+        tiledb.tiledb_dimension_alloc(
+            ctx.getCtxp(),
+            name,
+            this.type.toSwigEnum(),
+            domainBuffer.toVoidPointer(),
+            tileExtent.toVoidPointer(),
+            dimensionpp));
     this.dimensionp = tiledb.tiledb_dimension_tpp_value(dimensionpp);
   }
-
 
   protected SWIGTYPE_p_tiledb_dimension_t getDimensionp() {
     return dimensionp;
   }
 
   /**
-   *
    * @return The String name of the dimension.
    * @throws TileDBError A TileDB exception
    */
   public String getName() throws TileDBError {
-    if(name==null){
+    if (name == null) {
       SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
       try {
         ctx.handleError(tiledb.tiledb_dimension_get_name(ctx.getCtxp(), dimensionp, namepp));
@@ -128,7 +124,6 @@ public class Dimension<T> implements AutoCloseable {
   }
 
   /**
-   *
    * @return The dimension datatype.
    * @throws TileDBError A TileDB exception
    */
@@ -148,7 +143,6 @@ public class Dimension<T> implements AutoCloseable {
   }
 
   /**
-   *
    * @return The domain of the dimension (A Pair containing the lower and upper bound).
    * @throws TileDBError A TileDB exception
    */
@@ -162,14 +156,12 @@ public class Dimension<T> implements AutoCloseable {
         throw err;
       }
       NativeArray domainBuffer = new NativeArray(ctx, getType(), domainpp);
-      domain = new Pair<T,T>((T) domainBuffer.getItem(0), (T) domainBuffer.getItem(1));
-
+      domain = new Pair<T, T>((T) domainBuffer.getItem(0), (T) domainBuffer.getItem(1));
     }
     return domain;
   }
 
   /**
-   *
    * @return A string representation of the domain.
    * @throws TileDBError A TileDB exception
    */
@@ -179,7 +171,6 @@ public class Dimension<T> implements AutoCloseable {
   }
 
   /**
-   *
    * @return The tile extent of the dimension.
    * @throws TileDBError A TileDB exception
    */
@@ -187,7 +178,8 @@ public class Dimension<T> implements AutoCloseable {
     getType();
     SWIGTYPE_p_p_void tileExtent = tiledb.new_voidpArray(1);
     try {
-      ctx.handleError(tiledb.tiledb_dimension_get_tile_extent(ctx.getCtxp(), dimensionp, tileExtent));
+      ctx.handleError(
+          tiledb.tiledb_dimension_get_tile_extent(ctx.getCtxp(), dimensionp, tileExtent));
     } catch (TileDBError err) {
       tiledb.delete_voidpArray(tileExtent);
       throw err;
@@ -197,7 +189,6 @@ public class Dimension<T> implements AutoCloseable {
   }
 
   /**
-   *
    * @return A string representation of the extent.
    * @throws TileDBError A TileDB exception
    */
@@ -205,11 +196,9 @@ public class Dimension<T> implements AutoCloseable {
     return getTileExtent().toString();
   }
 
-  /**
-   * Free's native TileDB resources associated with the Dimension object
-   */
+  /** Free's native TileDB resources associated with the Dimension object */
   public void close() {
-    if (dimensionp!=null) {
+    if (dimensionp != null) {
       tiledb.tiledb_dimension_free(dimensionpp);
     }
   }

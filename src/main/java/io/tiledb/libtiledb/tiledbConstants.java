@@ -9,10 +9,10 @@
 package io.tiledb.libtiledb;
 
 public interface tiledbConstants {
-  public final static int TILEDB_ERR = (-1);
-  public final static int TILEDB_OK = 0;
-  public final static int TILEDB_OOM = (-2);
-  public final static int TILEDB_VERSION_MAJOR = 1;
-  public final static int TILEDB_VERSION_MINOR = 4;
-  public final static int TILEDB_VERSION_PATCH = 0;
+  public static final int TILEDB_ERR = (-1);
+  public static final int TILEDB_OK = 0;
+  public static final int TILEDB_OOM = (-2);
+  public static final int TILEDB_VERSION_MAJOR = 1;
+  public static final int TILEDB_VERSION_MINOR = 4;
+  public static final int TILEDB_VERSION_PATCH = 0;
 }

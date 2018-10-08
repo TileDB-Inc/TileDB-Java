@@ -29,7 +29,6 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
-
 import java.util.HashMap;
 
 /**
@@ -41,7 +40,7 @@ import java.util.HashMap;
  *   conf.set("vfs.s3.use_virtual_addressing", "true");
  *   Context ctx = new Context(conf);
  * </pre>
- * */
+ */
 public class Config implements AutoCloseable {
 
   private SWIGTYPE_p_p_tiledb_config_t configpp;
@@ -69,16 +68,14 @@ public class Config implements AutoCloseable {
   }
 
   /**
-   * Constructor that takes as input a filename (URI) that stores the config
-   * parameters. The file must have the following (text) format:
+   * Constructor that takes as input a filename (URI) that stores the config parameters. The file
+   * must have the following (text) format:
    *
-   * `{parameter} {value}`
+   * <p>`{parameter} {value}`
    *
-   * Anything following a `#` character is considered a comment and, thus, is
-   * ignored.
+   * <p>Anything following a `#` character is considered a comment and, thus, is ignored.
    *
-   * See `Config.set` for the various TileDB config parameters and allowed
-   * values.
+   * <p>See `Config.set` for the various TileDB config parameters and allowed values.
    *
    * @param filename local path to config file
    * @exception TileDBError A TileDB exception
@@ -109,11 +106,9 @@ public class Config implements AutoCloseable {
   }
 
   /**
-   * Get a parameter from the Config by name.
-   * <br>
-   * <a href="https://docs.tiledb.io/en/stable/tutorials/config.html#summary-of-parameters">
-   * Summary of config parameters</a>
-   * <br>
+   * Get a parameter from the Config by name. <br>
+   * <a href="https://docs.tiledb.io/en/stable/tutorials/config.html#summary-of-parameters">Summary
+   * of config parameters</a> <br>
    *
    * @param parameter parameter name
    * @return config parameter string value
@@ -137,11 +132,9 @@ public class Config implements AutoCloseable {
   }
 
   /**
-   * Sets a config parameter-value pair.
-   * <br>
-   * <a href="https://docs.tiledb.io/en/stable/tutorials/config.html#summary-of-parameters">
-   * Summary of config parameters</a>
-   * <br>
+   * Sets a config parameter-value pair. <br>
+   * <a href="https://docs.tiledb.io/en/stable/tutorials/config.html#summary-of-parameters">Summary
+   * of config parameters</a> <br>
    *
    * @param parameter config parameter to set
    * @param value config parameter value to set
@@ -172,7 +165,7 @@ public class Config implements AutoCloseable {
       tiledb.delete_tiledb_error_tpp(errorpp);
     }
   }
-   
+
   /**
    * Returns a map of TileDB config parameter, value pairs
    *
@@ -184,8 +177,8 @@ public class Config implements AutoCloseable {
   }
 
   /**
-   * Returns a map of TileDB config paramter, value pairs
-   * with parameter names starting with a given prefix.
+   * Returns a map of TileDB config paramter, value pairs with parameter names starting with a given
+   * prefix.
    *
    * @param prefix A parameter prefix. Use "" to get all parameters.
    * @return HashMap containing all parameters as key-value pairs.
@@ -218,8 +211,7 @@ public class Config implements AutoCloseable {
         tiledb.delete_tiledb_config_iter_tpp(iterpp);
         throw err;
       }
-      result.put(tiledb.charpp_value(parampp),
-                 tiledb.charpp_value(valuepp));
+      result.put(tiledb.charpp_value(parampp), tiledb.charpp_value(valuepp));
       next(iterp);
     }
     return result;
@@ -267,7 +259,8 @@ public class Config implements AutoCloseable {
     return hasMore;
   }
 
-  private void checkConfigError(int returnCode, SWIGTYPE_p_p_tiledb_error_t error) throws TileDBError {
+  private void checkConfigError(int returnCode, SWIGTYPE_p_p_tiledb_error_t error)
+      throws TileDBError {
     if (returnCode == tiledb.TILEDB_ERR) {
       SWIGTYPE_p_p_char msgpp = tiledb.new_charpp();
       tiledb.tiledb_error_message(tiledb.tiledb_error_tpp_value(error), msgpp);
@@ -278,16 +271,13 @@ public class Config implements AutoCloseable {
     }
   }
 
-
   protected SWIGTYPE_p_tiledb_config_t getConfigp() {
     return configp;
   }
 
-  /**
-   * Free's native TileDB resources associated with the Config object.
-   */
+  /** Free's native TileDB resources associated with the Config object. */
   public void close() {
-    if(configp != null) {
+    if (configp != null) {
       tiledb.tiledb_config_free(configpp);
     }
   }

@@ -17,9 +17,8 @@ public enum CompressorType {
   TILEDB_BZIP2,
   TILEDB_DOUBLE_DELTA;
 
-
-  protected tiledb_compressor_t toSwigEnum() throws TileDBError{
-    switch (this){
+  protected tiledb_compressor_t toSwigEnum() throws TileDBError {
+    switch (this) {
       case TILEDB_NO_COMPRESSION:
         return tiledb_compressor_t.TILEDB_NO_COMPRESSION;
       case TILEDB_GZIP:
@@ -51,8 +50,8 @@ public enum CompressorType {
     }
   }
 
-  protected static CompressorType fromSwigEnum(tiledb_compressor_t e) throws TileDBError{
-    switch (e){
+  protected static CompressorType fromSwigEnum(tiledb_compressor_t e) throws TileDBError {
+    switch (e) {
       case TILEDB_NO_COMPRESSION:
         return TILEDB_NO_COMPRESSION;
       case TILEDB_GZIP:
@@ -82,6 +81,5 @@ public enum CompressorType {
       default:
         throw new TileDBError("No such enum value" + e.name());
     }
-
   }
 }

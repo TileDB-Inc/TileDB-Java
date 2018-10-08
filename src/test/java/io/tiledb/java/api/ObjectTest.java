@@ -1,19 +1,15 @@
 package io.tiledb.java.api;
 
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Assert;
-
-import java.util.List;
+import static io.tiledb.java.api.ArrayType.*;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import io.tiledb.java.api.WalkOrder;
-
-import static io.tiledb.java.api.ArrayType.*;
-import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import java.util.List;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ObjectTest {
   private Context ctx;
@@ -24,8 +20,7 @@ public class ObjectTest {
     if (Files.exists(Paths.get("my_group"))) {
       TileDBObject.remove(ctx, "my_group");
     }
-    if (Files.exists(Paths.get("my_group2")))
-      TileDBObject.remove(ctx, "my_group2");
+    if (Files.exists(Paths.get("my_group2"))) TileDBObject.remove(ctx, "my_group2");
   }
 
   @After
@@ -42,38 +37,45 @@ public class ObjectTest {
   public void test() throws Exception {
     createHierarchy();
 
-    listTest("my_group", new String[]{"my_group/dense_arrays",
-	                              "my_group/sparse_arrays"});
+    listTest("my_group", new String[] {"my_group/dense_arrays", "my_group/sparse_arrays"});
 
-    listPreorderTest("my_group", new String[]{"my_group/dense_arrays",
-	                                      "my_group/dense_arrays/array_A",
-	                                      "my_group/dense_arrays/array_B",
-	                                      "my_group/sparse_arrays",
-	                                      "my_group/sparse_arrays/array_C",
-	                                      "my_group/sparse_arrays/array_D"});
+    listPreorderTest(
+        "my_group",
+        new String[] {
+          "my_group/dense_arrays",
+          "my_group/dense_arrays/array_A",
+          "my_group/dense_arrays/array_B",
+          "my_group/sparse_arrays",
+          "my_group/sparse_arrays/array_C",
+          "my_group/sparse_arrays/array_D"
+        });
 
-    listPostorderTest("my_group", new String[]{"my_group/dense_arrays/array_A",
-	                                       "my_group/dense_arrays/array_B",
-					       "my_group/dense_arrays",
-	                                       "my_group/sparse_arrays/array_C",
-	                                       "my_group/sparse_arrays/array_D",
-	                                       "my_group/sparse_arrays"});
+    listPostorderTest(
+        "my_group",
+        new String[] {
+          "my_group/dense_arrays/array_A",
+          "my_group/dense_arrays/array_B",
+          "my_group/dense_arrays",
+          "my_group/sparse_arrays/array_C",
+          "my_group/sparse_arrays/array_D",
+          "my_group/sparse_arrays"
+        });
 
-    moveRemoveObject();  // Renames `my_group` to `my_group_2`
+    moveRemoveObject(); // Renames `my_group` to `my_group_2`
 
-    listTest("my_group2", new String[]{"my_group2/sparse_arrays"});
+    listTest("my_group2", new String[] {"my_group2/sparse_arrays"});
 
-    listPreorderTest("my_group2", new String[]{"my_group2/sparse_arrays",
-	    				       "my_group2/sparse_arrays/array_D"});
+    listPreorderTest(
+        "my_group2", new String[] {"my_group2/sparse_arrays", "my_group2/sparse_arrays/array_D"});
 
-    listPostorderTest("my_group2", new String[]{"my_group2/sparse_arrays/array_D",
-	                                        "my_group2/sparse_arrays"});
+    listPostorderTest(
+        "my_group2", new String[] {"my_group2/sparse_arrays/array_D", "my_group2/sparse_arrays"});
   }
 
   private void moveRemoveObject() throws Exception {
-    TileDBObject.move(ctx,"my_group", "my_group2");
-    TileDBObject.remove(ctx,"my_group2/dense_arrays");
-    TileDBObject.remove(ctx,"my_group2/sparse_arrays/array_C");
+    TileDBObject.move(ctx, "my_group", "my_group2");
+    TileDBObject.remove(ctx, "my_group2/dense_arrays");
+    TileDBObject.remove(ctx, "my_group2/sparse_arrays/array_C");
   }
 
   private void createHierarchy() throws Exception {
@@ -90,8 +92,10 @@ public class ObjectTest {
   }
 
   private void createArray(String arrayURI, ArrayType type) throws Exception {
-    Dimension<Integer> rows = new Dimension<Integer>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
-    Dimension<Integer> cols = new Dimension<Integer>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+    Dimension<Integer> rows =
+        new Dimension<Integer>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+    Dimension<Integer> cols =
+        new Dimension<Integer>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
     Domain domain = new Domain(ctx);
     domain.addDimension(rows);
     domain.addDimension(cols);
@@ -107,7 +111,7 @@ public class ObjectTest {
   private void assertUriEndsWith(List<TileDBObject> objs, String[] expected) throws Exception {
     Assert.assertEquals(objs.size(), expected.length);
     for (int i = 0; i < expected.length; i++) {
-       Assert.assertTrue(objs.get(i).getUri().endsWith(expected[i]));
+      Assert.assertTrue(objs.get(i).getUri().endsWith(expected[i]));
     }
   }
 

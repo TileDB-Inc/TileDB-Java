@@ -24,7 +24,6 @@
 
 package io.tiledb.jni;
 
-
 import io.tiledb.libtiledb.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,8 +56,20 @@ public class ArrayTest {
 
   @Test
   public void testfloat() {
-    float[] a_ = {Float.MIN_VALUE, (float) -5.1, (float) -4.1, (float) -3.1, (float) -2.1,
-        (float) -1.1, (float) 0.1, (float) 1.1, (float) 2.1, (float) 3.1, (float) 4.1, Float.MAX_VALUE};
+    float[] a_ = {
+      Float.MIN_VALUE,
+      (float) -5.1,
+      (float) -4.1,
+      (float) -3.1,
+      (float) -2.1,
+      (float) -1.1,
+      (float) 0.1,
+      (float) 1.1,
+      (float) 2.1,
+      (float) 3.1,
+      (float) 4.1,
+      Float.MAX_VALUE
+    };
     floatArray a1 = Utils.newFloatArray(a_);
     float[] res = Utils.floatArrayGet(a1, a_.length);
     Assert.assertArrayEquals(a_, res, (float) 0.0001);
@@ -66,8 +77,9 @@ public class ArrayTest {
 
   @Test
   public void testdouble() {
-    double[] a_ = {Double.MIN_VALUE, -5.1, -4.1, -3.1, -2.1,
-        -1.1, 0.1, 1.1, 2.1, 3.1, 4.1, Double.MAX_VALUE};
+    double[] a_ = {
+      Double.MIN_VALUE, -5.1, -4.1, -3.1, -2.1, -1.1, 0.1, 1.1, 2.1, 3.1, 4.1, Double.MAX_VALUE
+    };
     doubleArray a1 = Utils.newDoubleArray(a_);
     double[] res = Utils.doubleArrayGet(a1, a_.length);
     Assert.assertArrayEquals(a_, res, 0.0001);

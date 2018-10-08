@@ -31,54 +31,47 @@
 
 package examples.io.tiledb.java.api;
 
+import static io.tiledb.java.api.WalkOrder.TILEDB_POSTORDER;
+
 import io.tiledb.java.api.Context;
 import io.tiledb.java.api.TileDBError;
 import io.tiledb.java.api.TileDBObject;
 import io.tiledb.java.api.TileDBObjectIterator;
 
-import static io.tiledb.java.api.WalkOrder.TILEDB_POSTORDER;
-
 public class ObjectLsWalk {
-  public static void main (String[] args) throws TileDBError {
+  public static void main(String[] args) throws TileDBError {
     // Create TileDB context
     Context ctx = new Context();
     // List children
-    System.out.println( "List children: ");
+    System.out.println("List children: ");
     TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, "my_group");
-    for (TileDBObject object : obj_iter.getAllObjects())
-      System.out.println(object);
-
+    for (TileDBObject object : obj_iter.getAllObjects()) System.out.println(object);
 
     // Walk in a path with a pre- and post-order traversal
-    System.out.println( "\nPreorder traversal: ");
+    System.out.println("\nPreorder traversal: ");
     obj_iter.setRecursive(); // Default order is preorder
-    for (TileDBObject object : obj_iter.getAllObjects())
-      System.out.println(object);
+    for (TileDBObject object : obj_iter.getAllObjects()) System.out.println(object);
 
-    System.out.println( "\nPostorder traversal: ");
+    System.out.println("\nPostorder traversal: ");
     obj_iter.setRecursive(TILEDB_POSTORDER);
-    for (TileDBObject object : obj_iter.getAllObjects())
-      System.out.println(object);
+    for (TileDBObject object : obj_iter.getAllObjects()) System.out.println(object);
 
     // Walk in a path, but list only groups
-    System.out.println( "\nOnly groups: ");
+    System.out.println("\nOnly groups: ");
     obj_iter.setRecursive(); // Default order is preorder
     obj_iter.setIteratorPolicy(true, false, false);
-    for (TileDBObject object : obj_iter.getAllObjects())
-      System.out.println(object);
+    for (TileDBObject object : obj_iter.getAllObjects()) System.out.println(object);
 
     // Walk in a path, but list only arrays
-    System.out.println( "\nOnly arrays: ");
+    System.out.println("\nOnly arrays: ");
     obj_iter.setRecursive(); // Default order is preorder
     obj_iter.setIteratorPolicy(false, true, false);
-    for (TileDBObject object : obj_iter.getAllObjects())
-      System.out.println(object);
+    for (TileDBObject object : obj_iter.getAllObjects()) System.out.println(object);
 
     // Walk in a path, but list only groups and arrays
-    System.out.println( "\nOnly groups and arrays: ");
+    System.out.println("\nOnly groups and arrays: ");
     obj_iter.setRecursive(); // Default order is preorder
     obj_iter.setIteratorPolicy(true, true, false);
-    for (TileDBObject object : obj_iter.getAllObjects())
-      System.out.println(object);
+    for (TileDBObject object : obj_iter.getAllObjects()) System.out.println(object);
   }
 }

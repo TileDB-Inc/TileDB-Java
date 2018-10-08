@@ -12,4 +12,5 @@ install:
   - ./gradlew assemble test
 
 script:
+  - ./gradlew checkFormat
   - ./gradlew test

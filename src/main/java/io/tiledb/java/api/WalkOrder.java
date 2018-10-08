@@ -7,7 +7,7 @@ public enum WalkOrder {
   TILEDB_POSTORDER;
 
   protected tiledb_walk_order_t toSwigEnum() throws TileDBError {
-    switch (this){
+    switch (this) {
       case TILEDB_PREORDER:
         return tiledb_walk_order_t.TILEDB_PREORDER;
       case TILEDB_POSTORDER:
@@ -17,8 +17,8 @@ public enum WalkOrder {
     }
   }
 
-  protected static WalkOrder fromSwigEnum(tiledb_walk_order_t e) throws TileDBError{
-    switch (e){
+  protected static WalkOrder fromSwigEnum(tiledb_walk_order_t e) throws TileDBError {
+    switch (e) {
       case TILEDB_PREORDER:
         return TILEDB_PREORDER;
       case TILEDB_POSTORDER:

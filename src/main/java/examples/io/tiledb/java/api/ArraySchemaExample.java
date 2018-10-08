@@ -24,14 +24,13 @@
 
 package examples.io.tiledb.java.api;
 
-import io.tiledb.java.api.*;
-
-import java.util.List;
-import java.util.Map;
-
 import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.CompressorType.*;
 import static io.tiledb.java.api.Layout.*;
+
+import io.tiledb.java.api.*;
+import java.util.List;
+import java.util.Map;
 
 public class ArraySchemaExample {
   public static void main(String[] args) throws Exception {
@@ -47,8 +46,11 @@ public class ArraySchemaExample {
     schema.setOffsetsCompressor(new Compressor(TILEDB_BLOSC_LZ, 5));
 
     // Create getDimensions
-    Dimension<Integer> d1 = new Dimension<Integer>(ctx, "d1", Integer.class, new Pair<Integer, Integer>(1, 1000), 10);
-    Dimension<Integer> d2 = new Dimension<Integer>(ctx, "d2", Integer.class, new Pair<Integer, Integer>(101, 10000), 100);
+    Dimension<Integer> d1 =
+        new Dimension<Integer>(ctx, "d1", Integer.class, new Pair<Integer, Integer>(1, 1000), 10);
+    Dimension<Integer> d2 =
+        new Dimension<Integer>(
+            ctx, "d2", Integer.class, new Pair<Integer, Integer>(101, 10000), 100);
 
     // Create and set getDomain
     Domain domain = new Domain(ctx);
@@ -73,23 +75,25 @@ public class ArraySchemaExample {
     schema.dump();
 
     // Print from getters
-    System.out.println("\nFrom getters:"
-        + "\n- Array getType: "
-        + ((schema.getArrayType() == TILEDB_DENSE) ? "dense" : "sparse")
-        + "\n- Cell order: "
-        + (schema.getCellOrder() == TILEDB_ROW_MAJOR ? "row-major" :
-        "col-major")
-        + "\n- Tile order: "
-        + (schema.getTileOrder() == TILEDB_ROW_MAJOR ? "row-major" :
-        "col-major")
-        + "\n- Capacity: " + schema.getCapacity()
-        + "\n- Coordinates compressor: " + schema.getCoordsCompressor()
-        + "\n- Offsets compressor: " + schema.getOffsetsCompressor());
+    System.out.println(
+        "\nFrom getters:"
+            + "\n- Array getType: "
+            + ((schema.getArrayType() == TILEDB_DENSE) ? "dense" : "sparse")
+            + "\n- Cell order: "
+            + (schema.getCellOrder() == TILEDB_ROW_MAJOR ? "row-major" : "col-major")
+            + "\n- Tile order: "
+            + (schema.getTileOrder() == TILEDB_ROW_MAJOR ? "row-major" : "col-major")
+            + "\n- Capacity: "
+            + schema.getCapacity()
+            + "\n- Coordinates compressor: "
+            + schema.getCoordsCompressor()
+            + "\n- Offsets compressor: "
+            + schema.getOffsetsCompressor());
 
     // Print the attribute names
     System.out.println("\n\nArray schema attribute names: ");
-    for (Map.Entry<String,Attribute> a : schema.getAttributes().entrySet()) {
-      System.out.println("* " +a.getKey());
+    for (Map.Entry<String, Attribute> a : schema.getAttributes().entrySet()) {
+      System.out.println("* " + a.getKey());
     }
 
     // Print getDomain
@@ -97,9 +101,9 @@ public class ArraySchemaExample {
 
     // Print the dimension names using getters
     System.out.println("\nArray schema dimension names: ");
-    for (Dimension d: (List<Dimension>) schema.getDomain().getDimensions()) {
-      System.out.println("* " + d.getName() + " domain: " +d.domainToStr() +" extent: " + d.tileExtentToStr());
+    for (Dimension d : (List<Dimension>) schema.getDomain().getDimensions()) {
+      System.out.println(
+          "* " + d.getName() + " domain: " + d.domainToStr() + " extent: " + d.tileExtentToStr());
     }
-
   }
 }

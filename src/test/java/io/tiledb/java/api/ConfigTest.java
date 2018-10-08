@@ -24,18 +24,15 @@
 
 package io.tiledb.java.api;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-
-import java.util.HashMap;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class ConfigTest {
 
-  @Rule
-  public TemporaryFolder temp = new TemporaryFolder();
+  @Rule public TemporaryFolder temp = new TemporaryFolder();
 
   @Test
   public void test() throws Exception {
@@ -46,7 +43,7 @@ public class ConfigTest {
     Assert.assertTrue(defaultParams.size() > 0);
 
     // Get only the S3 settings
-    for ( Map.Entry<String, String> p : config.parameters("vfs.s3").entrySet()) {
+    for (Map.Entry<String, String> p : config.parameters("vfs.s3").entrySet()) {
       Assert.assertTrue(defaultParams.containsKey("vfs.s3" + p.getKey()));
     }
 
@@ -63,7 +60,8 @@ public class ConfigTest {
     Config ctxConfig = ctx.getConfig();
     Assert.assertEquals(ctxConfig.get("vfs.s3.connect_timeout_ms"), "5000");
 
-    String configPath = temp.getRoot().getAbsolutePath() + temp.getRoot().pathSeparator + "testConfig";
+    String configPath =
+        temp.getRoot().getAbsolutePath() + temp.getRoot().pathSeparator + "testConfig";
     ctxConfig.saveToFile(configPath);
 
     Config loadConfig = new Config(configPath);

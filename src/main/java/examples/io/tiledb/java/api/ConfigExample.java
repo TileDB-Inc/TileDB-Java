@@ -26,9 +26,6 @@ package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.Config;
 import io.tiledb.java.api.Context;
-import io.tiledb.java.api.TileDBError;
-import io.tiledb.libtiledb.tiledb;
-
 import java.util.Map;
 
 public class ConfigExample {
@@ -38,9 +35,9 @@ public class ConfigExample {
     Config config = new Config();
 
     // Print the default config parameters
-    System.out.println( "Default settings:\n");
-    for ( Map.Entry<String, String> p : config.parameters("").entrySet()) {
-      System.out.println( "\"" + p.getKey() + "\" : \"" + p.getValue() + "\"");
+    System.out.println("Default settings:\n");
+    for (Map.Entry<String, String> p : config.parameters("").entrySet()) {
+      System.out.println("\"" + p.getKey() + "\" : \"" + p.getValue() + "\"");
     }
 
     // Set values
@@ -52,14 +49,14 @@ public class ConfigExample {
     System.out.println("\nTile cache size: " + tile_cache_size);
 
     // Print only the S3 settings
-    System.out.println( "\nVFS S3 settings:");
-    for ( Map.Entry<String, String> p : config.parameters("vfs.s3").entrySet()) {
-      System.out.println( "\"" + p.getKey() + "\" : \"" + p.getValue() + "\"");
+    System.out.println("\nVFS S3 settings:");
+    for (Map.Entry<String, String> p : config.parameters("vfs.s3").entrySet()) {
+      System.out.println("\"" + p.getKey() + "\" : \"" + p.getValue() + "\"");
     }
 
     // Assign a config object to a context and VFS
-    Context ctx =new Context(config);
-//    VFS vfs = new VFS(config);
+    Context ctx = new Context(config);
+    //    VFS vfs = new VFS(config);
 
   }
 }

@@ -61,7 +61,6 @@ public class Utils {
     return ret;
   }
 
-
   public static int[] int32ArrayGet(int32_tArray array, int size) {
     return tiledb.int32ArrayGet(int32_tArray.getCPtr(array), size);
   }
@@ -106,41 +105,40 @@ public class Utils {
     return tiledb.uint64ArrayGet(uint64_tArray.getCPtr(array), size);
   }
 
-//	public static uint64_tArray newUint64Array(long[] array){
-//		uint64_tArray ret = new uint64_tArray(array.length);
-//		for (int i = 0; i < array.length; i++) {
-//			ret.setitem(i, new BigInteger(array[i]+""));
-//		}
-//		return ret;
-//	}
-//	
-//	public static floatArray newFloatArray(float[] array){
-//		floatArray ret = new floatArray(array.length);
-//		for (int i = 0; i < array.length; i++) {
-//			ret.setitem(i, array[i]);
-//		}
-//		return ret;
-//	}
+  //	public static uint64_tArray newUint64Array(long[] array){
+  //		uint64_tArray ret = new uint64_tArray(array.length);
+  //		for (int i = 0; i < array.length; i++) {
+  //			ret.setitem(i, new BigInteger(array[i]+""));
+  //		}
+  //		return ret;
+  //	}
+  //
+  //	public static floatArray newFloatArray(float[] array){
+  //		floatArray ret = new floatArray(array.length);
+  //		for (int i = 0; i < array.length; i++) {
+  //			ret.setitem(i, array[i]);
+  //		}
+  //		return ret;
+  //	}
 
-//	public static charArray newCharArray(String s){
-//		char[] array = s.toCharArray();
-//		charArray ret = new charArray(array.length);
-//		for (int i = 0; i < array.length; i++) {
-//			//System.out.print(array[i]);
-//			ret.setitem(i, array[i]);
-//		}
-//		//System.out.println();
-//		return ret;
-//	}
+  //	public static charArray newCharArray(String s){
+  //		char[] array = s.toCharArray();
+  //		charArray ret = new charArray(array.length);
+  //		for (int i = 0; i < array.length; i++) {
+  //			//System.out.print(array[i]);
+  //			ret.setitem(i, array[i]);
+  //		}
+  //		//System.out.println();
+  //		return ret;
+  //	}
 
-
-//	public static doubleArray newDoubleArray(double[] array) {
-//		doubleArray ret = new doubleArray(array.length);
-//		for (int i = 0; i < array.length; i++) {
-//			ret.setitem(i, array[i]);
-//		}
-//		return ret;
-//	}
+  //	public static doubleArray newDoubleArray(double[] array) {
+  //		doubleArray ret = new doubleArray(array.length);
+  //		for (int i = 0; i < array.length; i++) {
+  //			ret.setitem(i, array[i]);
+  //		}
+  //		return ret;
+  //	}
 
   public static String substring(byte[] array, int start, int size) {
     byte[] c = new byte[size];
@@ -165,18 +163,30 @@ public class Utils {
 
   public static SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int java_path_callback() {
     long cPtr = tiledbJNI.java_path_callback();
-    return (cPtr == 0) ? null : new SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int(cPtr, false);
+    return (cPtr == 0)
+        ? null
+        : new SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int(cPtr, false);
   }
 
-  public static int tiledb_object_walk(SWIGTYPE_p_tiledb_ctx_t ctx, String path, tiledb_walk_order_t order, PathCallback callback) {
-    return tiledbJNI.tiledb_object_walk_java(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, path, order.swigValue(), callback);
+  public static int tiledb_object_walk(
+      SWIGTYPE_p_tiledb_ctx_t ctx, String path, tiledb_walk_order_t order, PathCallback callback) {
+    return tiledbJNI.tiledb_object_walk_java(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, path, order.swigValue(), callback);
   }
 
-  public static int tiledb_query_submit_async(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_query_t query, Callback callback) {
-    return tiledbJNI.tiledb_query_submit_async_java(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, SWIGTYPE_p_tiledb_query_t.getCPtr(query), query, callback);
+  public static int tiledb_query_submit_async(
+      SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_query_t query, Callback callback) {
+    return tiledbJNI.tiledb_query_submit_async_java(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        ctx,
+        SWIGTYPE_p_tiledb_query_t.getCPtr(query),
+        query,
+        callback);
   }
 
-  public static int tiledb_object_ls(SWIGTYPE_p_tiledb_ctx_t ctx, String path, PathCallback callback) {
-    return tiledbJNI.tiledb_object_ls_java(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, path, callback);
+  public static int tiledb_object_ls(
+      SWIGTYPE_p_tiledb_ctx_t ctx, String path, PathCallback callback) {
+    return tiledbJNI.tiledb_object_ls_java(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, path, callback);
   }
 }

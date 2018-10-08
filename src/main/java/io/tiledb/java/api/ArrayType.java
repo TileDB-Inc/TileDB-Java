@@ -6,8 +6,8 @@ public enum ArrayType {
   TILEDB_DENSE,
   TILEDB_SPARSE;
 
-  protected tiledb_array_type_t toSwigEnum() throws TileDBError{
-    switch (this){
+  protected tiledb_array_type_t toSwigEnum() throws TileDBError {
+    switch (this) {
       case TILEDB_DENSE:
         return tiledb_array_type_t.TILEDB_DENSE;
       case TILEDB_SPARSE:
@@ -17,7 +17,7 @@ public enum ArrayType {
     }
   }
 
-  protected static ArrayType fromSwigEnum(tiledb_array_type_t e) throws TileDBError{
+  protected static ArrayType fromSwigEnum(tiledb_array_type_t e) throws TileDBError {
     switch (e) {
       case TILEDB_DENSE:
         return TILEDB_DENSE;

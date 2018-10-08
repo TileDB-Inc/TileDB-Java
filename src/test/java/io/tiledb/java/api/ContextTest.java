@@ -24,10 +24,10 @@
 
 package io.tiledb.java.api;
 
-import org.junit.Test;
-import org.junit.Assert;
-
 import static io.tiledb.java.api.Filesystem.*;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 public class ContextTest {
 
@@ -40,10 +40,9 @@ public class ContextTest {
     Assert.assertTrue(ctx.isSupportedFs(TILEDB_S3) || true);
   }
 
-  private class Handler extends ContextCallback{
+  private class Handler extends ContextCallback {
 
     @Override
-    public void call(String msg) throws TileDBError {
-    }
+    public void call(String msg) throws TileDBError {}
   }
 }

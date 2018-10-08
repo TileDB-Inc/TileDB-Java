@@ -24,8 +24,8 @@
 
 package io.tiledb.java.api;
 
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 
 public class VersionTest {
 

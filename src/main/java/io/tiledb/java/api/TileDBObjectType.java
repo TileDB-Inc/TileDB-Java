@@ -9,7 +9,7 @@ public enum TileDBObjectType {
   TILEDB_KEY_VALUE;
 
   protected tiledb_object_t toSwigEnum() throws TileDBError {
-    switch (this){
+    switch (this) {
       case TILEDB_INVALID:
         return tiledb_object_t.TILEDB_INVALID;
       case TILEDB_GROUP:
@@ -23,8 +23,8 @@ public enum TileDBObjectType {
     }
   }
 
-  protected static TileDBObjectType fromSwigEnum(tiledb_object_t e) throws TileDBError{
-    switch (e){
+  protected static TileDBObjectType fromSwigEnum(tiledb_object_t e) throws TileDBError {
+    switch (e) {
       case TILEDB_INVALID:
         return TILEDB_INVALID;
       case TILEDB_GROUP:

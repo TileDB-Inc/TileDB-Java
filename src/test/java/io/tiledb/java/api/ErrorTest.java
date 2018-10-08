@@ -1,14 +1,12 @@
 package io.tiledb.java.api;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
-
+import examples.io.tiledb.java.api.Error;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import examples.io.tiledb.java.api.Error;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ErrorTest {
 

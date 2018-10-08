@@ -24,105 +24,115 @@
 
 package io.tiledb.java.api;
 
-import java.math.BigInteger;
-
 import static io.tiledb.java.api.Datatype.*;
+
+import java.math.BigInteger;
 
 public class Types {
 
   public static Datatype getNativeType(Class atrrType) throws TileDBError {
-    if(atrrType.equals(int[].class)) {
+    if (atrrType.equals(int[].class)) {
       return TILEDB_INT32;
-    } else if(atrrType.equals(long[].class)) {
+    } else if (atrrType.equals(long[].class)) {
       return TILEDB_UINT64;
-    } else if(atrrType.equals(char[].class)) {
+    } else if (atrrType.equals(char[].class)) {
       return TILEDB_CHAR;
-    } else if(atrrType.equals(float[].class)) {
+    } else if (atrrType.equals(float[].class)) {
       return TILEDB_FLOAT32;
-    } else if(atrrType.equals(double[].class)) {
+    } else if (atrrType.equals(double[].class)) {
       return TILEDB_FLOAT64;
-    } else if(atrrType.equals(byte[].class)) {
+    } else if (atrrType.equals(byte[].class)) {
       return TILEDB_INT8;
-    } else if(atrrType.equals(short[].class)) {
+    } else if (atrrType.equals(short[].class)) {
       return TILEDB_INT16;
-    } else if(atrrType.equals(boolean[].class)) {
+    } else if (atrrType.equals(boolean[].class)) {
       return TILEDB_INT8;
-    } else if(atrrType.equals(BigInteger[].class)) {
+    } else if (atrrType.equals(BigInteger[].class)) {
       return TILEDB_UINT64;
-    } else if(atrrType.equals(Integer.class)) {
+    } else if (atrrType.equals(Integer.class)) {
       return TILEDB_INT32;
-    } else if(atrrType.equals(Long.class)) {
+    } else if (atrrType.equals(Long.class)) {
       return TILEDB_UINT64;
-    } else if(atrrType.equals(Character.class)) {
+    } else if (atrrType.equals(Character.class)) {
       return TILEDB_CHAR;
-    } else if(atrrType.equals(String.class)) {
+    } else if (atrrType.equals(String.class)) {
       return TILEDB_CHAR;
-    } else if(atrrType.equals(Float.class)) {
+    } else if (atrrType.equals(Float.class)) {
       return TILEDB_FLOAT32;
-    } else if(atrrType.equals(Double.class)) {
+    } else if (atrrType.equals(Double.class)) {
       return TILEDB_FLOAT64;
-    } else if(atrrType.equals(Byte.class)) {
+    } else if (atrrType.equals(Byte.class)) {
       return TILEDB_INT8;
-    } else if(atrrType.equals(Short.class)) {
+    } else if (atrrType.equals(Short.class)) {
       return TILEDB_INT16;
-    } else if(atrrType.equals(Boolean.class)) {
+    } else if (atrrType.equals(Boolean.class)) {
       return TILEDB_INT8;
-    } else if(atrrType.equals(BigInteger.class)) {
+    } else if (atrrType.equals(BigInteger.class)) {
       return TILEDB_UINT64;
     } else {
-//      return TILEDB_INT8;
-      throw new TileDBError("Not supported getType: "+atrrType);
+      //      return TILEDB_INT8;
+      throw new TileDBError("Not supported getType: " + atrrType);
     }
   }
 
   public static Class getJavaType(Datatype type) throws TileDBError {
-    switch(type) {
-      case TILEDB_FLOAT32: {
-        return Float.class;
-      }
-      case TILEDB_FLOAT64: {
-        return Double.class;
-      }
-      case TILEDB_INT8: {
-        return Byte.class;
-      }
-      case TILEDB_INT16: {
-        return Short.class;
-      }
-      case TILEDB_INT32: {
-        return Integer.class;
-      }
-      case TILEDB_INT64: {
-        return Long.class;
-      }
-      case TILEDB_UINT8: {
-        return Short.class;
-      }
-      case TILEDB_UINT16: {
-        return Integer.class;
-      }
-      case TILEDB_UINT32: {
-        return Long.class;
-      }
-      case TILEDB_UINT64: {
-        return Long.class;
-      }
-      case TILEDB_CHAR: {
-        return String.class;
-      }
-      default: {
-        throw new TileDBError("Not supported getDomain getType " + type);
-      }
+    switch (type) {
+      case TILEDB_FLOAT32:
+        {
+          return Float.class;
+        }
+      case TILEDB_FLOAT64:
+        {
+          return Double.class;
+        }
+      case TILEDB_INT8:
+        {
+          return Byte.class;
+        }
+      case TILEDB_INT16:
+        {
+          return Short.class;
+        }
+      case TILEDB_INT32:
+        {
+          return Integer.class;
+        }
+      case TILEDB_INT64:
+        {
+          return Long.class;
+        }
+      case TILEDB_UINT8:
+        {
+          return Short.class;
+        }
+      case TILEDB_UINT16:
+        {
+          return Integer.class;
+        }
+      case TILEDB_UINT32:
+        {
+          return Long.class;
+        }
+      case TILEDB_UINT64:
+        {
+          return Long.class;
+        }
+      case TILEDB_CHAR:
+        {
+          return String.class;
+        }
+      default:
+        {
+          throw new TileDBError("Not supported getDomain getType " + type);
+        }
     }
   }
 
   public static boolean typeCheck(Datatype first, Datatype second) throws TileDBError {
-    if(first.equals(second)){
+    if (first.equals(second)) {
       return true;
-    }
-    else {
-      throw new TileDBError("Type " +first+" is not equal to the default getType: "+second);
+    } else {
+      throw new TileDBError("Type " + first + " is not equal to the default getType: " + second);
     }
   }
-
 }

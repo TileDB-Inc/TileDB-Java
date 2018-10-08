@@ -24,17 +24,14 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.*;
+import static io.tiledb.java.api.WalkOrder.*;
 
+import io.tiledb.libtiledb.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.tiledb.java.api.WalkOrder.*;
-
 /**
- * Enables listing TileDB objects in a directory or walking recursively an
- * entire directory tree.
- *
+ * Enables listing TileDB objects in a directory or walking recursively an entire directory tree.
  */
 public class TileDBObjectIterator {
   private final Context ctx;
@@ -46,14 +43,13 @@ public class TileDBObjectIterator {
   private String root = ".";
 
   /**
-   * Creates an object iterator. Unless `set_recursive` is invoked, this
-   * iterator will iterate only over the children of `root`. It will
-   * also retrieve only TileDB-related objects.
+   * Creates an object iterator. Unless `set_recursive` is invoked, this iterator will iterate only
+   * over the children of `root`. It will also retrieve only TileDB-related objects.
    *
    * @param ctx The TileDB context.
    * @param root The root directory where the iteration will begin.
    */
-  public TileDBObjectIterator(Context ctx, String root){
+  public TileDBObjectIterator(Context ctx, String root) {
     this.ctx = ctx;
     this.root = root;
   }
@@ -69,7 +65,14 @@ public class TileDBObjectIterator {
    * @param walkOrder The walk order.
    * @param root The root directory where the iteration will begin.
    */
-  public TileDBObjectIterator(Context ctx, boolean group, boolean array, boolean kv, boolean recursive, WalkOrder walkOrder, String root) {
+  public TileDBObjectIterator(
+      Context ctx,
+      boolean group,
+      boolean array,
+      boolean kv,
+      boolean recursive,
+      WalkOrder walkOrder,
+      String root) {
     this.ctx = ctx;
     this.group = group;
     this.array = array;
@@ -80,42 +83,40 @@ public class TileDBObjectIterator {
   }
 
   /**
-   * Determines whether group, array and key-value objects will be iterated
-   * on during the walk. The default (if the function is not invoked) is
-   * `true` for all objects.
+   * Determines whether group, array and key-value objects will be iterated on during the walk. The
+   * default (if the function is not invoked) is `true` for all objects.
    *
    * @param group If `true`, groups will be considered.
    * @param array If `true`, arrays will be considered.
    * @param kv If `true`, key-values will be considered.
    */
-  public void setIteratorPolicy(boolean group, boolean array, boolean kv){
+  public void setIteratorPolicy(boolean group, boolean array, boolean kv) {
     this.group = group;
     this.array = array;
     this.kv = kv;
   }
 
   /**
-   * Specifies that the iteration will be over all the directories in the
-   * tree rooted at `root`.
+   * Specifies that the iteration will be over all the directories in the tree rooted at `root`.
    *
    * @param walkOrder The walk order.
    */
-  public void setRecursive(WalkOrder walkOrder){
+  public void setRecursive(WalkOrder walkOrder) {
     recursive = true;
     setWalkOrder(walkOrder);
   }
 
   /**
-   * Specifies that the iteration will be over all the directories in the
-   * tree rooted at `root`. Default order is preorder
+   * Specifies that the iteration will be over all the directories in the tree rooted at `root`.
+   * Default order is preorder
    */
-  public void setRecursive(){
+  public void setRecursive() {
     recursive = true;
     setWalkOrder(TILEDB_PREORDER);
   }
 
   /** Disables recursive traversal. */
-  public void setNonRecursive(){
+  public void setNonRecursive() {
     recursive = false;
   }
 
@@ -153,8 +154,7 @@ public class TileDBObjectIterator {
       ctx.handleError(
           Utils.tiledb_object_walk(ctx.getCtxp(), root, walkOrder.toSwigEnum(), objectGetter));
     } else {
-      ctx.handleError(
-          Utils.tiledb_object_ls(ctx.getCtxp(), root, objectGetter));
+      ctx.handleError(Utils.tiledb_object_ls(ctx.getCtxp(), root, objectGetter));
     }
     return objectGetter.getObjects();
   }
@@ -180,9 +180,9 @@ public class TileDBObjectIterator {
 
     @Override
     public int call(String path, tiledb_object_t type) {
-      if ((type == tiledb_object_t.TILEDB_ARRAY && array) ||
-          (type == tiledb_object_t.TILEDB_GROUP && group) ||
-          (type == tiledb_object_t.TILEDB_KEY_VALUE && kv)) {
+      if ((type == tiledb_object_t.TILEDB_ARRAY && array)
+          || (type == tiledb_object_t.TILEDB_GROUP && group)
+          || (type == tiledb_object_t.TILEDB_KEY_VALUE && kv)) {
         TileDBObject object = null;
         try {
           object = new TileDBObject(ctx, path, TileDBObjectType.fromSwigEnum(type));

@@ -133,5 +133,4 @@ public class PointerUtils {
   public static uint64_tArray uint64_tArrayFromVoid(SWIGTYPE_p_p_void p) {
     return new uint64_tArray(SWIGTYPE_p_void.getCPtr(tiledb.derefVoid(p)), false);
   }
-
 }

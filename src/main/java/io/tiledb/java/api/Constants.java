@@ -11,12 +11,12 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.tiledb;
 
 public class Constants {
-  public final static int TILEDB_OOM = tiledb.TILEDB_OOM;
-  public final static int TILEDB_ERR = tiledb.TILEDB_ERR;
-  public final static int TILEDB_OK = tiledb.TILEDB_OK;
-  public final static int TILEDB_VERSION_MAJOR = tiledb.TILEDB_VERSION_MAJOR;
-  public final static int TILEDB_VERSION_MINOR = tiledb.TILEDB_VERSION_MINOR;
-  public final static int TILEDB_VERSION_PATCH = tiledb.TILEDB_VERSION_PATCH;
-  public final static long TILEDB_VAR_NUM = tiledb.tiledb_var_num();
-  public final static String TILEDB_COORDS = tiledb.tiledb_coords();
+  public static final int TILEDB_OOM = tiledb.TILEDB_OOM;
+  public static final int TILEDB_ERR = tiledb.TILEDB_ERR;
+  public static final int TILEDB_OK = tiledb.TILEDB_OK;
+  public static final int TILEDB_VERSION_MAJOR = tiledb.TILEDB_VERSION_MAJOR;
+  public static final int TILEDB_VERSION_MINOR = tiledb.TILEDB_VERSION_MINOR;
+  public static final int TILEDB_VERSION_PATCH = tiledb.TILEDB_VERSION_PATCH;
+  public static final long TILEDB_VAR_NUM = tiledb.tiledb_var_num();
+  public static final String TILEDB_COORDS = tiledb.tiledb_coords();
 }

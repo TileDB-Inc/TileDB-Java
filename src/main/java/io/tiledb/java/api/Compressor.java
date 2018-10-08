@@ -25,9 +25,8 @@
 package io.tiledb.java.api;
 
 /**
- * Represents a compression scheme. Composed of a compression algorithm + a
- * compression level. A compression level of -1 indicates the default
- * level.
+ * Represents a compression scheme. Composed of a compression algorithm + a compression level. A
+ * compression level of -1 indicates the default level.
  *
  * <pre><b>Example:</b>
  *   Attribute a1 = new Attribute(ctx, "a1", Integer.class);
@@ -40,10 +39,7 @@ public class Compressor {
 
   @Override
   public String toString() {
-    return "Compressor{" +
-        "compressor=" + compressor +
-        ", level=" + level +
-        '}';
+    return "Compressor{" + "compressor=" + compressor + ", level=" + level + '}';
   }
 
   /**
@@ -57,10 +53,7 @@ public class Compressor {
     this.level = level;
   }
 
-  /**
-   *
-   * @return CompressorType algorithm enum
-   */
+  /** @return CompressorType algorithm enum */
   public CompressorType getCompressor() {
     return compressor;
   }
@@ -74,10 +67,7 @@ public class Compressor {
     this.compressor = compressor;
   }
 
-  /**
-   *
-   * @return The compression level int
-   */
+  /** @return The compression level int */
   public int getLevel() {
     return level;
   }
@@ -85,11 +75,9 @@ public class Compressor {
   /**
    * Sets the compression level
    *
-   * @param level Compression level (-1 for the compression algorithm's
-   * default).
+   * @param level Compression level (-1 for the compression algorithm's default).
    */
   public void setLevel(int level) {
     this.level = level;
   }
-
 }

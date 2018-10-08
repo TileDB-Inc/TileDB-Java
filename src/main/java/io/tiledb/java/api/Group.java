@@ -32,8 +32,8 @@ public class Group {
   private final String uri;
 
   /**
-   * Creates a new group. A Group is a logical grouping of TileDB objects on the
-   * storage system with the sample path prefix.
+   * Creates a new group. A Group is a logical grouping of TileDB objects on the storage system with
+   * the sample path prefix.
    *
    * @param ctx The TileDB context.
    * @param uri The group URI.

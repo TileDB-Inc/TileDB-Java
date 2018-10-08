@@ -33,11 +33,10 @@ import io.tiledb.java.api.Context;
 import io.tiledb.java.api.ContextCallback;
 import io.tiledb.java.api.Group;
 import io.tiledb.java.api.TileDBError;
-import io.tiledb.libtiledb.tiledb;
 
 public class Error {
 
-  public static void main (String[] args) throws TileDBError {
+  public static void main(String[] args) throws TileDBError {
     // Create TileDB context
     Context ctx = new Context();
 
@@ -46,7 +45,7 @@ public class Error {
       Group group = new Group(ctx, "my_group");
       group = new Group(ctx, "my_group");
     } catch (TileDBError e) {
-      System.out.println( "TileDB exception: " + e.toString());
+      System.out.println("TileDB exception: " + e.toString());
     }
 
     // Set a different error handler
