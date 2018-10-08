@@ -56,5 +56,4 @@ public class int8_tArray {
     long cPtr = tiledbJNI.int8_tArray_frompointer(SWIGTYPE_p_signed_char.getCPtr(t));
     return (cPtr == 0) ? null : new int8_tArray(cPtr, false);
   }
-
 }

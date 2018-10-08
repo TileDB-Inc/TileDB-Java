@@ -22,12 +22,10 @@
  * SOFTWARE.
  */
 
-
 package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.Array;
 import io.tiledb.java.api.Context;
-import io.tiledb.java.api.TileDBError;
 
 public class ArrayConsolidateExample {
   public static void main(String[] args) throws Exception {
@@ -35,6 +33,6 @@ public class ArrayConsolidateExample {
     Context ctx = new Context();
 
     // Consolidate array
-    Array.consolidate(ctx,"my_dense_array");
+    Array.consolidate(ctx, "my_dense_array");
   }
 }

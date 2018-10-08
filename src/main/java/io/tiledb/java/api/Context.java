@@ -30,13 +30,11 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
-
 /**
- * A TileDB context wraps a TileDB storage manager instance.
- * Most objects and functions will require a Context. <br>
- *
- * Internal error handling is also defined by the Context; the default error
- * handler throws a TileDBError with a specific message. <br>
+ * A TileDB context wraps a TileDB storage manager instance. Most objects and functions will require
+ * a Context. <br>
+ * Internal error handling is also defined by the Context; the default error handler throws a
+ * TileDBError with a specific message. <br>
  *
  * <pre><b>Example:</b>
  *   Context ctx = new Context();
@@ -65,6 +63,7 @@ public class Context implements AutoCloseable {
 
   /**
    * Constructor. Creates a TileDB Context with default configuration.
+   *
    * @throws TileDBError if construction fails
    */
   public Context() throws TileDBError {
@@ -82,8 +81,8 @@ public class Context implements AutoCloseable {
   }
 
   /**
-   * Sets the error handler using a subclass of ContextCallback. If none is set,
-   * ContextCallback is used. The callback accepts an error message.
+   * Sets the error handler using a subclass of ContextCallback. If none is set, ContextCallback is
+   * used. The callback accepts an error message.
    *
    * @param errorHandler A custom ContextCallback error handler
    */
@@ -92,16 +91,14 @@ public class Context implements AutoCloseable {
   }
 
   /**
-   * Error handler for the TileDB C API (JNI) calls. Throws an exception
-   * in case of error.
+   * Error handler for the TileDB C API (JNI) calls. Throws an exception in case of error.
    *
    * @param rc If != TILEDB_OK, call error handler
    * @exception TileDBError A TileDB exception
    */
   public void handleError(int rc) throws TileDBError {
     // Do nothing if there is no error
-    if (rc == tiledb.TILEDB_OK)
-      return;
+    if (rc == tiledb.TILEDB_OK) return;
 
     // Get error
     SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
@@ -145,7 +142,6 @@ public class Context implements AutoCloseable {
     return isSupported;
   }
 
-
   private void createContext(Config config) throws TileDBError {
     SWIGTYPE_p_p_tiledb_ctx_t _ctxpp = tiledb.new_tiledb_ctx_tpp();
     if (tiledb.tiledb_ctx_alloc(config.getConfigp(), _ctxpp) != tiledb.TILEDB_OK) {
@@ -162,10 +158,7 @@ public class Context implements AutoCloseable {
     return ctxp;
   }
 
-  /**
-   *
-   * @return A Config object containing all configuration values of the Context.
-   */
+  /** @return A Config object containing all configuration values of the Context. */
   public Config getConfig() {
     return config;
   }
@@ -174,12 +167,12 @@ public class Context implements AutoCloseable {
    * Close the context and delete all native objects. Should be called always to cleanup the context
    */
   public void close() {
-    if(ctxp != null) {
+    if (ctxp != null) {
       tiledb.tiledb_ctx_free(ctxpp);
       ctxp = null;
       ctxpp = null;
     }
-    if(config != null) {
+    if (config != null) {
       config.close();
     }
   }

@@ -25,41 +25,39 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Represents the domain of an array. <br>
+ * A Domain defines the set of Dimension objects for a given array. The properties of a Domain
+ * derive from the underlying dimensions. A Domain is a component of an ArraySchema. <br>
+ * <b>Note:</b> The dimension can only be integral types, as well as floating point for sparse array
+ * domains.
  *
- * A Domain defines the set of Dimension objects for a given array. The
- * properties of a Domain derive from the underlying dimensions. A
- * Domain is a component of an ArraySchema. <br>
+ * <p><b>Example:</b>
  *
- * <b>Note:</b> The dimension can only be integral types, as well as floating point for sparse array domains.
- *
- * <b>Example:</b>
  * <pre>{@code
- *   Context ctx = new Context();
- *   Domain domain = new Domain(ctx);
+ * Context ctx = new Context();
+ * Domain domain = new Domain(ctx);
  *
- *   // Note the dimension bounds are inclusive.
- *   Dimension<Integer> d1 = new Dimension<Integer>(ctx, "d1", Integer.class, new Pair<Integer, Integer>(-10, 10), 1);
- *   Dimension<Long> d2 = new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(1l, 10l), 1l);
- *   Dimension<Integer> d3 = new Dimension<Integer>(ctx, "d3", Integer.class, new Pair<Integer, Integer>(-100, 100), 10);
+ * // Note the dimension bounds are inclusive.
+ * Dimension<Integer> d1 = new Dimension<Integer>(ctx, "d1", Integer.class, new Pair<Integer, Integer>(-10, 10), 1);
+ * Dimension<Long> d2 = new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(1l, 10l), 1l);
+ * Dimension<Integer> d3 = new Dimension<Integer>(ctx, "d3", Integer.class, new Pair<Integer, Integer>(-100, 100), 10);
  *
- *   domain.addDimension(d1);
- *   domain.addDimension(d2); // Throws error, all dims must be same type
- *   domain.addDimension(d3);
+ * domain.addDimension(d1);
+ * domain.addDimension(d2); // Throws error, all dims must be same type
+ * domain.addDimension(d3);
  *
- *   domain.getType(); // TILEDB_INT32, determined from the dimensions
- *   domain.getRank(); // 2, d1 and d3
+ * domain.getType(); // TILEDB_INT32, determined from the dimensions
+ * domain.getRank(); // 2, d1 and d3
  *
- *   ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
- *   schema.setDomain(domain); // Set the array's domain
+ * ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+ * schema.setDomain(domain); // Set the array's domain
  * }</pre>
- **/
+ */
 public class Domain implements AutoCloseable {
   private Context ctx;
   private List<Dimension> dimensions;
@@ -90,19 +88,19 @@ public class Domain implements AutoCloseable {
     return domainp;
   }
 
-//  /**
-//   * Returns the total number of cells in the getDomain. Throws an exception
-//   * if the getDomain getType is `float32` or `float64`.
-//   */
-//  public long getCellNum() throws TileDBError {
-//    long ret = 1;
-//    for (Dimension dim : getDimensions()) {
-//      Pair d = dim.getDomain();
-//      ret *= (d.getSecond() - d.getFirst() + 1);
-//    }
-//    return ret;
-//
-//  }
+  //  /**
+  //   * Returns the total number of cells in the getDomain. Throws an exception
+  //   * if the getDomain getType is `float32` or `float64`.
+  //   */
+  //  public long getCellNum() throws TileDBError {
+  //    long ret = 1;
+  //    for (Dimension dim : getDimensions()) {
+  //      Pair d = dim.getDomain();
+  //      ret *= (d.getSecond() - d.getFirst() + 1);
+  //    }
+  //    return ret;
+  //
+  //  }
 
   /**
    * Dumps the Domain in an ASCII representation to stdout.
@@ -124,7 +122,6 @@ public class Domain implements AutoCloseable {
   }
 
   /**
-   *
    * @return The domain Enumerated type.
    * @exception TileDBError A TileDB exception
    */
@@ -142,7 +139,6 @@ public class Domain implements AutoCloseable {
   }
 
   /**
-   *
    * @return The rank of the domain (number of dimensions)
    * @exception TileDBError A TileDB exception
    */
@@ -160,18 +156,18 @@ public class Domain implements AutoCloseable {
   }
 
   /**
-   *
    * @return A List containing the Dimensions in domain.
    * @exception TileDBError A TileDB exception
    */
   public List<Dimension> getDimensions() throws TileDBError {
-    if (dimensions == null){
+    if (dimensions == null) {
       long rank = getRank();
       dimensions = new ArrayList<Dimension>();
-      for (long i=0; i<rank; i++){
+      for (long i = 0; i < rank; i++) {
         SWIGTYPE_p_p_tiledb_dimension_t dimpp = tiledb.new_tiledb_dimension_tpp();
         try {
-          ctx.handleError(tiledb.tiledb_domain_get_dimension_from_index(ctx.getCtxp(), domainp, i, dimpp));
+          ctx.handleError(
+              tiledb.tiledb_domain_get_dimension_from_index(ctx.getCtxp(), domainp, i, dimpp));
         } catch (TileDBError err) {
           tiledb.delete_tiledb_dimension_tpp(dimpp);
           throw err;
@@ -191,11 +187,12 @@ public class Domain implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public void addDimension(Dimension dimension) throws TileDBError {
-    if(dimensions==null){
+    if (dimensions == null) {
       dimensions = new ArrayList<Dimension>();
     }
     dimensions.add(dimension);
-    ctx.handleError(tiledb.tiledb_domain_add_dimension(ctx.getCtxp(), domainp, dimension.getDimensionp()));
+    ctx.handleError(
+        tiledb.tiledb_domain_add_dimension(ctx.getCtxp(), domainp, dimension.getDimensionp()));
   }
 
   /**
@@ -210,14 +207,12 @@ public class Domain implements AutoCloseable {
     }
   }
 
-  /**
-   * Free's native TileDB resources associated with the Domain object
-   */
+  /** Free's native TileDB resources associated with the Domain object */
   public void close() {
-    if(domainp!=null) {
+    if (domainp != null) {
       tiledb.tiledb_domain_free(domainpp);
     }
-    if(dimensions!=null) {
+    if (dimensions != null) {
       for (Dimension d : dimensions) {
         d.close();
       }

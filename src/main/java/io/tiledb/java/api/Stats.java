@@ -1,18 +1,17 @@
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.SWIGTYPE_p_FILE;
 import io.tiledb.libtiledb.tiledb;
-
 
 /**
  * Encapsulates functionality related to internal TileDB statistics.
  *
- * <b>Example:</b>
+ * <p><b>Example:</b>
+ *
  * <pre>{@code
- *   // Enable stats, submit a query, then dump to stdout.
- *   Stats.enable();
- *   query.submit();
- *   Stats.dump();
+ * // Enable stats, submit a query, then dump to stdout.
+ * Stats.enable();
+ * query.submit();
+ * Stats.dump();
  * }</pre>
  */
 public class Stats {
@@ -71,7 +70,6 @@ public class Stats {
    * @exception TileDBError
    */
   private static void check_error(int rc, String msg) throws TileDBError {
-    if (rc != tiledb.TILEDB_OK)
-      throw new TileDBError("Stats Error: " + msg);
+    if (rc != tiledb.TILEDB_OK) throw new TileDBError("Stats Error: " + msg);
   }
 }

@@ -20,7 +20,7 @@ public enum VFSMode {
     }
   }
 
-  protected static VFSMode fromSwigEnum(tiledb_vfs_mode_t e) throws TileDBError{
+  protected static VFSMode fromSwigEnum(tiledb_vfs_mode_t e) throws TileDBError {
     switch (e) {
       case TILEDB_VFS_READ:
         return TILEDB_VFS_READ;

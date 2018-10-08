@@ -40,7 +40,7 @@ import io.tiledb.java.api.TileDBError;
 import io.tiledb.java.api.TileDBObject;
 
 public class TileDBObjectType {
-  public static void main (String[] args) throws TileDBError {
+  public static void main(String[] args) throws TileDBError {
     // Create TileDB context
     Context ctx = new Context();
     // Print object types

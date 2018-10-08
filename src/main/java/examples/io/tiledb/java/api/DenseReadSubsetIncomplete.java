@@ -24,11 +24,11 @@
 
 package examples.io.tiledb.java.api;
 
-import io.tiledb.java.api.*;
-
 import static io.tiledb.java.api.Layout.TILEDB_COL_MAJOR;
 import static io.tiledb.java.api.QueryStatus.TILEDB_INCOMPLETE;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
+
+import io.tiledb.java.api.*;
 
 public class DenseReadSubsetIncomplete {
   public static void main(String[] args) throws Exception {
@@ -52,7 +52,7 @@ public class DenseReadSubsetIncomplete {
       query.submit();
 
       int[] a1_buff = (int[]) query.getBuffer("a1");
-      for (int i =0; i< a1_buff.length; i++){
+      for (int i = 0; i < a1_buff.length; i++) {
         System.out.println(a1_buff[i]);
       }
     } while (query.getQueryStatus() == TILEDB_INCOMPLETE);

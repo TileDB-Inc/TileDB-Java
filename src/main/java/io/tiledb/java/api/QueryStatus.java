@@ -10,7 +10,7 @@ public enum QueryStatus {
   TILEDB_UNINITIALIZED;
 
   protected tiledb_query_status_t toSwigEnum() throws TileDBError {
-    switch (this){
+    switch (this) {
       case TILEDB_FAILED:
         return tiledb_query_status_t.TILEDB_FAILED;
       case TILEDB_COMPLETED:
@@ -26,8 +26,8 @@ public enum QueryStatus {
     }
   }
 
-  protected static QueryStatus fromSwigEnum(tiledb_query_status_t e) throws TileDBError{
-    switch (e){
+  protected static QueryStatus fromSwigEnum(tiledb_query_status_t e) throws TileDBError {
+    switch (e) {
       case TILEDB_FAILED:
         return TILEDB_FAILED;
       case TILEDB_COMPLETED:

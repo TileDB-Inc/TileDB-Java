@@ -28,9 +28,7 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_object_t;
 import io.tiledb.libtiledb.tiledb;
 
-/**
- * Represents a TileDB object: array, group, key-value, or none (invalid).
- */
+/** Represents a TileDB object: array, group, key-value, or none (invalid). */
 public class TileDBObject {
 
   private final Context ctx;
@@ -58,7 +56,7 @@ public class TileDBObject {
     tiledb.delete_tiledb_object_tp(typep);
   }
 
-  protected TileDBObject(Context ctx, String uri, TileDBObjectType type){
+  protected TileDBObject(Context ctx, String uri, TileDBObjectType type) {
     this.ctx = ctx;
     this.uri = uri;
     this.type = type;
@@ -83,17 +81,11 @@ public class TileDBObject {
    * @param new_uri The path to the new object.
    * @exception TileDBError A TileDB exception
    */
-  public static void move(
-      Context ctx,
-      String old_uri,
-      String new_uri) throws TileDBError {
-    ctx.handleError(
-        tiledb.tiledb_object_move(ctx.getCtxp(), old_uri, new_uri));
+  public static void move(Context ctx, String old_uri, String new_uri) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_object_move(ctx.getCtxp(), old_uri, new_uri));
   }
 
-  /**
-   * Returns a string representation of the object, including its type and URI.
-   */
+  /** Returns a string representation of the object, including its type and URI. */
   @Override
   public String toString() {
     String ret = "Obj<";
@@ -120,7 +112,7 @@ public class TileDBObject {
    *
    * @return a tiledb object type enum
    */
-  public TileDBObjectType getType(){
+  public TileDBObjectType getType() {
     return type;
   }
 

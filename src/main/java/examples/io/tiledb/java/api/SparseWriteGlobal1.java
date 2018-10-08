@@ -35,13 +35,13 @@
 
 package examples.io.tiledb.java.api;
 
+import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+
 import io.tiledb.java.api.Array;
 import io.tiledb.java.api.Context;
 import io.tiledb.java.api.NativeArray;
 import io.tiledb.java.api.Query;
-
-import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
-import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class SparseWriteGlobal1 {
   public static void main(String[] args) throws Exception {
@@ -49,46 +49,23 @@ public class SparseWriteGlobal1 {
     Context ctx = ctx = new Context();
 
     // Prepare cell buffers
-    NativeArray a1_data = new NativeArray(
-        ctx,
-        new int[] {0, 1, 2, 3, 4, 5, 6, 7},
-        Integer.class);
-    NativeArray a2_offsets = new NativeArray(
-        ctx,
-        new long[]{
-            0, 1, 3, 6, 10, 11, 13, 16
-        },
-        Long.class);
-    NativeArray buffer_var_a2 = new NativeArray(
-        ctx,
-        "abbcccdddd"+
-            "effggghhhh",
-        String.class);
+    NativeArray a1_data = new NativeArray(ctx, new int[] {0, 1, 2, 3, 4, 5, 6, 7}, Integer.class);
+    NativeArray a2_offsets =
+        new NativeArray(ctx, new long[] {0, 1, 3, 6, 10, 11, 13, 16}, Long.class);
+    NativeArray buffer_var_a2 = new NativeArray(ctx, "abbcccdddd" + "effggghhhh", String.class);
 
-    NativeArray buffer_a3 = new NativeArray(
-        ctx,
-        new float[]{0.1f,
-            0.2f,
-            1.1f,
-            1.2f,
-            2.1f,
-            2.2f,
-            3.1f,
-            3.2f,
-            4.1f,
-            4.2f,
-            5.1f,
-            5.2f,
-            6.1f,
-            6.2f,
-            7.1f,
-            7.2f},
-        Float.class);
+    NativeArray buffer_a3 =
+        new NativeArray(
+            ctx,
+            new float[] {
+              0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f,
+              7.1f, 7.2f
+            },
+            Float.class);
 
-    NativeArray coords_buff = new NativeArray(
-        ctx,
-        new long[]{1, 1, 1, 2, 1, 4, 2, 3, 3, 1, 4, 2, 3, 3, 3, 4},
-        Long.class);
+    NativeArray coords_buff =
+        new NativeArray(
+            ctx, new long[] {1, 1, 1, 2, 1, 4, 2, 3, 3, 1, 4, 2, 3, 3, 3, 4}, Long.class);
 
     // Create query
     Array my_sparse_array = new Array(ctx, "my_sparse_array", TILEDB_WRITE);

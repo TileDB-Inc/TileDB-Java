@@ -24,10 +24,10 @@
 
 package examples.io.tiledb.java.api;
 
-import io.tiledb.java.api.*;
-
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+
+import io.tiledb.java.api.*;
 
 public class DenseWriteOrderedSubarray {
   public static void main(String[] args) throws Exception {
@@ -36,26 +36,20 @@ public class DenseWriteOrderedSubarray {
     Context ctx = new Context();
 
     // Prepare cell buffers
-    NativeArray a1_data = new NativeArray(
-        ctx,
-        new int[]{9, 12, 13, 11, 14, 15},
-        Integer.class);
-    NativeArray a2_offsets = new NativeArray(
-        ctx,
-        new long[]{0, 2, 3, 5, 9, 12},
-        Long.class);
-    NativeArray buffer_var_a2 = new NativeArray(
-        ctx,
-        "jjmnnllllooopppp",
-        String.class);
+    NativeArray a1_data = new NativeArray(ctx, new int[] {9, 12, 13, 11, 14, 15}, Integer.class);
+    NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 2, 3, 5, 9, 12}, Long.class);
+    NativeArray buffer_var_a2 = new NativeArray(ctx, "jjmnnllllooopppp", String.class);
 
-    NativeArray buffer_a3 = new NativeArray(
-        ctx,
-        new float[]{9.1f, 9.2f, 12.1f, 12.2f, 13.1f, 13.2f, 11.1f, 11.2f, 14.1f, 14.2f, 15.1f, 15.2f},
-        Float.class);
+    NativeArray buffer_a3 =
+        new NativeArray(
+            ctx,
+            new float[] {
+              9.1f, 9.2f, 12.1f, 12.2f, 13.1f, 13.2f, 11.1f, 11.2f, 14.1f, 14.2f, 15.1f, 15.2f
+            },
+            Float.class);
 
     // Create query
-    Array my_dense_array = new Array(ctx,"my_dense_array", TILEDB_WRITE);
+    Array my_dense_array = new Array(ctx, "my_dense_array", TILEDB_WRITE);
     Query query = new Query(my_dense_array);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setSubarray(new NativeArray(ctx, new long[] {3, 4, 2, 4}, Long.class));

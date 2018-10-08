@@ -7,7 +7,7 @@ public enum QueryType {
   TILEDB_WRITE;
 
   protected tiledb_query_type_t toSwigEnum() throws TileDBError {
-    switch (this){
+    switch (this) {
       case TILEDB_READ:
         return tiledb_query_type_t.TILEDB_READ;
       case TILEDB_WRITE:
@@ -17,8 +17,8 @@ public enum QueryType {
     }
   }
 
-  protected static QueryType fromSwigEnum(tiledb_query_type_t e) throws TileDBError{
-    switch (e){
+  protected static QueryType fromSwigEnum(tiledb_query_type_t e) throws TileDBError {
+    switch (e) {
       case TILEDB_READ:
         return TILEDB_READ;
       case TILEDB_WRITE:

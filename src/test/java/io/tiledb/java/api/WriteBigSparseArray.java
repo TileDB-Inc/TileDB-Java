@@ -24,14 +24,14 @@
 
 package io.tiledb.java.api;
 
-import java.util.HashSet;
-import java.util.Random;
-
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
 import static io.tiledb.java.api.CompressorType.TILEDB_GZIP;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+
+import java.util.HashSet;
+import java.util.Random;
 
 public class WriteBigSparseArray {
   private static Array array;
@@ -40,31 +40,28 @@ public class WriteBigSparseArray {
     create();
 
     HashSet<Long> set = new HashSet<>();
-    for (int i =0; i<100 ; i++)
-      write(i, set);
+    for (int i = 0; i < 100; i++) write(i, set);
 
-
-//    read();
+    //    read();
   }
 
-  private static void read() throws Exception {
-
-  }
+  private static void read() throws Exception {}
 
   public static void create() throws Exception {
     // Create TileDB context
     Context ctx = new Context();
     // Create getDimensions
-    Dimension<Long> d1 = new Dimension<Long>(ctx,"d1",Long.class, new Pair<Long, Long>(0l, 10000l),100l);
-    Dimension<Long> d2 = new Dimension<Long>(ctx,"d2",Long.class, new Pair<Long, Long>(0l, 10000l),100l);
+    Dimension<Long> d1 =
+        new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(0l, 10000l), 100l);
+    Dimension<Long> d2 =
+        new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(0l, 10000l), 100l);
     // Create getDomain
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
     domain.addDimension(d2);
 
-
     // Create and add getAttributes
-    Attribute a1 = new Attribute(ctx,"a1",Integer.class);
+    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
     a1.setCompressor(new Compressor(TILEDB_GZIP, -1));
 
     // Create array schema
@@ -75,11 +72,10 @@ public class WriteBigSparseArray {
     schema.setDomain(domain);
     schema.addAttribute(a1);
 
-
     // Check array schema
     try {
       schema.check();
-    }catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
 
@@ -88,30 +84,23 @@ public class WriteBigSparseArray {
     Array.create("my_big_array", schema);
   }
 
-
   public static void write(int index, HashSet<Long> set) throws Exception {
     // Create TileDB context
     Context ctx = ctx = new Context();
     int size = 1000;
     // Prepare cell buffers
     int[] d = new int[size];
-    long[] coords = new long[size*2];
+    long[] coords = new long[size * 2];
     Random random = new Random();
-    for (int i =0; i< size; i++){
-      d[i]=i;
-      Pair<Long,Long> p = nextUnique(random, set, 10000l);
-      coords[2*i] = p.getFirst();
-      coords[2*i+1] = p.getSecond();
+    for (int i = 0; i < size; i++) {
+      d[i] = i;
+      Pair<Long, Long> p = nextUnique(random, set, 10000l);
+      coords[2 * i] = p.getFirst();
+      coords[2 * i + 1] = p.getSecond();
     }
-    NativeArray a1_data = new NativeArray(
-        ctx,
-        d,
-        Integer.class);
+    NativeArray a1_data = new NativeArray(ctx, d, Integer.class);
 
-    NativeArray coords_buff = new NativeArray(
-        ctx,
-        coords,
-        Long.class);
+    NativeArray coords_buff = new NativeArray(ctx, coords, Long.class);
 
     // Create query
     Query query = new Query(array, TILEDB_WRITE);
@@ -124,16 +113,16 @@ public class WriteBigSparseArray {
     query.close();
   }
 
-  private static Pair<Long,Long> nextUnique(Random random, HashSet<Long> set, long max) {
-    Long l = Math.abs(random.nextLong())%(max*max);
-    long x = l%max;
-    long y = l/max;
-    Pair<Long,Long> p = new Pair<>(x,y);
-    while(set.contains(l)){
-      l = Math.abs(random.nextLong())%(max*max);
-      x = l%max;
-      y = l/max;
-      p = new Pair<>(x,y);
+  private static Pair<Long, Long> nextUnique(Random random, HashSet<Long> set, long max) {
+    Long l = Math.abs(random.nextLong()) % (max * max);
+    long x = l % max;
+    long y = l / max;
+    Pair<Long, Long> p = new Pair<>(x, y);
+    while (set.contains(l)) {
+      l = Math.abs(random.nextLong()) % (max * max);
+      x = l % max;
+      y = l / max;
+      p = new Pair<>(x, y);
     }
     set.add(l);
     return p;

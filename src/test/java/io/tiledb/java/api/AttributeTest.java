@@ -24,14 +24,11 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.tiledb;
-import org.junit.Test;
-import org.junit.Assert;
-
-import io.tiledb.java.api.CompressorType;
-import io.tiledb.java.api.Datatype;
-
 import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
+
+import io.tiledb.libtiledb.tiledb;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class AttributeTest {
 

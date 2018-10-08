@@ -1,18 +1,17 @@
 package io.tiledb.java.api;
 
-import org.junit.rules.TemporaryFolder;
-import org.junit.Test;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Assert;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class ArrayTest {
 
   private Context ctx;
   private String arrayURI;
 
-  @Rule
-  public TemporaryFolder temp = new TemporaryFolder();
+  @Rule public TemporaryFolder temp = new TemporaryFolder();
 
   @Before
   public void setup() throws Exception {
@@ -21,7 +20,8 @@ public class ArrayTest {
   }
 
   public void arrayCreate() throws Exception {
-    Dimension<Long> d1 = new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
+    Dimension<Long> d1 =
+        new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
 
@@ -36,7 +36,8 @@ public class ArrayTest {
     Array.create(arrayURI, schema);
   }
 
-  @Test public void testArrayExists() throws Exception {
+  @Test
+  public void testArrayExists() throws Exception {
     Assert.assertFalse(Array.exists(ctx, arrayURI));
     arrayCreate();
     Assert.assertTrue(Array.exists(ctx, arrayURI));

@@ -25,22 +25,16 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.SWIGTYPE_p_int;
-import io.tiledb.libtiledb.SWIGTYPE_p_long_long;
-import io.tiledb.libtiledb.SWIGTYPE_p_p_char;
 import io.tiledb.libtiledb.tiledb;
 
-/**
- * TileDB version. (major, minor, revision)
- */
+/** TileDB version. (major, minor, revision) */
 public class Version {
 
   private int major;
   private int minor;
   private int rev;
 
-  /**
-   * Constructor for TileDB library version object
-   */
+  /** Constructor for TileDB library version object */
   public Version() {
     SWIGTYPE_p_int majorp = tiledb.new_intp();
     SWIGTYPE_p_int minorp = tiledb.new_intp();
@@ -54,32 +48,23 @@ public class Version {
     tiledb.delete_intp(revp);
   }
 
-  /**
-   *
-   * @return The major number.
-   */
+  /** @return The major number. */
   public int getMajor() {
     return major;
   }
 
-  /**
-   *
-   * @return The minor number.
-   */
+  /** @return The minor number. */
   public int getMinor() {
     return minor;
   }
 
-  /**
-   *
-   * @return The revision number.
-   */
+  /** @return The revision number. */
   public int getRevision() {
     return rev;
   }
 
   /** Prints version to string. */
-  public String toString(){
+  public String toString() {
     return "TileDB v" + major + "." + minor + "." + rev;
   }
 }

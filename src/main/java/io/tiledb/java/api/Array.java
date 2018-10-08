@@ -24,20 +24,19 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.*;
+import static io.tiledb.java.api.QueryType.*;
 
+import io.tiledb.libtiledb.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.tiledb.java.api.QueryType.*;
-
 /**
  * Class representing a TileDB array object.
  *
- * An Array object represents array data in TileDB at some persisted location,
- * e.g. on disk, in an S3 bucket, etc. Once an array has been opened for reading
- * or writing, interact with the data through {@link Query} objects.
+ * <p>An Array object represents array data in TileDB at some persisted location, e.g. on disk, in
+ * an S3 bucket, etc. Once an array has been opened for reading or writing, interact with the data
+ * through {@link Query} objects.
  *
  * <pre><b>Example:</b>
  * {@code
@@ -99,7 +98,8 @@ public class Array implements AutoCloseable {
     this(ctx, uri, TILEDB_READ);
   }
 
-  private synchronized void openArray(Context ctx, String uri, QueryType query_type) throws TileDBError {
+  private synchronized void openArray(Context ctx, String uri, QueryType query_type)
+      throws TileDBError {
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
       ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
@@ -128,8 +128,9 @@ public class Array implements AutoCloseable {
   /**
    * Consolidates the fragments of an array into a single fragment.
    *
-   * All queries to the array before consolidation must be finalized before consolidation can begin.
-   * Consolidation temporarily aquires an exclusive lock on the array when finalizing the resulting merged fragment.
+   * <p>All queries to the array before consolidation must be finalized before consolidation can
+   * begin. Consolidation temporarily aquires an exclusive lock on the array when finalizing the
+   * resulting merged fragment.
    *
    * <pre><b>Example:</b>
    * {@code
@@ -162,7 +163,8 @@ public class Array implements AutoCloseable {
       tiledb.delete_tiledb_object_tp(objtypep);
       throw err;
     }
-    TileDBObjectType objtype = TileDBObjectType.fromSwigEnum(tiledb.tiledb_object_tp_value(objtypep));
+    TileDBObjectType objtype =
+        TileDBObjectType.fromSwigEnum(tiledb.tiledb_object_tp_value(objtypep));
     tiledb.delete_tiledb_object_tp(objtypep);
     if (objtype == TileDBObjectType.TILEDB_ARRAY) {
       return true;
@@ -192,8 +194,8 @@ public class Array implements AutoCloseable {
   /**
    * Get the non-empty domain of an array, returning the bounding coordinates for each dimension.
    *
-   * @return A HashMap of dimension names and (lower, upper) inclusive bounding coordinate range pair.
-   *         Empty HashMap if the array has no data.
+   * @return A HashMap of dimension names and (lower, upper) inclusive bounding coordinate range
+   *     pair. Empty HashMap if the array has no data.
    * @exception TileDBError A TileDB exception
    */
   public HashMap<String, Pair> nonEmptyDomain() throws TileDBError {
@@ -203,13 +205,14 @@ public class Array implements AutoCloseable {
     NativeArray buffer = new NativeArray(ctx, 2 * dimensions.size(), schema.getDomain().getType());
     SWIGTYPE_p_int emptyp = tiledb.new_intp();
     try {
-        ctx.handleError(tiledb.tiledb_array_get_non_empty_domain(
-                ctx.getCtxp(), arrayp, buffer.toVoidPointer(), emptyp));
-        if (tiledb.intp_value(emptyp) == 1) {
-            return ret;
-        }
+      ctx.handleError(
+          tiledb.tiledb_array_get_non_empty_domain(
+              ctx.getCtxp(), arrayp, buffer.toVoidPointer(), emptyp));
+      if (tiledb.intp_value(emptyp) == 1) {
+        return ret;
+      }
     } finally {
-        tiledb.delete_intp(emptyp);
+      tiledb.delete_intp(emptyp);
     }
     int i = 0;
     for (Dimension d : dimensions) {
@@ -223,15 +226,15 @@ public class Array implements AutoCloseable {
    * Compute an upper bound on the buffer elements needed to read a subarray.
    *
    * @param subarray Domain subarray
-   * @return The maximum number of elements for each array attribute.
-   *     If the Array is sparse, max number of coordinates are also returned.
-   *     Note that two numbers are returned per attribute. The first
-   *     is the maximum number of elements in the offset buffer
-   *     (0 for fixed-sized attributes and coordinates),
-   *     the second is the maximum number of elements of the value buffer.
+   * @return The maximum number of elements for each array attribute. If the Array is sparse, max
+   *     number of coordinates are also returned. Note that two numbers are returned per attribute.
+   *     The first is the maximum number of elements in the offset buffer (0 for fixed-sized
+   *     attributes and coordinates), the second is the maximum number of elements of the value
+   *     buffer.
    * @throws TileDBError A TileDB exception
    */
-  public HashMap<String,Pair<Long,Long>> maxBufferElements(NativeArray subarray) throws TileDBError {
+  public HashMap<String, Pair<Long, Long>> maxBufferElements(NativeArray subarray)
+      throws TileDBError {
 
     checkIsOpen();
 
@@ -240,12 +243,13 @@ public class Array implements AutoCloseable {
     uint64_tArray off_nbytes = new uint64_tArray(1);
     uint64_tArray val_nbytes = new uint64_tArray(1);
 
-    HashMap<String, Pair<Long,Long>> ret = new HashMap<String, Pair<Long,Long>>();
+    HashMap<String, Pair<Long, Long>> ret = new HashMap<String, Pair<Long, Long>>();
 
-    for(Map.Entry<String, Attribute> a : schema.getAttributes().entrySet()) {
+    for (Map.Entry<String, Attribute> a : schema.getAttributes().entrySet()) {
       if (a.getValue().isVar()) {
         try {
-          ctx.handleError(tiledb.tiledb_array_max_buffer_size_var(
+          ctx.handleError(
+              tiledb.tiledb_array_max_buffer_size_var(
                   ctx.getCtxp(),
                   arrayp,
                   a.getKey(),
@@ -256,31 +260,37 @@ public class Array implements AutoCloseable {
           off_nbytes.delete();
           throw err;
         }
-	    ret.put(a.getKey(),
-            new Pair(off_nbytes.getitem(0).longValue() /
-                       tiledb.tiledb_offset_size().longValue(),
-                     val_nbytes.getitem(0).longValue() /
-                       tiledb.tiledb_datatype_size(a.getValue().getType().toSwigEnum()).longValue()));
+        ret.put(
+            a.getKey(),
+            new Pair(
+                off_nbytes.getitem(0).longValue() / tiledb.tiledb_offset_size().longValue(),
+                val_nbytes.getitem(0).longValue()
+                    / tiledb
+                        .tiledb_datatype_size(a.getValue().getType().toSwigEnum())
+                        .longValue()));
       } else {
         try {
-          ctx.handleError(tiledb.tiledb_array_max_buffer_size(
-                  ctx.getCtxp(),
-                  arrayp,
-                  a.getKey(),
-                  subarray.toVoidPointer(),
-                  val_nbytes.cast()));
+          ctx.handleError(
+              tiledb.tiledb_array_max_buffer_size(
+                  ctx.getCtxp(), arrayp, a.getKey(), subarray.toVoidPointer(), val_nbytes.cast()));
         } catch (TileDBError err) {
           val_nbytes.delete();
           throw err;
         }
-        ret.put(a.getKey(),
-            new Pair(0l, val_nbytes.getitem(0).longValue() /
-                     tiledb.tiledb_datatype_size(a.getValue().getType().toSwigEnum()).longValue()));
+        ret.put(
+            a.getKey(),
+            new Pair(
+                0l,
+                val_nbytes.getitem(0).longValue()
+                    / tiledb
+                        .tiledb_datatype_size(a.getValue().getType().toSwigEnum())
+                        .longValue()));
       }
     }
     // Add coordinates
     try {
-      ctx.handleError(tiledb.tiledb_array_max_buffer_size(
+      ctx.handleError(
+          tiledb.tiledb_array_max_buffer_size(
               ctx.getCtxp(),
               arrayp,
               tiledb.tiledb_coords(),
@@ -289,58 +299,46 @@ public class Array implements AutoCloseable {
     } catch (TileDBError err) {
       val_nbytes.delete();
     }
-    ret.put(tiledb.tiledb_coords(),
-          new Pair(0l, val_nbytes.getitem(0).longValue() /
-               tiledb.tiledb_datatype_size(schema.getDomain().getType().toSwigEnum()).longValue()));
+    ret.put(
+        tiledb.tiledb_coords(),
+        new Pair(
+            0l,
+            val_nbytes.getitem(0).longValue()
+                / tiledb
+                    .tiledb_datatype_size(schema.getDomain().getType().toSwigEnum())
+                    .longValue()));
 
     off_nbytes.delete();
     val_nbytes.delete();
     return ret;
   }
 
-  /**
-   *
-   * @return The TileDB Context object associated with the Array instance.
-   */
+  /** @return The TileDB Context object associated with the Array instance. */
   public Context getCtx() {
     return ctx;
   }
 
-  /**
-   *
-   * @return The URI string of the array
-   */
+  /** @return The URI string of the array */
   public String getUri() {
     return uri;
   }
 
-  /**
-   *
-   * @return The TileDB ArraySchema of the Array instance.
-   */
+  /** @return The TileDB ArraySchema of the Array instance. */
   public ArraySchema getSchema() {
     return schema;
   }
 
-  /**
-   *
-   * @return The TileDB QueryType enum value that the Array instance.
-   */
+  /** @return The TileDB QueryType enum value that the Array instance. */
   public QueryType getQueryType() {
     return query_type;
   }
 
-  /**
-   *
-   * @return SWIG tiledb_array_t pointer wrapper object.
-   */
+  /** @return SWIG tiledb_array_t pointer wrapper object. */
   protected SWIGTYPE_p_tiledb_array_t getArrayp() {
     return arrayp;
   }
 
-  /**
-   * Free's the native objects and closes the Array.
-   */
+  /** Free's the native objects and closes the Array. */
   public synchronized void close() {
     if (arrayp != null && arraypp != null) {
       tiledb.tiledb_array_close(ctx.getCtxp(), arrayp);

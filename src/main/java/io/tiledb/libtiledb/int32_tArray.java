@@ -56,5 +56,4 @@ public class int32_tArray {
     long cPtr = tiledbJNI.int32_tArray_frompointer(SWIGTYPE_p_int.getCPtr(t));
     return (cPtr == 0) ? null : new int32_tArray(cPtr, false);
   }
-
 }

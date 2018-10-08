@@ -21,7 +21,7 @@ public enum Datatype {
   }
 
   protected tiledb_datatype_t toSwigEnum() throws TileDBError {
-    switch (this){
+    switch (this) {
       case TILEDB_INT32:
         return tiledb_datatype_t.TILEDB_INT32;
       case TILEDB_INT64:
@@ -49,8 +49,8 @@ public enum Datatype {
     }
   }
 
-  protected static Datatype fromSwigEnum(tiledb_datatype_t e) throws TileDBError{
-    switch (e){
+  protected static Datatype fromSwigEnum(tiledb_datatype_t e) throws TileDBError {
+    switch (e) {
       case TILEDB_INT32:
         return TILEDB_INT32;
       case TILEDB_INT64:

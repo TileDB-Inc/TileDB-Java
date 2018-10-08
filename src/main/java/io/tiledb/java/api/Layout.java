@@ -9,7 +9,7 @@ public enum Layout {
   TILEDB_UNORDERED;
 
   protected tiledb_layout_t toSwigEnum() throws TileDBError {
-    switch (this){
+    switch (this) {
       case TILEDB_ROW_MAJOR:
         return tiledb_layout_t.TILEDB_ROW_MAJOR;
       case TILEDB_COL_MAJOR:
@@ -23,8 +23,8 @@ public enum Layout {
     }
   }
 
-  protected static Layout fromSwigEnum(tiledb_layout_t e) throws TileDBError{
-    switch (e){
+  protected static Layout fromSwigEnum(tiledb_layout_t e) throws TileDBError {
+    switch (e) {
       case TILEDB_ROW_MAJOR:
         return TILEDB_ROW_MAJOR;
       case TILEDB_COL_MAJOR:

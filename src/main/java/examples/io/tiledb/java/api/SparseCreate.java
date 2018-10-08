@@ -29,32 +29,32 @@
 
 package examples.io.tiledb.java.api;
 
-import io.tiledb.java.api.*;
-import io.tiledb.libtiledb.tiledb;
-
-import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
 import static io.tiledb.java.api.CompressorType.*;
+import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+
+import io.tiledb.java.api.*;
 
 public class SparseCreate {
   public static void main(String[] args) throws Exception {
     // Create TileDB context
     Context ctx = new Context();
     // Create getDimensions
-    Dimension<Long> d1 = new Dimension<Long>(ctx,"d1",Long.class, new Pair<Long, Long>(1l,4l),2l);
-    Dimension<Long> d2 = new Dimension<Long>(ctx,"d2",Long.class, new Pair<Long, Long>(1l,4l),2l);
+    Dimension<Long> d1 =
+        new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
+    Dimension<Long> d2 =
+        new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
     // Create getDomain
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
     domain.addDimension(d2);
 
-
     // Create and add getAttributes
-    Attribute a1 = new Attribute(ctx,"a1",Integer.class);
-    Attribute a2 = new Attribute(ctx,"a2",String.class);
+    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
+    Attribute a2 = new Attribute(ctx, "a2", String.class);
     a2.setCellValNum(TILEDB_VAR_NUM);
-    Attribute a3 = new Attribute(ctx,"a3",Float.class);
+    Attribute a3 = new Attribute(ctx, "a3", Float.class);
     a3.setCellValNum(2);
     a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
     a2.setCompressor(new Compressor(TILEDB_GZIP, -1));
@@ -75,7 +75,7 @@ public class SparseCreate {
 
     // Print array schema contents
     schema.dump();
-    
+
     Array.create("my_sparse_array", schema);
   }
 }
