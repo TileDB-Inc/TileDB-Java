@@ -9,10 +9,10 @@
 package io.tiledb.libtiledb;
 
 public enum tiledb_layout_t {
-  TILEDB_ROW_MAJOR,
-  TILEDB_COL_MAJOR,
-  TILEDB_GLOBAL_ORDER,
-  TILEDB_UNORDERED;
+  TILEDB_ROW_MAJOR(0),
+  TILEDB_COL_MAJOR(1),
+  TILEDB_GLOBAL_ORDER(2),
+  TILEDB_UNORDERED(3);
 
   public final int swigValue() {
     return swigValue;

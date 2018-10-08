@@ -9,8 +9,8 @@
 package io.tiledb.libtiledb;
 
 public enum tiledb_walk_order_t {
-  TILEDB_PREORDER,
-  TILEDB_POSTORDER;
+  TILEDB_PREORDER(0),
+  TILEDB_POSTORDER(1);
 
   public final int swigValue() {
     return swigValue;

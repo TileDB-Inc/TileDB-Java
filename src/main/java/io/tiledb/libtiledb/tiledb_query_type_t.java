@@ -9,8 +9,8 @@
 package io.tiledb.libtiledb;
 
 public enum tiledb_query_type_t {
-  TILEDB_READ,
-  TILEDB_WRITE;
+  TILEDB_READ(0),
+  TILEDB_WRITE(1);
 
   public final int swigValue() {
     return swigValue;

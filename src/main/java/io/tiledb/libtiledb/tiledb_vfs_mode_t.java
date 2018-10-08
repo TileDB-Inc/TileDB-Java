@@ -9,9 +9,9 @@
 package io.tiledb.libtiledb;
 
 public enum tiledb_vfs_mode_t {
-  TILEDB_VFS_READ,
-  TILEDB_VFS_WRITE,
-  TILEDB_VFS_APPEND;
+  TILEDB_VFS_READ(0),
+  TILEDB_VFS_WRITE(1),
+  TILEDB_VFS_APPEND(2);
 
   public final int swigValue() {
     return swigValue;
