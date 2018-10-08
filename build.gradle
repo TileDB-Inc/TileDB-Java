@@ -1,11 +1,12 @@
+plugins {
+   id 'java'
+   id 'idea'
+   id 'maven-publish'
+   id 'com.github.sherter.google-java-format' version '0.7.1'
+}
+
 group 'io.tiledb'
 version '0.1.1'
-
-apply plugin: 'java'
-apply plugin: 'idea'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 repositories {
     jcenter()
@@ -15,23 +16,8 @@ repositories {
     }
 }
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.ysb33r.gradle:doxygen:0.3.2'
-    }
-}
-
-apply plugin : 'org.ysb33r.doxygen'
-apply plugin : 'maven-publish'
-
-doxygen {
-    generate_html true
-
-    source new File(projectDir,'src/main/java/io/tiledb/java')
-}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 sourceSets {
     main {
@@ -50,7 +36,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -64,7 +49,6 @@ task cmakeTask(type: Exec) {
     executable = "cmake"
     args  ".."
 }
-
 
 task makeTask(type: Exec) {
     workingDir = buildDir
