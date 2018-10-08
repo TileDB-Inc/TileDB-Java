@@ -70,3 +70,19 @@ test {
         showStandardStreams = true
     }
 }
+
+import com.github.sherter.googlejavaformatgradleplugin.GoogleJavaFormat
+import com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat
+
+task format(type: GoogleJavaFormat) {
+    source = sourceSets*.allJava
+    source 'swig/customCode'
+    include '**/*.java'
+}
+
+task checkFormat(type: VerifyGoogleJavaFormat) {
+    source = sourceSets*.allJava
+    source 'swig/customCode'
+    include '**/*.java'
+    ignoreFailures false
+}

@@ -40,6 +40,17 @@ You may need to explitly define the java library path:
 
 `java -Djava.library.path=".:<path/to/TileDB-Java/build/tiledb_jni>" -cp build/libs/tiledb-java-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
 
+## Format 
+ 
+To auto-format the Java source code run:
+
+`./gradlew format`
+
+to check Java source code formatting:
+
+`./gradlew checkFormat`
+
+
 ## Generate JNI bindings for TileDB C-API
 
 ### Dependencies
