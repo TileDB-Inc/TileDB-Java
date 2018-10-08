@@ -9,8 +9,8 @@
 package io.tiledb.libtiledb;
 
 public enum tiledb_array_type_t {
-  TILEDB_DENSE,
-  TILEDB_SPARSE;
+  TILEDB_DENSE(0),
+  TILEDB_SPARSE(1);
 
   public final int swigValue() {
     return swigValue;

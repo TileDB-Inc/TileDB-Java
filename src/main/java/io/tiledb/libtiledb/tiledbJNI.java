@@ -302,6 +302,7 @@ public class tiledbJNI {
   public final static native long tiledb_max_path();
   public final static native java.math.BigInteger tiledb_datatype_size(int jarg1);
   public final static native java.math.BigInteger tiledb_offset_size();
+  public final static native java.math.BigInteger tiledb_timestamp_now_ms();
   public final static native void tiledb_version(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_error_message(long jarg1, long jarg2);
   public final static native void tiledb_error_free(long jarg1);
@@ -377,6 +378,7 @@ public class tiledbJNI {
   public final static native int tiledb_array_schema_set_offsets_compressor(long jarg1, long jarg2, int jarg3, int jarg4);
   public final static native int tiledb_array_schema_check(long jarg1, long jarg2);
   public final static native int tiledb_array_schema_load(long jarg1, String jarg2, long jarg3);
+  public final static native int tiledb_array_schema_load_with_key(long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, long jarg6);
   public final static native int tiledb_array_schema_get_array_type(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_schema_get_capacity(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_schema_get_cell_order(long jarg1, long jarg2, long jarg3);
@@ -406,6 +408,9 @@ public class tiledbJNI {
   public final static native int tiledb_query_get_type(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_alloc(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_array_open(long jarg1, long jarg2, int jarg3);
+  public final static native int tiledb_array_open_at(long jarg1, long jarg2, int jarg3, java.math.BigInteger jarg4);
+  public final static native int tiledb_array_open_with_key(long jarg1, long jarg2, int jarg3, int jarg4, long jarg5, long jarg6);
+  public final static native int tiledb_array_open_at_with_key(long jarg1, long jarg2, int jarg3, int jarg4, long jarg5, long jarg6, java.math.BigInteger jarg7);
   public final static native int tiledb_array_is_open(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_reopen(long jarg1, long jarg2);
   public final static native int tiledb_array_close(long jarg1, long jarg2);
@@ -413,10 +418,13 @@ public class tiledbJNI {
   public final static native int tiledb_array_get_schema(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_get_query_type(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_array_create(long jarg1, String jarg2, long jarg3);
+  public final static native int tiledb_array_create_with_key(long jarg1, String jarg2, long jarg3, int jarg4, long jarg5, long jarg6);
   public final static native int tiledb_array_consolidate(long jarg1, String jarg2);
+  public final static native int tiledb_array_consolidate_with_key(long jarg1, String jarg2, int jarg3, long jarg4, long jarg5);
   public final static native int tiledb_array_get_non_empty_domain(long jarg1, long jarg2, long jarg3, long jarg4);
   public final static native int tiledb_array_max_buffer_size(long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
   public final static native int tiledb_array_max_buffer_size_var(long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
+  public final static native int tiledb_array_get_uri(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_object_type(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_object_remove(long jarg1, String jarg2);
   public final static native int tiledb_object_move(long jarg1, String jarg2, String jarg3);
@@ -428,6 +436,7 @@ public class tiledbJNI {
   public final static native int tiledb_kv_schema_set_capacity(long jarg1, long jarg2, java.math.BigInteger jarg3);
   public final static native int tiledb_kv_schema_check(long jarg1, long jarg2);
   public final static native int tiledb_kv_schema_load(long jarg1, String jarg2, long jarg3);
+  public final static native int tiledb_kv_schema_load_with_key(long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, long jarg6);
   public final static native int tiledb_kv_schema_get_capacity(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_kv_schema_get_attribute_num(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_kv_schema_get_attribute_from_index(long jarg1, long jarg2, long jarg3, long jarg4);
@@ -440,9 +449,15 @@ public class tiledbJNI {
   public final static native int tiledb_kv_item_get_key(long jarg1, long jarg2, long jarg3, long jarg4, long jarg5);
   public final static native int tiledb_kv_item_get_value(long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
   public final static native int tiledb_kv_create(long jarg1, String jarg2, long jarg3);
+  public final static native int tiledb_kv_create_with_key(long jarg1, String jarg2, long jarg3, int jarg4, long jarg5, long jarg6);
   public final static native int tiledb_kv_consolidate(long jarg1, String jarg2);
+  public final static native int tiledb_kv_consolidate_with_key(long jarg1, String jarg2, int jarg3, long jarg4, long jarg5);
   public final static native int tiledb_kv_alloc(long jarg1, String jarg2, long jarg3);
   public final static native int tiledb_kv_open(long jarg1, long jarg2, int jarg3);
+  public final static native int tiledb_kv_open_at(long jarg1, long jarg2, int jarg3, java.math.BigInteger jarg4);
+  public final static native int tiledb_kv_open_with_key(long jarg1, long jarg2, int jarg3, int jarg4, long jarg5, long jarg6);
+  public final static native int tiledb_kv_open_at_with_key(long jarg1, long jarg2, int jarg3, int jarg4, long jarg5, long jarg6, java.math.BigInteger jarg7);
+  public final static native int tiledb_kv_is_open(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_kv_reopen(long jarg1, long jarg2);
   public final static native int tiledb_kv_close(long jarg1, long jarg2);
   public final static native void tiledb_kv_free(long jarg1);

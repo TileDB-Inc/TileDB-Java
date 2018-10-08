@@ -9,10 +9,10 @@
 package io.tiledb.libtiledb;
 
 public enum tiledb_object_t {
-  TILEDB_INVALID(1),
-  TILEDB_GROUP,
-  TILEDB_ARRAY,
-  TILEDB_KEY_VALUE;
+  TILEDB_INVALID(0),
+  TILEDB_GROUP(1),
+  TILEDB_ARRAY(2),
+  TILEDB_KEY_VALUE(3);
 
   public final int swigValue() {
     return swigValue;

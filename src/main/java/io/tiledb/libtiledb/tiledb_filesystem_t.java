@@ -9,8 +9,8 @@
 package io.tiledb.libtiledb;
 
 public enum tiledb_filesystem_t {
-  TILEDB_HDFS,
-  TILEDB_S3;
+  TILEDB_HDFS(0),
+  TILEDB_S3(1);
 
   public final int swigValue() {
     return swigValue;

@@ -8,48 +8,37 @@
 
 package io.tiledb.libtiledb;
 
-public enum tiledb_compressor_t {
-  TILEDB_NO_COMPRESSION(0),
-  TILEDB_GZIP(1),
-  TILEDB_ZSTD(2),
-  TILEDB_LZ4(3),
-  TILEDB_BLOSC_LZ(4),
-  TILEDB_BLOSC_LZ4(5),
-  TILEDB_BLOSC_LZ4HC(6),
-  TILEDB_BLOSC_SNAPPY(7),
-  TILEDB_BLOSC_ZLIB(8),
-  TILEDB_BLOSC_ZSTD(9),
-  TILEDB_RLE(10),
-  TILEDB_BZIP2(11),
-  TILEDB_DOUBLE_DELTA(12);
+public enum tiledb_encryption_type_t {
+  TILEDB_NO_ENCRYPTION(0),
+  TILEDB_AES_256_GCM(1);
 
   public final int swigValue() {
     return swigValue;
   }
 
-  public static tiledb_compressor_t swigToEnum(int swigValue) {
-    tiledb_compressor_t[] swigValues = tiledb_compressor_t.class.getEnumConstants();
+  public static tiledb_encryption_type_t swigToEnum(int swigValue) {
+    tiledb_encryption_type_t[] swigValues = tiledb_encryption_type_t.class.getEnumConstants();
     if (swigValue < swigValues.length && swigValue >= 0 && swigValues[swigValue].swigValue == swigValue)
       return swigValues[swigValue];
-    for (tiledb_compressor_t swigEnum : swigValues)
+    for (tiledb_encryption_type_t swigEnum : swigValues)
       if (swigEnum.swigValue == swigValue)
         return swigEnum;
-    throw new IllegalArgumentException("No enum " + tiledb_compressor_t.class + " with value " + swigValue);
+    throw new IllegalArgumentException("No enum " + tiledb_encryption_type_t.class + " with value " + swigValue);
   }
 
   @SuppressWarnings("unused")
-  private tiledb_compressor_t() {
+  private tiledb_encryption_type_t() {
     this.swigValue = SwigNext.next++;
   }
 
   @SuppressWarnings("unused")
-  private tiledb_compressor_t(int swigValue) {
+  private tiledb_encryption_type_t(int swigValue) {
     this.swigValue = swigValue;
     SwigNext.next = swigValue+1;
   }
 
   @SuppressWarnings("unused")
-  private tiledb_compressor_t(tiledb_compressor_t swigEnum) {
+  private tiledb_encryption_type_t(tiledb_encryption_type_t swigEnum) {
     this.swigValue = swigEnum.swigValue;
     SwigNext.next = this.swigValue+1;
   }
