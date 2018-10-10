@@ -79,9 +79,10 @@ public class Attribute implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Attribute(Context ctx, String name, Class attrType) throws TileDBError {
+    Datatype _type;
     SWIGTYPE_p_p_tiledb_attribute_t _attributepp = tiledb.new_tiledb_attribute_tpp();
-    Datatype _type = Types.getNativeType(attrType);
     try {
+      _type = Types.getNativeType(attrType);
       ctx.handleError(
           tiledb.tiledb_attribute_alloc(ctx.getCtxp(), name, _type.toSwigEnum(), _attributepp));
     } catch (TileDBError err) {
@@ -97,41 +98,46 @@ public class Attribute implements AutoCloseable {
 
   /* Constructor from native object */
   protected Attribute(Context ctx, SWIGTYPE_p_p_tiledb_attribute_t attributepp) throws TileDBError {
-    SWIGTYPE_p_tiledb_attribute_t _attributep = tiledb.tiledb_attribute_tpp_value(attributepp);
-    SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
-    SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
-    String _name;
-    Datatype _type;
-    try {
-      ctx.handleError(tiledb.tiledb_attribute_get_name(ctx.getCtxp(), _attributep, namepp));
-      ctx.handleError(tiledb.tiledb_attribute_get_type(ctx.getCtxp(), _attributep, typep));
-      _name = tiledb.charpp_value(namepp);
-      _type = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
-      tiledb.delete_charpp(namepp);
-      tiledb.delete_tiledb_datatype_tp(typep);
-    } catch (TileDBError err) {
-      tiledb.delete_charpp(namepp);
-      tiledb.delete_tiledb_datatype_tp(typep);
-      throw err;
-    }
     this.ctx = ctx;
-    this.name = _name;
-    this.type = _type;
-    this.attributepp = attributepp;
     this.attributep = tiledb.tiledb_attribute_tpp_value(attributepp);
+    this.attributepp = attributepp;
   }
 
   protected SWIGTYPE_p_tiledb_attribute_t getAttributep() {
     return attributep;
   }
 
-  /** @return The name of the Attribute. */
-  public String getName() {
+  /**
+   * @return The name of the Attribute.
+   * @exception TileDBError A TileDB exception
+   */
+  public String getName() throws TileDBError {
+    if (name == null) {
+      SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
+      try {
+        ctx.handleError(tiledb.tiledb_attribute_get_name(ctx.getCtxp(), getAttributep(), namepp));
+        name = tiledb.charpp_value(namepp);
+      } finally {
+        tiledb.delete_charpp(namepp);
+      }
+    }
     return name;
   }
 
-  /** @return The Attribute Enumerated datatype (C type). */
-  public Datatype getType() {
+  /**
+   * @return The Attribute Enumerated datatype (TileDB type).
+   * @exception TileDBError A TileDB exception
+   */
+  public Datatype getType() throws TileDBError {
+    if (type == null) {
+      SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
+      try {
+        ctx.handleError(tiledb.tiledb_attribute_get_type(ctx.getCtxp(), getAttributep(), typep));
+        type = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
+      } finally {
+        tiledb.delete_tiledb_datatype_tp(typep);
+      }
+    }
     return type;
   }
 
@@ -140,16 +146,15 @@ public class Attribute implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public long getCellSize() throws TileDBError {
+    long cellSize;
     SWIGTYPE_p_unsigned_long_long sizep = tiledb.new_ullp();
     try {
-      ctx.handleError(tiledb.tiledb_attribute_get_cell_size(ctx.getCtxp(), attributep, sizep));
-    } catch (TileDBError err) {
+      ctx.handleError(tiledb.tiledb_attribute_get_cell_size(ctx.getCtxp(), getAttributep(), sizep));
+      cellSize = tiledb.ullp_value(sizep).longValue();
+    } finally {
       tiledb.delete_ullp(sizep);
-      throw err;
     }
-    long size = tiledb.ullp_value(sizep).longValue();
-    tiledb.delete_ullp(sizep);
-    return size;
+    return cellSize;
   }
 
   /**
@@ -158,16 +163,16 @@ public class Attribute implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public long getCellValNum() throws TileDBError {
-    SWIGTYPE_p_unsigned_int sizep = tiledb.new_uintp();
+    long cellValNum;
+    SWIGTYPE_p_unsigned_int nump = tiledb.new_uintp();
     try {
-      ctx.handleError(tiledb.tiledb_attribute_get_cell_val_num(ctx.getCtxp(), attributep, sizep));
-    } catch (TileDBError err) {
-      tiledb.delete_uintp(sizep);
-      throw err;
+      ctx.handleError(
+          tiledb.tiledb_attribute_get_cell_val_num(ctx.getCtxp(), getAttributep(), nump));
+      cellValNum = tiledb.uintp_value(nump);
+    } finally {
+      tiledb.delete_uintp(nump);
     }
-    long size = tiledb.uintp_value(sizep);
-    tiledb.delete_uintp(sizep);
-    return size;
+    return cellValNum;
   }
 
   /**
@@ -203,13 +208,11 @@ public class Attribute implements AutoCloseable {
           new Compressor(
               CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressor)),
               tiledb.intp_value(level));
-    } catch (TileDBError err) {
+
+    } finally {
       tiledb.delete_intp(level);
       tiledb.delete_tiledb_compressor_tp(compressor);
-      throw err;
     }
-    tiledb.delete_intp(level);
-    tiledb.delete_tiledb_compressor_tp(compressor);
     return cmp;
   }
 
@@ -249,6 +252,8 @@ public class Attribute implements AutoCloseable {
   public void close() {
     if (attributep != null) {
       tiledb.tiledb_attribute_free(attributepp);
+      attributep = null;
+      attributepp = null;
     }
   }
 }
