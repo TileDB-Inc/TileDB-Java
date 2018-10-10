@@ -58,7 +58,7 @@ import java.util.List;
  * schema.setDomain(domain); // Set the array's domain
  * }</pre>
  */
-public class Domain implements AutoCloseable {
+public class Domain implements AutoCloseable, Iterable<Dimension> {
   private Context ctx;
   private List<Dimension> dimensions;
 
@@ -88,19 +88,10 @@ public class Domain implements AutoCloseable {
     return domainp;
   }
 
-  //  /**
-  //   * Returns the total number of cells in the getDomain. Throws an exception
-  //   * if the getDomain getType is `float32` or `float64`.
-  //   */
-  //  public long getCellNum() throws TileDBError {
-  //    long ret = 1;
-  //    for (Dimension dim : getDimensions()) {
-  //      Pair d = dim.getDomain();
-  //      ret *= (d.getSecond() - d.getFirst() + 1);
-  //    }
-  //    return ret;
-  //
-  //  }
+  @Override
+  public DimensionIterator iterator() {
+    return new DimensionIterator(this);
+  }
 
   /**
    * Dumps the Domain in an ASCII representation to stdout.
