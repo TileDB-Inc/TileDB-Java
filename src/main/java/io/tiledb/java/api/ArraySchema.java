@@ -72,7 +72,7 @@ import java.util.Map;
  * ArraySchema s = ArraySchema(ctx, "my_array"); // Load schema from array
  * }</pre>
  */
-public class ArraySchema implements AutoCloseable {
+public class ArraySchema implements AutoCloseable, Iterable<Attribute> {
 
   private Context ctx;
   private ArrayType arrayType;
@@ -141,6 +141,11 @@ public class ArraySchema implements AutoCloseable {
     this.ctx = ctx;
     this.schemap = tiledb.tiledb_array_schema_tpp_value(_schemapp);
     this.schemapp = _schemapp;
+  }
+
+  @Override
+  public AttributeIterator iterator() {
+    return new AttributeIterator(this);
   }
 
   /**

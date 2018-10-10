@@ -33,7 +33,7 @@ import org.junit.Test;
 public class AttributeTest {
 
   @Test
-  public void testArraySchema() throws Exception {
+  public void testAttribute() throws Exception {
     Context ctx = new Context();
     Attribute a = new Attribute(ctx, "a1", Long.class);
     a.setCompressor(new Compressor(CompressorType.TILEDB_GZIP, 1));
