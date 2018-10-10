@@ -102,16 +102,15 @@ public class Query implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public QueryStatus getQueryStatus() throws TileDBError {
+    QueryStatus status;
     SWIGTYPE_p_tiledb_query_status_t statusp = tiledb.new_tiledb_query_status_tp();
     try {
       ctx.handleError(tiledb.tiledb_query_get_status(ctx.getCtxp(), queryp, statusp));
-    } catch (TileDBError err) {
+      status = QueryStatus.fromSwigEnum(tiledb.tiledb_query_status_tp_value(statusp));
+    } finally {
       tiledb.delete_tiledb_query_status_tp(statusp);
-      throw err;
     }
-    tiledb_query_status_t status = tiledb.tiledb_query_status_tp_value(statusp);
-    tiledb.delete_tiledb_query_status_tp(statusp);
-    return QueryStatus.fromSwigEnum(status);
+    return status;
   }
 
   /**
@@ -169,22 +168,21 @@ public class Query implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public void setBuffer(String attr, NativeArray buffer) throws TileDBError {
-    HashMap<String, Attribute> schemaAttributes = array.getSchema().getAttributes();
-    Datatype attribute_datatype;
-    if (schemaAttributes.containsKey(attr)) {
-      attribute_datatype = schemaAttributes.get(attr).getType();
-      Types.typeCheck(attribute_datatype, buffer.getNativeType());
-    } else if (attr.equals(tiledb.tiledb_coords())) {
-      attribute_datatype = array.getSchema().getDomain().getType();
-      Types.typeCheck(attribute_datatype, buffer.getNativeType());
-    } else {
-      throw new TileDBError("Attribute does not exist: " + attr);
+    try (ArraySchema schema = array.getSchema()) {
+      if (attr.equals(tiledb.tiledb_coords())) {
+        try (Domain domain = schema.getDomain()) {
+          Types.typeCheck(domain.getType(), buffer.getNativeType());
+        }
+      } else {
+        try (Attribute attribute = schema.getAttribute(attr)) {
+          Types.typeCheck(attribute.getType(), buffer.getNativeType());
+        }
+      }
     }
     Pair<uint64_tArray, uint64_tArray> buffer_sizes =
         new Pair<uint64_tArray, uint64_tArray>(new uint64_tArray(1), new uint64_tArray(1));
     buffer_sizes.getFirst().setitem(0, BigInteger.valueOf(0l));
     buffer_sizes.getSecond().setitem(0, BigInteger.valueOf(buffer.getNBytes()));
-
     buffers_.put(attr, buffer);
     buffer_sizes_.put(attr, buffer_sizes);
   }

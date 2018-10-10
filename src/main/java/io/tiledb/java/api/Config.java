@@ -263,7 +263,12 @@ public class Config implements AutoCloseable {
       throws TileDBError {
     if (returnCode == tiledb.TILEDB_ERR) {
       SWIGTYPE_p_p_char msgpp = tiledb.new_charpp();
-      tiledb.tiledb_error_message(tiledb.tiledb_error_tpp_value(error), msgpp);
+      int ret = tiledb.tiledb_error_message(tiledb.tiledb_error_tpp_value(error), msgpp);
+      if (ret == tiledb.TILEDB_ERR) {
+        tiledb.delete_charpp(msgpp);
+        tiledb.tiledb_error_free(error);
+        throw new TileDBError("Config Error: Unknown error, could not retrieve error message");
+      }
       String msg = tiledb.charpp_value(msgpp);
       tiledb.delete_charpp(msgpp);
       tiledb.tiledb_error_free(error);
@@ -279,6 +284,8 @@ public class Config implements AutoCloseable {
   public void close() {
     if (configp != null) {
       tiledb.tiledb_config_free(configpp);
+      configp = null;
+      configpp = null;
     }
   }
 }
