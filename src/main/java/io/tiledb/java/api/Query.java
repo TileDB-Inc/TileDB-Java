@@ -59,7 +59,6 @@ public class Query implements AutoCloseable {
   private HashMap<String, NativeArray> buffers_;
   private HashMap<String, Pair<NativeArray, NativeArray>> var_buffers_;
   private HashMap<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
-  private boolean executed;
 
   public Query(Array array, QueryType type) throws TileDBError {
     Context _ctx = array.getCtx();
@@ -80,7 +79,6 @@ public class Query implements AutoCloseable {
     this.buffers_ = new HashMap<>();
     this.var_buffers_ = new HashMap<>();
     this.buffer_sizes_ = new HashMap<>();
-    executed = false;
   }
 
   public Query(Array array) throws TileDBError {
@@ -122,7 +120,6 @@ public class Query implements AutoCloseable {
   public QueryStatus submit() throws TileDBError {
     prepareSubmission();
     ctx.handleError(tiledb.tiledb_query_submit(ctx.getCtxp(), queryp));
-    executed = true;
     return getQueryStatus();
   }
 
@@ -144,7 +141,6 @@ public class Query implements AutoCloseable {
   public void submitAsync(Callback callback) throws TileDBError {
     prepareSubmission();
     ctx.handleError(Utils.tiledb_query_submit_async(ctx.getCtxp(), queryp, callback));
-    executed = true;
   }
 
   /**
@@ -157,6 +153,9 @@ public class Query implements AutoCloseable {
     Types.typeCheck(subarray.getNativeType(), array.getSchema().getDomain().getType());
     ctx.handleError(
         tiledb.tiledb_query_set_subarray(ctx.getCtxp(), queryp, subarray.toVoidPointer()));
+    if (this.subarray != null) {
+      this.subarray.close();
+    }
     this.subarray = subarray;
   }
 
@@ -183,6 +182,10 @@ public class Query implements AutoCloseable {
         new Pair<uint64_tArray, uint64_tArray>(new uint64_tArray(1), new uint64_tArray(1));
     buffer_sizes.getFirst().setitem(0, BigInteger.valueOf(0l));
     buffer_sizes.getSecond().setitem(0, BigInteger.valueOf(buffer.getNBytes()));
+    // close previous buffers if they exist for this attribute
+    if (buffers_.containsKey(attr)) {
+      buffers_.get(attr).close();
+    }
     buffers_.put(attr, buffer);
     buffer_sizes_.put(attr, buffer_sizes);
   }
@@ -196,18 +199,30 @@ public class Query implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public void setBuffer(String attr, NativeArray offsets, NativeArray buffer) throws TileDBError {
+
     if (attr.equals(tiledb.tiledb_coords())) {
       throw new TileDBError("Cannot set coordinate buffer as variable sized.");
     }
-    if (!offsets.getNativeType().equals(TILEDB_UINT64))
+    if (!offsets.getNativeType().equals(TILEDB_UINT64)) {
       throw new TileDBError(
           "Buffer offsets should be of getType TILEDB_UINT64 or Long. Found getType: "
               + offsets.getNativeType());
+    }
+    // type check the buffer native type matches the schema attribute type
+    try (ArraySchema schema = array.getSchema();
+        Attribute attribute = schema.getAttribute(attr)) {
+      Types.typeCheck(attribute.getType(), buffer.getNativeType());
+    }
     Pair<uint64_tArray, uint64_tArray> buffer_sizes =
         new Pair<uint64_tArray, uint64_tArray>(new uint64_tArray(1), new uint64_tArray(1));
     buffer_sizes.getFirst().setitem(0, BigInteger.valueOf(offsets.getNBytes()));
     buffer_sizes.getSecond().setitem(0, BigInteger.valueOf(buffer.getNBytes()));
-
+    // close previous buffers if they exist for this attribute
+    if (var_buffers_.containsKey(attr)) {
+      Pair<NativeArray, NativeArray> prev_buffers = var_buffers_.get(attr);
+      prev_buffers.getFirst().close();
+      prev_buffers.getSecond().close();
+    }
     var_buffers_.put(attr, new Pair<NativeArray, NativeArray>(offsets, buffer));
     buffer_sizes_.put(attr, buffer_sizes);
   }
@@ -270,21 +285,29 @@ public class Query implements AutoCloseable {
 
   /** Clears all attribute buffers. */
   public void resetBuffers() {
-    for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
-      size_pair.getFirst().delete();
-      size_pair.getSecond().delete();
-    }
     for (NativeArray buffer : buffers_.values()) {
       buffer.close();
     }
+    buffers_.clear();
     for (Pair<NativeArray, NativeArray> var_buffer : var_buffers_.values()) {
       var_buffer.getFirst().close();
       var_buffer.getSecond().close();
     }
-    buffers_.clear();
     var_buffers_.clear();
+    for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
+      size_pair.getFirst().delete();
+      size_pair.getSecond().delete();
+    }
     buffer_sizes_.clear();
-    executed = false;
+  }
+
+  /** Resets all attribute buffer sizes to zero */
+  public void resetBufferSizes() {
+    BigInteger zero = BigInteger.valueOf(0L);
+    for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
+      size_pair.getFirst().setitem(0, zero);
+      size_pair.getSecond().setitem(0, zero);
+    }
   }
 
   private void prepareSubmission() throws TileDBError {
