@@ -181,6 +181,59 @@ public class Domain implements AutoCloseable {
   }
 
   /**
+   * Retrieves a Dimension Object from a Domain by name / label
+   *
+   * @param name The name of the domain dimension
+   * @return A TileDB Dimension object
+   * @throws TileDBError
+   */
+  public Dimension getDimension(String name) throws TileDBError {
+    Dimension dim;
+    SWIGTYPE_p_p_tiledb_dimension_t dimpp = tiledb.new_tiledb_dimension_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_domain_get_dimension_from_name(ctx.getCtxp(), getDomainp(), name, dimpp));
+      dim = new Dimension(ctx, dimpp);
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_dimension_tpp(dimpp);
+      throw err;
+    }
+    return dim;
+  }
+
+  /**
+   * Retrieves a Dimension Object from a Domain by index
+   *
+   * @param idx The index of the domain dimension
+   * @return A TileDB Dimension object
+   * @throws TileDBError
+   */
+  public Dimension getDimension(Long idx) throws TileDBError {
+    Dimension dim;
+    SWIGTYPE_p_p_tiledb_dimension_t dimpp = tiledb.new_tiledb_dimension_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_domain_get_dimension_from_index(ctx.getCtxp(), getDomainp(), idx, dimpp));
+      dim = new Dimension(ctx, dimpp);
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_dimension_tpp(dimpp);
+      throw err;
+    }
+    return dim;
+  }
+
+  /**
+   * Retrieves a Dimension Object from a Domain by index
+   *
+   * @param idx The index of the domain dimension
+   * @return A TileDB Dimension object
+   * @throws TileDBError
+   */
+  public Dimension getDimension(Integer idx) throws TileDBError {
+    return getDimension(idx.longValue());
+  }
+
+  /**
    * Adds a new dimension to the domain.
    *
    * @param dimension The Dimension object to be added.

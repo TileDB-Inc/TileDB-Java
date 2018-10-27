@@ -75,6 +75,7 @@ import java.util.Map;
 public class ArraySchema implements AutoCloseable {
 
   private Context ctx;
+  private ArrayType arrayType;
   private HashMap<String, Attribute> attributes;
 
   private SWIGTYPE_p_tiledb_array_schema_t schemap;
@@ -104,8 +105,15 @@ public class ArraySchema implements AutoCloseable {
       throw err;
     }
     this.ctx = ctx;
+    this.arrayType = type;
     this.schemap = tiledb.tiledb_array_schema_tpp_value(_schemapp);
     this.schemapp = _schemapp;
+  }
+
+  protected ArraySchema(Context ctx, SWIGTYPE_p_p_tiledb_array_schema_t schemapp) {
+    this.ctx = ctx;
+    this.schemap = tiledb.tiledb_array_schema_tpp_value(schemapp);
+    this.schemapp = schemapp;
   }
 
   /**
@@ -141,7 +149,7 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public void dump() throws TileDBError {
-    ctx.handleError(tiledb.tiledb_array_schema_dump_stdout(ctx.getCtxp(), schemap));
+    ctx.handleError(tiledb.tiledb_array_schema_dump_stdout(ctx.getCtxp(), getSchemap()));
   }
 
   /**
@@ -151,7 +159,7 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public void dump(String filename) throws TileDBError {
-    ctx.handleError(tiledb.tiledb_array_schema_dump_file(ctx.getCtxp(), schemap, filename));
+    ctx.handleError(tiledb.tiledb_array_schema_dump_file(ctx.getCtxp(), getSchemap(), filename));
   }
 
   /**
@@ -161,16 +169,17 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public ArrayType getArrayType() throws TileDBError {
-    SWIGTYPE_p_tiledb_array_type_t typep = tiledb.new_tiledb_array_type_tp();
-    try {
-      ctx.handleError(tiledb.tiledb_array_schema_get_array_type(ctx.getCtxp(), schemap, typep));
-    } catch (TileDBError err) {
-      tiledb.delete_tiledb_array_type_tp(typep);
-      throw err;
+    if (arrayType == null) {
+      SWIGTYPE_p_tiledb_array_type_t typep = tiledb.new_tiledb_array_type_tp();
+      try {
+        ctx.handleError(
+            tiledb.tiledb_array_schema_get_array_type(ctx.getCtxp(), getSchemap(), typep));
+        arrayType = ArrayType.fromSwigEnum(tiledb.tiledb_array_type_tp_value(typep));
+      } finally {
+        tiledb.delete_tiledb_array_type_tp(typep);
+      }
     }
-    tiledb_array_type_t type = tiledb.tiledb_array_type_tp_value(typep);
-    tiledb.delete_tiledb_array_type_tp(typep);
-    return ArrayType.fromSwigEnum(type);
+    return arrayType;
   }
 
   /**
@@ -190,15 +199,15 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public long getCapacity() throws TileDBError {
+    long capacity;
     SWIGTYPE_p_unsigned_long_long capacityp = tiledb.new_ullp();
     try {
-      ctx.handleError(tiledb.tiledb_array_schema_get_capacity(ctx.getCtxp(), schemap, capacityp));
-    } catch (TileDBError err) {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_capacity(ctx.getCtxp(), getSchemap(), capacityp));
+      capacity = tiledb.ullp_value(capacityp).longValue();
+    } finally {
       tiledb.delete_ullp(capacityp);
-      throw err;
     }
-    long capacity = tiledb.ullp_value(capacityp).longValue();
-    tiledb.delete_ullp(capacityp);
     return capacity;
   }
 
@@ -229,16 +238,16 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Layout getTileOrder() throws TileDBError {
+    Layout tileOrder;
     SWIGTYPE_p_tiledb_layout_t layoutpp = tiledb.new_tiledb_layout_tp();
     try {
-      ctx.handleError(tiledb.tiledb_array_schema_get_tile_order(ctx.getCtxp(), schemap, layoutpp));
-    } catch (TileDBError err) {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_tile_order(ctx.getCtxp(), getSchemap(), layoutpp));
+      tileOrder = Layout.fromSwigEnum(tiledb.tiledb_layout_tp_value(layoutpp));
+    } finally {
       tiledb.delete_tiledb_layout_tp(layoutpp);
-      throw err;
     }
-    tiledb_layout_t layout = tiledb.tiledb_layout_tp_value(layoutpp);
-    tiledb.delete_tiledb_layout_tp(layoutpp);
-    return Layout.fromSwigEnum(layout);
+    return tileOrder;
   }
 
   /**
@@ -249,7 +258,8 @@ public class ArraySchema implements AutoCloseable {
    */
   public void setTileOrder(Layout layout) throws TileDBError {
     ctx.handleError(
-        tiledb.tiledb_array_schema_set_tile_order(ctx.getCtxp(), schemap, layout.toSwigEnum()));
+        tiledb.tiledb_array_schema_set_tile_order(
+            ctx.getCtxp(), getSchemap(), layout.toSwigEnum()));
   }
 
   /**
@@ -259,16 +269,16 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Layout getCellOrder() throws TileDBError {
+    Layout cellOrder;
     SWIGTYPE_p_tiledb_layout_t layoutpp = tiledb.new_tiledb_layout_tp();
     try {
-      ctx.handleError(tiledb.tiledb_array_schema_get_cell_order(ctx.getCtxp(), schemap, layoutpp));
-    } catch (TileDBError err) {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_cell_order(ctx.getCtxp(), getSchemap(), layoutpp));
+      cellOrder = Layout.fromSwigEnum(tiledb.tiledb_layout_tp_value(layoutpp));
+    } finally {
       tiledb.delete_tiledb_layout_tp(layoutpp);
-      throw err;
     }
-    tiledb_layout_t layout = tiledb.tiledb_layout_tp_value(layoutpp);
-    tiledb.delete_tiledb_layout_tp(layoutpp);
-    return Layout.fromSwigEnum(layout);
+    return cellOrder;
   }
 
   /**
@@ -279,7 +289,8 @@ public class ArraySchema implements AutoCloseable {
    */
   public void setCellOrder(Layout layout) throws TileDBError {
     ctx.handleError(
-        tiledb.tiledb_array_schema_set_cell_order(ctx.getCtxp(), schemap, layout.toSwigEnum()));
+        tiledb.tiledb_array_schema_set_cell_order(
+            ctx.getCtxp(), getSchemap(), layout.toSwigEnum()));
   }
 
   /**
@@ -290,23 +301,21 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Compressor getCoordsCompressor() throws TileDBError {
+    Compressor compressor;
     SWIGTYPE_p_tiledb_compressor_t compressorp = tiledb.new_tiledb_compressor_tp();
     SWIGTYPE_p_int levelp = tiledb.new_intp();
     try {
       ctx.handleError(
           tiledb.tiledb_array_schema_get_coords_compressor(
-              ctx.getCtxp(), schemap, compressorp, levelp));
-    } catch (TileDBError err) {
+              ctx.getCtxp(), getSchemap(), compressorp, levelp));
+      compressor =
+          new Compressor(
+              CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressorp)),
+              tiledb.intp_value(levelp));
+    } finally {
       tiledb.delete_tiledb_compressor_tp(compressorp);
       tiledb.delete_intp(levelp);
-      throw err;
     }
-    Compressor compressor =
-        new Compressor(
-            CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressorp)),
-            tiledb.intp_value(levelp));
-    tiledb.delete_tiledb_compressor_tp(compressorp);
-    tiledb.delete_intp(levelp);
     return compressor;
   }
 
@@ -327,7 +336,7 @@ public class ArraySchema implements AutoCloseable {
     ctx.handleError(
         tiledb.tiledb_array_schema_set_coords_compressor(
             ctx.getCtxp(),
-            schemap,
+            getSchemap(),
             compressor.getCompressor().toSwigEnum(),
             compressor.getLevel()));
   }
@@ -340,23 +349,21 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Compressor getOffsetsCompressor() throws TileDBError {
+    Compressor compressor;
     SWIGTYPE_p_tiledb_compressor_t compressorp = tiledb.new_tiledb_compressor_tp();
     SWIGTYPE_p_int levelp = tiledb.new_intp();
     try {
       ctx.handleError(
           tiledb.tiledb_array_schema_get_offsets_compressor(
-              ctx.getCtxp(), schemap, compressorp, levelp));
-    } catch (TileDBError err) {
+              ctx.getCtxp(), getSchemap(), compressorp, levelp));
+      compressor =
+          new Compressor(
+              CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressorp)),
+              tiledb.intp_value(levelp));
+    } finally {
       tiledb.delete_tiledb_compressor_tp(compressorp);
       tiledb.delete_intp(levelp);
-      throw err;
     }
-    Compressor compressor =
-        new Compressor(
-            CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressorp)),
-            tiledb.intp_value(levelp));
-    tiledb.delete_tiledb_compressor_tp(compressorp);
-    tiledb.delete_intp(levelp);
     return compressor;
   }
 
@@ -377,7 +384,7 @@ public class ArraySchema implements AutoCloseable {
     ctx.handleError(
         tiledb.tiledb_array_schema_set_offsets_compressor(
             ctx.getCtxp(),
-            schemap,
+            getSchemap(),
             compressor.getCompressor().toSwigEnum(),
             compressor.getLevel()));
   }
@@ -389,7 +396,7 @@ public class ArraySchema implements AutoCloseable {
   public Domain getDomain() throws TileDBError {
     SWIGTYPE_p_p_tiledb_domain_t domainpp = tiledb.new_tiledb_domain_tpp();
     try {
-      ctx.handleError(tiledb.tiledb_array_schema_get_domain(ctx.getCtxp(), schemap, domainpp));
+      ctx.handleError(tiledb.tiledb_array_schema_get_domain(ctx.getCtxp(), getSchemap(), domainpp));
     } catch (TileDBError err) {
       tiledb.delete_tiledb_domain_tpp(domainpp);
       throw err;
@@ -415,7 +422,7 @@ public class ArraySchema implements AutoCloseable {
    */
   public void setDomain(Domain domain) throws TileDBError {
     ctx.handleError(
-        tiledb.tiledb_array_schema_set_domain(ctx.getCtxp(), schemap, domain.getDomainp()));
+        tiledb.tiledb_array_schema_set_domain(ctx.getCtxp(), getSchemap(), domain.getDomainp()));
   }
 
   /**
@@ -434,7 +441,8 @@ public class ArraySchema implements AutoCloseable {
    */
   public void addAttribute(Attribute attr) throws TileDBError {
     ctx.handleError(
-        tiledb.tiledb_array_schema_add_attribute(ctx.getCtxp(), schemap, attr.getAttributep()));
+        tiledb.tiledb_array_schema_add_attribute(
+            ctx.getCtxp(), getSchemap(), attr.getAttributep()));
   }
 
   /**
@@ -443,7 +451,7 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public void check() throws TileDBError {
-    ctx.handleError(tiledb.tiledb_array_schema_check(ctx.getCtxp(), schemap));
+    ctx.handleError(tiledb.tiledb_array_schema_check(ctx.getCtxp(), getSchemap()));
   }
 
   /**
@@ -484,6 +492,23 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
+   * @return The number of attributes of the array.
+   * @throws TileDBError A TileDB exception
+   */
+  public long getAttributeNum() throws TileDBError {
+    long num;
+    SWIGTYPE_p_unsigned_int nump = tiledb.new_uintp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_attribute_num(ctx.getCtxp(), getSchemap(), nump));
+      num = tiledb.uintp_value(nump);
+    } finally {
+      tiledb.delete_uintp(nump);
+    }
+    return num;
+  }
+
+  /**
    * Get an Attribute by name
    *
    * @param name The name of the attribute.
@@ -494,29 +519,13 @@ public class ArraySchema implements AutoCloseable {
     SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
     try {
       ctx.handleError(
-          tiledb.tiledb_array_schema_get_attribute_from_name(ctx.getCtxp(), schemap, name, attrpp));
+          tiledb.tiledb_array_schema_get_attribute_from_name(
+              ctx.getCtxp(), getSchemap(), name, attrpp));
     } catch (TileDBError err) {
       tiledb.delete_tiledb_attribute_tpp(attrpp);
       throw err;
     }
     return new Attribute(ctx, attrpp);
-  }
-
-  /**
-   * @return The number of attributes of the array.
-   * @throws TileDBError A TileDB exception
-   */
-  public long getAttributeNum() throws TileDBError {
-    SWIGTYPE_p_unsigned_int nump = tiledb.new_uintp();
-    try {
-      ctx.handleError(tiledb.tiledb_array_schema_get_attribute_num(ctx.getCtxp(), schemap, nump));
-    } catch (TileDBError err) {
-      tiledb.delete_uintp(nump);
-      throw err;
-    }
-    long num = tiledb.uintp_value(nump);
-    tiledb.delete_uintp(nump);
-    return num;
   }
 
   /**
@@ -537,10 +546,6 @@ public class ArraySchema implements AutoCloseable {
       throw err;
     }
     return new Attribute(ctx, attrpp);
-  }
-
-  protected SWIGTYPE_p_p_tiledb_array_schema_t getSchemapp() {
-    return schemapp;
   }
 
   protected SWIGTYPE_p_tiledb_array_schema_t getSchemap() {
@@ -576,11 +581,15 @@ public class ArraySchema implements AutoCloseable {
   public void close() {
     if (schemap != null) {
       tiledb.tiledb_array_schema_free(schemapp);
+      schemap = null;
+      schemapp = null;
     }
+    // TODO: remove
     if (attributes != null) {
       for (Map.Entry<String, Attribute> e : attributes.entrySet()) {
         e.getValue().close();
       }
     }
+    attributes = null;
   }
 }
