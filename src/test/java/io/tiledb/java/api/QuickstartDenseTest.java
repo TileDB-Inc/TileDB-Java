@@ -30,7 +30,6 @@ import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
 
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -126,7 +125,7 @@ public class QuickstartDenseTest {
               0, 1, 3, 6, 10, 11, 13, 16,
               20, 21, 23, 26, 30, 31, 33, 36
             },
-            Long.class);
+            Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 =
         new NativeArray(
             ctx, "abbcccdddd" + "effggghhhh" + "ijjkkkllll" + "mnnooopppp", String.class);
@@ -160,10 +159,10 @@ public class QuickstartDenseTest {
     Array my_dense_array = new Array(ctx, arrayURI);
     HashMap<String, Pair> dom = my_dense_array.nonEmptyDomain();
 
-    Assert.assertEquals(dom.get("d1").getFirst(), BigInteger.valueOf(1l));
-    Assert.assertEquals(dom.get("d1").getSecond(), BigInteger.valueOf(4l));
-    Assert.assertEquals(dom.get("d2").getFirst(), BigInteger.valueOf(1l));
-    Assert.assertEquals(dom.get("d2").getSecond(), BigInteger.valueOf(4l));
+    Assert.assertEquals(dom.get("d1").getFirst(), 1l);
+    Assert.assertEquals(dom.get("d1").getSecond(), 4l);
+    Assert.assertEquals(dom.get("d2").getFirst(), 1l);
+    Assert.assertEquals(dom.get("d2").getSecond(), 4l);
 
     // for (Map.Entry<String, Pair> e : dom.entrySet()) {
     //  System.out.println(e.getKey() + ": ("+e.getValue().getFirst()+",
@@ -194,7 +193,7 @@ public class QuickstartDenseTest {
         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
     query.setBuffer(
         "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
+        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
         new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
     query.setBuffer(
         "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
@@ -271,7 +270,7 @@ public class QuickstartDenseTest {
         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
     query.setBuffer(
         "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
+        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
         new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
     query.setBuffer(
         "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));

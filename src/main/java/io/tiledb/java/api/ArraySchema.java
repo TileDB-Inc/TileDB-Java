@@ -209,9 +209,17 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public void setCapacity(long capacity) throws TileDBError {
-    ctx.handleError(
-        tiledb.tiledb_array_schema_set_capacity(
-            ctx.getCtxp(), schemap, new BigInteger(capacity + "")));
+    setCapacity(BigInteger.valueOf(capacity));
+  }
+
+  /**
+   * Sets the tile capacity.
+   *
+   * @param capacity value to set
+   * @exception TileDBError A T
+   */
+  public void setCapacity(BigInteger capacity) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_array_schema_set_capacity(ctx.getCtxp(), schemap, capacity));
   }
 
   /**

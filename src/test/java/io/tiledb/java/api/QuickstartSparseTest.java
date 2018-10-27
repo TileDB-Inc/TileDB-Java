@@ -33,7 +33,6 @@ import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -111,7 +110,7 @@ public class QuickstartSparseTest {
     // Prepare cell buffers
     NativeArray a1_data = new NativeArray(ctx, new int[] {0, 1, 2, 3, 4, 5, 6, 7}, Integer.class);
     NativeArray a2_offsets =
-        new NativeArray(ctx, new long[] {0, 1, 3, 6, 10, 11, 13, 16}, Long.class);
+        new NativeArray(ctx, new long[] {0, 1, 3, 6, 10, 11, 13, 16}, Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 = new NativeArray(ctx, "abbcccdddd" + "effggghhhh", String.class);
 
     NativeArray buffer_a3 =
@@ -147,10 +146,10 @@ public class QuickstartSparseTest {
     Array my_sparse_array = new Array(ctx, "my_sparse_array");
     HashMap<String, Pair> dom = my_sparse_array.nonEmptyDomain();
 
-    Assert.assertEquals(dom.get("d1").getFirst(), BigInteger.valueOf(1l));
-    Assert.assertEquals(dom.get("d1").getSecond(), BigInteger.valueOf(4l));
-    Assert.assertEquals(dom.get("d2").getFirst(), BigInteger.valueOf(1l));
-    Assert.assertEquals(dom.get("d2").getSecond(), BigInteger.valueOf(4l));
+    Assert.assertEquals(dom.get("d1").getFirst(), 1l);
+    Assert.assertEquals(dom.get("d1").getSecond(), 4l);
+    Assert.assertEquals(dom.get("d2").getFirst(), 1l);
+    Assert.assertEquals(dom.get("d2").getSecond(), 4l);
 
     // for (Map.Entry<String, Pair> e : dom.entrySet()){
     //  System.out.println(e.getKey() + ": (" +e.getValue().getFirst() + ", " +
@@ -179,7 +178,7 @@ public class QuickstartSparseTest {
         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
     query.setBuffer(
         "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
+        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
         new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
     query.setBuffer(
         "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));

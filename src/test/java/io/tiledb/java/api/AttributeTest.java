@@ -40,7 +40,7 @@ public class AttributeTest {
     a.setCellValNum(tiledb.tiledb_var_num());
 
     Assert.assertEquals(a.getName(), "a1");
-    Assert.assertEquals(a.getType(), Datatype.TILEDB_UINT64);
+    Assert.assertEquals(a.getType(), Datatype.TILEDB_INT64);
     Assert.assertEquals(a.getCellValNum(), TILEDB_VAR_NUM);
     Assert.assertEquals(a.getCompressor().getCompressor(), CompressorType.TILEDB_GZIP);
     Assert.assertEquals(a.getCompressor().getLevel(), 1);

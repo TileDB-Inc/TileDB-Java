@@ -26,15 +26,13 @@ package io.tiledb.java.api;
 
 import static io.tiledb.java.api.Datatype.*;
 
-import java.math.BigInteger;
-
 public class Types {
 
   public static Datatype getNativeType(Class atrrType) throws TileDBError {
     if (atrrType.equals(int[].class)) {
       return TILEDB_INT32;
     } else if (atrrType.equals(long[].class)) {
-      return TILEDB_UINT64;
+      return TILEDB_INT64;
     } else if (atrrType.equals(char[].class)) {
       return TILEDB_CHAR;
     } else if (atrrType.equals(float[].class)) {
@@ -47,12 +45,10 @@ public class Types {
       return TILEDB_INT16;
     } else if (atrrType.equals(boolean[].class)) {
       return TILEDB_INT8;
-    } else if (atrrType.equals(BigInteger[].class)) {
-      return TILEDB_UINT64;
     } else if (atrrType.equals(Integer.class)) {
       return TILEDB_INT32;
     } else if (atrrType.equals(Long.class)) {
-      return TILEDB_UINT64;
+      return TILEDB_INT64;
     } else if (atrrType.equals(Character.class)) {
       return TILEDB_CHAR;
     } else if (atrrType.equals(String.class)) {
@@ -67,8 +63,6 @@ public class Types {
       return TILEDB_INT16;
     } else if (atrrType.equals(Boolean.class)) {
       return TILEDB_INT8;
-    } else if (atrrType.equals(BigInteger.class)) {
-      return TILEDB_UINT64;
     } else {
       //      return TILEDB_INT8;
       throw new TileDBError("Not supported getType: " + atrrType);
@@ -129,10 +123,9 @@ public class Types {
   }
 
   public static boolean typeCheck(Datatype first, Datatype second) throws TileDBError {
-    if (first.equals(second)) {
-      return true;
-    } else {
+    if (!first.equals(second)) {
       throw new TileDBError("Type " + first + " is not equal to the default getType: " + second);
     }
+    return true;
   }
 }

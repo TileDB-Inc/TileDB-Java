@@ -33,7 +33,6 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
 public class NativeArray implements AutoCloseable {
@@ -49,7 +48,7 @@ public class NativeArray implements AutoCloseable {
   private uint8_tArray uint8_tArray;
   private uint16_tArray uint16_tArray;
   private uint32_tArray uint32_tArray;
-  private uint64_tArray uint64_tArray;
+  private int64_tArray uint64_tArray;
   private int size;
   //  private charArray charArray;
 
@@ -247,7 +246,7 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_UINT64:
         {
           size = ((long[]) buffer).length;
-          uint64_tArray = Utils.newUint64Array((long[]) buffer);
+          uint64_tArray = Utils.newInt64_tArray((long[]) buffer);
           break;
         }
       case TILEDB_CHAR:
@@ -313,7 +312,7 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_UINT64:
         {
-          uint64_tArray = new uint64_tArray(size);
+          uint64_tArray = new int64_tArray(size);
           break;
         }
       case TILEDB_CHAR:
@@ -375,7 +374,7 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_UINT64:
         {
-          return uint64_tArray.getitem(index);
+          return int64_tArray.getitem(index);
         }
       case TILEDB_CHAR:
         {
@@ -444,7 +443,7 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_UINT64:
         {
-          uint64_tArray.setitem(index, new BigInteger(value + ""));
+          uint64_tArray.setitem(index, (long) value);
           break;
         }
       case TILEDB_CHAR:
@@ -563,7 +562,7 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_UINT64:
         {
-          return Utils.uint64ArrayGet(uint64_tArray, elements);
+          return Utils.int64ArrayGet(uint64_tArray, elements);
         }
       case TILEDB_CHAR:
         {
@@ -625,7 +624,7 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_UINT64:
         {
-          uint64_tArray = PointerUtils.uint64_tArrayFromVoid(pointer);
+          uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
       default:
@@ -684,7 +683,7 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_UINT64:
         {
-          uint64_tArray = PointerUtils.uint64_tArrayFromVoid(pointer);
+          uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
       default:
