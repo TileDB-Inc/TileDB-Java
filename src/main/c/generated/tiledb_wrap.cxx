@@ -258,9 +258,6 @@ SWIGINTERN void int32_tArray_setitem(int32_tArray *self,int index,int32_t value)
 SWIGINTERN int32_t *int32_tArray_cast(int32_tArray *self){
   return self;
 }
-SWIGINTERN int32_tArray *int32_tArray_frompointer(int32_t *t){
-  return (int32_tArray *) t;
-}
 
 typedef int64_t int64_tArray;
 
@@ -278,9 +275,6 @@ SWIGINTERN void int64_tArray_setitem(int64_tArray *self,int index,int64_t value)
 }
 SWIGINTERN int64_t *int64_tArray_cast(int64_tArray *self){
   return self;
-}
-SWIGINTERN int64_tArray *int64_tArray_frompointer(int64_t *t){
-  return (int64_tArray *) t;
 }
 
 typedef char charArray;
@@ -300,9 +294,6 @@ SWIGINTERN void charArray_setitem(charArray *self,int index,char value){
 SWIGINTERN char *charArray_cast(charArray *self){
   return self;
 }
-SWIGINTERN charArray *charArray_frompointer(char *t){
-  return (charArray *) t;
-}
 
 typedef float floatArray;
 
@@ -320,9 +311,6 @@ SWIGINTERN void floatArray_setitem(floatArray *self,int index,float value){
 }
 SWIGINTERN float *floatArray_cast(floatArray *self){
   return self;
-}
-SWIGINTERN floatArray *floatArray_frompointer(float *t){
-  return (floatArray *) t;
 }
 
 typedef double doubleArray;
@@ -342,9 +330,6 @@ SWIGINTERN void doubleArray_setitem(doubleArray *self,int index,double value){
 SWIGINTERN double *doubleArray_cast(doubleArray *self){
   return self;
 }
-SWIGINTERN doubleArray *doubleArray_frompointer(double *t){
-  return (doubleArray *) t;
-}
 
 typedef int8_t int8_tArray;
 
@@ -362,9 +347,6 @@ SWIGINTERN void int8_tArray_setitem(int8_tArray *self,int index,int8_t value){
 }
 SWIGINTERN int8_t *int8_tArray_cast(int8_tArray *self){
   return self;
-}
-SWIGINTERN int8_tArray *int8_tArray_frompointer(int8_t *t){
-  return (int8_tArray *) t;
 }
 
 typedef uint8_t uint8_tArray;
@@ -384,9 +366,6 @@ SWIGINTERN void uint8_tArray_setitem(uint8_tArray *self,int index,uint8_t value)
 SWIGINTERN uint8_t *uint8_tArray_cast(uint8_tArray *self){
   return self;
 }
-SWIGINTERN uint8_tArray *uint8_tArray_frompointer(uint8_t *t){
-  return (uint8_tArray *) t;
-}
 
 typedef int16_t int16_tArray;
 
@@ -404,9 +383,6 @@ SWIGINTERN void int16_tArray_setitem(int16_tArray *self,int index,int16_t value)
 }
 SWIGINTERN int16_t *int16_tArray_cast(int16_tArray *self){
   return self;
-}
-SWIGINTERN int16_tArray *int16_tArray_frompointer(int16_t *t){
-  return (int16_tArray *) t;
 }
 
 typedef uint16_t uint16_tArray;
@@ -426,9 +402,6 @@ SWIGINTERN void uint16_tArray_setitem(uint16_tArray *self,int index,uint16_t val
 SWIGINTERN uint16_t *uint16_tArray_cast(uint16_tArray *self){
   return self;
 }
-SWIGINTERN uint16_tArray *uint16_tArray_frompointer(uint16_t *t){
-  return (uint16_tArray *) t;
-}
 
 typedef uint32_t uint32_tArray;
 
@@ -447,9 +420,6 @@ SWIGINTERN void uint32_tArray_setitem(uint32_tArray *self,int index,uint32_t val
 SWIGINTERN uint32_t *uint32_tArray_cast(uint32_tArray *self){
   return self;
 }
-SWIGINTERN uint32_tArray *uint32_tArray_frompointer(uint32_t *t){
-  return (uint32_tArray *) t;
-}
 
 typedef uint64_t uint64_tArray;
 
@@ -467,9 +437,6 @@ SWIGINTERN void uint64_tArray_setitem(uint64_tArray *self,int index,uint64_t val
 }
 SWIGINTERN uint64_t *uint64_tArray_cast(uint64_tArray *self){
   return self;
-}
-SWIGINTERN uint64_tArray *uint64_tArray_frompointer(uint64_t *t){
-  return (uint64_tArray *) t;
 }
 
 static char * *new_charpArray(int nelements) { 
@@ -1272,20 +1239,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int32_1tArray_1cast(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int32_1tArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  int32_t *arg1 = (int32_t *) 0 ;
-  int32_tArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(int32_t **)&jarg1; 
-  result = (int32_tArray *)int32_tArray_frompointer(arg1);
-  *(int32_tArray **)&jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1int64_1tArray(JNIEnv *jenv, jclass jcls, jint jarg1) {
   jlong jresult = 0 ;
   int arg1 ;
@@ -1353,20 +1306,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int64_1tArray_1cast(
   arg1 = *(int64_tArray **)&jarg1; 
   result = (int64_t *)int64_tArray_cast(arg1);
   *(int64_t **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int64_1tArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  int64_t *arg1 = (int64_t *) 0 ;
-  int64_tArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(int64_t **)&jarg1; 
-  result = (int64_tArray *)int64_tArray_frompointer(arg1);
-  *(int64_tArray **)&jresult = result; 
   return jresult;
 }
 
@@ -1442,25 +1381,6 @@ SWIGEXPORT jstring JNICALL Java_io_tiledb_libtiledb_tiledbJNI_charArray_1cast(JN
 }
 
 
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_charArray_1frompointer(JNIEnv *jenv, jclass jcls, jstring jarg1) {
-  jlong jresult = 0 ;
-  char *arg1 = (char *) 0 ;
-  charArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = 0;
-  if (jarg1) {
-    arg1 = (char *)jenv->GetStringUTFChars(jarg1, 0);
-    if (!arg1) return 0;
-  }
-  result = (charArray *)charArray_frompointer(arg1);
-  *(charArray **)&jresult = result; 
-  if (arg1) jenv->ReleaseStringUTFChars(jarg1, (const char *)arg1);
-  return jresult;
-}
-
-
 SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1floatArray(JNIEnv *jenv, jclass jcls, jint jarg1) {
   jlong jresult = 0 ;
   int arg1 ;
@@ -1528,20 +1448,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_floatArray_1cast(JNI
   arg1 = *(floatArray **)&jarg1; 
   result = (float *)floatArray_cast(arg1);
   *(float **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_floatArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  float *arg1 = (float *) 0 ;
-  floatArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(float **)&jarg1; 
-  result = (floatArray *)floatArray_frompointer(arg1);
-  *(floatArray **)&jresult = result; 
   return jresult;
 }
 
@@ -1617,20 +1523,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_doubleArray_1cast(JN
 }
 
 
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_doubleArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  double *arg1 = (double *) 0 ;
-  doubleArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(double **)&jarg1; 
-  result = (doubleArray *)doubleArray_frompointer(arg1);
-  *(doubleArray **)&jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1int8_1tArray(JNIEnv *jenv, jclass jcls, jint jarg1) {
   jlong jresult = 0 ;
   int arg1 ;
@@ -1698,20 +1590,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int8_1tArray_1cast(J
   arg1 = *(int8_tArray **)&jarg1; 
   result = (int8_t *)int8_tArray_cast(arg1);
   *(int8_t **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int8_1tArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  int8_t *arg1 = (int8_t *) 0 ;
-  int8_tArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(int8_t **)&jarg1; 
-  result = (int8_tArray *)int8_tArray_frompointer(arg1);
-  *(int8_tArray **)&jresult = result; 
   return jresult;
 }
 
@@ -1787,20 +1665,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint8_1tArray_1cast(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint8_1tArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  uint8_t *arg1 = (uint8_t *) 0 ;
-  uint8_tArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(uint8_t **)&jarg1; 
-  result = (uint8_tArray *)uint8_tArray_frompointer(arg1);
-  *(uint8_tArray **)&jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1int16_1tArray(JNIEnv *jenv, jclass jcls, jint jarg1) {
   jlong jresult = 0 ;
   int arg1 ;
@@ -1868,20 +1732,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int16_1tArray_1cast(
   arg1 = *(int16_tArray **)&jarg1; 
   result = (int16_t *)int16_tArray_cast(arg1);
   *(int16_t **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_int16_1tArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  int16_t *arg1 = (int16_t *) 0 ;
-  int16_tArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(int16_t **)&jarg1; 
-  result = (int16_tArray *)int16_tArray_frompointer(arg1);
-  *(int16_tArray **)&jresult = result; 
   return jresult;
 }
 
@@ -1957,20 +1807,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint16_1tArray_1cast
 }
 
 
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint16_1tArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  uint16_t *arg1 = (uint16_t *) 0 ;
-  uint16_tArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(uint16_t **)&jarg1; 
-  result = (uint16_tArray *)uint16_tArray_frompointer(arg1);
-  *(uint16_tArray **)&jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1uint32_1tArray(JNIEnv *jenv, jclass jcls, jint jarg1) {
   jlong jresult = 0 ;
   int arg1 ;
@@ -2038,20 +1874,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint32_1tArray_1cast
   arg1 = *(uint32_tArray **)&jarg1; 
   result = (uint32_t *)uint32_tArray_cast(arg1);
   *(uint32_t **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint32_1tArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  uint32_t *arg1 = (uint32_t *) 0 ;
-  uint32_tArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(uint32_t **)&jarg1; 
-  result = (uint32_tArray *)uint32_tArray_frompointer(arg1);
-  *(uint32_tArray **)&jresult = result; 
   return jresult;
 }
 
@@ -2165,20 +1987,6 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint64_1tArray_1cast
   arg1 = *(uint64_tArray **)&jarg1; 
   result = (uint64_t *)uint64_tArray_cast(arg1);
   *(uint64_t **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_uint64_1tArray_1frompointer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  uint64_t *arg1 = (uint64_t *) 0 ;
-  uint64_tArray *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(uint64_t **)&jarg1; 
-  result = (uint64_tArray *)uint64_tArray_frompointer(arg1);
-  *(uint64_tArray **)&jresult = result; 
   return jresult;
 }
 

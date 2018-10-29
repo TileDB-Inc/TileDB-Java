@@ -51,9 +51,4 @@ public class uint32_tArray {
     long cPtr = tiledbJNI.uint32_tArray_cast(swigCPtr, this);
     return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_int(cPtr, false);
   }
-
-  public static uint32_tArray frompointer(SWIGTYPE_p_unsigned_int t) {
-    long cPtr = tiledbJNI.uint32_tArray_frompointer(SWIGTYPE_p_unsigned_int.getCPtr(t));
-    return (cPtr == 0) ? null : new uint32_tArray(cPtr, false);
-  }
 }

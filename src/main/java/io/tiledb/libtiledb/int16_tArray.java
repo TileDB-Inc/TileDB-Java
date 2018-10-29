@@ -51,9 +51,4 @@ public class int16_tArray {
     long cPtr = tiledbJNI.int16_tArray_cast(swigCPtr, this);
     return (cPtr == 0) ? null : new SWIGTYPE_p_short(cPtr, false);
   }
-
-  public static int16_tArray frompointer(SWIGTYPE_p_short t) {
-    long cPtr = tiledbJNI.int16_tArray_frompointer(SWIGTYPE_p_short.getCPtr(t));
-    return (cPtr == 0) ? null : new int16_tArray(cPtr, false);
-  }
 }

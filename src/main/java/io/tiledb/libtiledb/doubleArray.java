@@ -51,9 +51,4 @@ public class doubleArray {
     long cPtr = tiledbJNI.doubleArray_cast(swigCPtr, this);
     return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, false);
   }
-
-  public static doubleArray frompointer(SWIGTYPE_p_double t) {
-    long cPtr = tiledbJNI.doubleArray_frompointer(SWIGTYPE_p_double.getCPtr(t));
-    return (cPtr == 0) ? null : new doubleArray(cPtr, false);
-  }
 }

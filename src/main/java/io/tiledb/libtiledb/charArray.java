@@ -50,9 +50,4 @@ public class charArray {
   public String cast() {
     return tiledbJNI.charArray_cast(swigCPtr, this);
   }
-
-  public static charArray frompointer(String t) {
-    long cPtr = tiledbJNI.charArray_frompointer(t);
-    return (cPtr == 0) ? null : new charArray(cPtr, false);
-  }
 }

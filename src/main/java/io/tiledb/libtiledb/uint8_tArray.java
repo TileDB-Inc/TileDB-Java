@@ -51,9 +51,4 @@ public class uint8_tArray {
     long cPtr = tiledbJNI.uint8_tArray_cast(swigCPtr, this);
     return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
   }
-
-  public static uint8_tArray frompointer(SWIGTYPE_p_unsigned_char t) {
-    long cPtr = tiledbJNI.uint8_tArray_frompointer(SWIGTYPE_p_unsigned_char.getCPtr(t));
-    return (cPtr == 0) ? null : new uint8_tArray(cPtr, false);
-  }
 }
