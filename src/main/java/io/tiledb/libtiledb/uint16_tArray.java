@@ -11,10 +11,12 @@ package io.tiledb.libtiledb;
 public class uint16_tArray {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
+  private final int nelements;
 
-  protected uint16_tArray(long cPtr, boolean cMemoryOwn) {
+  protected uint16_tArray(long cPtr, boolean cMemoryOwn, int nelements) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
+    this.nelements = nelements;
   }
 
   protected static long getCPtr(uint16_tArray obj) {
@@ -36,19 +38,29 @@ public class uint16_tArray {
   }
 
   public uint16_tArray(int nelements) {
-    this(tiledbJNI.new_uint16_tArray(nelements), true);
+    this(tiledbJNI.new_uint16_tArray(nelements), true, nelements);
   }
 
   public int getitem(int index) {
+    if (index >= nelements || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return tiledbJNI.uint16_tArray_getitem(swigCPtr, this, index);
   }
 
   public void setitem(int index, int value) {
+    if (index >= nelements || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     tiledbJNI.uint16_tArray_setitem(swigCPtr, this, index, value);
   }
 
   public SWIGTYPE_p_unsigned_short cast() {
     long cPtr = tiledbJNI.uint16_tArray_cast(swigCPtr, this);
     return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_short(cPtr, false);
+  }
+
+  protected int size() {
+    return nelements;
   }
 }

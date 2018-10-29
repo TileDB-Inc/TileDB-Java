@@ -11,10 +11,12 @@ package io.tiledb.libtiledb;
 public class floatArray {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
+  private final int nelements;
 
-  protected floatArray(long cPtr, boolean cMemoryOwn) {
+  protected floatArray(long cPtr, boolean cMemoryOwn, int nelements) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
+    this.nelements = nelements;
   }
 
   protected static long getCPtr(floatArray obj) {
@@ -36,19 +38,29 @@ public class floatArray {
   }
 
   public floatArray(int nelements) {
-    this(tiledbJNI.new_floatArray(nelements), true);
+    this(tiledbJNI.new_floatArray(nelements), true, nelements);
   }
 
   public float getitem(int index) {
+    if (index >= nelements || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return tiledbJNI.floatArray_getitem(swigCPtr, this, index);
   }
 
   public void setitem(int index, float value) {
+    if (index >= nelements || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     tiledbJNI.floatArray_setitem(swigCPtr, this, index, value);
   }
 
   public SWIGTYPE_p_float cast() {
     long cPtr = tiledbJNI.floatArray_cast(swigCPtr, this);
     return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
+  }
+
+  protected int size() {
+    return nelements;
   }
 }
