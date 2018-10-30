@@ -23,3 +23,4 @@ public class SWIGTYPE_p_tiledb_domain_t {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
+

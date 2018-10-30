@@ -23,3 +23,4 @@ public class SWIGTYPE_p_float {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
+

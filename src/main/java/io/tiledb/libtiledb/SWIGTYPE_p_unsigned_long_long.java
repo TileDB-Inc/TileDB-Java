@@ -11,8 +11,7 @@ package io.tiledb.libtiledb;
 public class SWIGTYPE_p_unsigned_long_long {
   private transient long swigCPtr;
 
-  protected SWIGTYPE_p_unsigned_long_long(
-      long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+  protected SWIGTYPE_p_unsigned_long_long(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
     swigCPtr = cPtr;
   }
 
@@ -24,3 +23,4 @@ public class SWIGTYPE_p_unsigned_long_long {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
+
