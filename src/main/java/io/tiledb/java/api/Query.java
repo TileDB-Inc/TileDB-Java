@@ -324,7 +324,7 @@ public class Query implements AutoCloseable {
       Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
       NativeArray off_buffer = entry.getValue().getFirst();
       uint64_tArray offsets =
-          PointerUtils.uint64_tArrayFromVoid(off_buffer.toVoidPointer(), off_buffer.getSize());
+          PointerUtils.uint64_tArrayFromVoid(off_buffer.toVoidPointer());
       uint64_tArray off_size = buffer_size.getFirst();
       NativeArray val_buffer = entry.getValue().getSecond();
       uint64_tArray val_size = buffer_size.getSecond();

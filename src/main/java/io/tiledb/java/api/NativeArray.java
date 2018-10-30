@@ -538,6 +538,9 @@ public class NativeArray implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Object toJavaArray(int position, int elements) throws TileDBError {
+    if (position + elements > size || position < 0 || elements < 0) {
+      throw new ArrayIndexOutOfBoundsException(position + elements);
+    }
     switch (nativeType) {
       case TILEDB_FLOAT32:
         {
@@ -594,52 +597,52 @@ public class NativeArray implements AutoCloseable {
     switch (nativeType) {
       case TILEDB_FLOAT32:
         {
-          floatArray = PointerUtils.floatArrayFromVoid(pointer, this.size);
+          floatArray = PointerUtils.floatArrayFromVoid(pointer);
           break;
         }
       case TILEDB_FLOAT64:
         {
-          doubleArray = PointerUtils.doubleArrayFromVoid(pointer, this.size);
+          doubleArray = PointerUtils.doubleArrayFromVoid(pointer);
           break;
         }
       case TILEDB_INT8:
         {
-          int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer, this.size);
+          int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_INT16:
         {
-          int16_tArray = PointerUtils.int16_tArrayFromVoid(pointer, this.size);
+          int16_tArray = PointerUtils.int16_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_INT32:
         {
-          int32_tArray = PointerUtils.int32_tArrayFromVoid(pointer, this.size);
+          int32_tArray = PointerUtils.int32_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_INT64:
         {
-          int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer, this.size);
+          int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_UINT8:
         {
-          uint8_tArray = PointerUtils.uint8_tArrayFromVoid(pointer, this.size);
+          uint8_tArray = PointerUtils.uint8_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_UINT16:
         {
-          uint16_tArray = PointerUtils.uint16_tArrayFromVoid(pointer, this.size);
+          uint16_tArray = PointerUtils.uint16_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_UINT32:
         {
-          uint32_tArray = PointerUtils.uint32_tArrayFromVoid(pointer, this.size);
+          uint32_tArray = PointerUtils.uint32_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_UINT64:
         {
-          uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer, this.size);
+          uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
       default:
@@ -653,52 +656,52 @@ public class NativeArray implements AutoCloseable {
     switch (nativeType) {
       case TILEDB_FLOAT32:
         {
-          floatArray = PointerUtils.floatArrayFromVoid(pointer, this.size);
+          floatArray = PointerUtils.floatArrayFromVoid(pointer);
           break;
         }
       case TILEDB_FLOAT64:
         {
-          doubleArray = PointerUtils.doubleArrayFromVoid(pointer, this.size);
+          doubleArray = PointerUtils.doubleArrayFromVoid(pointer);
           break;
         }
       case TILEDB_INT8:
         {
-          int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer, this.size);
+          int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_INT16:
         {
-          int16_tArray = PointerUtils.int16_tArrayFromVoid(pointer, this.size);
+          int16_tArray = PointerUtils.int16_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_INT32:
         {
-          int32_tArray = PointerUtils.int32_tArrayFromVoid(pointer, this.size);
+          int32_tArray = PointerUtils.int32_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_INT64:
         {
-          int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer, this.size);
+          int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_UINT8:
         {
-          uint8_tArray = PointerUtils.uint8_tArrayFromVoid(pointer, this.size);
+          uint8_tArray = PointerUtils.uint8_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_UINT16:
         {
-          uint16_tArray = PointerUtils.uint16_tArrayFromVoid(pointer, this.size);
+          uint16_tArray = PointerUtils.uint16_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_UINT32:
         {
-          uint32_tArray = PointerUtils.uint32_tArrayFromVoid(pointer, this.size);
+          uint32_tArray = PointerUtils.uint32_tArrayFromVoid(pointer);
           break;
         }
       case TILEDB_UINT64:
         {
-          uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer, this.size);
+          uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
       default:

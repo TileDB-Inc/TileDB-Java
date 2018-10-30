@@ -116,17 +116,17 @@
 %native (newUint32ArraySet) jlong newUint32ArraySet(jlongArray jarg1);
 %native (newUint64ArraySet) jlong newUint64ArraySet(jlongArray jarg1);
 
-%native (int32ArrayGet) jintArray int32ArrayGet(jlong array, jint sz);
-%native (int64ArrayGet) jlongArray int64ArrayGet(jlong array, jint sz);
-%native (charArrayGet)  jstring charArrayGet(jlong array);
-%native (floatArrayGet) jfloatArray floatArrayGet(jlong array, jint size);
-%native (doubleArrayGet) jdoubleArray doubleArrayGet(jlong array, jint size);
-%native (int8ArrayGet) jbyteArray int8ArrayGet(jlong array, jint size);
-%native (uint8ArrayGet) jshortArray uint8ArrayGet(jlong array, jint size);
-%native (int16ArrayGet) jshortArray int16ArrayGet(jlong array, jint size);
-%native (uint16ArrayGet) jintArray uint16ArrayGet(jlong array, jint size);
-%native (uint32ArrayGet) jlongArray uint32ArrayGet(jlong array, jint size);
-%native (uint64ArrayGet) jlongArray uint64ArrayGet(jlong array, jint size);
+%native (int32ArrayGet) jintArray int32ArrayGet(jlong array, jint pos, jint sz);
+%native (int64ArrayGet) jlongArray int64ArrayGet(jlong array, jint pos, jint sz);
+%native (charArrayGet)  jstring charArrayGet(jlong array, jint pos);
+%native (floatArrayGet) jfloatArray floatArrayGet(jlong array, jint pos, jint sz);
+%native (doubleArrayGet) jdoubleArray doubleArrayGet(jlong array, jint pos, jint sz);
+%native (int8ArrayGet) jbyteArray int8ArrayGet(jlong array, jint pos, jint sz);
+%native (uint8ArrayGet) jshortArray uint8ArrayGet(jlong array, jint pos, jint sz);
+%native (int16ArrayGet) jshortArray int16ArrayGet(jlong array, jint pos, jint sz);
+%native (uint16ArrayGet) jintArray uint16ArrayGet(jlong array, jint pos, jint sz);
+%native (uint32ArrayGet) jlongArray uint32ArrayGet(jlong array, jint pos, jint sz);
+%native (uint64ArrayGet) jlongArray uint64ArrayGet(jlong array, jint pos, jint sz);
 
 %include "tiledb_generated.h"
 %include "tiledb_java_extensions.h"
