@@ -336,7 +336,10 @@ public class NativeArray implements AutoCloseable {
    * @return item A Java scalar
    * @exception TileDBError A TileDB exception
    */
-  public Object getItem(int index) throws TileDBError {
+  public Object getItem(int index) throws ArrayIndexOutOfBoundsException, TileDBError {
+    if (index >= size || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     switch (nativeType) {
       case TILEDB_FLOAT32:
         {
@@ -396,7 +399,10 @@ public class NativeArray implements AutoCloseable {
    * @param value array value to set at index
    * @exception TileDBError A TileDB exception
    */
-  public void setItem(int index, Object value) throws TileDBError {
+  public void setItem(int index, Object value) throws ArrayIndexOutOfBoundsException, TileDBError {
+    if (index >= size || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     switch (nativeType) {
       case TILEDB_FLOAT32:
         {
