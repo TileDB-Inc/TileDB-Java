@@ -1042,12 +1042,12 @@ extern "C" {
     JNIEnv* jenv = getJNI(vm);
     jobject obj = ((Callback*)data)->obj;
     jclass cls=jenv->GetObjectClass(obj);
-    jmethodID mid = jenv->GetMethodID(cls, "call", "(JII)I");
+    jmethodID mid = jenv->GetMethodID(cls, "call", "(JI)I");
     if (mid == 0)
       return -1;
     jlong jpath;
     *(const char **)&jpath = path;
-    jint ret = jenv->CallIntMethod(obj, mid, jpath, (jint) type, strlen(path));
+    jint ret = jenv->CallIntMethod(obj, mid, jpath, (jint) type);
     vm->DetachCurrentThread();
     return ret;
   }
