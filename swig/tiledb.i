@@ -66,9 +66,12 @@
 %pointer_functions(tiledb_datatype_t, tiledb_datatype_tp);
 %pointer_functions(tiledb_array_type_t, tiledb_array_type_tp);
 %pointer_functions(tiledb_layout_t, tiledb_layout_tp);
+%pointer_functions(tiledb_filter_type_t, tiledb_filter_type_tp);
+%pointer_functions(tiledb_filter_option_t, tiledb_filter_option_tp);
 %pointer_functions(tiledb_compressor_t, tiledb_compressor_tp);
 %pointer_functions(tiledb_walk_order_t, tiledb_walk_order_tp);
 %pointer_functions(tiledb_vfs_mode_t, tiledb_vfs_mode_tp);
+%pointer_functions(tiledb_encryption_type_t, tiledb_encryption_type_tp);
 
 %pointer_functions(tiledb_array_t*, tiledb_array_tpp);
 %pointer_functions(tiledb_config_t*, tiledb_config_tpp);
@@ -80,8 +83,10 @@
 %pointer_functions(tiledb_dimension_t*, tiledb_dimension_tpp);
 %pointer_functions(tiledb_domain_t*, tiledb_domain_tpp);
 %pointer_functions(tiledb_query_t*, tiledb_query_tpp);
-%pointer_functions(tiledb_kv_schema_t*, tiledb_kv_schema_tpp);
+%pointer_functions(tiledb_filter_t*, tiledb_filter_tpp);
+%pointer_functions(tiledb_filter_list_t*, tiledb_filter_list_tpp);
 %pointer_functions(tiledb_kv_t*, tiledb_kv_tpp);
+%pointer_functions(tiledb_kv_schema_t*, tiledb_kv_schema_tpp);
 %pointer_functions(tiledb_kv_item_t*, tiledb_kv_item_tpp);
 %pointer_functions(tiledb_kv_iter_t*, tiledb_kv_iter_tpp);
 %pointer_functions(tiledb_vfs_t*, tiledb_vfs_tpp);
