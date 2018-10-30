@@ -11,10 +11,12 @@ package io.tiledb.libtiledb;
 public class int32_tArray {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
+  private final int nelements;
 
-  protected int32_tArray(long cPtr, boolean cMemoryOwn) {
+  protected int32_tArray(long cPtr, boolean cMemoryOwn, int nelements) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
+    this.nelements = nelements;
   }
 
   protected static long getCPtr(int32_tArray obj) {
@@ -36,14 +38,20 @@ public class int32_tArray {
   }
 
   public int32_tArray(int nelements) {
-    this(tiledbJNI.new_int32_tArray(nelements), true);
+    this(tiledbJNI.new_int32_tArray(nelements), true, nelements);
   }
 
   public int getitem(int index) {
+    if (index >= nelements || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return tiledbJNI.int32_tArray_getitem(swigCPtr, this, index);
   }
 
   public void setitem(int index, int value) {
+    if (index >= nelements || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     tiledbJNI.int32_tArray_setitem(swigCPtr, this, index, value);
   }
 
@@ -52,8 +60,7 @@ public class int32_tArray {
     return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, false);
   }
 
-  public static int32_tArray frompointer(SWIGTYPE_p_int t) {
-    long cPtr = tiledbJNI.int32_tArray_frompointer(SWIGTYPE_p_int.getCPtr(t));
-    return (cPtr == 0) ? null : new int32_tArray(cPtr, false);
+  protected int size() {
+    return nelements;
   }
 }

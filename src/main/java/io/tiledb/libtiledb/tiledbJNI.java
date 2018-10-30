@@ -47,8 +47,6 @@ public class tiledbJNI {
 
   public static final native long int32_tArray_cast(long jarg1, int32_tArray jarg1_);
 
-  public static final native long int32_tArray_frompointer(long jarg1);
-
   public static final native long new_int64_tArray(int jarg1);
 
   public static final native void delete_int64_tArray(long jarg1);
@@ -59,8 +57,6 @@ public class tiledbJNI {
       long jarg1, int64_tArray jarg1_, int jarg2, long jarg3);
 
   public static final native long int64_tArray_cast(long jarg1, int64_tArray jarg1_);
-
-  public static final native long int64_tArray_frompointer(long jarg1);
 
   public static final native long new_charArray(int jarg1);
 
@@ -73,8 +69,6 @@ public class tiledbJNI {
 
   public static final native String charArray_cast(long jarg1, charArray jarg1_);
 
-  public static final native long charArray_frompointer(String jarg1);
-
   public static final native long new_floatArray(int jarg1);
 
   public static final native void delete_floatArray(long jarg1);
@@ -85,8 +79,6 @@ public class tiledbJNI {
       long jarg1, floatArray jarg1_, int jarg2, float jarg3);
 
   public static final native long floatArray_cast(long jarg1, floatArray jarg1_);
-
-  public static final native long floatArray_frompointer(long jarg1);
 
   public static final native long new_doubleArray(int jarg1);
 
@@ -99,8 +91,6 @@ public class tiledbJNI {
 
   public static final native long doubleArray_cast(long jarg1, doubleArray jarg1_);
 
-  public static final native long doubleArray_frompointer(long jarg1);
-
   public static final native long new_int8_tArray(int jarg1);
 
   public static final native void delete_int8_tArray(long jarg1);
@@ -111,8 +101,6 @@ public class tiledbJNI {
       long jarg1, int8_tArray jarg1_, int jarg2, byte jarg3);
 
   public static final native long int8_tArray_cast(long jarg1, int8_tArray jarg1_);
-
-  public static final native long int8_tArray_frompointer(long jarg1);
 
   public static final native long new_uint8_tArray(int jarg1);
 
@@ -125,8 +113,6 @@ public class tiledbJNI {
 
   public static final native long uint8_tArray_cast(long jarg1, uint8_tArray jarg1_);
 
-  public static final native long uint8_tArray_frompointer(long jarg1);
-
   public static final native long new_int16_tArray(int jarg1);
 
   public static final native void delete_int16_tArray(long jarg1);
@@ -138,8 +124,6 @@ public class tiledbJNI {
 
   public static final native long int16_tArray_cast(long jarg1, int16_tArray jarg1_);
 
-  public static final native long int16_tArray_frompointer(long jarg1);
-
   public static final native long new_uint16_tArray(int jarg1);
 
   public static final native void delete_uint16_tArray(long jarg1);
@@ -150,8 +134,6 @@ public class tiledbJNI {
       long jarg1, uint16_tArray jarg1_, int jarg2, int jarg3);
 
   public static final native long uint16_tArray_cast(long jarg1, uint16_tArray jarg1_);
-
-  public static final native long uint16_tArray_frompointer(long jarg1);
 
   public static final native long new_uint32_tArray(int jarg1);
 
@@ -165,8 +147,6 @@ public class tiledbJNI {
 
   public static final native long uint32_tArray_cast(long jarg1, uint32_tArray jarg1_);
 
-  public static final native long uint32_tArray_frompointer(long jarg1);
-
   public static final native long new_uint64_tArray(int jarg1);
 
   public static final native void delete_uint64_tArray(long jarg1);
@@ -178,8 +158,6 @@ public class tiledbJNI {
       long jarg1, uint64_tArray jarg1_, int jarg2, java.math.BigInteger jarg3);
 
   public static final native long uint64_tArray_cast(long jarg1, uint64_tArray jarg1_);
-
-  public static final native long uint64_tArray_frompointer(long jarg1);
 
   public static final native long new_charpArray(int jarg1);
 
@@ -571,27 +549,27 @@ public class tiledbJNI {
 
   public static final native long newUint64ArraySet(long[] jarg1);
 
-  public static final native int[] int32ArrayGet(long jarg1, int jarg2);
+  public static final native int[] int32ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native long[] int64ArrayGet(long jarg1, int jarg2);
+  public static final native long[] int64ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native String charArrayGet(long jarg1);
+  public static final native String charArrayGet(long jarg1, int jarg2);
 
-  public static final native float[] floatArrayGet(long jarg1, int jarg2);
+  public static final native float[] floatArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native double[] doubleArrayGet(long jarg1, int jarg2);
+  public static final native double[] doubleArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native byte[] int8ArrayGet(long jarg1, int jarg2);
+  public static final native byte[] int8ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native short[] uint8ArrayGet(long jarg1, int jarg2);
+  public static final native short[] uint8ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native short[] int16ArrayGet(long jarg1, int jarg2);
+  public static final native short[] int16ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native int[] uint16ArrayGet(long jarg1, int jarg2);
+  public static final native int[] uint16ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native long[] uint32ArrayGet(long jarg1, int jarg2);
+  public static final native long[] uint32ArrayGet(long jarg1, int jarg2, int jarg3);
 
-  public static final native long[] uint64ArrayGet(long jarg1, int jarg2);
+  public static final native long[] uint64ArrayGet(long jarg1, int jarg2, int jarg3);
 
   public static final native String tiledb_coords();
 

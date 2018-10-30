@@ -11,10 +11,12 @@ package io.tiledb.libtiledb;
 public class doubleArray {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
+  private final int nelements;
 
-  protected doubleArray(long cPtr, boolean cMemoryOwn) {
+  protected doubleArray(long cPtr, boolean cMemoryOwn, int nelements) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
+    this.nelements = nelements;
   }
 
   protected static long getCPtr(doubleArray obj) {
@@ -36,14 +38,20 @@ public class doubleArray {
   }
 
   public doubleArray(int nelements) {
-    this(tiledbJNI.new_doubleArray(nelements), true);
+    this(tiledbJNI.new_doubleArray(nelements), true, nelements);
   }
 
   public double getitem(int index) {
+    if (index >= nelements || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return tiledbJNI.doubleArray_getitem(swigCPtr, this, index);
   }
 
   public void setitem(int index, double value) {
+    if (index >= nelements || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     tiledbJNI.doubleArray_setitem(swigCPtr, this, index, value);
   }
 
@@ -52,8 +60,7 @@ public class doubleArray {
     return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, false);
   }
 
-  public static doubleArray frompointer(SWIGTYPE_p_double t) {
-    long cPtr = tiledbJNI.doubleArray_frompointer(SWIGTYPE_p_double.getCPtr(t));
-    return (cPtr == 0) ? null : new doubleArray(cPtr, false);
+  protected int size() {
+    return nelements;
   }
 }

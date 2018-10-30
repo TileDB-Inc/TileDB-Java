@@ -9,10 +9,10 @@
 package io.tiledb.libtiledb;
 
 public abstract class PathCallback {
-  private int call(long path, int type) {
-    charArray jpath = new charArray(path, false);
+  private int call(long path, int type, int nelements) {
+    charArray jpath = new charArray(path, false, nelements);
     tiledb_object_t jtype = tiledb_object_t.swigToEnum(type);
-    return call(Utils.charArrayGet(jpath), jtype);
+    return call(Utils.charArrayGet(jpath, 0), jtype);
   }
 
   public abstract int call(String path, tiledb_object_t type);

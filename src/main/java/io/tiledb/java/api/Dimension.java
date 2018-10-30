@@ -164,7 +164,7 @@ public class Dimension<T> implements AutoCloseable {
         tiledb.delete_voidpArray(domainArraypp);
         throw err;
       }
-      try (NativeArray domainBuffer = new NativeArray(ctx, getType(), domainArraypp)) {
+      try (NativeArray domainBuffer = new NativeArray(ctx, getType(), domainArraypp, 2)) {
         this.domain = new Pair<T, T>((T) domainBuffer.getItem(0), (T) domainBuffer.getItem(1));
       }
     }
@@ -194,7 +194,7 @@ public class Dimension<T> implements AutoCloseable {
         tiledb.delete_voidpArray(tileExtentpp);
         throw err;
       }
-      try (NativeArray tileExtentArray = new NativeArray(ctx, getType(), tileExtentpp)) {
+      try (NativeArray tileExtentArray = new NativeArray(ctx, getType(), tileExtentpp, 1)) {
         tileExtent = (T) tileExtentArray.getItem(0);
       }
     }

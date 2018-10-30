@@ -970,48 +970,48 @@ public class tiledb implements tiledbConstants {
     return tiledbJNI.newUint64ArraySet(jarg1);
   }
 
-  public static int[] int32ArrayGet(long array, int sz) {
-    return tiledbJNI.int32ArrayGet(array, sz);
+  public static int[] int32ArrayGet(long array, int pos, int sz) {
+    return tiledbJNI.int32ArrayGet(array, pos, sz);
   }
 
-  public static long[] int64ArrayGet(long array, int sz) {
-    return tiledbJNI.int64ArrayGet(array, sz);
+  public static long[] int64ArrayGet(long array, int pos, int sz) {
+    return tiledbJNI.int64ArrayGet(array, pos, sz);
   }
 
-  public static String charArrayGet(long array) {
-    return tiledbJNI.charArrayGet(array);
+  public static String charArrayGet(long array, int pos) {
+    return tiledbJNI.charArrayGet(array, pos);
   }
 
-  public static float[] floatArrayGet(long array, int size) {
-    return tiledbJNI.floatArrayGet(array, size);
+  public static float[] floatArrayGet(long array, int pos, int size) {
+    return tiledbJNI.floatArrayGet(array, pos, size);
   }
 
-  public static double[] doubleArrayGet(long array, int size) {
-    return tiledbJNI.doubleArrayGet(array, size);
+  public static double[] doubleArrayGet(long array, int pos, int size) {
+    return tiledbJNI.doubleArrayGet(array, pos, size);
   }
 
-  public static byte[] int8ArrayGet(long array, int size) {
-    return tiledbJNI.int8ArrayGet(array, size);
+  public static byte[] int8ArrayGet(long array, int pos, int size) {
+    return tiledbJNI.int8ArrayGet(array, pos, size);
   }
 
-  public static short[] uint8ArrayGet(long array, int size) {
-    return tiledbJNI.uint8ArrayGet(array, size);
+  public static short[] uint8ArrayGet(long array, int pos, int size) {
+    return tiledbJNI.uint8ArrayGet(array, pos, size);
   }
 
-  public static short[] int16ArrayGet(long array, int size) {
-    return tiledbJNI.int16ArrayGet(array, size);
+  public static short[] int16ArrayGet(long array, int pos, int size) {
+    return tiledbJNI.int16ArrayGet(array, pos, size);
   }
 
-  public static int[] uint16ArrayGet(long array, int size) {
-    return tiledbJNI.uint16ArrayGet(array, size);
+  public static int[] uint16ArrayGet(long array, int pos, int size) {
+    return tiledbJNI.uint16ArrayGet(array, pos, size);
   }
 
-  public static long[] uint32ArrayGet(long array, int size) {
-    return tiledbJNI.uint32ArrayGet(array, size);
+  public static long[] uint32ArrayGet(long array, int pos, int size) {
+    return tiledbJNI.uint32ArrayGet(array, pos, size);
   }
 
-  public static long[] uint64ArrayGet(long array, int size) {
-    return tiledbJNI.uint64ArrayGet(array, size);
+  public static long[] uint64ArrayGet(long array, int pos, int size) {
+    return tiledbJNI.uint64ArrayGet(array, pos, size);
   }
 
   public static String tiledb_coords() {
