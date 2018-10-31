@@ -376,7 +376,7 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_UINT64:
         {
-          return int64_tArray.getitem(index);
+          return uint64_tArray.getitem(index);
         }
       case TILEDB_CHAR:
         {
