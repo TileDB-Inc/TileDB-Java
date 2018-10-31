@@ -27,6 +27,7 @@ package io.tiledb.java.api;
 import static io.tiledb.java.api.QueryType.*;
 
 import io.tiledb.libtiledb.*;
+
 import java.util.HashMap;
 
 /**
@@ -57,6 +58,23 @@ public class Array implements AutoCloseable {
   private SWIGTYPE_p_p_tiledb_array_t arraypp;
 
   /**
+   * Constructs an Array object opening the array for reading.
+   *
+   * <pre><b>Example:</b>
+   * {@code
+   *   Context ctx = new Context();
+   *   Array array new Array(ctx, "s3://bucket-name/array-name");
+   * }</pre>
+   *
+   * @param ctx TileDB context
+   * @param uri The array URI
+   * @exception TileDBError A TileDB exception
+   */
+  public Array(Context ctx, String uri) throws TileDBError {
+    openArray(ctx, uri, TILEDB_READ, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {});
+  }
+
+  /**
    * Constructs an Array object, opening the array for the given query type.
    *
    * <pre><b>Example:</b>
@@ -72,27 +90,35 @@ public class Array implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Array(Context ctx, String uri, QueryType query_type) throws TileDBError {
-    openArray(ctx, uri, query_type);
+    openArray(ctx, uri, query_type, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {});
   }
 
   /**
-   * Constructs an Array object opening the array for reading.
+   * Constructs an Array object, opening the encrypted array for the given query type.
    *
    * <pre><b>Example:</b>
    * {@code
-   *   Context ctx = new Context();
-   *   Array array new Array(ctx, "s3://bucket-name/array-name");
-   * }</pre>
+   * Context ctx = new Context();
+   * String key = "0123456789abcdeF0123456789abcdeF";
+   * Array array new Array(ctx, "s3://bucket-name/array-name",
+   *                       TILEDB_READ,
+   *                       TILEDB_AES_256_GCM,
+   *                       key.getBytes(StandardCharsets.UTF_8));
+   * }
+   * </pre>
    *
    * @param ctx TileDB context
    * @param uri The array URI
-   * @exception TileDBError A TileDB exception
+   * @param query_type Query type to open the array for
+   * @param encryption_type The encryption type to use
+   * @param key The encryption key to use
+   * @throws TileDBError A TileDB exception
    */
-  public Array(Context ctx, String uri) throws TileDBError {
-    this(ctx, uri, TILEDB_READ);
+  public Array(Context ctx, String uri, QueryType query_type, EncryptionType encryption_type, byte[] key) throws TileDBError {
+    openArray(ctx, uri, query_type, encryption_type, key);
   }
 
-  private synchronized void openArray(Context ctx, String uri, QueryType query_type)
+  private synchronized void openArray(Context ctx, String uri, QueryType query_type, EncryptionType encryption_type, byte[] key)
       throws TileDBError {
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
@@ -102,20 +128,21 @@ public class Array implements AutoCloseable {
       throw err;
     }
     SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
-    try {
-      ctx.handleError(tiledb.tiledb_array_open(ctx.getCtxp(), _arrayp, query_type.toSwigEnum()));
-    } catch (TileDBError err) {
-      tiledb.delete_tiledb_array_tpp(_arraypp);
-      throw err;
-    }
     ArraySchema _schema;
-    SWIGTYPE_p_p_tiledb_array_schema_t schemapp = tiledb.new_tiledb_array_schema_tpp();
-    try {
-      ctx.handleError(tiledb.tiledb_array_get_schema(ctx.getCtxp(), _arrayp, schemapp));
-      _schema = new ArraySchema(ctx, schemapp);
-    } catch (TileDBError err) {
-      tiledb.delete_tiledb_array_schema_tpp(schemapp);
-      throw err;
+    try(NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
+      try {
+        ctx.handleError(tiledb.tiledb_array_open_with_key(
+                ctx.getCtxp(),
+                _arrayp,
+                query_type.toSwigEnum(),
+                encryption_type.toSwigEnum(),
+                keyArray.toVoidPointer(),
+                keyArray.getSize()));
+      } catch (TileDBError err) {
+        tiledb.delete_tiledb_array_tpp(_arraypp);
+        throw err;
+      }
+      _schema = new ArraySchema(ctx, uri, encryption_type, key);
     }
     this.ctx = ctx;
     this.uri = uri;
@@ -151,7 +178,39 @@ public class Array implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public static void consolidate(Context ctx, String uri) throws TileDBError {
-    ctx.handleError(tiledb.tiledb_array_consolidate(ctx.getCtxp(), uri));
+    consolidate(ctx, uri, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {});
+  }
+
+  /**
+   * Consolidates the fragments of an array into a single fragment.
+   *
+   * <p>All queries to the array before consolidation must be finalized before consolidation can
+   * begin. Consolidation temporarily aquires an exclusive lock on the array when finalizing the
+   * resulting merged fragment.
+   *
+   * <pre><b>Example:</b>
+   * {@code
+   *   Context ctx = new Context();
+   *   String key = "0123456789abcdeF0123456789abcdeF";
+   *   Array.consolidate(ctx, "s3://bucket-name/array-name",
+   *                     TILEDB_AES_256_GCM,
+   *                     key.getBytes(StandardCharsets.UTF_8));
+   * }
+   * </pre>
+   *
+   * @param ctx A TileDB Context
+   * @param uri URI string to TileDB array
+   * @param encryption_type Encryption type the array is encrypted with
+   * @param key A byte array key to decrypt array
+   * @throws TileDBError
+   */
+  public static void consolidate(Context ctx, String uri,
+                                 EncryptionType encryption_type,
+                                 byte[] key) throws TileDBError {
+    try(NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
+        ctx.handleError(tiledb.tiledb_array_consolidate_with_key(
+                ctx.getCtxp(),uri,encryption_type.toSwigEnum(),keyArray.toVoidPointer(),keyArray.getSize()));
+    }
   }
 
   /**
@@ -194,6 +253,35 @@ public class Array implements AutoCloseable {
     Context ctx = schema.getCtx();
     ctx.handleError(tiledb.tiledb_array_schema_check(ctx.getCtxp(), schema.getSchemap()));
     ctx.handleError(tiledb.tiledb_array_create(ctx.getCtxp(), uri, schema.getSchemap()));
+  }
+
+  /**
+   * Creates an encrypted persisted TileDBArray given input {@link ArraySchema} and encryption key
+   *
+   * <pre><b>Example:</b>
+   * {@code
+   *   String key = "0123456789abcdeF0123456789abcdeF";
+   *   Array.create("my_array", schema,
+   *                TILEDB_AES_256_GCM,
+   *                key.getBytes(StandardCharsets.UTF_8));
+   * }
+   * </pre>
+   *
+   *
+   * @param uri The array URI string
+   * @param schema The TileDB ArraySchema
+   * @param encryption_type The encryption type to use
+   * @param key The encryption key to use
+   * @throws TileDBError A TileDB exception
+   */
+  public static void create(String uri, ArraySchema schema, EncryptionType encryption_type, byte[] key) throws TileDBError {
+    Context ctx = schema.getCtx();
+    ctx.handleError(tiledb.tiledb_array_schema_check(ctx.getCtxp(), schema.getSchemap()));
+    try (NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
+      ctx.handleError(tiledb.tiledb_array_create_with_key(
+              ctx.getCtxp(), uri, schema.getSchemap(),
+              encryption_type.toSwigEnum(), keyArray.toVoidPointer(), keyArray.getSize()));
+    }
   }
 
   /**

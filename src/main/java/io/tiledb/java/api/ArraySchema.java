@@ -25,6 +25,7 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
+
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -137,6 +138,45 @@ public class ArraySchema implements AutoCloseable {
     } catch (TileDBError err) {
       tiledb.delete_tiledb_array_schema_tpp(_schemapp);
       throw err;
+    }
+    this.ctx = ctx;
+    this.schemap = tiledb.tiledb_array_schema_tpp_value(_schemapp);
+    this.schemapp = _schemapp;
+  }
+
+  /**
+   * Loads the encrypted ArraySchema of an existing array with the given URI string.
+   *
+   * <pre><b>Example:</b>
+   * {@code
+   *   Context ctx = new Context();
+   *   String key = "0123456789abcdeF0123456789abcdeF";
+   *   ArraySchema schema = new ArraySchema(ctx, "s3://bucket-name/array-name"
+   *                                        TILEDB_AES_GCM_256,
+   *                                        key.getBytes(StandardCharsets.UTF_8));
+   * }
+   * </pre>
+   *
+   * @param ctx TileDB context
+   * @param uri URI of TileDB Array
+   * @param encryption_type Encryption type of the array schema
+   * @param key Encryption key used to decrypt the array schema
+   * @throws TileDBError A TileDB exception
+   */
+  public ArraySchema(Context ctx, String uri, EncryptionType encryption_type, byte[] key) throws TileDBError {
+    SWIGTYPE_p_p_tiledb_array_schema_t _schemapp = tiledb.new_tiledb_array_schema_tpp();
+    try(NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
+      try {
+        ctx.handleError(tiledb.tiledb_array_schema_load_with_key(
+                ctx.getCtxp(), uri,
+                encryption_type.toSwigEnum(),
+                keyArray.toVoidPointer(),
+                keyArray.getSize(),
+                _schemapp));
+      } catch (TileDBError err) {
+        tiledb.delete_tiledb_array_schema_tpp(_schemapp);
+        throw err;
+      }
     }
     this.ctx = ctx;
     this.schemap = tiledb.tiledb_array_schema_tpp_value(_schemapp);
