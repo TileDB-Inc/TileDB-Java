@@ -97,7 +97,7 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public ArraySchema(Context ctx, ArrayType type) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_array_schema_t _schemapp = tiledb.new_tiledb_array_schema_tpp();
+   SWIGTYPE_p_p_tiledb_array_schema_t _schemapp = tiledb.new_tiledb_array_schema_tpp();
     try {
       ctx.handleError(
           tiledb.tiledb_array_schema_alloc(ctx.getCtxp(), type.toSwigEnum(), _schemapp));

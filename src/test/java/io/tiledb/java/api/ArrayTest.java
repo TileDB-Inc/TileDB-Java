@@ -1,9 +1,6 @@
 package io.tiledb.java.api;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
 import java.nio.charset.StandardCharsets;
@@ -22,6 +19,11 @@ public class ArrayTest {
     arrayURI = temp.getRoot().toString();
     String keyString = "0123456789abcdeF0123456789abcdeF";
     key = keyString.getBytes(StandardCharsets.US_ASCII);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    ctx.close();
   }
 
   public ArraySchema schemaCreate() throws Exception {
