@@ -35,7 +35,7 @@ public class AttributeTest {
   @Test
   public void testArraySchema() throws Exception {
     try (Context ctx = new Context();
-         Attribute a = new Attribute(ctx, "a1", Long.class)) {
+        Attribute a = new Attribute(ctx, "a1", Long.class)) {
       try (FilterList filterList = new FilterList(ctx).addFilter(new GzipFilter(ctx, 1))) {
         a.setFilterList(filterList);
       }

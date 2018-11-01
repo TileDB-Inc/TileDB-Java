@@ -240,7 +240,9 @@ public class Attribute implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public Attribute setFilterList(FilterList filters) throws TileDBError {
-    ctx.handleError(tiledb.tiledb_attribute_set_filter_list(ctx.getCtxp(), attributep, filters.getFilterListp()));
+    ctx.handleError(
+        tiledb.tiledb_attribute_set_filter_list(
+            ctx.getCtxp(), attributep, filters.getFilterListp()));
     return this;
   }
 
@@ -254,7 +256,8 @@ public class Attribute implements AutoCloseable {
     FilterList filterlist;
     SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
     try {
-      ctx.handleError(tiledb.tiledb_attribute_get_filter_list(ctx.getCtxp(), attributep, filterlistpp));
+      ctx.handleError(
+          tiledb.tiledb_attribute_get_filter_list(ctx.getCtxp(), attributep, filterlistpp));
       filterlist = new FilterList(ctx, filterlistpp);
     } catch (TileDBError err) {
       tiledb.delete_tiledb_filter_list_tpp(filterlistpp);

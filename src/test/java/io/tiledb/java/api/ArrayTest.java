@@ -1,9 +1,8 @@
 package io.tiledb.java.api;
 
+import java.nio.charset.StandardCharsets;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
-
-import java.nio.charset.StandardCharsets;
 
 public class ArrayTest {
 
@@ -78,7 +77,10 @@ public class ArrayTest {
     // Test that we can create the encrypted array
     Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
     String keyString = "0123456789abcdeF0123456789abcdeZ";
-    ArraySchema schema = new ArraySchema(ctx, arrayURI,
+    ArraySchema schema =
+        new ArraySchema(
+            ctx,
+            arrayURI,
             EncryptionType.TILEDB_AES_256_GCM,
             keyString.getBytes(StandardCharsets.US_ASCII));
   }
@@ -88,7 +90,10 @@ public class ArrayTest {
     // Test that we can create the encrypted array
     Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
     String keyString = "0123456789abcdeF0123456789a";
-    ArraySchema schema = new ArraySchema(ctx, arrayURI,
+    ArraySchema schema =
+        new ArraySchema(
+            ctx,
+            arrayURI,
             EncryptionType.TILEDB_AES_256_GCM,
             keyString.getBytes(StandardCharsets.US_ASCII));
   }

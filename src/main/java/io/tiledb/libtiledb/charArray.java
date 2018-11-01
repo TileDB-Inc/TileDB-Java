@@ -55,5 +55,4 @@ public class charArray {
     long cPtr = tiledbJNI.charArray_frompointer(t);
     return (cPtr == 0) ? null : new charArray(cPtr, false);
   }
-
 }
