@@ -1,5 +1,6 @@
 package io.tiledb.java.api;
 
+import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_filter_t;
 import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.tiledb_filter_option_t;
 import io.tiledb.libtiledb.tiledb_filter_type_t;
@@ -19,6 +20,10 @@ public class BitWidthReductionFilter extends Filter {
             super.close();
             throw err;
         }
+    }
+
+    protected BitWidthReductionFilter(Context ctx, SWIGTYPE_p_p_tiledb_filter_t filterpp) {
+        super(ctx, filterpp);
     }
 
     public int getWindow() throws TileDBError {

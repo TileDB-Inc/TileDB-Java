@@ -8,6 +8,12 @@ public class Filter implements AutoCloseable {
     private SWIGTYPE_p_tiledb_filter_t filterp;
     private SWIGTYPE_p_p_tiledb_filter_t filterpp;
 
+    protected Filter(Context ctx, SWIGTYPE_p_p_tiledb_filter_t filterpp) {
+       this.ctx = ctx;
+       this.filterp = tiledb.tiledb_filter_tpp_value(filterpp);
+       this.filterpp = filterpp;
+    }
+
     protected Filter(Context ctx, tiledb_filter_type_t filter_type) throws TileDBError {
         SWIGTYPE_p_p_tiledb_filter_t filterpp = tiledb.new_tiledb_filter_tpp();
         try {

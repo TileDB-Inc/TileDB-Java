@@ -1,10 +1,16 @@
 package io.tiledb.java.api;
 
-import javafx.geometry.Pos;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class FilterTest {
+
+    @Test
+    public void testNoneFiler() throws Exception {
+        try (Context ctx = new Context();
+             NoneFilter filter = new NoneFilter(ctx)) {
+        }
+    }
 
     @Test
     public void testGzipFilter() throws Exception {

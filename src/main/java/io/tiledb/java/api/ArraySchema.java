@@ -588,6 +588,70 @@ public class ArraySchema implements AutoCloseable {
     return new Attribute(ctx, attrpp);
   }
 
+  /**
+   * Sets the FilterList for the coordinates, which is an ordered list of filters that will be used
+   * to process and/or transform the coordinate data (such as compression).
+   *
+   * @param filterList FilterList to use
+   * @return This ArraySchema instance
+   * @throws TileDBError A TileDB exception
+   */
+  public ArraySchema setCoodsFilterList(FilterList filterList) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_array_schema_set_coords_filter_list(ctx.getCtxp(), getSchemap(), filterList.getFilterListp()));
+    return this;
+  }
+
+  /**
+   * Returns a copy of the FilterList of the coordinates.
+   *
+   * @return coordinates FilterList
+   * @throws TileDBError A TileDB exception
+   */
+  public FilterList getCoordsFilterList() throws TileDBError {
+    FilterList filterlist;
+    SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
+    try {
+      ctx.handleError(tiledb.tiledb_array_schema_get_coords_filter_list(ctx.getCtxp(), getSchemap(), filterlistpp));
+      filterlist = new FilterList(ctx, filterlistpp);
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_filter_list_tpp(filterlistpp);
+      throw err;
+    }
+    return filterlist;
+  }
+
+  /**
+   * Sets the FilterList for the offsets, which is an ordered list of filters that will be
+   * used to process and/or transform the offsets data (such as compression).
+   *
+   * @param filterList FilterList to use
+   * @return This ArraySchema instance
+   * @throws TileDBError A TileDB exception
+   */
+  public ArraySchema setOffsetsFilterList(FilterList filterList) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_array_schema_set_offsets_filter_list(ctx.getCtxp(), getSchemap(), filterList.getFilterListp()));
+    return this;
+  }
+
+  /**
+   * Returns a copy of the FilterList of the offsets.
+   *
+   * @return offsets FilterList
+   * @throws TileDBError A TileDB exception
+   */
+  public FilterList getOffsetsFilterList() throws TileDBError {
+    FilterList filterlist;
+    SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
+    try {
+      ctx.handleError(tiledb.tiledb_array_schema_get_offsets_filter_list(ctx.getCtxp(), getSchemap(), filterlistpp));
+      filterlist = new FilterList(ctx, filterlistpp);
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_filter_list_tpp(filterlistpp);
+      throw err;
+    }
+    return filterlist;
+  }
+
   protected SWIGTYPE_p_tiledb_array_schema_t getSchemap() {
     return schemap;
   }

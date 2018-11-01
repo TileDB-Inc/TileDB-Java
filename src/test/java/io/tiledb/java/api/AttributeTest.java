@@ -34,15 +34,22 @@ public class AttributeTest {
 
   @Test
   public void testArraySchema() throws Exception {
-    Context ctx = new Context();
-    Attribute a = new Attribute(ctx, "a1", Long.class);
-    a.setCompressor(new Compressor(CompressorType.TILEDB_GZIP, 1));
-    a.setCellValNum(tiledb.tiledb_var_num());
-
-    Assert.assertEquals(a.getName(), "a1");
-    Assert.assertEquals(a.getType(), Datatype.TILEDB_INT64);
-    Assert.assertEquals(a.getCellValNum(), TILEDB_VAR_NUM);
-    Assert.assertEquals(a.getCompressor().getCompressor(), CompressorType.TILEDB_GZIP);
-    Assert.assertEquals(a.getCompressor().getLevel(), 1);
+    try (Context ctx = new Context();
+         Attribute a = new Attribute(ctx, "a1", Long.class)) {
+      try (FilterList filterList = new FilterList(ctx).addFilter(new GzipFilter(ctx, 1))) {
+        a.setFilterList(filterList);
+      }
+      a.setCellValNum(tiledb.tiledb_var_num());
+      Assert.assertEquals(a.getName(), "a1");
+      Assert.assertEquals(a.getType(), Datatype.TILEDB_INT64);
+      Assert.assertEquals(a.getCellValNum(), TILEDB_VAR_NUM);
+      try (FilterList filterList = a.getFilterList()) {
+        Assert.assertEquals(filterList.getNumFilters(), 1L);
+        try (Filter filter = filterList.getFilter(0L)) {
+          Assert.assertTrue(filter instanceof GzipFilter);
+          Assert.assertEquals(((GzipFilter) filter).getLevel(), 1L);
+        }
+      }
+    }
   }
 }
