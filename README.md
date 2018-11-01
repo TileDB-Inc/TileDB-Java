@@ -69,3 +69,19 @@ http://www.swig.org/Doc3.0/Preface.html#Preface_installation
 2) Generate the JNI code using
 
 `env TILEDB_HOME=/path/to/TileDB/dist ./gradlew generateJNI`
+
+## Cross Compile JNI
+
+The JNI library (and TileDB by extent) can be cross compiled using docker and
+the dockcross project.
+
+This works well except java is not included in the dockcross. To work around
+this we require that the hosts java be mounted to the docker image.
+
+Example usage:
+
+This will produce a build-linux-arv7 directory with the cross compiled libtiledb and libtiledbjni
+
+```
+export IMAGE="linux-armv7" && ./docker/dockcross-${IMAGE} --args "-v $JAVA_HOME:/java --rm" bash -c 'mkdir build-${IMAGE} && cd build-${IMAGE} && cmake .. -DTILEDB_USE_NATIVE_JNI=OFF && make -j4'
+```

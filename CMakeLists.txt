@@ -35,6 +35,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Mo
 
 # Default builds the superbuild.
 option(TILEDB_JNI_SUPERBUILD "If true, perform a superbuild (builds all missing dependencies)." ON)
+option(TILEDB_USE_NATIVE_JNI "Use platform's native JNI" ON)
 
 # Set C++11 as required standard for all C++ targets.
 set(CMAKE_CXX_STANDARD 11)
@@ -68,7 +69,16 @@ set(TILEDB_JNI_EP_INSTALL_PREFIX "${TILEDB_JNI_EP_BASE}/install")
 
 # Find required library dependencies
 find_package(TileDB_EP REQUIRED)
-find_package(JNI REQUIRED)
+if(TILEDB_USE_NATIVE_JNI)
+    find_package(JNI REQUIRED)
+    message(WARNING "JAVA_JVM_LIBRARY: ${JAVA_JVM_LIBRARY}")
+    include_directories(${JNI_INCLUDE_DIRS})
+else()
+    include_directories(/java/include)
+    # TODO Provide correct jni_md.h
+    include_directories(/java/include/linux)
+    include_directories(/java/include/darwin)
+endif()
 
 if (WIN32)
   set(LIB_EXTENSION dll)
@@ -93,7 +103,7 @@ target_include_directories(tiledbjni
 target_link_libraries(tiledbjni
   PRIVATE
     TileDB::tiledb_shared
-    ${JAVA_JVM_LIBRARY}
+    # ${JAVA_JVM_LIBRARY}
 )
 
 set_target_properties(tiledbjni PROPERTIES SUFFIX ".${LIB_EXTENSION}")
