@@ -13,15 +13,9 @@ public enum tiledb_compressor_t {
   TILEDB_GZIP(1),
   TILEDB_ZSTD(2),
   TILEDB_LZ4(3),
-  TILEDB_BLOSC_LZ(4),
-  TILEDB_BLOSC_LZ4(5),
-  TILEDB_BLOSC_LZ4HC(6),
-  TILEDB_BLOSC_SNAPPY(7),
-  TILEDB_BLOSC_ZLIB(8),
-  TILEDB_BLOSC_ZSTD(9),
-  TILEDB_RLE(10),
-  TILEDB_BZIP2(11),
-  TILEDB_DOUBLE_DELTA(12);
+  TILEDB_RLE(4),
+  TILEDB_BZIP2(5),
+  TILEDB_DOUBLE_DELTA(6);
 
   public final int swigValue() {
     return swigValue;

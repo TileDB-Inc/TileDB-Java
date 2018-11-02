@@ -53,7 +53,7 @@ public class DenseCreate {
     a2.setCellValNum(TILEDB_VAR_NUM);
     Attribute a3 = new Attribute(ctx, "a3", Float.class);
     a3.setCellValNum(2);
-    a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
+    a1.setCompressor(new Compressor(TILEDB_LZ4, -1));
     a2.setCompressor(new Compressor(TILEDB_GZIP, -1));
     a3.setCompressor(new Compressor(TILEDB_ZSTD, -1));
 

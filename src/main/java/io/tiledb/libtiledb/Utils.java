@@ -3,138 +3,101 @@ package io.tiledb.libtiledb;
 public class Utils {
 
   public static int32_tArray newInt32_tArray(int[] array) {
-    int32_tArray ret = new int32_tArray(tiledb.newInt32ArraySet(array), true, array.length);
+    int32_tArray ret = new int32_tArray(tiledb.newInt32ArraySet(array), true);
     return ret;
   }
 
-  public static int32_tArray newInt32Array(int[] array) {
-    return newInt32_tArray(array);
-  }
-
   public static int64_tArray newInt64_tArray(long[] array) {
-    int64_tArray ret = new int64_tArray(tiledb.newInt64ArraySet(array), true, array.length);
+    int64_tArray ret = new int64_tArray(tiledb.newInt64ArraySet(array), true);
     return ret;
   }
 
   public static charArray newCharArray(String array) {
-    charArray ret = new charArray(tiledb.newCharArraySet(array), true, array.length());
+    charArray ret = new charArray(tiledb.newCharArraySet(array), true);
     return ret;
   }
 
   public static floatArray newFloatArray(float[] array) {
-    floatArray ret = new floatArray(tiledb.newFloatArraySet(array), true, array.length);
+    floatArray ret = new floatArray(tiledb.newFloatArraySet(array), true);
     return ret;
   }
 
   public static doubleArray newDoubleArray(double[] array) {
-    doubleArray ret = new doubleArray(tiledb.newDoubleArraySet(array), true, array.length);
+    doubleArray ret = new doubleArray(tiledb.newDoubleArraySet(array), true);
     return ret;
   }
 
   public static int8_tArray newInt8_tArray(byte[] array) {
-    int8_tArray ret = new int8_tArray(tiledb.newInt8ArraySet(array), true, array.length);
+    int8_tArray ret = new int8_tArray(tiledb.newInt8ArraySet(array), true);
     return ret;
   }
 
   public static uint8_tArray newUint8_tArray(short[] array) {
-    uint8_tArray ret = new uint8_tArray(tiledb.newUint8ArraySet(array), true, array.length);
+    uint8_tArray ret = new uint8_tArray(tiledb.newUint8ArraySet(array), true);
     return ret;
   }
 
   public static int16_tArray newInt16_tArray(short[] array) {
-    int16_tArray ret = new int16_tArray(tiledb.newInt16ArraySet(array), true, array.length);
+    int16_tArray ret = new int16_tArray(tiledb.newInt16ArraySet(array), true);
     return ret;
   }
 
   public static uint16_tArray newUint16_tArray(int[] array) {
-    uint16_tArray ret = new uint16_tArray(tiledb.newUint16ArraySet(array), true, array.length);
+    uint16_tArray ret = new uint16_tArray(tiledb.newUint16ArraySet(array), true);
     return ret;
   }
 
   public static uint32_tArray newUint32_tArray(long[] array) {
-    uint32_tArray ret = new uint32_tArray(tiledb.newUint32ArraySet(array), true, array.length);
+    uint32_tArray ret = new uint32_tArray(tiledb.newUint32ArraySet(array), true);
     return ret;
   }
 
   public static uint64_tArray newUint64Array(long[] array) {
-    uint64_tArray ret = new uint64_tArray(tiledb.newUint64ArraySet(array), true, array.length);
+    uint64_tArray ret = new uint64_tArray(tiledb.newUint64ArraySet(array), true);
     return ret;
   }
 
   public static int[] int32ArrayGet(int32_tArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.int32ArrayGet(int32_tArray.getCPtr(array), pos, size);
   }
 
   public static long[] int64ArrayGet(int64_tArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.int64ArrayGet(int64_tArray.getCPtr(array), pos, size);
   }
 
   public static String charArrayGet(charArray array, int pos) {
-    if (pos > array.size() || pos < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos);
-    }
     return tiledb.charArrayGet(charArray.getCPtr(array), pos);
   }
 
   public static float[] floatArrayGet(floatArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.floatArrayGet(floatArray.getCPtr(array), pos, size);
   }
 
   public static double[] doubleArrayGet(doubleArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.doubleArrayGet(doubleArray.getCPtr(array), pos, size);
   }
 
   public static byte[] int8ArrayGet(int8_tArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.int8ArrayGet(int8_tArray.getCPtr(array), pos, size);
   }
 
   public static short[] uint8ArrayGet(uint8_tArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.uint8ArrayGet(uint8_tArray.getCPtr(array), pos, size);
   }
 
   public static short[] int16ArrayGet(int16_tArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.int16ArrayGet(int16_tArray.getCPtr(array), pos, size);
   }
 
   public static int[] uint16ArrayGet(uint16_tArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.uint16ArrayGet(uint16_tArray.getCPtr(array), pos, size);
   }
 
   public static long[] uint32ArrayGet(uint32_tArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.uint32ArrayGet(uint32_tArray.getCPtr(array), pos, size);
   }
 
   public static long[] uint64ArrayGet(uint64_tArray array, int pos, int size) {
-    if (pos + size > array.size() || pos < 0 || size < 0) {
-      throw new ArrayIndexOutOfBoundsException(pos + size);
-    }
     return tiledb.uint64ArrayGet(uint64_tArray.getCPtr(array), pos, size);
   }
 

@@ -66,9 +66,12 @@
 %pointer_functions(tiledb_datatype_t, tiledb_datatype_tp);
 %pointer_functions(tiledb_array_type_t, tiledb_array_type_tp);
 %pointer_functions(tiledb_layout_t, tiledb_layout_tp);
+%pointer_functions(tiledb_filter_type_t, tiledb_filter_type_tp);
+%pointer_functions(tiledb_filter_option_t, tiledb_filter_option_tp);
 %pointer_functions(tiledb_compressor_t, tiledb_compressor_tp);
 %pointer_functions(tiledb_walk_order_t, tiledb_walk_order_tp);
 %pointer_functions(tiledb_vfs_mode_t, tiledb_vfs_mode_tp);
+%pointer_functions(tiledb_encryption_type_t, tiledb_encryption_type_tp);
 
 %pointer_functions(tiledb_array_t*, tiledb_array_tpp);
 %pointer_functions(tiledb_config_t*, tiledb_config_tpp);
@@ -80,8 +83,10 @@
 %pointer_functions(tiledb_dimension_t*, tiledb_dimension_tpp);
 %pointer_functions(tiledb_domain_t*, tiledb_domain_tpp);
 %pointer_functions(tiledb_query_t*, tiledb_query_tpp);
-%pointer_functions(tiledb_kv_schema_t*, tiledb_kv_schema_tpp);
+%pointer_functions(tiledb_filter_t*, tiledb_filter_tpp);
+%pointer_functions(tiledb_filter_list_t*, tiledb_filter_list_tpp);
 %pointer_functions(tiledb_kv_t*, tiledb_kv_tpp);
+%pointer_functions(tiledb_kv_schema_t*, tiledb_kv_schema_tpp);
 %pointer_functions(tiledb_kv_item_t*, tiledb_kv_item_tpp);
 %pointer_functions(tiledb_kv_iter_t*, tiledb_kv_iter_tpp);
 %pointer_functions(tiledb_vfs_t*, tiledb_vfs_tpp);
@@ -111,17 +116,17 @@
 %native (newUint32ArraySet) jlong newUint32ArraySet(jlongArray jarg1);
 %native (newUint64ArraySet) jlong newUint64ArraySet(jlongArray jarg1);
 
-%native (int32ArrayGet) jintArray int32ArrayGet(jlong array, jint sz);
-%native (int64ArrayGet) jlongArray int64ArrayGet(jlong array, jint sz);
-%native (charArrayGet)  jstring charArrayGet(jlong array);
-%native (floatArrayGet) jfloatArray floatArrayGet(jlong array, jint size);
-%native (doubleArrayGet) jdoubleArray doubleArrayGet(jlong array, jint size);
-%native (int8ArrayGet) jbyteArray int8ArrayGet(jlong array, jint size);
-%native (uint8ArrayGet) jshortArray uint8ArrayGet(jlong array, jint size);
-%native (int16ArrayGet) jshortArray int16ArrayGet(jlong array, jint size);
-%native (uint16ArrayGet) jintArray uint16ArrayGet(jlong array, jint size);
-%native (uint32ArrayGet) jlongArray uint32ArrayGet(jlong array, jint size);
-%native (uint64ArrayGet) jlongArray uint64ArrayGet(jlong array, jint size);
+%native (int32ArrayGet) jintArray int32ArrayGet(jlong array, jint pos, jint sz);
+%native (int64ArrayGet) jlongArray int64ArrayGet(jlong array, jint pos, jint sz);
+%native (charArrayGet)  jstring charArrayGet(jlong array, jint pos);
+%native (floatArrayGet) jfloatArray floatArrayGet(jlong array, jint pos, jint sz);
+%native (doubleArrayGet) jdoubleArray doubleArrayGet(jlong array, jint pos, jint sz);
+%native (int8ArrayGet) jbyteArray int8ArrayGet(jlong array, jint pos, jint sz);
+%native (uint8ArrayGet) jshortArray uint8ArrayGet(jlong array, jint pos, jint sz);
+%native (int16ArrayGet) jshortArray int16ArrayGet(jlong array, jint pos, jint sz);
+%native (uint16ArrayGet) jintArray uint16ArrayGet(jlong array, jint pos, jint sz);
+%native (uint32ArrayGet) jlongArray uint32ArrayGet(jlong array, jint pos, jint sz);
+%native (uint64ArrayGet) jlongArray uint64ArrayGet(jlong array, jint pos, jint sz);
 
 %include "tiledb_generated.h"
 %include "tiledb_java_extensions.h"

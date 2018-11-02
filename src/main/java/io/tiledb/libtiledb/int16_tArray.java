@@ -11,12 +11,10 @@ package io.tiledb.libtiledb;
 public class int16_tArray {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
-  private final int nelements;
 
-  protected int16_tArray(long cPtr, boolean cMemoryOwn, int nelements) {
+  protected int16_tArray(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
-    this.nelements = nelements;
   }
 
   protected static long getCPtr(int16_tArray obj) {
@@ -38,20 +36,14 @@ public class int16_tArray {
   }
 
   public int16_tArray(int nelements) {
-    this(tiledbJNI.new_int16_tArray(nelements), true, nelements);
+    this(tiledbJNI.new_int16_tArray(nelements), true);
   }
 
   public short getitem(int index) {
-    if (index >= nelements || index < 0) {
-      throw new ArrayIndexOutOfBoundsException(index);
-    }
     return tiledbJNI.int16_tArray_getitem(swigCPtr, this, index);
   }
 
   public void setitem(int index, short value) {
-    if (index >= nelements || index < 0) {
-      throw new ArrayIndexOutOfBoundsException(index);
-    }
     tiledbJNI.int16_tArray_setitem(swigCPtr, this, index, value);
   }
 
@@ -60,7 +52,8 @@ public class int16_tArray {
     return (cPtr == 0) ? null : new SWIGTYPE_p_short(cPtr, false);
   }
 
-  protected int size() {
-    return nelements;
+  public static int16_tArray frompointer(SWIGTYPE_p_short t) {
+    long cPtr = tiledbJNI.int16_tArray_frompointer(SWIGTYPE_p_short.getCPtr(t));
+    return (cPtr == 0) ? null : new int16_tArray(cPtr, false);
   }
 }

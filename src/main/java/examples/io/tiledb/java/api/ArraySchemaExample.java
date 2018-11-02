@@ -43,7 +43,7 @@ public class ArraySchemaExample {
     schema.setTileOrder(TILEDB_ROW_MAJOR);
     schema.setCellOrder(TILEDB_COL_MAJOR);
     schema.setCoordsCompressor(new Compressor(TILEDB_ZSTD, 4));
-    schema.setOffsetsCompressor(new Compressor(TILEDB_BLOSC_LZ, 5));
+    schema.setOffsetsCompressor(new Compressor(TILEDB_GZIP, 5));
 
     // Create getDimensions
     Dimension<Integer> d1 =

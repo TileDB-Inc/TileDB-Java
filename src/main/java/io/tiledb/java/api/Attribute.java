@@ -189,8 +189,9 @@ public class Attribute implements AutoCloseable {
    * @param size The number of values per cell. Use TILEDB_VAR_NUM for variable length.
    * @exception TileDBError A TileDB exception
    */
-  public void setCellValNum(long size) throws TileDBError {
+  public Attribute setCellValNum(long size) throws TileDBError {
     ctx.handleError(tiledb.tiledb_attribute_set_cell_val_num(ctx.getCtxp(), attributep, size));
+    return this;
   }
 
   /**
@@ -222,13 +223,47 @@ public class Attribute implements AutoCloseable {
    * @param compressor The Compressor object to be used.
    * @exception TileDBError A TileDB exception
    */
-  public void setCompressor(Compressor compressor) throws TileDBError {
+  public Attribute setCompressor(Compressor compressor) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_attribute_set_compressor(
             ctx.getCtxp(),
             attributep,
             compressor.getCompressor().toSwigEnum(),
             compressor.getLevel()));
+    return this;
+  }
+
+  /**
+   * Sets the Attribute FilterList.
+   *
+   * @param filters A TileDB FilterList
+   * @throws TileDBError A TileDB exception
+   */
+  public Attribute setFilterList(FilterList filters) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_attribute_set_filter_list(
+            ctx.getCtxp(), attributep, filters.getFilterListp()));
+    return this;
+  }
+
+  /**
+   * Gets the list of filtes associated with the attribute
+   *
+   * @return A FilterList instance
+   * @throws TileDBError A TileDB exception
+   */
+  public FilterList getFilterList() throws TileDBError {
+    FilterList filterlist;
+    SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_attribute_get_filter_list(ctx.getCtxp(), attributep, filterlistpp));
+      filterlist = new FilterList(ctx, filterlistpp);
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_filter_list_tpp(filterlistpp);
+      throw err;
+    }
+    return filterlist;
   }
 
   /** @return A String representation for the Attribute. */

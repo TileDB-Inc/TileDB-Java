@@ -47,6 +47,8 @@ public class tiledbJNI {
 
   public static final native long int32_tArray_cast(long jarg1, int32_tArray jarg1_);
 
+  public static final native long int32_tArray_frompointer(long jarg1);
+
   public static final native long new_int64_tArray(int jarg1);
 
   public static final native void delete_int64_tArray(long jarg1);
@@ -57,6 +59,8 @@ public class tiledbJNI {
       long jarg1, int64_tArray jarg1_, int jarg2, long jarg3);
 
   public static final native long int64_tArray_cast(long jarg1, int64_tArray jarg1_);
+
+  public static final native long int64_tArray_frompointer(long jarg1);
 
   public static final native long new_charArray(int jarg1);
 
@@ -69,6 +73,8 @@ public class tiledbJNI {
 
   public static final native String charArray_cast(long jarg1, charArray jarg1_);
 
+  public static final native long charArray_frompointer(String jarg1);
+
   public static final native long new_floatArray(int jarg1);
 
   public static final native void delete_floatArray(long jarg1);
@@ -79,6 +85,8 @@ public class tiledbJNI {
       long jarg1, floatArray jarg1_, int jarg2, float jarg3);
 
   public static final native long floatArray_cast(long jarg1, floatArray jarg1_);
+
+  public static final native long floatArray_frompointer(long jarg1);
 
   public static final native long new_doubleArray(int jarg1);
 
@@ -91,6 +99,8 @@ public class tiledbJNI {
 
   public static final native long doubleArray_cast(long jarg1, doubleArray jarg1_);
 
+  public static final native long doubleArray_frompointer(long jarg1);
+
   public static final native long new_int8_tArray(int jarg1);
 
   public static final native void delete_int8_tArray(long jarg1);
@@ -101,6 +111,8 @@ public class tiledbJNI {
       long jarg1, int8_tArray jarg1_, int jarg2, byte jarg3);
 
   public static final native long int8_tArray_cast(long jarg1, int8_tArray jarg1_);
+
+  public static final native long int8_tArray_frompointer(long jarg1);
 
   public static final native long new_uint8_tArray(int jarg1);
 
@@ -113,6 +125,8 @@ public class tiledbJNI {
 
   public static final native long uint8_tArray_cast(long jarg1, uint8_tArray jarg1_);
 
+  public static final native long uint8_tArray_frompointer(long jarg1);
+
   public static final native long new_int16_tArray(int jarg1);
 
   public static final native void delete_int16_tArray(long jarg1);
@@ -124,6 +138,8 @@ public class tiledbJNI {
 
   public static final native long int16_tArray_cast(long jarg1, int16_tArray jarg1_);
 
+  public static final native long int16_tArray_frompointer(long jarg1);
+
   public static final native long new_uint16_tArray(int jarg1);
 
   public static final native void delete_uint16_tArray(long jarg1);
@@ -134,6 +150,8 @@ public class tiledbJNI {
       long jarg1, uint16_tArray jarg1_, int jarg2, int jarg3);
 
   public static final native long uint16_tArray_cast(long jarg1, uint16_tArray jarg1_);
+
+  public static final native long uint16_tArray_frompointer(long jarg1);
 
   public static final native long new_uint32_tArray(int jarg1);
 
@@ -147,6 +165,8 @@ public class tiledbJNI {
 
   public static final native long uint32_tArray_cast(long jarg1, uint32_tArray jarg1_);
 
+  public static final native long uint32_tArray_frompointer(long jarg1);
+
   public static final native long new_uint64_tArray(int jarg1);
 
   public static final native void delete_uint64_tArray(long jarg1);
@@ -158,6 +178,8 @@ public class tiledbJNI {
       long jarg1, uint64_tArray jarg1_, int jarg2, java.math.BigInteger jarg3);
 
   public static final native long uint64_tArray_cast(long jarg1, uint64_tArray jarg1_);
+
+  public static final native long uint64_tArray_frompointer(long jarg1);
 
   public static final native long new_charpArray(int jarg1);
 
@@ -315,6 +337,26 @@ public class tiledbJNI {
 
   public static final native int tiledb_layout_tp_value(long jarg1);
 
+  public static final native long new_tiledb_filter_type_tp();
+
+  public static final native long copy_tiledb_filter_type_tp(int jarg1);
+
+  public static final native void delete_tiledb_filter_type_tp(long jarg1);
+
+  public static final native void tiledb_filter_type_tp_assign(long jarg1, int jarg2);
+
+  public static final native int tiledb_filter_type_tp_value(long jarg1);
+
+  public static final native long new_tiledb_filter_option_tp();
+
+  public static final native long copy_tiledb_filter_option_tp(int jarg1);
+
+  public static final native void delete_tiledb_filter_option_tp(long jarg1);
+
+  public static final native void tiledb_filter_option_tp_assign(long jarg1, int jarg2);
+
+  public static final native int tiledb_filter_option_tp_value(long jarg1);
+
   public static final native long new_tiledb_compressor_tp();
 
   public static final native long copy_tiledb_compressor_tp(int jarg1);
@@ -344,6 +386,16 @@ public class tiledbJNI {
   public static final native void tiledb_vfs_mode_tp_assign(long jarg1, int jarg2);
 
   public static final native int tiledb_vfs_mode_tp_value(long jarg1);
+
+  public static final native long new_tiledb_encryption_type_tp();
+
+  public static final native long copy_tiledb_encryption_type_tp(int jarg1);
+
+  public static final native void delete_tiledb_encryption_type_tp(long jarg1);
+
+  public static final native void tiledb_encryption_type_tp_assign(long jarg1, int jarg2);
+
+  public static final native int tiledb_encryption_type_tp_value(long jarg1);
 
   public static final native long new_tiledb_array_tpp();
 
@@ -445,15 +497,25 @@ public class tiledbJNI {
 
   public static final native long tiledb_query_tpp_value(long jarg1);
 
-  public static final native long new_tiledb_kv_schema_tpp();
+  public static final native long new_tiledb_filter_tpp();
 
-  public static final native long copy_tiledb_kv_schema_tpp(long jarg1);
+  public static final native long copy_tiledb_filter_tpp(long jarg1);
 
-  public static final native void delete_tiledb_kv_schema_tpp(long jarg1);
+  public static final native void delete_tiledb_filter_tpp(long jarg1);
 
-  public static final native void tiledb_kv_schema_tpp_assign(long jarg1, long jarg2);
+  public static final native void tiledb_filter_tpp_assign(long jarg1, long jarg2);
 
-  public static final native long tiledb_kv_schema_tpp_value(long jarg1);
+  public static final native long tiledb_filter_tpp_value(long jarg1);
+
+  public static final native long new_tiledb_filter_list_tpp();
+
+  public static final native long copy_tiledb_filter_list_tpp(long jarg1);
+
+  public static final native void delete_tiledb_filter_list_tpp(long jarg1);
+
+  public static final native void tiledb_filter_list_tpp_assign(long jarg1, long jarg2);
+
+  public static final native long tiledb_filter_list_tpp_value(long jarg1);
 
   public static final native long new_tiledb_kv_tpp();
 
@@ -464,6 +526,16 @@ public class tiledbJNI {
   public static final native void tiledb_kv_tpp_assign(long jarg1, long jarg2);
 
   public static final native long tiledb_kv_tpp_value(long jarg1);
+
+  public static final native long new_tiledb_kv_schema_tpp();
+
+  public static final native long copy_tiledb_kv_schema_tpp(long jarg1);
+
+  public static final native void delete_tiledb_kv_schema_tpp(long jarg1);
+
+  public static final native void tiledb_kv_schema_tpp_assign(long jarg1, long jarg2);
+
+  public static final native long tiledb_kv_schema_tpp_value(long jarg1);
 
   public static final native long new_tiledb_kv_item_tpp();
 
@@ -859,6 +931,11 @@ public class tiledbJNI {
 
   public static final native int tiledb_array_reopen(long jarg1, long jarg2);
 
+  public static final native int tiledb_array_reopen_at(
+      long jarg1, long jarg2, java.math.BigInteger jarg3);
+
+  public static final native int tiledb_array_get_timestamp(long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_array_close(long jarg1, long jarg2);
 
   public static final native void tiledb_array_free(long jarg1);
@@ -976,6 +1053,11 @@ public class tiledbJNI {
   public static final native int tiledb_kv_is_open(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_kv_reopen(long jarg1, long jarg2);
+
+  public static final native int tiledb_kv_reopen_at(
+      long jarg1, long jarg2, java.math.BigInteger jarg3);
+
+  public static final native int tiledb_kv_get_timestamp(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_kv_close(long jarg1, long jarg2);
 

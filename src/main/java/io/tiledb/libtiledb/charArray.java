@@ -11,12 +11,10 @@ package io.tiledb.libtiledb;
 public class charArray {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
-  private final int nelements;
 
-  protected charArray(long cPtr, boolean cMemoryOwn, int nelements) {
+  protected charArray(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
-    this.nelements = nelements;
   }
 
   protected static long getCPtr(charArray obj) {
@@ -38,20 +36,14 @@ public class charArray {
   }
 
   public charArray(int nelements) {
-    this(tiledbJNI.new_charArray(nelements), true, nelements);
+    this(tiledbJNI.new_charArray(nelements), true);
   }
 
   public char getitem(int index) {
-    if (index >= nelements || index < 0) {
-      throw new ArrayIndexOutOfBoundsException(index);
-    }
     return tiledbJNI.charArray_getitem(swigCPtr, this, index);
   }
 
   public void setitem(int index, char value) {
-    if (index >= nelements || index < 0) {
-      throw new ArrayIndexOutOfBoundsException(index);
-    }
     tiledbJNI.charArray_setitem(swigCPtr, this, index, value);
   }
 
@@ -59,7 +51,8 @@ public class charArray {
     return tiledbJNI.charArray_cast(swigCPtr, this);
   }
 
-  protected int size() {
-    return nelements;
+  public static charArray frompointer(String t) {
+    long cPtr = tiledbJNI.charArray_frompointer(t);
+    return (cPtr == 0) ? null : new charArray(cPtr, false);
   }
 }
