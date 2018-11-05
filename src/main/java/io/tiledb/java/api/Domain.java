@@ -156,12 +156,20 @@ public class Domain implements AutoCloseable {
   }
 
   /**
+   * @return The number of dimensions in the domain
+   * @throws TileDBError A TileDB exception
+   */
+  public long getNDim() throws TileDBError {
+    return getRank();
+  }
+
+  /**
    * @return A List containing the Dimensions in domain.
    * @exception TileDBError A TileDB exception
    */
   public List<Dimension> getDimensions() throws TileDBError {
     if (dimensions == null) {
-      long rank = getRank();
+      long rank = getNDim();
       dimensions = new ArrayList<Dimension>();
       for (long i = 0; i < rank; i++) {
         SWIGTYPE_p_p_tiledb_dimension_t dimpp = tiledb.new_tiledb_dimension_tpp();
@@ -178,6 +186,27 @@ public class Domain implements AutoCloseable {
     }
     // return shallow copy of dimensions
     return new ArrayList<>(dimensions);
+  }
+
+  /**
+   * Checks if the Domain has the given dimension with name
+   *
+   * @param name Name of the dimension in the domain
+   * @return True if the dimension exists in the domain
+   * @throws TileDBError
+   */
+  public boolean hasDimension(String name) throws TileDBError {
+    SWIGTYPE_p_p_tiledb_dimension_t dimpp = tiledb.new_tiledb_dimension_tpp();
+    int rc;
+    try {
+      rc = tiledb.tiledb_domain_get_dimension_from_name(ctx.getCtxp(), getDomainp(), name, dimpp);
+      if (rc == tiledb.TILEDB_OOM) {
+        ctx.handleError(rc);
+      }
+    } finally {
+      tiledb.delete_tiledb_dimension_tpp(dimpp);
+    }
+    return rc == tiledb.TILEDB_OK;
   }
 
   /**
