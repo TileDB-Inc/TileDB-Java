@@ -58,4 +58,25 @@ public class ArraySchemaTest {
       }
     }
   }
+
+  @Test
+  public void testArraySchemaHasAttribute() throws Exception {
+    try (Context ctx = new Context();
+        ArraySchema schema = schemaCreate(ctx)) {
+      Assert.assertTrue(schema.hasAttribute("a1"));
+      Assert.assertFalse(schema.hasAttribute(""));
+      Assert.assertFalse(schema.hasAttribute("b1"));
+    }
+  }
+
+  @Test
+  public void testArraySchemaDomainHasDimension() throws Exception {
+    try (Context ctx = new Context();
+        ArraySchema schema = schemaCreate(ctx);
+        Domain domain = schema.getDomain()) {
+      Assert.assertTrue(domain.hasDimension("d1"));
+      Assert.assertFalse(domain.hasDimension(""));
+      Assert.assertFalse(domain.hasDimension("a1"));
+    }
+  }
 }

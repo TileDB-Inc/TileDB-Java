@@ -551,6 +551,29 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
+   * Checks if the ArraySchema has the given attribute with name
+   *
+   * @param name The name of the attribute
+   * @return True if the array schema has an attribute with the given name
+   * @throws TileDBError
+   */
+  public boolean hasAttribute(String name) throws TileDBError {
+    SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
+    int rc;
+    try {
+      rc =
+          tiledb.tiledb_array_schema_get_attribute_from_name(
+              ctx.getCtxp(), getSchemap(), name, attrpp);
+      if (rc == tiledb.TILEDB_OOM) {
+        ctx.handleError(rc);
+      }
+    } finally {
+      tiledb.delete_tiledb_attribute_tpp(attrpp);
+    }
+    return rc == tiledb.TILEDB_OK;
+  }
+
+  /**
    * Get an Attribute by name
    *
    * @param name The name of the attribute.
@@ -558,16 +581,18 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Attribute getAttribute(String name) throws TileDBError {
+    Attribute attr;
     SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
     try {
       ctx.handleError(
           tiledb.tiledb_array_schema_get_attribute_from_name(
               ctx.getCtxp(), getSchemap(), name, attrpp));
+      attr = new Attribute(ctx, attrpp);
     } catch (TileDBError err) {
       tiledb.delete_tiledb_attribute_tpp(attrpp);
       throw err;
     }
-    return new Attribute(ctx, attrpp);
+    return attr;
   }
 
   /**
@@ -578,16 +603,18 @@ public class ArraySchema implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public Attribute getAttribute(long index) throws TileDBError {
+    Attribute attr;
     SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
     try {
       ctx.handleError(
           tiledb.tiledb_array_schema_get_attribute_from_index(
               ctx.getCtxp(), schemap, index, attrpp));
+      attr = new Attribute(ctx, attrpp);
     } catch (TileDBError err) {
       tiledb.delete_tiledb_attribute_tpp(attrpp);
       throw err;
     }
-    return new Attribute(ctx, attrpp);
+    return attr;
   }
 
   /**
