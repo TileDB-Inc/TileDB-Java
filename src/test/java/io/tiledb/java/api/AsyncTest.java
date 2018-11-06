@@ -86,6 +86,7 @@ public class AsyncTest {
       // Wait till query is done
       status = query.getQueryStatus();
     } while (status == QueryStatus.TILEDB_INPROGRESS);
+    query.finalizeQuery();
     query.close();
   }
 

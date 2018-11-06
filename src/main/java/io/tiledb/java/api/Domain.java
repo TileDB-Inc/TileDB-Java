@@ -268,13 +268,14 @@ public class Domain implements AutoCloseable {
    * @param dimension The Dimension object to be added.
    * @exception TileDBError A TileDB exception
    */
-  public void addDimension(Dimension dimension) throws TileDBError {
+  public Domain addDimension(Dimension dimension) throws TileDBError {
     if (dimensions == null) {
       dimensions = new ArrayList<Dimension>();
     }
     dimensions.add(dimension);
     ctx.handleError(
         tiledb.tiledb_domain_add_dimension(ctx.getCtxp(), domainp, dimension.getDimensionp()));
+    return this;
   }
 
   /**

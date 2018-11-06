@@ -298,10 +298,11 @@ public class ArraySchema implements AutoCloseable {
    * @param layout tile Layout order
    * @exception TileDBError A TileDB exception
    */
-  public void setTileOrder(Layout layout) throws TileDBError {
+  public ArraySchema setTileOrder(Layout layout) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_array_schema_set_tile_order(
             ctx.getCtxp(), getSchemap(), layout.toSwigEnum()));
+    return this;
   }
 
   /**
@@ -329,10 +330,11 @@ public class ArraySchema implements AutoCloseable {
    * @param layout cell Layout order
    * @exception TileDBError A TileDB exception
    */
-  public void setCellOrder(Layout layout) throws TileDBError {
+  public ArraySchema setCellOrder(Layout layout) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_array_schema_set_cell_order(
             ctx.getCtxp(), getSchemap(), layout.toSwigEnum()));
+    return this;
   }
 
   /**

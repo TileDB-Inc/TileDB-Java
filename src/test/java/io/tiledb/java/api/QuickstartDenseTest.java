@@ -142,15 +142,16 @@ public class QuickstartDenseTest {
             Float.class);
 
     // Create query
-    Query query = new Query(my_dense_array, TILEDB_WRITE);
-    query.setLayout(TILEDB_GLOBAL_ORDER);
-    query.setBuffer("a1", a1_data);
-    query.setBuffer("a2", a2_offsets, buffer_var_a2);
-    query.setBuffer("a3", buffer_a3);
-
-    // Submit query
-    query.submit();
-    query.close();
+    try (Query query = new Query(my_dense_array, TILEDB_WRITE)) {
+      query
+          .setLayout(TILEDB_GLOBAL_ORDER)
+          .setBuffer("a1", a1_data)
+          .setBuffer("a2", a2_offsets, buffer_var_a2)
+          .setBuffer("a3", buffer_a3);
+      // Submit query
+      query.submit();
+      query.finalizeQuery();
+    }
   }
 
   private void arrayRead() throws Exception {

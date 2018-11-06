@@ -137,7 +137,7 @@ public class QuickstartSparseTest {
 
     // Submit query
     query.submit();
-
+    query.finalizeQuery();
     query.close();
   }
 
