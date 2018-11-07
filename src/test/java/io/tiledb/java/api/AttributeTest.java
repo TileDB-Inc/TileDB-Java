@@ -26,7 +26,6 @@ package io.tiledb.java.api;
 
 import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 
-import io.tiledb.libtiledb.tiledb;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,13 +34,13 @@ public class AttributeTest {
   @Test
   public void testArraySchema() throws Exception {
     try (Context ctx = new Context();
-        Attribute a = new Attribute(ctx, "a1", Long.class)) {
+        Attribute a = new Attribute(ctx, "a1", Long.class).setCellVar()) {
       try (FilterList filterList = new FilterList(ctx).addFilter(new GzipFilter(ctx, 1))) {
         a.setFilterList(filterList);
       }
-      a.setCellValNum(tiledb.tiledb_var_num());
       Assert.assertEquals(a.getName(), "a1");
       Assert.assertEquals(a.getType(), Datatype.TILEDB_INT64);
+      Assert.assertTrue(a.isVar());
       Assert.assertEquals(a.getCellValNum(), TILEDB_VAR_NUM);
       try (FilterList filterList = a.getFilterList()) {
         Assert.assertEquals(filterList.getNumFilters(), 1L);

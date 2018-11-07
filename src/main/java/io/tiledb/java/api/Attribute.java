@@ -195,6 +195,16 @@ public class Attribute implements AutoCloseable {
   }
 
   /**
+   * Sets the Attribute to have variable length cell representation
+   *
+   * @return Attribute
+   * @exception TileDBError A TileDB exception
+   */
+  public Attribute setCellVar() throws TileDBError {
+    return setCellValNum(TILEDB_VAR_NUM);
+  }
+
+  /**
    * @return The Attribute compressor.
    * @exception TileDBError A TileDB exception
    */
