@@ -91,8 +91,9 @@ public class Query implements AutoCloseable {
    * @param layout The layout order to be set.
    * @exception TileDBError A TileDB exception
    */
-  public void setLayout(Layout layout) throws TileDBError {
+  public Query setLayout(Layout layout) throws TileDBError {
     ctx.handleError(tiledb.tiledb_query_set_layout(ctx.getCtxp(), queryp, layout.toSwigEnum()));
+    return this;
   }
 
   /**
@@ -149,7 +150,7 @@ public class Query implements AutoCloseable {
    * @param subarray The targeted subarray.
    * @exception TileDBError A TileDB exception
    */
-  public void setSubarray(NativeArray subarray) throws TileDBError {
+  public Query setSubarray(NativeArray subarray) throws TileDBError {
     Types.typeCheck(subarray.getNativeType(), array.getSchema().getDomain().getType());
     ctx.handleError(
         tiledb.tiledb_query_set_subarray(ctx.getCtxp(), queryp, subarray.toVoidPointer()));
@@ -157,6 +158,7 @@ public class Query implements AutoCloseable {
       this.subarray.close();
     }
     this.subarray = subarray;
+    return this;
   }
 
   /**
@@ -166,7 +168,7 @@ public class Query implements AutoCloseable {
    * @param buffer NativeBuffer to be used for the attribute values.
    * @exception TileDBError A TileDB exception
    */
-  public void setBuffer(String attr, NativeArray buffer) throws TileDBError {
+  public Query setBuffer(String attr, NativeArray buffer) throws TileDBError {
     try (ArraySchema schema = array.getSchema()) {
       if (attr.equals(tiledb.tiledb_coords())) {
         try (Domain domain = schema.getDomain()) {
@@ -188,6 +190,7 @@ public class Query implements AutoCloseable {
     }
     buffers_.put(attr, buffer);
     buffer_sizes_.put(attr, buffer_sizes);
+    return this;
   }
 
   /**
@@ -198,7 +201,7 @@ public class Query implements AutoCloseable {
    * @param buffer Buffer vector with elements of the attribute type.
    * @exception TileDBError A TileDB exception
    */
-  public void setBuffer(String attr, NativeArray offsets, NativeArray buffer) throws TileDBError {
+  public Query setBuffer(String attr, NativeArray offsets, NativeArray buffer) throws TileDBError {
 
     if (attr.equals(tiledb.tiledb_coords())) {
       throw new TileDBError("Cannot set coordinate buffer as variable sized.");
@@ -225,6 +228,7 @@ public class Query implements AutoCloseable {
     }
     var_buffers_.put(attr, new Pair<NativeArray, NativeArray>(offsets, buffer));
     buffer_sizes_.put(attr, buffer_sizes);
+    return this;
   }
 
   /**
@@ -233,8 +237,9 @@ public class Query implements AutoCloseable {
    * @param buffer A NativeArray to be used for the coordinates.
    * @exception TileDBError A TileDB exception
    */
-  public void setCoordinates(NativeArray buffer) throws TileDBError {
+  public Query setCoordinates(NativeArray buffer) throws TileDBError {
     setBuffer(tiledb.tiledb_coords(), buffer);
+    return this;
   }
 
   /**
@@ -394,6 +399,19 @@ public class Query implements AutoCloseable {
     return (long[]) buffer.toJavaArray(nelements);
   }
 
+  /**
+   * Flushes all internal state of a query object and finalizes the query. This is applicable only
+   * to global layout writes. It has no effect for any other query type.
+   *
+   * @return Finalized query instance
+   * @throws TileDBError A TileDB excdeption
+   */
+  public Query finalizeQuery() throws TileDBError {
+    ctx.handleError(tiledb.tiledb_query_finalize(ctx.getCtxp(), queryp));
+    return this;
+  }
+
+  // Default noop async completion callback
   private static class DefaultCallback implements Callback {
     public DefaultCallback() {}
 
@@ -412,9 +430,9 @@ public class Query implements AutoCloseable {
   }
 
   /** Free's native TileDB resources associated with the Query object */
-  public void close() throws TileDBError {
+  @Override
+  public void close() {
     if (queryp != null) {
-      ctx.handleError(tiledb.tiledb_query_finalize(ctx.getCtxp(), queryp));
       for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
         size_pair.getFirst().delete();
         size_pair.getSecond().delete();

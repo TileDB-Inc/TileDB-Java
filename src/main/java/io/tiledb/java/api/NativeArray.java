@@ -523,6 +523,16 @@ public class NativeArray implements AutoCloseable {
   }
 
   /**
+   * Return a Java array (i.e. int[], long[]) that is a copy of the entire native array
+   *
+   * @return A java array
+   * @throws TileDBError A TileDB exception
+   */
+  public Object toJavaArray() throws TileDBError {
+    return toJavaArray(0, size);
+  }
+
+  /**
    * Return a Java array (i.e. int[], long[]) that is a copy of the native array values with the
    * given size, starting at position 0
    *
