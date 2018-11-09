@@ -319,18 +319,26 @@ public class Query implements AutoCloseable {
     for (Map.Entry<String, NativeArray> entry : buffers_.entrySet()) {
       String name = entry.getKey();
       NativeArray buffer = entry.getValue();
-      uint64_tArray buffer_size = buffer_sizes_.get(name).getSecond();
+      Pair<uint64_tArray, uint64_tArray> buffer_sizes = buffer_sizes_.get(name);
+      buffer_sizes.getFirst().setitem(0, BigInteger.valueOf(0L));
+      buffer_sizes.getSecond().setitem(0, BigInteger.valueOf(buffer.getNBytes()));
+
+      uint64_tArray buffer_size = buffer_sizes.getSecond();
       ctx.handleError(
           tiledb.tiledb_query_set_buffer(
               ctx.getCtxp(), queryp, name, buffer.toVoidPointer(), buffer_size.cast()));
     }
     for (Map.Entry<String, Pair<NativeArray, NativeArray>> entry : var_buffers_.entrySet()) {
       String name = entry.getKey();
-      Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
       NativeArray off_buffer = entry.getValue().getFirst();
+      NativeArray val_buffer = entry.getValue().getSecond();
+
+      Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
+      buffer_size.getFirst().setitem(0, BigInteger.valueOf(off_buffer.getNBytes()));
+      buffer_size.getSecond().setitem(0, BigInteger.valueOf(val_buffer.getNBytes()));
+
       uint64_tArray offsets = PointerUtils.uint64_tArrayFromVoid(off_buffer.toVoidPointer());
       uint64_tArray off_size = buffer_size.getFirst();
-      NativeArray val_buffer = entry.getValue().getSecond();
       uint64_tArray val_size = buffer_size.getSecond();
       ctx.handleError(
           tiledb.tiledb_query_set_buffer_var(
