@@ -96,8 +96,19 @@ target_include_directories(tiledbjni
 
 target_link_libraries(tiledbjni
   PRIVATE
-    TileDB::tiledb_shared
     ${JAVA_JVM_LIBRARY}
 )
+
+if (TARGET TileDB::tiledb_static)
+  target_link_libraries(tiledbjni
+    PRIVATE
+      TileDB::tiledb_static
+  )
+else()
+  target_link_libraries(tiledbjni
+    PRIVATE
+      TileDB::tiledb_shared
+  )
+endif()
 
 set_target_properties(tiledbjni PROPERTIES SUFFIX ".${LIB_EXTENSION}")
