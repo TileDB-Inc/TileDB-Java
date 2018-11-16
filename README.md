@@ -14,7 +14,7 @@ To build the library with dependencies bundled in run:
 
 `./gradlew oneJar`
 
-This will create the TileDB JNI library `build/tiledb_jni/libtiledbjni.jnilib`. This will also download and build the [TileDB](https://github.com/TileDB-Inc/TileDB) library first, if it is not found installed in a global system path, in which case the native library gets placed in `build/externals/install/lib/libtiledb.dylib`.
+This will create the TileDB JNI library `build/tiledb_jni/libtiledbjni.dylib`. This will also download and build the [TileDB](https://github.com/TileDB-Inc/TileDB) library first, if it is not found installed in a global system path, in which case the native library gets placed in `build/externals/install/lib/libtiledb.dylib`.
 
 If you wish to build with a custom version of the native TileDB library, you can define the environment variable `TILEDB_HOME`, e.g.:
 

@@ -74,14 +74,6 @@ set(TILEDB_JNI_EP_INSTALL_PREFIX "${TILEDB_JNI_EP_BASE}/install")
 find_package(TileDB_EP REQUIRED)
 find_package(JNI REQUIRED)
 
-if (WIN32)
-  set(LIB_EXTENSION dll)
-elseif(APPLE)
-  set(LIB_EXTENSION jnilib)
-else()
-  set(LIB_EXTENSION so)
-endif()
-
 add_library(tiledbjni SHARED
     src/main/c/generated/tiledb_wrap.cxx
     src/main/c/custom/tiledb_custom.cxx
@@ -110,5 +102,3 @@ else()
       TileDB::tiledb_shared
   )
 endif()
-
-set_target_properties(tiledbjni PROPERTIES SUFFIX ".${LIB_EXTENSION}")
