@@ -7,6 +7,19 @@ jdk:
 notifications:
   email: false
 
+env:
+  global:
+    # SONATYPE_USERNAME
+    - secure: "aAY9lDbr9aG3TSuPEcEiBSx8aff2YgkQmRzM6eehOrYyT+BA9sBh4vTOGBD8gJQLTmx0I0L8rwBKR2bDsOHJ5QTaPBtCbl7NmB1OIvubZHqRiW14uYKS5mhmDhGaFAQhZDkh3vZ2ozJRUnpNPcfxh1jmsgg0o4S1l7L/tKpOYQViIUNHRpV9g/aOn1wv0SXFsS8Rnua0cSuKsf/vCDh7ZbNZyw5sd1twzqPQ7Is9jb/WuvQE+qzewfOW6V8ABh8qcTZUa3QYdBPwWvJ0M41A9PIezQ82qufCWYjtGBRhjCLLjaN8MavkPnC/wTdK+BeZHK+yXy514WuQmU4YiWaOZ9pFTNswYmrukYH50bC2v3wGQk3HJ0dY6lSqB+W8hkn7vX2zlRtGXw6RHtBgGdAi6KqRehJ6JsfTAf43bEnQTnqcxGvM1wnlvEDtEgPPbtkarS/cb1gn3I4L0397t97zH7ttodneWyRLDw7zRKRcUZULd6tKdEwn8kAokCeWgBTK7rxxmGDktbJqOjAr/65WVybC8R2SrElKVRW3j5nfsTskrzhGxmpwAbjJE+lFXQKLZyVxQCpmN/RvGWv1fZLFGZMbRMjcB84uTEV70KjPlSIG52Zk2EePr9kOgynqP7IlxBI1MSQ2Er73qZkznJybp7OeQaXjdikw2M/FSBjCawE="
+    # SONATYPE_PASSWORD
+    - secure: "Tp4hEA/ONepMvGU+lGrnJ5T/Ly/wGAq9qyp2bmReh4ctisRKE3+G0Q+C3upAmZ4GWXlngPUbwO/beHVnqIQYTRhER0ls4VMeWipn3F/0K63J7PXWvZb5mn2d0DmAFRyE4WgOSmNZwZWoB6V09xHzduXETL7osnOGvparnj58l+ml7PEonFhNKckt5yIjsn0qSqYAcyxp65ttwz8X+Ozl0RCeBvKd1VQtyRjamleqReY3bYRbg7a22DNevJiyeDR/ogsceQu6eGpRgkv14oMsCi1+YKBwiM8iVcvAWwsPSAPazvmKHnGT1l0KsLTs5+zHyKTdGwh/A/WJ0YasXCtngHBOB/T/JZhf01mti+tsIKsDBCTJbHY+tKLJsxRltWBZunqeFIPJ6loKuWT1v8BvLOPaN8nUL4YzFfWVK+V7BpLF59M9wFrLo827AoEt6jacN0gzZHVtihv6IDwr76O9hFuQLcOu1pam4Wo4XvU7Gko+leRSMkNHB4U/078JpYCYZv7XI7BUHi1b0S0oRBTFBlKQEbrc+33sSUl0iRSFG3rpClRRkuGJqG64LcRfdAsfRs9//AIHbzSlXhf6PV8Eu2Je/lRmHI9WrOWACiTyRx/OK43SMnKmMg/4w6gB2QWR0MKB7cTDmqAJFuOwJ8LAeKBmtw3UxId8RWcEsuXlw9M="
+    # GPG_KEY_ID
+    - secure: "kezpe2URyvDjUMP1MzueClytx/IgV9YssdQKpbhbsoumAD9T4ZTxIwbLWfSMZ8SX3ckJwSawS3+oit7ImRGME3Mmfuy+Kmt9Itgsr+rgwgQabYNv+P35AUrLN2uvY0/zDGPhM0Sqbz8n5bshSxXigNOTbuX51+9B+E2ZBjVYlEBxhnptL7MqD1YsfZMrZ/n867KnRsB5tDFl2nM3Gc2X/um76Dm5WpBhkjnJ/JUJiPMVXFfahpyQstaYepYhSwJYl6/A4Jy8dnpa2TtqNPv/xXvTy6EFUByRyaCyeuKAwGdRbw8GnhGIa3tX9gQowZrRKqg6o8YJWC7DyoHclyFk5z+B0ad4aMI/K+GA7t+kHOQn4pMSjpWO9B5ZA85gJvj5/3YmLpvwfbDSdbXO89i6rWA8H4EPflDWmH3zHAH/If2pwL2/e+vfv2GT4KEx5NNmKvu2kNWJKfH/KNt802cQm5c+MpcgEa4ItyCPvkosW9N0GhIjM2rRaVE4nNilLP67C8vzGkULgmPe/rFOq7utYnEj997v+vvTPQlyuHt6t9w5ilH3lg49PyinSu0yvGzgRvDX0UqtFsmXVE5U5LzqH/OrnetESiPapPEo4IK5rLZgR4pkX60HkSIwDvIUvvR7Vv5zI/MnYmU/GVjBPDOBz+5ZxxNAnxEjrU/2S8qgvUw="
+    # GPG_PASSPHRASE
+    - secure: "tlwBItwWUy3j37alCqby01GkCv+2AnhhvkLGRA/gaomx+rlRcz4metjV33rsl17m+GRfVF8iFaMYlsHikKsDt1VryKtH0W/ZCbY0aqBIUw9Ei3qUzcoi9zBu3GqD+cei3zt4IO7Iwm8GyQEzJc7k7P/M1qQ0hBEQc5CIDV77RVeGh9Xelv5fTho+lbVDzHzZuTRyxixtDsvJgASsMrIeiPnmkUQBMMcZTADV1gGmXfNMu2VX7A4d4fFRabq/KuxcEq0LwDnZBERUYI1TyVNQm6ziJfFEAAevT6OXkjU08WRENVTUjdvruhInJT+IaVp8ArpMEk86Bu66sf2+x5BtMClk00Q4dJqM27Lr2cUYqA89hpww3f98Eahglun/WjV1+Jh/blCB6gQGgPUJ3xSXp/xGbqi6mpK1Tu67zcL52VGgWn9itsgA1uZ1i/NzqdwKqusqako8g2mDgssyuifu+9Ge9o0G4zL2QWfWv5aVpdCm5YBthDPr6PiEcLvKIlO16XCz7JmWaxXNk5njT7k8yY7cLR1LdIRJMZjaAeX4nezUPr//YimiSmkTtDXxPMOZmsGmVlCBc2jqPEW9VPI3as+4bFr00yeFv6/CsTc+teMzQ5LSi9AE5zhpCBHx2t9BvICsDe+ZSV+D+nM0bpvUcZCaBZARj1Zrkyk/ZUlH64E="
+    - GPG_KEY_LOCATION=".travis/secret.gpg"
+    - ENCRYPTED_GPG_KEY_LOCATION=".travis/secret.gpg.enc"
+
 matrix:
   include:
     - os: linux
@@ -17,6 +30,7 @@ matrix:
         CPPFLAGS="-march=x86-64"
         ONEJAR="ON"
         ORG_GRADLE_PROJECT_TILEDB_S3="ON"
+
 install:
   # Build and install extension module
   - ./gradlew assemble test
@@ -24,13 +38,19 @@ install:
   - if [[ "${ONEJAR}" == "ON" ]]; then
       ./gradlew oneJar;
     fi
+
 script:
   - ./gradlew checkFormat
   - ./gradlew test
 
 before_deploy:
-  - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
+  - mkdir .travis
+  - echo "${GPG_SECRET_KEYS_ENC}" | base64 --decode > ${ENCRYPTED_GPG_KEY_LOCATION}
+  - openssl aes-256-cbc -K $encrypted_a2869fb015d7_key -iv $encrypted_a2869fb015d7_iv -in $ENCRYPTED_GPG_KEY_LOCATION -out $GPG_KEY_LOCATION -d
+  - ./gradlew properties -q | grep "version:" | awk '{print $2}')
   - export PROJECT_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
+  # Upload to sonatype oss so it can make its way to maven central
+  - ./gradlew publishMavenJavaPublicationToMavenRepository
 
 deploy:
   provider: releases
