@@ -45,6 +45,9 @@ if (NOT TILEDB_FOUND)
       GIT_TAG "dev"
       CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${TILEDB_JNI_EP_INSTALL_PREFIX}
+        -DTILEDB_VERBOSE=${TILEDB_VERBOSE}
+        -DTILEDB_S3=${TILEDB_S3}
+        -DTILEDB_HDFS=${TILEDB_HDFS}
       UPDATE_COMMAND ""
       INSTALL_COMMAND
         ${CMAKE_COMMAND} --build . --target install-tiledb

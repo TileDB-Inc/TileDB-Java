@@ -22,6 +22,21 @@ If you wish to build with a custom version of the native TileDB library, you can
 
 Before running the Java code you should copy the `libtiledbjni.dylib` file into your system library path, or add the build folder in your `LD_LIBRARY_PATH` ENV variable.
 
+### Enabling TileDB Backends During Superbuild
+
+If tiledb is not globally installed on the system where the JNI library is
+being compiled, the native TileDB Library will be compiled. There are
+multiple properties which can be configured including S3 and HDFS support.
+
+See [grade.properties](gradle.properties) for all properties which can be
+set for building.
+
+The properties can be set via the `-P` option to gradlew:
+
+```
+./gradlew -P TILEDB_S3=ON -P TILEDB_VERBOSE=ON
+```
+
 ## Tests
 
 To run the tests use:

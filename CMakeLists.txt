@@ -41,6 +41,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # Don't use GNU extensions
 
+option(TILEDB_VERBOSE "Prints TileDB errors with verbosity" OFF)
+option(TILEDB_S3 "Enables S3/minio support using aws-cpp-sdk" OFF)
+option(TILEDB_HDFS "Enables HDFS support using the official Hadoop JNI bindings" OFF)
+
 ############################################################
 # Superbuild setup
 ############################################################
