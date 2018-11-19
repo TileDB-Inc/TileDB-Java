@@ -48,7 +48,7 @@ if (NOT TILEDB_FOUND)
         -DTILEDB_VERBOSE=${TILEDB_VERBOSE}
         -DTILEDB_S3=${TILEDB_S3}
         -DTILEDB_HDFS=${TILEDB_HDFS}
-        -DTILED_STATIC=ON
+        -DTILEDB_STATIC=ON
       UPDATE_COMMAND ""
       INSTALL_COMMAND
         ${CMAKE_COMMAND} --build . --target install-tiledb
