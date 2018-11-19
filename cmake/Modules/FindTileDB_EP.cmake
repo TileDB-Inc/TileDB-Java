@@ -49,6 +49,7 @@ if (NOT TILEDB_FOUND)
         -DTILEDB_S3=${TILEDB_S3}
         -DTILEDB_HDFS=${TILEDB_HDFS}
         -DTILEDB_STATIC=ON
+        -DTILEDB_FORCE_ALL_DEPS=ON
       UPDATE_COMMAND ""
       INSTALL_COMMAND
         ${CMAKE_COMMAND} --build . --target install-tiledb
