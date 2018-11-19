@@ -44,10 +44,34 @@ publishing {
     }
 }
 
+def String getProjectProperty(String propertyName)
+{
+    String property = null
+    if (hasProperty(propertyName))
+    {
+        property = this.properties[propertyName]
+    }
+    return property
+}
+
 task cmakeTask(type: Exec) {
     workingDir = buildDir
     executable = "cmake"
-    args  ".."
+    List<String> buildArgs = new ArrayList<String>()
+    buildArgs.add("..")
+    String tiledb_verbose= getProjectProperty('TILEDB_VERBOSE')
+    String tiledb_s3 = getProjectProperty('TILEDB_S3')
+    String tiledb_hdfs = getProjectProperty('TILEDB_HDFS')
+    if (tiledb_verbose != null) {
+        buildArgs.add("-DTILEDB_VERBOSE=" + tiledb_verbose)
+    }
+    if (tiledb_s3 != null) {
+        buildArgs.add("-DTILEDB_S3=" + tiledb_s3)
+    }
+    if (tiledb_hdfs != null) {
+        buildArgs.add("-DTILEDB_HDFS=" + tiledb_hdfs)
+    }
+    args buildArgs
 }
 
 task makeTask(type: Exec) {
