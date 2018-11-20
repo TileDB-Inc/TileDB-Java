@@ -5,6 +5,7 @@ plugins {
    id 'signing'
    id 'com.github.sherter.google-java-format' version '0.7.1'
    id "com.github.onslip.gradle-one-jar" version "1.0.5"
+   id 'io.codearte.nexus-staging' version '0.12.0'
 }
 
 group 'io.tiledb'
@@ -16,6 +17,11 @@ repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
+}
+
+nexusStaging {
+    username = System.getenv('SONATYPE_USERNAME')
+    password = System.getenv('SONATYPE_PASSWORD')
 }
 
 sourceCompatibility = 1.8

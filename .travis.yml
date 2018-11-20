@@ -51,6 +51,7 @@ before_deploy:
   - export PROJECT_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
   # Upload to sonatype oss so it can make its way to maven central
   - ./gradlew publishMavenJavaPublicationToMavenRepository
+  - ./gradlew closeAndReleaseRepository
 
 deploy:
   provider: releases
