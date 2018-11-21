@@ -4,8 +4,8 @@ plugins {
    id 'maven-publish'
    id 'signing'
    id 'com.github.sherter.google-java-format' version '0.7.1'
-   id "com.github.onslip.gradle-one-jar" version "1.0.5"
    id 'io.codearte.nexus-staging' version '0.12.0'
+   id 'com.google.osdetector' version '1.6.0'
 }
 
 group 'io.tiledb'
@@ -111,9 +111,10 @@ task checkFormat(type: VerifyGoogleJavaFormat) {
     ignoreFailures false
 }
 
-task oneJar(type: OneJar) {
-    mainClass = 'examples.io.tiledb.java.api.ConfigExample'
-    binLib = files(new File(new File(buildDir, "tiledb_jni"), System.mapLibraryName("tiledbjni")))
+jar {
+    into(new File('lib', osdetector.classifier).toString()) {
+        from files(new File(new File(buildDir, "tiledb_jni"), System.mapLibraryName("tiledbjni")))
+    }
 }
 
 import org.gradle.plugins.signing.Sign
@@ -142,7 +143,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
-    archives oneJar
+    archives jar
     archives sourceJar
     archives javadocJar
 }
@@ -150,9 +151,7 @@ artifacts {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
-
-            artifact oneJar
+            artifact jar
             artifact sourceJar
             artifact javadocJar
 

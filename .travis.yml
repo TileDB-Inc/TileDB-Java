@@ -28,16 +28,12 @@ matrix:
       env:
         CFLAGS="-march=x86-64"
         CPPFLAGS="-march=x86-64"
-        ONEJAR="ON"
+        PUBLISH=1
         ORG_GRADLE_PROJECT_TILEDB_S3="ON"
 
 install:
   # Build and install extension module
   - ./gradlew assemble test
-  # Build oneJar for contained dependencies
-  - if [[ "${ONEJAR}" == "ON" ]]; then
-      ./gradlew oneJar;
-    fi
 
 script:
   - ./gradlew checkFormat
@@ -62,4 +58,4 @@ deploy:
   on:
     repo: TileDB-Inc/TileDB-Java
     tags: true
-    condition: $ONEJAR = "ON"
+    condition: $PUBLISH = 1

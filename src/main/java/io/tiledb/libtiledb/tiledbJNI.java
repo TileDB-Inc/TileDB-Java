@@ -8,12 +8,24 @@
 
 package io.tiledb.libtiledb;
 
+import static io.tiledb.libtiledb.tiledbJNILoader.TILEDB_JNI_LIBRARY_NAME;
+import static io.tiledb.libtiledb.tiledbJNILoader.findNativeLibrary;
+
+import java.io.File;
+
 public class tiledbJNI {
 
   static {
     try {
-      System.loadLibrary("tiledbjni");
-    } catch (UnsatisfiedLinkError e) {
+      File nativeLibFile = findNativeLibrary();
+      if (nativeLibFile != null) {
+        // Load extracted or specified tiledbjni native library.
+        System.load(nativeLibFile.getAbsolutePath());
+      } else {
+        // Load preinstalled tiledbjni (in the path -Djava.library.path)
+        System.loadLibrary(TILEDB_JNI_LIBRARY_NAME);
+      }
+    } catch (Exception e) {
       System.err.println("Native code library failed to load. \n" + e);
       System.exit(1);
     }
