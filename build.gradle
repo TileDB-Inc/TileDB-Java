@@ -2,8 +2,10 @@ plugins {
    id 'java'
    id 'idea'
    id 'maven-publish'
+   id 'signing'
    id 'com.github.sherter.google-java-format' version '0.7.1'
-   id "com.github.onslip.gradle-one-jar" version "1.0.5"
+   id 'io.codearte.nexus-staging' version '0.12.0'
+   id 'com.google.osdetector' version '1.6.0'
 }
 
 group 'io.tiledb'
@@ -15,6 +17,11 @@ repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
+}
+
+nexusStaging {
+    username = System.getenv('SONATYPE_USERNAME')
+    password = System.getenv('SONATYPE_PASSWORD')
 }
 
 sourceCompatibility = 1.8
@@ -35,14 +42,6 @@ sourceSets {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
 }
 
 def String getProjectProperty(String propertyName)
@@ -112,9 +111,83 @@ task checkFormat(type: VerifyGoogleJavaFormat) {
     ignoreFailures false
 }
 
-task oneJar(type: OneJar) {
-    mainClass = 'examples.io.tiledb.java.api.ConfigExample'
-    binLib = files(new File(new File(buildDir, "tiledb_jni"), System.mapLibraryName("tiledbjni")))
+jar {
+    into(new File('lib', osdetector.classifier).toString()) {
+        from files(new File(new File(buildDir, "tiledb_jni"), System.mapLibraryName("tiledbjni")))
+    }
 }
 
-oneJar.dependsOn assemble
+import org.gradle.plugins.signing.Sign
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.allTasks.any { it instanceof Sign }) {
+        allprojects { ext."signing.keyId" = System.getenv('GPG_KEY_ID') }
+        allprojects { ext."signing.secretKeyRingFile" = System.getenv('GPG_KEY_LOCATION') }
+        allprojects { ext."signing.password" = System.getenv('GPG_PASSPHRASE') }
+    }
+    // Do not sign archives by default (a local build without gpg keyring should succeed)
+    if (taskGraph.allTasks.any { it.name == 'build' || it.name == 'assemble' }) {
+        tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' }.each { task ->
+            task.enabled = false
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    classifier "sources"
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+            artifact sourceJar
+            artifact javadocJar
+
+            pom {
+                name = 'TileDB Java'
+                description = 'Java bindings for TileDB Library'
+                url = 'https://github.com/TileDB-Inc/TileDB-Java'
+                licenses {
+                    license {
+                        name = 'The MIT License (MIT)'
+                        url = 'https://github.com/TileDB-Inc/TileDB-Java/blob/master/LICENSE'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/TileDB-Inc/TileDB-Java.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/TileDB-Inc/TileDB-Java'
+                    url = 'https://github.com/TileDB-Inc/TileDB-Java'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username System.getenv('SONATYPE_USERNAME')
+                password System.getenv('SONATYPE_PASSWORD')
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+    sign configurations.archives
+}
