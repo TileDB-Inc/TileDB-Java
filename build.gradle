@@ -170,6 +170,14 @@ publishing {
                     developerConnection = 'scm:git:ssh://git@github.com/TileDB-Inc/TileDB-Java'
                     url = 'https://github.com/TileDB-Inc/TileDB-Java'
                 }
+                developers {
+                    developer {
+                        name = 'Seth Shelnutt'
+                        email = 'help@tiledb.io'
+                        organization = 'TileDB, Inc.'
+                        organizationUrl = 'https://tiledb.io/'
+                    }
+                }
             }
         }
     }
