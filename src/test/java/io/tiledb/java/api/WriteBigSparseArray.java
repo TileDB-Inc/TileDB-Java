@@ -40,9 +40,9 @@ public class WriteBigSparseArray {
     create();
 
     HashSet<Long> set = new HashSet<>();
-    for (int i = 0; i < 100; i++) write(i, set);
-
-    //    read();
+    for (int i = 0; i < 100; i++) {
+      write(i, set);
+    }
   }
 
   private static void read() throws Exception {}
