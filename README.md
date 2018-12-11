@@ -10,25 +10,16 @@ To build the JNI extension you need to install:
 
 ## Build
 
-To build the library with dependencies bundled in run:
+To build the library with the native library bundled in run:
 
-`./gradlew oneJar`
+`./gradlew assemble`
 
 This will create the TileDB JNI library `build/tiledb_jni/libtiledbjni.dylib`. This will also download and build the [TileDB](https://github.com/TileDB-Inc/TileDB) library first, if it is not found installed in a global system path, in which case the native library gets placed in `build/externals/install/lib/libtiledb.dylib`.
 
 If you wish to build with a custom version of the native TileDB library, you can define the environment variable `TILEDB_HOME`, e.g.:
 
-`env TILEDB_HOME=/path/to/TileDB/dist ./gradlew oneJar`
+`env TILEDB_HOME=/path/to/TileDB/dist ./gradlew assemble`
 Note that if you build with a custom native TileDB library it will only be bundled into the jar if the native static library was produced.
-
-
-### Non Bundled Jar
-
-It is possible to build the native JNI library and produce a jar file that does not contain the dependencies.
-
-`./gradlew assemble`
-
-If you build the non-builded jar, before running the Java code you should copy the `libtiledbjni.dylib` file into your system library path, or add the build folder in your `LD_LIBRARY_PATH` ENV variable.
 
 ### Enabling TileDB Backends During Superbuild
 
@@ -57,7 +48,7 @@ You can run the examples located in `src/main/java/examples` using you IDE or fr
 
 To run an example from the terminal use:
 
-`java -cp build/libs/tiledb-java-1.0-SNAPSHOT-standalone.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
+`java -cp build/libs/tiledb-java-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
 
 You may need to explicitly define the java library path if not using the bundled jar:
 
