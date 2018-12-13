@@ -38,11 +38,12 @@ if (NOT TILEDB_FOUND)
   if (TILEDB_JNI_SUPERBUILD)
     message(STATUS "Could NOT find TileDB")
     message(STATUS "Adding TileDB as an external project")
-
+    message(STATUS "TileDB downloading git repo ${TILEDB_GIT_REPOSITORY}")
+    message(STATUS "TileDB checkout git tag ${TILEDB_GIT_TAG}")
     ExternalProject_Add(ep_tiledb
       PREFIX "externals"
-      GIT_REPOSITORY "https://github.com/TileDB-Inc/TileDB"
-      GIT_TAG "dev"
+      GIT_REPOSITORY "${TILEDB_GIT_REPOSITORY}"
+      GIT_TAG ${TILEDB_GIT_TAG}
       CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${TILEDB_JNI_EP_INSTALL_PREFIX}
         -DTILEDB_VERBOSE=${TILEDB_VERBOSE}
@@ -58,7 +59,6 @@ if (NOT TILEDB_FOUND)
       LOG_BUILD FALSE
       LOG_INSTALL FALSE
     )
-
     list(APPEND TILEDB_JNI_EXTERNAL_PROJECTS ep_tiledb)
   else()
     message(FATAL_ERROR "Could not find TileDB (required).")
