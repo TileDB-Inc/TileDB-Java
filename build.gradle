@@ -59,9 +59,17 @@ task cmakeTask(type: Exec) {
     executable = "cmake"
     List<String> buildArgs = new ArrayList<String>()
     buildArgs.add("..")
-    String tiledb_verbose= getProjectProperty('TILEDB_VERBOSE')
+    String tiledb_git_repo = getProjectProperty('TILEDB_GIT_REPOSITORY')
+    String tiledb_git_tag = getProjectProperty('TILEDB_GIT_TAG')
+    String tiledb_verbose = getProjectProperty('TILEDB_VERBOSE')
     String tiledb_s3 = getProjectProperty('TILEDB_S3')
     String tiledb_hdfs = getProjectProperty('TILEDB_HDFS')
+    if (tiledb_git_repo != null) {
+	    buildArgs.add("-DTILEDB_GIT_REPOSITORY=" + tiledb_git_repo)
+    }
+    if (tiledb_git_tag != null) {
+        buildArgs.add("-DTILEDB_GIT_TAG=" + tiledb_git_tag)
+    }
     if (tiledb_verbose != null) {
         buildArgs.add("-DTILEDB_VERBOSE=" + tiledb_verbose)
     }
