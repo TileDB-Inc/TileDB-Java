@@ -33,11 +33,23 @@ public class ContextTest {
 
   @Test
   public void testContext() throws Throwable {
-    Context ctx = new Context();
-    ctx.setErrorHandler(new Handler());
+    try (Context ctx = new Context()) {
+      ctx.setErrorHandler(new Handler());
+      Assert.assertTrue(ctx.isSupportedFs(TILEDB_HDFS) || true);
+      Assert.assertTrue(ctx.isSupportedFs(TILEDB_S3) || true);
+    }
+  }
 
-    Assert.assertTrue(ctx.isSupportedFs(TILEDB_HDFS) || true);
-    Assert.assertTrue(ctx.isSupportedFs(TILEDB_S3) || true);
+  @Test
+  public void testContextConfig() throws Exception {
+    try (Config config = new Config()) {
+      config.set("foo", "bar");
+      Assert.assertEquals("bar", config.get("foo"));
+      try (Context ctx = new Context(config);
+          Config ctxConfig = ctx.getConfig()) {
+        Assert.assertEquals("bar", ctxConfig.get("foo"));
+      }
+    }
   }
 
   private class Handler extends ContextCallback {

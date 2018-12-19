@@ -47,6 +47,16 @@ public class Config implements AutoCloseable {
   private SWIGTYPE_p_tiledb_config_t configp;
 
   /**
+   * Constructor from native object handle
+   *
+   * @param configpp A Swig wrapper object to a tiledb_config_t pointer
+   */
+  protected Config(SWIGTYPE_p_p_tiledb_config_t configpp) {
+    this.configpp = configpp;
+    this.configp = tiledb.tiledb_config_tpp_value(configpp);
+  }
+
+  /**
    * Constructor that creates a new config object with default configuration values.
    *
    * @exception TileDBError A TileDB exception
@@ -276,11 +286,13 @@ public class Config implements AutoCloseable {
     }
   }
 
+  /** @return Swig wrapper object to a tiledb_config_t pointer */
   protected SWIGTYPE_p_tiledb_config_t getConfigp() {
     return configp;
   }
 
   /** Free's native TileDB resources associated with the Config object. */
+  @Override
   public void close() {
     if (configp != null) {
       tiledb.tiledb_config_free(configpp);
