@@ -961,10 +961,10 @@ public class tiledbJNI {
   public static final native int tiledb_array_create_with_key(
       long jarg1, String jarg2, long jarg3, int jarg4, long jarg5, long jarg6);
 
-  public static final native int tiledb_array_consolidate(long jarg1, String jarg2);
+  public static final native int tiledb_array_consolidate(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_array_consolidate_with_key(
-      long jarg1, String jarg2, int jarg3, long jarg4, long jarg5);
+      long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, long jarg6);
 
   public static final native int tiledb_array_get_non_empty_domain(
       long jarg1, long jarg2, long jarg3, long jarg4);
@@ -1038,10 +1038,10 @@ public class tiledbJNI {
   public static final native int tiledb_kv_create_with_key(
       long jarg1, String jarg2, long jarg3, int jarg4, long jarg5, long jarg6);
 
-  public static final native int tiledb_kv_consolidate(long jarg1, String jarg2);
+  public static final native int tiledb_kv_consolidate(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_kv_consolidate_with_key(
-      long jarg1, String jarg2, int jarg3, long jarg4, long jarg5);
+      long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, long jarg6);
 
   public static final native int tiledb_kv_alloc(long jarg1, String jarg2, long jarg3);
 
@@ -1131,6 +1131,9 @@ public class tiledbJNI {
 
   public static final native int tiledb_vfs_remove_file(long jarg1, long jarg2, String jarg3);
 
+  public static final native int tiledb_vfs_dir_size(
+      long jarg1, long jarg2, String jarg3, long jarg4);
+
   public static final native int tiledb_vfs_file_size(
       long jarg1, long jarg2, String jarg3, long jarg4);
 
@@ -1152,6 +1155,9 @@ public class tiledbJNI {
       long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4);
 
   public static final native int tiledb_vfs_sync(long jarg1, long jarg2);
+
+  public static final native int tiledb_vfs_ls(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
   public static final native void tiledb_vfs_fh_free(long jarg1);
 

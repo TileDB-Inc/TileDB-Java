@@ -9,6 +9,7 @@
 package io.tiledb.libtiledb;
 
 public abstract class PathCallback {
+
   private int call(long path, int type) {
     charArray jpath = new charArray(path, false);
     tiledb_object_t jtype = tiledb_object_t.swigToEnum(type);
