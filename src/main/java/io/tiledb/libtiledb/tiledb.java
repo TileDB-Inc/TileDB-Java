@@ -2281,8 +2281,12 @@ public class tiledb implements tiledbConstants {
         key_length);
   }
 
-  public static int tiledb_array_consolidate(SWIGTYPE_p_tiledb_ctx_t ctx, String array_uri) {
-    return tiledbJNI.tiledb_array_consolidate(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), array_uri);
+  public static int tiledb_array_consolidate(
+      SWIGTYPE_p_tiledb_ctx_t ctx, String array_uri, SWIGTYPE_p_tiledb_config_t config) {
+    return tiledbJNI.tiledb_array_consolidate(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        array_uri,
+        SWIGTYPE_p_tiledb_config_t.getCPtr(config));
   }
 
   public static int tiledb_array_consolidate_with_key(
@@ -2290,13 +2294,15 @@ public class tiledb implements tiledbConstants {
       String array_uri,
       tiledb_encryption_type_t encryption_type,
       SWIGTYPE_p_void encryption_key,
-      long key_length) {
+      long key_length,
+      SWIGTYPE_p_tiledb_config_t config) {
     return tiledbJNI.tiledb_array_consolidate_with_key(
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         array_uri,
         encryption_type.swigValue(),
         SWIGTYPE_p_void.getCPtr(encryption_key),
-        key_length);
+        key_length,
+        SWIGTYPE_p_tiledb_config_t.getCPtr(config));
   }
 
   public static int tiledb_array_get_non_empty_domain(
@@ -2596,8 +2602,10 @@ public class tiledb implements tiledbConstants {
         key_length);
   }
 
-  public static int tiledb_kv_consolidate(SWIGTYPE_p_tiledb_ctx_t ctx, String kv_uri) {
-    return tiledbJNI.tiledb_kv_consolidate(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), kv_uri);
+  public static int tiledb_kv_consolidate(
+      SWIGTYPE_p_tiledb_ctx_t ctx, String kv_uri, SWIGTYPE_p_tiledb_config_t config) {
+    return tiledbJNI.tiledb_kv_consolidate(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), kv_uri, SWIGTYPE_p_tiledb_config_t.getCPtr(config));
   }
 
   public static int tiledb_kv_consolidate_with_key(
@@ -2605,13 +2613,15 @@ public class tiledb implements tiledbConstants {
       String kv_uri,
       tiledb_encryption_type_t encryption_type,
       SWIGTYPE_p_void encryption_key,
-      long key_length) {
+      long key_length,
+      SWIGTYPE_p_tiledb_config_t config) {
     return tiledbJNI.tiledb_kv_consolidate_with_key(
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         kv_uri,
         encryption_type.swigValue(),
         SWIGTYPE_p_void.getCPtr(encryption_key),
-        key_length);
+        key_length,
+        SWIGTYPE_p_tiledb_config_t.getCPtr(config));
   }
 
   public static int tiledb_kv_alloc(
@@ -2924,6 +2934,18 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_vfs_t.getCPtr(vfs), uri);
   }
 
+  public static int tiledb_vfs_dir_size(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_vfs_t vfs,
+      String uri,
+      SWIGTYPE_p_unsigned_long_long size) {
+    return tiledbJNI.tiledb_vfs_dir_size(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_vfs_t.getCPtr(vfs),
+        uri,
+        SWIGTYPE_p_unsigned_long_long.getCPtr(size));
+  }
+
   public static int tiledb_vfs_file_size(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_vfs_t vfs,
@@ -3002,6 +3024,20 @@ public class tiledb implements tiledbConstants {
   public static int tiledb_vfs_sync(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_vfs_fh_t fh) {
     return tiledbJNI.tiledb_vfs_sync(
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_vfs_fh_t.getCPtr(fh));
+  }
+
+  public static int tiledb_vfs_ls(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_vfs_t vfs,
+      String path,
+      SWIGTYPE_p_f_p_q_const__char_p_void__int callback,
+      SWIGTYPE_p_void data) {
+    return tiledbJNI.tiledb_vfs_ls(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_vfs_t.getCPtr(vfs),
+        path,
+        SWIGTYPE_p_f_p_q_const__char_p_void__int.getCPtr(callback),
+        SWIGTYPE_p_void.getCPtr(data));
   }
 
   public static void tiledb_vfs_fh_free(SWIGTYPE_p_p_tiledb_vfs_fh_t fh) {

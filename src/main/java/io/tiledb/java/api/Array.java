@@ -194,6 +194,29 @@ public class Array implements AutoCloseable {
    * <pre><b>Example:</b>
    * {@code
    *   Context ctx = new Context();
+   *   Array.consolidate(ctx, "s3://bucket-name/array-name");
+   * }
+   * </pre>
+   *
+   * @param ctx TileDB context object
+   * @param uri TileDB URI string
+   * @param config A TileDB config object with configuration parameters for the consolidation
+   * @exception TileDBError A TileDB exception
+   */
+  public static void consolidate(Context ctx, String uri, Config config) throws TileDBError {
+    consolidate(ctx, uri, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {}, config);
+  }
+
+  /**
+   * Consolidates the fragments of an array into a single fragment.
+   *
+   * <p>All queries to the array before consolidation must be finalized before consolidation can
+   * begin. Consolidation temporarily aquires an exclusive lock on the array when finalizing the
+   * resulting merged fragment.
+   *
+   * <pre><b>Example:</b>
+   * {@code
+   *   Context ctx = new Context();
    *   String key = "0123456789abcdeF0123456789abcdeF";
    *   Array.consolidate(ctx, "s3://bucket-name/array-name",
    *                     TILEDB_AES_256_GCM,
@@ -209,6 +232,36 @@ public class Array implements AutoCloseable {
    */
   public static void consolidate(
       Context ctx, String uri, EncryptionType encryption_type, byte[] key) throws TileDBError {
+    consolidate(ctx, uri, encryption_type, key, new Config());
+  }
+
+  /**
+   * Consolidates the fragments of an array into a single fragment.
+   *
+   * <p>All queries to the array before consolidation must be finalized before consolidation can
+   * begin. Consolidation temporarily aquires an exclusive lock on the array when finalizing the
+   * resulting merged fragment.
+   *
+   * <pre><b>Example:</b>
+   * {@code
+   *   Context ctx = new Context();
+   *   String key = "0123456789abcdeF0123456789abcdeF";
+   *   Array.consolidate(ctx, "s3://bucket-name/array-name",
+   *                     TILEDB_AES_256_GCM,
+   *                     key.getBytes(StandardCharsets.UTF_8));
+   * }
+   * </pre>
+   *
+   * @param ctx A TileDB Context
+   * @param uri URI string to TileDB array
+   * @param encryption_type Encryption type the array is encrypted with
+   * @param key A byte array key to decrypt array
+   * @param config A TileDB config object with configuration parameters for the consolidation
+   * @throws TileDBError
+   */
+  public static void consolidate(
+      Context ctx, String uri, EncryptionType encryption_type, byte[] key, Config config)
+      throws TileDBError {
     try (NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
       ctx.handleError(
           tiledb.tiledb_array_consolidate_with_key(
@@ -216,7 +269,8 @@ public class Array implements AutoCloseable {
               uri,
               encryption_type.toSwigEnum(),
               keyArray.toVoidPointer(),
-              keyArray.getSize()));
+              keyArray.getSize(),
+              config.getConfigp()));
     }
   }
 
