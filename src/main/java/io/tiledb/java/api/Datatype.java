@@ -14,7 +14,14 @@ public enum Datatype {
   TILEDB_INT16,
   TILEDB_UINT16,
   TILEDB_UINT32,
-  TILEDB_UINT64;
+  TILEDB_UINT64,
+  TILEDB_STRING_ASCII,
+  TILEDB_STRING_UTF8,
+  TILEDB_STRING_UTF16,
+  TILEDB_STRING_UTF32,
+  TILEDB_STRING_UCS2,
+  TILEDB_STRING_UCS4,
+  TILEDB_ANY;
 
   public int getNativeSize() throws TileDBError {
     return tiledb.tiledb_datatype_size(this.toSwigEnum()).intValue();
@@ -44,6 +51,20 @@ public enum Datatype {
         return tiledb_datatype_t.TILEDB_UINT32;
       case TILEDB_UINT64:
         return tiledb_datatype_t.TILEDB_UINT64;
+      case TILEDB_STRING_ASCII:
+        return tiledb_datatype_t.TILEDB_STRING_ASCII;
+      case TILEDB_STRING_UTF8:
+        return tiledb_datatype_t.TILEDB_STRING_UTF8;
+      case TILEDB_STRING_UTF16:
+        return tiledb_datatype_t.TILEDB_STRING_UTF16;
+      case TILEDB_STRING_UTF32:
+        return tiledb_datatype_t.TILEDB_STRING_UTF32;
+      case TILEDB_STRING_UCS2:
+        return tiledb_datatype_t.TILEDB_STRING_UCS2;
+      case TILEDB_STRING_UCS4:
+        return tiledb_datatype_t.TILEDB_STRING_UCS4;
+      case TILEDB_ANY:
+        return tiledb_datatype_t.TILEDB_ANY;
       default:
         throw new TileDBError("No such enum value" + this.name());
     }
@@ -73,6 +94,20 @@ public enum Datatype {
         return TILEDB_UINT32;
       case TILEDB_UINT64:
         return TILEDB_UINT64;
+      case TILEDB_STRING_ASCII:
+        return TILEDB_STRING_ASCII;
+      case TILEDB_STRING_UTF8:
+        return TILEDB_STRING_UTF8;
+      case TILEDB_STRING_UTF16:
+        return TILEDB_STRING_UTF16;
+      case TILEDB_STRING_UTF32:
+        return TILEDB_STRING_UTF32;
+      case TILEDB_STRING_UCS2:
+        return TILEDB_STRING_UCS2;
+      case TILEDB_STRING_UCS4:
+        return TILEDB_STRING_UCS4;
+      case TILEDB_ANY:
+        return TILEDB_ANY;
       default:
         throw new TileDBError("No such enum value" + e.name());
     }
