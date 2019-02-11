@@ -51,8 +51,6 @@ public class Types {
       return TILEDB_INT64;
     } else if (atrrType.equals(Character.class)) {
       return TILEDB_CHAR;
-    } else if (atrrType.equals(String.class)) {
-      return TILEDB_CHAR;
     } else if (atrrType.equals(Float.class)) {
       return TILEDB_FLOAT32;
     } else if (atrrType.equals(Double.class)) {
@@ -63,9 +61,10 @@ public class Types {
       return TILEDB_INT16;
     } else if (atrrType.equals(Boolean.class)) {
       return TILEDB_INT8;
+    } else if (atrrType.equals(String.class)) {
+      return TILEDB_STRING_UTF16;
     } else {
-      //      return TILEDB_INT8;
-      throw new TileDBError("Not supported getType: " + atrrType);
+      throw new TileDBError("Unsupported Java type class to TileDB datatype conversion : " + atrrType);
     }
   }
 
@@ -111,13 +110,18 @@ public class Types {
         {
           return Long.class;
         }
-      case TILEDB_CHAR:
+      case TILEDB_STRING_ASCII:
+      case TILEDB_STRING_UTF8:
+      case TILEDB_STRING_UTF16:
+      case TILEDB_STRING_UTF32:
+      case TILEDB_STRING_UCS2:
+      case TILEDB_STRING_UCS4:
         {
           return String.class;
         }
       default:
         {
-          throw new TileDBError("Not supported getDomain getType " + type);
+          throw new TileDBError("Unsupported TileDB datatype to Java type class conversion: " + type);
         }
     }
   }

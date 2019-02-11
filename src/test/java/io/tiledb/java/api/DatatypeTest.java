@@ -32,4 +32,19 @@ public class DatatypeTest {
       Assert.assertEquals(dtype, Datatype.fromSwigEnum(dtype.toSwigEnum()));
     }
   }
+
+  @Test
+  public void testNativeStringTypeConversion() throws Exception {
+    Assert.assertEquals(String.class, Types.getJavaType(Datatype.TILEDB_STRING_ASCII));
+    Assert.assertEquals(String.class, Types.getJavaType(Datatype.TILEDB_STRING_UTF8));
+    Assert.assertEquals(String.class, Types.getJavaType(Datatype.TILEDB_STRING_UTF16));
+    Assert.assertEquals(String.class, Types.getJavaType(Datatype.TILEDB_STRING_UTF32));
+    Assert.assertEquals(String.class, Types.getJavaType(Datatype.TILEDB_STRING_UCS2));
+    Assert.assertEquals(String.class, Types.getJavaType(Datatype.TILEDB_STRING_UCS4));
+  }
+
+  @Test
+  public void testJavaStringTypeConversion() throws Exception {
+    Assert.assertEquals(Datatype.TILEDB_STRING_UTF16, Types.getNativeType(String.class));
+  }
 }
