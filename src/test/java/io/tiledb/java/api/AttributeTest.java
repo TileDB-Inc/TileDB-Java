@@ -32,7 +32,7 @@ import org.junit.Test;
 public class AttributeTest {
 
   @Test
-  public void testArraySchema() throws Exception {
+  public void testAttribute() throws Exception {
     try (Context ctx = new Context();
         Attribute a = new Attribute(ctx, "a1", Long.class).setCellVar()) {
       try (FilterList filterList = new FilterList(ctx).addFilter(new GzipFilter(ctx, 1))) {
@@ -49,6 +49,14 @@ public class AttributeTest {
           Assert.assertEquals(((GzipFilter) filter).getLevel(), 1L);
         }
       }
+    }
+  }
+
+  @Test
+  public void testAttributeDatatype() throws Exception {
+    try (Context ctx = new Context();
+        Attribute a = new Attribute(ctx, "a2", Datatype.TILEDB_FLOAT32)) {
+      Assert.assertEquals(Datatype.TILEDB_FLOAT32, a.getType());
     }
   }
 }

@@ -71,11 +71,11 @@ public class Attribute implements AutoCloseable {
   private SWIGTYPE_p_p_tiledb_attribute_t attributepp;
 
   /**
-   * Construct an attribute with a name and type. `cellValNum` will be set to 1.
+   * Construct an attribute with a name and java class type. `cellValNum` will be set to 1.
    *
-   * @param ctx TileDB Context
-   * @param name Name of the Attribute
-   * @param attrType Java type of the Attribute
+   * @param ctx TileDB context
+   * @param name Name of the attribute
+   * @param attrType Java class type of the attribute
    * @exception TileDBError A TileDB exception
    */
   public Attribute(Context ctx, String name, Class attrType) throws TileDBError {
@@ -92,6 +92,29 @@ public class Attribute implements AutoCloseable {
     this.ctx = ctx;
     this.name = name;
     this.type = _type;
+    this.attributep = tiledb.tiledb_attribute_tpp_value(_attributepp);
+    this.attributepp = _attributepp;
+  }
+
+  /**
+   * Construct an attribute with name and TileDB Datatype. `cellValNum` will be set to 1.
+   *
+   * @param ctx TileDB Context
+   * @param name Name of the attribute
+   * @param attrType TileDB Datatype of attribute
+   * @throws TileDBError A TileDB exception
+   */
+  public Attribute(Context ctx, String name, Datatype attrType) throws TileDBError {
+    SWIGTYPE_p_p_tiledb_attribute_t _attributepp = tiledb.new_tiledb_attribute_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_attribute_alloc(ctx.getCtxp(), name, attrType.toSwigEnum(), _attributepp));
+    } catch (TileDBError error) {
+      tiledb.delete_tiledb_attribute_tpp(_attributepp);
+    }
+    this.ctx = ctx;
+    this.name = name;
+    this.type = attrType;
     this.attributep = tiledb.tiledb_attribute_tpp_value(_attributepp);
     this.attributepp = _attributepp;
   }

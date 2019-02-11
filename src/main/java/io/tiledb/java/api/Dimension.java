@@ -64,7 +64,7 @@ public class Dimension<T> implements AutoCloseable {
   }
 
   /**
-   * Constructor for creating a new dimension with datatype
+   * Constructor for creating a new dimension with java type class
    *
    * @param ctx The TileDB context.
    * @param name The dimension name.
@@ -75,23 +75,37 @@ public class Dimension<T> implements AutoCloseable {
    */
   public Dimension(Context ctx, String name, Class<T> type, Pair<T, T> domain, T extent)
       throws TileDBError {
+    createImpl(ctx, name, Types.getNativeType(type), domain, extent);
+  }
+
+  /**
+   * Constructor for creating a new dimension with TileDB Datatype
+   *
+   * @param ctx A TileDB context
+   * @param name A dimension name
+   * @param type The dimension Datatype
+   * @param domain A dimension domain (A Pair containing lower and upper bound).
+   * @param extent The tiledb extent on the dimension.
+   * @throws TileDBError A TileDB exception.
+   */
+  public Dimension(Context ctx, String name, Datatype type, Pair<T, T> domain, T extent)
+      throws TileDBError {
     createImpl(ctx, name, type, domain, extent);
   }
 
-  private void createImpl(Context ctx, String name, Class<T> type, Pair<T, T> domain, T extent)
+  private void createImpl(Context ctx, String name, Datatype dimType, Pair<T, T> domain, T extent)
       throws TileDBError {
     SWIGTYPE_p_p_tiledb_dimension_t dimensionpp = tiledb.new_tiledb_dimension_tpp();
-    Datatype dimensionDatatype = Types.getNativeType(type);
-    try (NativeArray domainBuffer = new NativeArray(ctx, 2, dimensionDatatype);
-        NativeArray tileExtent = new NativeArray(ctx, 1, dimensionDatatype)) {
-      domainBuffer.setItem(0, (Object) domain.getFirst());
-      domainBuffer.setItem(1, (Object) domain.getSecond());
-      tileExtent.setItem(0, (Object) extent);
+    try (NativeArray domainBuffer = new NativeArray(ctx, 2, dimType);
+        NativeArray tileExtent = new NativeArray(ctx, 1, dimType)) {
+      domainBuffer.setItem(0, domain.getFirst());
+      domainBuffer.setItem(1, domain.getSecond());
+      tileExtent.setItem(0, extent);
       ctx.handleError(
           tiledb.tiledb_dimension_alloc(
               ctx.getCtxp(),
               name,
-              dimensionDatatype.toSwigEnum(),
+              dimType.toSwigEnum(),
               domainBuffer.toVoidPointer(),
               tileExtent.toVoidPointer(),
               dimensionpp));
@@ -103,7 +117,7 @@ public class Dimension<T> implements AutoCloseable {
     this.name = name;
     this.domain = domain;
     this.tileExtent = extent;
-    this.type = dimensionDatatype;
+    this.type = dimType;
     this.dimensionp = tiledb.tiledb_dimension_tpp_value(dimensionpp);
     this.dimensionpp = dimensionpp;
   }
