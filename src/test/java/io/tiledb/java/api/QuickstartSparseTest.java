@@ -82,11 +82,9 @@ public class QuickstartSparseTest {
     domain.addDimension(d2);
 
     // Create and add getAttributes
-    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
-    Attribute a2 = new Attribute(ctx, "a2", String.class);
-    a2.setCellValNum(TILEDB_VAR_NUM);
-    Attribute a3 = new Attribute(ctx, "a3", Float.class);
-    a3.setCellValNum(2);
+    Attribute a1 = new Attribute(ctx, "a1", Datatype.TILEDB_INT32);
+    Attribute a2 = new Attribute(ctx, "a2", Datatype.TILEDB_STRING_UTF8).setCellVar();
+    Attribute a3 = new Attribute(ctx, "a3", Datatype.TILEDB_FLOAT32).setCellValNum(2);
     a1.setCompressor(new Compressor(TILEDB_LZ4, -1));
     a2.setCompressor(new Compressor(TILEDB_GZIP, -1));
     a3.setCompressor(new Compressor(TILEDB_ZSTD, -1));
@@ -111,7 +109,7 @@ public class QuickstartSparseTest {
     NativeArray a1_data = new NativeArray(ctx, new int[] {0, 1, 2, 3, 4, 5, 6, 7}, Integer.class);
     NativeArray a2_offsets =
         new NativeArray(ctx, new long[] {0, 1, 3, 6, 10, 11, 13, 16}, Datatype.TILEDB_UINT64);
-    NativeArray buffer_var_a2 = new NativeArray(ctx, "abbcccdddd" + "effggghhhh", String.class);
+    NativeArray buffer_var_a2 = new NativeArray(ctx, "abbcccdddd" + "effggghhhh", Datatype.TILEDB_STRING_UTF8);
 
     NativeArray buffer_a3 =
         new NativeArray(
@@ -160,10 +158,10 @@ public class QuickstartSparseTest {
     NativeArray subarray = new NativeArray(ctx, new long[] {1l, 4l, 1l, 4l}, Long.class);
     HashMap<String, Pair<Long, Long>> max_sizes = my_sparse_array.maxBufferElements(subarray);
 
-    Assert.assertEquals(max_sizes.get("a1").getFirst(), (Long) 0l);
-    Assert.assertEquals(max_sizes.get("a1").getSecond(), (Long) 8l);
-    Assert.assertEquals(max_sizes.get("a2").getFirst(), (Long) 8l);
-    Assert.assertEquals(max_sizes.get("a2").getSecond(), (Long) 20l);
+    Assert.assertEquals((Long) 0l, max_sizes.get("a1").getFirst());
+    Assert.assertEquals((Long) 8l, max_sizes.get("a1").getSecond());
+    Assert.assertEquals((Long) 8l, max_sizes.get("a2").getFirst());
+    Assert.assertEquals((Long) 20l, max_sizes.get("a2").getSecond());
 
     // for (Map.Entry<String, Pair<Long,Long>> e : max_sizes.entrySet()){
     //  System.out.println(e.getKey() + " ("+e.getValue().getFirst()+",
@@ -179,7 +177,7 @@ public class QuickstartSparseTest {
     query.setBuffer(
         "a2",
         new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
+        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), Datatype.TILEDB_STRING_UTF8));
     query.setBuffer(
         "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
     query.setCoordinates(
@@ -207,8 +205,8 @@ public class QuickstartSparseTest {
     String[] a2_expected = new String[] {"a", "bb", "ccc", "dddd", "e", "ff", "ggg", "hhhh"};
     for (int i = 0; i < a2_offsets.length; i++) {
       int end = (i == a2_offsets.length - 1) ? a2_data.length : (int) a2_offsets[i + 1];
-      String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end));
-      Assert.assertEquals(a2_value, a2_expected[i]);
+      String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end), "UTF-8");
+      Assert.assertEquals(a2_expected[i], a2_value);
     }
 
     // check a3

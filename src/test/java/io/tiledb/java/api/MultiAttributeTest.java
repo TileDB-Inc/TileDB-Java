@@ -70,7 +70,7 @@ public class MultiAttributeTest {
 
   public void arrayWrite() throws Exception {
     // Prepare cell buffers
-    NativeArray a1 = new NativeArray(ctx, "abcdefghijklmnop", String.class);
+    NativeArray a1 = new NativeArray(ctx, "abcdefghijklmnop".getBytes(), Character.class);
     NativeArray a2 =
         new NativeArray(
             ctx,
@@ -140,8 +140,7 @@ public class MultiAttributeTest {
     NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Integer.class);
 
     // Create query
-    Query query = new Query(array, TILEDB_READ);
-    query.setLayout(TILEDB_ROW_MAJOR);
+    Query query = new Query(array, TILEDB_READ).setLayout(TILEDB_ROW_MAJOR);
 
     // Prepare the query - subselect over "a1" only
     query.setSubarray(subarray);

@@ -78,6 +78,10 @@ public class Types {
         {
           return Double.class;
         }
+        case TILEDB_CHAR:
+        {
+          return Character.class;
+        }
       case TILEDB_INT8:
         {
           return Byte.class;

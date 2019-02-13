@@ -30,6 +30,7 @@ import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -38,6 +39,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.xml.crypto.Data;
 
 @SuppressWarnings("ALL")
 public class QuickstartDenseTest {
@@ -83,9 +86,8 @@ public class QuickstartDenseTest {
     domain.addDimension(d2);
 
     // Create and add getAttributes
-    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
-    Attribute a2 = new Attribute(ctx, "a2", Character.class);
-    a2.setCellValNum(TILEDB_VAR_NUM);
+    Attribute a1 = new Attribute(ctx, "a1", Datatype.TILEDB_INT32);
+    Attribute a2 = new Attribute(ctx, "a2", Datatype.TILEDB_STRING_ASCII).setCellVar();
     Attribute a3 = new Attribute(ctx, "a3", Float.class);
     a3.setCellValNum(2);
     a1.setCompressor(new Compressor(TILEDB_LZ4, -1));
@@ -128,7 +130,7 @@ public class QuickstartDenseTest {
             Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 =
         new NativeArray(
-            ctx, "abbcccdddd" + "effggghhhh" + "ijjkkkllll" + "mnnooopppp", String.class);
+            ctx, "abbcccdddd" + "effggghhhh" + "ijjkkkllll" + "mnnooopppp", Datatype.TILEDB_STRING_ASCII);
 
     NativeArray buffer_a3 =
         new NativeArray(
@@ -174,12 +176,12 @@ public class QuickstartDenseTest {
     NativeArray subarray = new NativeArray(ctx, new long[] {1l, 4l, 1l, 4l}, Long.class);
     HashMap<String, Pair<Long, Long>> max_sizes = my_dense_array.maxBufferElements(subarray);
 
-    Assert.assertEquals(max_sizes.get("a1").getFirst(), (Long) 0l);
-    Assert.assertEquals(max_sizes.get("a1").getSecond(), (Long) 16l);
-    Assert.assertEquals(max_sizes.get("a2").getFirst(), (Long) 16l);
-    Assert.assertEquals(max_sizes.get("a2").getSecond(), (Long) 56l);
-    Assert.assertEquals(max_sizes.get("a3").getFirst(), (Long) 0l);
-    Assert.assertEquals(max_sizes.get("a3").getSecond(), (Long) 32l);
+    Assert.assertEquals((Long) 0l, max_sizes.get("a1").getFirst());
+    Assert.assertEquals((Long) 16l, max_sizes.get("a1").getSecond());
+    Assert.assertEquals((Long) 16l, max_sizes.get("a2").getFirst());
+    Assert.assertEquals((Long) 56l, max_sizes.get("a2").getSecond());
+    Assert.assertEquals((Long) 0l, max_sizes.get("a3").getFirst());
+    Assert.assertEquals((Long) 32l, max_sizes.get("a3").getSecond());
 
     // for (Map.Entry<String, Pair<Long,Long>> e : max_sizes.entrySet()){
     //  System.out.println(e.getKey() + " ("+e.getValue().getFirst()+",
@@ -191,13 +193,13 @@ public class QuickstartDenseTest {
     query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setSubarray(subarray);
     query.setBuffer(
-        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
+        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Datatype.TILEDB_INT32));
     query.setBuffer(
         "a2",
         new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
+        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), Datatype.TILEDB_STRING_ASCII));
     query.setBuffer(
-        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
+        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Datatype.TILEDB_FLOAT32));
 
     // Submit query
     query.submit();
@@ -220,13 +222,11 @@ public class QuickstartDenseTest {
           "a", "bb", "ccc", "dddd", "e", "ff", "ggg", "hhhh", "i", "jj", "kkk", "llll", "m", "nn",
           "ooo", "pppp"
         };
-
     for (int i = 0; i < a2_offsets.length; i++) {
       int end = (i == a2_offsets.length - 1) ? a2_data.length : (int) a2_offsets[i + 1];
-      String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end));
-      Assert.assertEquals(a2_value, a2_expected[i]);
+      String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end), "US-ASCII");
+      Assert.assertEquals(a2_expected[i], a2_value);
     }
-
     // check a3
     float[] a3_expected =
         new float[] {
@@ -236,7 +236,7 @@ public class QuickstartDenseTest {
         };
     Assert.assertEquals(a3_buff.length, a3_expected.length);
     for (int i = 0; i < a3_buff.length; i++) {
-      Assert.assertEquals(a3_buff[i], a3_expected[i], 0.01f);
+      Assert.assertEquals(a3_expected[i], a3_buff[i], 0.01f);
     }
 
     // System.out.println("Result num: " + a1_buff.length );
@@ -268,13 +268,13 @@ public class QuickstartDenseTest {
     Query query = new Query(my_dense_array, TILEDB_READ);
     query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer(
-        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
+        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Datatype.TILEDB_INT32));
     query.setBuffer(
         "a2",
         new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
+        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), Datatype.TILEDB_STRING_ASCII));
     query.setBuffer(
-        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
+        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Datatype.TILEDB_FLOAT32));
 
     // Submit query with callback
     query.submitAsync(new ReadCallback());

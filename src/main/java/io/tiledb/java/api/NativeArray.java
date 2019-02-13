@@ -34,7 +34,6 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
 
-import javax.xml.crypto.Data;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
@@ -149,7 +148,6 @@ public class NativeArray implements AutoCloseable {
         {
           return ((double[]) buffer).length;
         }
-      case TILEDB_CHAR:
       case TILEDB_INT8:
         {
           return ((byte[]) buffer).length;
@@ -212,6 +210,7 @@ public class NativeArray implements AutoCloseable {
           doubleArray = Utils.newDoubleArray((double[]) buffer);
           break;
         }
+      case TILEDB_CHAR:
       case TILEDB_INT8:
         {
           size = ((byte[]) buffer).length;
@@ -332,6 +331,12 @@ public class NativeArray implements AutoCloseable {
           break;
         }
       case TILEDB_CHAR:
+      case TILEDB_STRING_ASCII:
+      case TILEDB_STRING_UTF8:
+      case TILEDB_STRING_UTF16:
+      case TILEDB_STRING_UTF32:
+      case TILEDB_STRING_UCS2:
+      case TILEDB_STRING_UCS4:
         {
           int8_tArray = new int8_tArray(size);
           break;
@@ -396,6 +401,12 @@ public class NativeArray implements AutoCloseable {
           return uint64_tArray.getitem(index);
         }
       case TILEDB_CHAR:
+      case TILEDB_STRING_ASCII:
+      case TILEDB_STRING_UTF8:
+      case TILEDB_STRING_UTF16:
+      case TILEDB_STRING_UTF32:
+      case TILEDB_STRING_UCS2:
+      case TILEDB_STRING_UCS4:
         {
           return int8_tArray.getitem(index);
         }
@@ -428,6 +439,7 @@ public class NativeArray implements AutoCloseable {
           doubleArray.setitem(index, (double) value);
           break;
         }
+      case TILEDB_CHAR:
       case TILEDB_INT8:
         {
           int8_tArray.setitem(index, (byte) value);
@@ -468,11 +480,14 @@ public class NativeArray implements AutoCloseable {
           uint64_tArray.setitem(index, (long) value);
           break;
         }
-
-
-      case TILEDB_CHAR:
+      case TILEDB_STRING_ASCII:
+      case TILEDB_STRING_UTF8:
+      case TILEDB_STRING_UTF16:
+      case TILEDB_STRING_UTF32:
+      case TILEDB_STRING_UCS2:
+      case TILEDB_STRING_UCS4:
         {
-          for (byte b : stringToBytes(value)) {
+          for (byte b : stringToBytes(nativeType, (String) value)) {
             int8_tArray.setitem(index, b);
             index++;
           }
@@ -528,6 +543,12 @@ public class NativeArray implements AutoCloseable {
           return PointerUtils.toVoid(uint64_tArray);
         }
       case TILEDB_CHAR:
+      case TILEDB_STRING_ASCII:
+      case TILEDB_STRING_UTF8:
+      case TILEDB_STRING_UTF16:
+      case TILEDB_STRING_UTF32:
+      case TILEDB_STRING_UCS2:
+      case TILEDB_STRING_UCS4:
         {
           return PointerUtils.toVoid(int8_tArray);
         }
@@ -615,6 +636,12 @@ public class NativeArray implements AutoCloseable {
           return Utils.int64ArrayGet(uint64_tArray, position, elements);
         }
       case TILEDB_CHAR:
+      case TILEDB_STRING_ASCII:
+      case TILEDB_STRING_UTF8:
+      case TILEDB_STRING_UTF16:
+      case TILEDB_STRING_UTF32:
+      case TILEDB_STRING_UCS2:
+      case TILEDB_STRING_UCS4:
         {
           return Utils.int8ArrayGet(int8_tArray, position, elements);
         }
@@ -677,6 +704,17 @@ public class NativeArray implements AutoCloseable {
           uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
+      case TILEDB_CHAR:
+      case TILEDB_STRING_ASCII:
+      case TILEDB_STRING_UTF8:
+      case TILEDB_STRING_UTF16:
+      case TILEDB_STRING_UTF32:
+      case TILEDB_STRING_UCS2:
+      case TILEDB_STRING_UCS4:
+        {
+          int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
+          break;
+        }
       default:
         {
           throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
@@ -734,6 +772,17 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_UINT64:
         {
           uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
+          break;
+        }
+      case TILEDB_CHAR:
+      case TILEDB_STRING_ASCII:
+      case TILEDB_STRING_UTF8:
+      case TILEDB_STRING_UTF16:
+      case TILEDB_STRING_UTF32:
+      case TILEDB_STRING_UCS2:
+      case TILEDB_STRING_UCS4:
+          {
+          int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
           break;
         }
       default:
