@@ -259,8 +259,9 @@ public class ArraySchema implements AutoCloseable {
    * @param capacity Capacity value to set
    * @exception TileDBError A TileDB exception
    */
-  public void setCapacity(long capacity) throws TileDBError {
+  public ArraySchema setCapacity(long capacity) throws TileDBError {
     setCapacity(BigInteger.valueOf(capacity));
+    return this;
   }
 
   /**
@@ -269,8 +270,9 @@ public class ArraySchema implements AutoCloseable {
    * @param capacity value to set
    * @exception TileDBError A T
    */
-  public void setCapacity(BigInteger capacity) throws TileDBError {
+  public ArraySchema setCapacity(BigInteger capacity) throws TileDBError {
     ctx.handleError(tiledb.tiledb_array_schema_set_capacity(ctx.getCtxp(), schemap, capacity));
+    return this;
   }
 
   /**
@@ -376,13 +378,14 @@ public class ArraySchema implements AutoCloseable {
    * @param compressor Compressor to use
    * @exception TileDBError A TileDB exception
    */
-  public void setCoordsCompressor(Compressor compressor) throws TileDBError {
+  public ArraySchema setCoordsCompressor(Compressor compressor) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_array_schema_set_coords_compressor(
             ctx.getCtxp(),
             getSchemap(),
             compressor.getCompressor().toSwigEnum(),
             compressor.getLevel()));
+    return this;
   }
 
   /**
@@ -424,13 +427,14 @@ public class ArraySchema implements AutoCloseable {
    * @param compressor Compressor to use
    * @exception TileDBError A TileDB exception
    */
-  public void setOffsetsCompressor(Compressor compressor) throws TileDBError {
+  public ArraySchema setOffsetsCompressor(Compressor compressor) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_array_schema_set_offsets_compressor(
             ctx.getCtxp(),
             getSchemap(),
             compressor.getCompressor().toSwigEnum(),
             compressor.getLevel()));
+    return this;
   }
 
   /**
@@ -464,9 +468,10 @@ public class ArraySchema implements AutoCloseable {
    * @param domain Domain to use
    * @exception TileDBError A TileDB exception
    */
-  public void setDomain(Domain domain) throws TileDBError {
+  public ArraySchema setDomain(Domain domain) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_array_schema_set_domain(ctx.getCtxp(), getSchemap(), domain.getDomainp()));
+    return this;
   }
 
   /**
@@ -483,10 +488,18 @@ public class ArraySchema implements AutoCloseable {
    * @param attr The Attribute to add
    * @exception TileDBError A TileDB exception
    */
-  public void addAttribute(Attribute attr) throws TileDBError {
+  public ArraySchema addAttribute(Attribute attr) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_array_schema_add_attribute(
             ctx.getCtxp(), getSchemap(), attr.getAttributep()));
+    return this;
+  }
+
+  public ArraySchema addAttribute(Attribute... attrs) throws TileDBError {
+    for (Attribute attr : attrs) {
+      addAttribute(attr);
+    }
+    return this;
   }
 
   /**

@@ -64,7 +64,8 @@ public class Types {
     } else if (atrrType.equals(String.class)) {
       return TILEDB_STRING_UTF16;
     } else {
-      throw new TileDBError("Unsupported Java type class to TileDB datatype conversion : " + atrrType);
+      throw new TileDBError(
+          "Unsupported Java type class to TileDB datatype conversion : " + atrrType);
     }
   }
 
@@ -78,10 +79,7 @@ public class Types {
         {
           return Double.class;
         }
-        case TILEDB_CHAR:
-        {
-          return Character.class;
-        }
+      case TILEDB_CHAR:
       case TILEDB_INT8:
         {
           return Byte.class;
@@ -125,7 +123,8 @@ public class Types {
         }
       default:
         {
-          throw new TileDBError("Unsupported TileDB datatype to Java type class conversion: " + type);
+          throw new TileDBError(
+              "Unsupported TileDB datatype to Java type class conversion: " + type);
         }
     }
   }

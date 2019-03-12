@@ -26,11 +26,9 @@ package io.tiledb.java.api;
 
 import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.CompressorType.*;
-import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -39,8 +37,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.xml.crypto.Data;
 
 @SuppressWarnings("ALL")
 public class QuickstartDenseTest {
@@ -130,7 +126,9 @@ public class QuickstartDenseTest {
             Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 =
         new NativeArray(
-            ctx, "abbcccdddd" + "effggghhhh" + "ijjkkkllll" + "mnnooopppp", Datatype.TILEDB_STRING_ASCII);
+            ctx,
+            "abbcccdddd" + "effggghhhh" + "ijjkkkllll" + "mnnooopppp",
+            Datatype.TILEDB_STRING_ASCII);
 
     NativeArray buffer_a3 =
         new NativeArray(
@@ -193,13 +191,16 @@ public class QuickstartDenseTest {
     query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setSubarray(subarray);
     query.setBuffer(
-        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Datatype.TILEDB_INT32));
+        "a1",
+        new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Datatype.TILEDB_INT32));
     query.setBuffer(
         "a2",
         new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), Datatype.TILEDB_STRING_ASCII));
+        new NativeArray(
+            ctx, max_sizes.get("a2").getSecond().intValue(), Datatype.TILEDB_STRING_ASCII));
     query.setBuffer(
-        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Datatype.TILEDB_FLOAT32));
+        "a3",
+        new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Datatype.TILEDB_FLOAT32));
 
     // Submit query
     query.submit();
@@ -224,7 +225,8 @@ public class QuickstartDenseTest {
         };
     for (int i = 0; i < a2_offsets.length; i++) {
       int end = (i == a2_offsets.length - 1) ? a2_data.length : (int) a2_offsets[i + 1];
-      String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end), "US-ASCII");
+      String a2_value =
+          new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end), "US-ASCII");
       Assert.assertEquals(a2_expected[i], a2_value);
     }
     // check a3
@@ -268,13 +270,16 @@ public class QuickstartDenseTest {
     Query query = new Query(my_dense_array, TILEDB_READ);
     query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer(
-        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Datatype.TILEDB_INT32));
+        "a1",
+        new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Datatype.TILEDB_INT32));
     query.setBuffer(
         "a2",
         new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), Datatype.TILEDB_STRING_ASCII));
+        new NativeArray(
+            ctx, max_sizes.get("a2").getSecond().intValue(), Datatype.TILEDB_STRING_ASCII));
     query.setBuffer(
-        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Datatype.TILEDB_FLOAT32));
+        "a3",
+        new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Datatype.TILEDB_FLOAT32));
 
     // Submit query with callback
     query.submitAsync(new ReadCallback());

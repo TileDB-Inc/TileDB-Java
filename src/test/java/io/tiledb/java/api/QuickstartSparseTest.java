@@ -27,7 +27,6 @@ package io.tiledb.java.api;
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
 import static io.tiledb.java.api.CompressorType.*;
 import static io.tiledb.java.api.Constants.TILEDB_COORDS;
-import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
@@ -109,7 +108,8 @@ public class QuickstartSparseTest {
     NativeArray a1_data = new NativeArray(ctx, new int[] {0, 1, 2, 3, 4, 5, 6, 7}, Integer.class);
     NativeArray a2_offsets =
         new NativeArray(ctx, new long[] {0, 1, 3, 6, 10, 11, 13, 16}, Datatype.TILEDB_UINT64);
-    NativeArray buffer_var_a2 = new NativeArray(ctx, "abbcccdddd" + "effggghhhh", Datatype.TILEDB_STRING_UTF8);
+    NativeArray buffer_var_a2 =
+        new NativeArray(ctx, "abbcccdddd" + "effggghhhh", Datatype.TILEDB_STRING_UTF8);
 
     NativeArray buffer_a3 =
         new NativeArray(
@@ -177,7 +177,8 @@ public class QuickstartSparseTest {
     query.setBuffer(
         "a2",
         new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), Datatype.TILEDB_STRING_UTF8));
+        new NativeArray(
+            ctx, max_sizes.get("a2").getSecond().intValue(), Datatype.TILEDB_STRING_UTF8));
     query.setBuffer(
         "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
     query.setCoordinates(

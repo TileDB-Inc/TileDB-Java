@@ -33,7 +33,6 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
@@ -148,6 +147,7 @@ public class NativeArray implements AutoCloseable {
         {
           return ((double[]) buffer).length;
         }
+      case TILEDB_CHAR:
       case TILEDB_INT8:
         {
           return ((byte[]) buffer).length;
@@ -781,7 +781,7 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_STRING_UTF32:
       case TILEDB_STRING_UCS2:
       case TILEDB_STRING_UCS4:
-          {
+        {
           int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
           break;
         }
@@ -795,28 +795,33 @@ public class NativeArray implements AutoCloseable {
   private byte[] stringToBytes(Datatype dtype, Object buffer) throws TileDBError {
     try {
       switch (dtype) {
-        case TILEDB_STRING_ASCII: {
-          return ((String) buffer).getBytes(StandardCharsets.US_ASCII);
-        }
-        case TILEDB_STRING_UTF8: {
-          return ((String) buffer).getBytes(StandardCharsets.UTF_8);
-        }
+        case TILEDB_STRING_ASCII:
+          {
+            return ((String) buffer).getBytes(StandardCharsets.US_ASCII);
+          }
+        case TILEDB_STRING_UTF8:
+          {
+            return ((String) buffer).getBytes(StandardCharsets.UTF_8);
+          }
         case TILEDB_STRING_UCS2:
-        case TILEDB_STRING_UTF16: {
-          return ((String) buffer).getBytes(StandardCharsets.UTF_16LE);
-        }
+        case TILEDB_STRING_UTF16:
+          {
+            return ((String) buffer).getBytes(StandardCharsets.UTF_16LE);
+          }
         case TILEDB_STRING_UCS4:
-        case TILEDB_STRING_UTF32: {
-          return ((String) buffer).getBytes("UTF-32LE");
-        }
-        default: {
-          throw new TileDBError("Unsupported Java string to bytes datatype: " + dtype);
-        }
+        case TILEDB_STRING_UTF32:
+          {
+            return ((String) buffer).getBytes("UTF-32LE");
+          }
+        default:
+          {
+            throw new TileDBError("Unsupported Java string to bytes datatype: " + dtype);
+          }
       }
     } catch (UnsupportedEncodingException error) {
       throw new TileDBError("Unsupported Java string encoding: UTF-32LE");
     }
- }
+  }
 
   protected Datatype getNativeType() {
     return nativeType;

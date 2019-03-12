@@ -42,120 +42,101 @@ public class MultiAttributeTest {
 
   public void arrayCreate() throws Exception {
     // The array will be 4x4 with dimensions "rows" and "cols", with domain [1,4].
-    Dimension<Integer> rows =
-        new Dimension<Integer>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
-    Dimension<Integer> cols =
-        new Dimension<Integer>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+    try (Domain domain = new Domain(ctx);
+        Dimension<Integer> rows =
+            new Dimension<>(ctx, "rows", Datatype.TILEDB_INT32, new Pair<>(1, 4), 2);
+        Dimension<Integer> cols =
+            new Dimension<>(ctx, "cols", Datatype.TILEDB_INT32, new Pair<>(1, 4), 2);
+        Attribute a1 = new Attribute(ctx, "a1", Datatype.TILEDB_CHAR);
+        Attribute a2 = new Attribute(ctx, "a2", Datatype.TILEDB_FLOAT32).setCellValNum(2);
+        ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE)) {
 
-    // Create and set getDomain
-    Domain domain = new Domain(ctx);
-    domain.addDimension(rows);
-    domain.addDimension(cols);
+      domain.addDimension(rows).addDimension(cols);
 
-    // Add two attributes "a1" and "a2", so each (i,j) cell can store
-    // a character on "a1" and a vector of two floats on "a2".
-    Attribute a1 = new Attribute(ctx, "a1", Character.class);
-    Attribute a2 = new Attribute(ctx, "a2", Float.class);
-    a2.setCellValNum(2);
+      schema
+          .setDomain(domain)
+          .setTileOrder(TILEDB_ROW_MAJOR)
+          .setCellOrder(TILEDB_ROW_MAJOR)
+          .addAttribute(a1, a2);
 
-    ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
-    schema.setTileOrder(TILEDB_ROW_MAJOR);
-    schema.setCellOrder(TILEDB_ROW_MAJOR);
-    schema.setDomain(domain);
-    schema.addAttribute(a1);
-    schema.addAttribute(a2);
-
-    Array.create(arrayURI, schema);
+      Array.create(arrayURI, schema);
+    }
   }
 
   public void arrayWrite() throws Exception {
-    // Prepare cell buffers
-    NativeArray a1 = new NativeArray(ctx, "abcdefghijklmnop".getBytes(), Character.class);
-    NativeArray a2 =
-        new NativeArray(
-            ctx,
-            new float[] {
-              0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
-              4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f,
-              8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f,
-              12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
-            },
-            Float.class);
-
     // Create query
-    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
-    Query query = new Query(array);
-    query.setLayout(TILEDB_ROW_MAJOR);
-    query.setBuffer("a1", a1);
-    query.setBuffer("a2", a2);
-    // Submit query
-    query.submit();
-    query.close();
-    array.close();
+    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+        Query query = new Query(array);
+        // Prepare cell buffers
+        NativeArray a1 = new NativeArray(ctx, "abcdefghijklmnop".getBytes(), Datatype.TILEDB_CHAR);
+        NativeArray a2 =
+            new NativeArray(
+                ctx,
+                new float[] {
+                  0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
+                  4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f,
+                  8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f,
+                  12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+                },
+                Datatype.TILEDB_FLOAT32)) {
+      query.setLayout(TILEDB_ROW_MAJOR);
+      query.setBuffer("a1", a1);
+      query.setBuffer("a2", a2);
+      query.submit();
+    }
   }
 
   private void arrayRead() throws Exception {
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+        // Slice only rows 1, 2 and cols 2, 3, 4
+        NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Datatype.TILEDB_INT32);
+        // Create query
+        Query query = new Query(array, TILEDB_READ)) {
+      query.setLayout(TILEDB_ROW_MAJOR);
+      // Prepare the vector that will hold the result
+      // (of size 6 elements for "a1" and 12 elements for "a2" since
+      // it stores two floats per cell)
+      query.setSubarray(subarray);
+      query.setBuffer("a1", new NativeArray(ctx, 6, Datatype.TILEDB_CHAR));
+      query.setBuffer("a2", new NativeArray(ctx, 12, Datatype.TILEDB_FLOAT32));
 
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+      // Submit query
+      query.submit();
+      HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
-    // Slice only rows 1, 2 and cols 2, 3, 4
-    NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Integer.class);
+      byte[] a1 = (byte[]) query.getBuffer("a1");
+      byte[] expected_a1 = new byte[] {'b', 'c', 'd', 'f', 'g', 'h'};
+      Assert.assertArrayEquals(expected_a1, a1);
 
-    // Create query
-    Query query = new Query(array, TILEDB_READ);
-    query.setLayout(TILEDB_ROW_MAJOR);
-
-    // Prepare the vector that will hold the result
-    // (of size 6 elements for "a1" and 12 elements for "a2" since
-    // it stores two floats per cell)
-    query.setSubarray(subarray);
-    query.setBuffer("a1", new NativeArray(ctx, 6, Character.class));
-    query.setBuffer("a2", new NativeArray(ctx, 12, Float.class));
-
-    // Submit query
-    query.submit();
-
-    HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
-
-    byte[] a1 = (byte[]) query.getBuffer("a1");
-    float[] a2 = (float[]) query.getBuffer("a2");
-
-    query.close();
-    array.close();
-
-    Assert.assertArrayEquals(a1, new byte[] {'b', 'c', 'd', 'f', 'g', 'h'});
-
-    float[] expected_a2 =
-        new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f};
-    for (int i = 0; i < a2.length; i++) {
-      Assert.assertEquals(a2[i], expected_a2[i], 0.01f);
+      float[] a2 = (float[]) query.getBuffer("a2");
+      float[] expected_a2 =
+          new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f};
+      Assert.assertArrayEquals(expected_a2, a2, 0.01f);
     }
   }
 
   private void arrayReadSubselect() throws Exception {
 
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+        // Slice only rows 1, 2 and cols 2, 3, 4
+        NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Datatype.TILEDB_INT32);
+        // Create query
+        Query query = new Query(array, TILEDB_READ)) {
 
-    // Slice only rows 1, 2 and cols 2, 3, 4
-    NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Integer.class);
+      query.setLayout(TILEDB_ROW_MAJOR);
 
-    // Create query
-    Query query = new Query(array, TILEDB_READ).setLayout(TILEDB_ROW_MAJOR);
+      // Prepare the query - subselect over "a1" only
+      query.setSubarray(subarray);
+      query.setBuffer("a1", new NativeArray(ctx, 6, Datatype.TILEDB_CHAR));
 
-    // Prepare the query - subselect over "a1" only
-    query.setSubarray(subarray);
-    query.setBuffer("a1", new NativeArray(ctx, 6, Character.class));
+      // Submit query
+      query.submit();
 
-    // Submit query
-    query.submit();
+      // Print cell values (assumes all getAttributes are read)
+      HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
-    // Print cell values (assumes all getAttributes are read)
-    HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
-
-    byte[] a1 = (byte[]) query.getBuffer("a1");
-    query.close();
-    array.close();
-
-    Assert.assertArrayEquals(a1, new byte[] {'b', 'c', 'd', 'f', 'g', 'h'});
+      byte[] a1 = (byte[]) query.getBuffer("a1");
+      Assert.assertArrayEquals(new byte[] {'b', 'c', 'd', 'f', 'g', 'h'}, a1);
+    }
   }
 }
