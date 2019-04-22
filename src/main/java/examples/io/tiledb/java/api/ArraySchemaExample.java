@@ -25,7 +25,6 @@
 package examples.io.tiledb.java.api;
 
 import static io.tiledb.java.api.ArrayType.*;
-import static io.tiledb.java.api.CompressorType.*;
 import static io.tiledb.java.api.Layout.*;
 
 import io.tiledb.java.api.*;
@@ -42,8 +41,8 @@ public class ArraySchemaExample {
     schema.setCapacity(10);
     schema.setTileOrder(TILEDB_ROW_MAJOR);
     schema.setCellOrder(TILEDB_COL_MAJOR);
-    schema.setCoordsCompressor(new Compressor(TILEDB_ZSTD, 4));
-    schema.setOffsetsCompressor(new Compressor(TILEDB_GZIP, 5));
+    schema.setCoodsFilterList(new FilterList(ctx).addFilter(new ZstdFilter(ctx, 4)));
+    schema.setOffsetsFilterList(new FilterList(ctx).addFilter(new GzipFilter(ctx, 5)));
 
     // Create getDimensions
     Dimension<Integer> d1 =
@@ -62,7 +61,7 @@ public class ArraySchemaExample {
     Attribute a1 = new Attribute(ctx, "a1", Integer.class);
     a1.setCellValNum(3);
     Attribute a2 = new Attribute(ctx, "a2", Float.class);
-    a2.setCompressor(new Compressor(TILEDB_GZIP, -1));
+    a2.setFilterList(new FilterList(ctx).addFilter(new GzipFilter(ctx)));
     schema.addAttribute(a1);
     schema.addAttribute(a2);
 
@@ -86,9 +85,9 @@ public class ArraySchemaExample {
             + "\n- Capacity: "
             + schema.getCapacity()
             + "\n- Coordinates compressor: "
-            + schema.getCoordsCompressor()
+            + schema.getCoordsFilterList()
             + "\n- Offsets compressor: "
-            + schema.getOffsetsCompressor());
+            + schema.getOffsetsFilterList());
 
     // Print the attribute names
     System.out.println("\n\nArray schema attribute names: ");

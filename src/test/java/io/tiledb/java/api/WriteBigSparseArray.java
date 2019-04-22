@@ -25,7 +25,6 @@
 package io.tiledb.java.api;
 
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
-import static io.tiledb.java.api.CompressorType.TILEDB_GZIP;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
@@ -62,7 +61,7 @@ public class WriteBigSparseArray {
 
     // Create and add getAttributes
     Attribute a1 = new Attribute(ctx, "a1", Integer.class);
-    a1.setCompressor(new Compressor(TILEDB_GZIP, -1));
+    a1.setFilterList(new FilterList(ctx).addFilter(new GzipFilter(ctx)));
 
     // Create array schema
     ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);

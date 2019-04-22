@@ -82,7 +82,6 @@ import java.io.File;
 %pointer_functions(tiledb_layout_t, tiledb_layout_tp);
 %pointer_functions(tiledb_filter_type_t, tiledb_filter_type_tp);
 %pointer_functions(tiledb_filter_option_t, tiledb_filter_option_tp);
-%pointer_functions(tiledb_compressor_t, tiledb_compressor_tp);
 %pointer_functions(tiledb_walk_order_t, tiledb_walk_order_tp);
 %pointer_functions(tiledb_vfs_mode_t, tiledb_vfs_mode_tp);
 %pointer_functions(tiledb_encryption_type_t, tiledb_encryption_type_tp);

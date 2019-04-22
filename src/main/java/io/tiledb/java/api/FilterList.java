@@ -69,7 +69,7 @@ public class FilterList implements AutoCloseable {
       case TILEDB_FILTER_ZSTD:
         return new ZstdFilter(this.ctx, _filterpp);
       case TILEDB_FILTER_LZ4:
-        return new ZstdFilter(this.ctx, _filterpp);
+        return new LZ4Filter(this.ctx, _filterpp);
       case TILEDB_FILTER_BZIP2:
         return new Bzip2Filter(this.ctx, _filterpp);
       case TILEDB_FILTER_RLE:
