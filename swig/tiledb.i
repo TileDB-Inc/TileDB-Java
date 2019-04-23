@@ -1,25 +1,17 @@
 %module tiledb
 
 %pragma(java) jniclassimports=%{
-import static io.tiledb.libtiledb.tiledbJNILoader.TILEDB_JNI_LIBRARY_NAME;
-import static io.tiledb.libtiledb.tiledbJNILoader.findNativeLibrary;
-
-import java.io.File;
+import io.tiledb.libtiledb.NativeLibLoader;
 %}
 
 %pragma(java) jniclasscode=%{
   static {
     try {
-      File nativeLibFile = findNativeLibrary();
-      if (nativeLibFile != null) {
-        // Load extracted or specified tiledbjni native library.
-        System.load(nativeLibFile.getAbsolutePath());
-      } else {
-        // Load preinstalled tiledbjni (in the path -Djava.library.path)
-        System.loadLibrary(TILEDB_JNI_LIBRARY_NAME);
-      }
+      NativeLibLoader.loadNativeTileDB();
+      NativeLibLoader.loadNativeTileDBJNI();
     } catch (Exception e) {
-      System.err.println("Native code library failed to load. \n" + e);
+      System.err.println("Native code library failed to load");
+      e.printStackTrace();
       System.exit(1);
     }
   }

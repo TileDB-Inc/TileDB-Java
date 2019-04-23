@@ -4,7 +4,9 @@ import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.Layout.*;
 
 /**
- * public class FragmentsConsolidationTest { private Context ctx; private String arrayURI =
+ * Disabled due to: TileDB #
+ *
+ * <p>public class FragmentsConsolidationTest { private Context ctx; private String arrayURI =
  * "fragments_consolidation"; @Before public void setup() throws Exception { ctx = new Context(); if
  * (Files.exists(Paths.get(arrayURI))) { TileDBObject.remove(ctx, arrayURI); } } @After public void
  * teardown() throws Exception { if (Files.exists(Paths.get(arrayURI))) { TileDBObject.remove(ctx,

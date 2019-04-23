@@ -1,6 +1,26 @@
 package io.tiledb.libtiledb;
 
-import io.tiledb.java.api.TileDBError;
+/*--------------------------------------------------------------------------
+ *  Copyright 2011 Taro L. Saito
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *--------------------------------------------------------------------------
+ *
+ * Originally from https://github.com/xerial/snappy-java
+ * Modifications made by TileDB, Inc. 2018
+ *
+ * */
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,11 +31,37 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.UUID;
 
-public class tiledbJNILoader {
+/** Helper class that finds native libraries embedded as resources and loads them dynamically. */
+public class NativeLibLoader {
 
   private static final String UNKNOWN = "unknown";
 
-  static final String TILEDB_JNI_LIBRARY_NAME = "tiledbjni";
+  /** Path (relative to jar) where native libraries are located. */
+  private static final String LIB_RESOURCE_DIR = "/lib";
+
+  /** Finds and loads native TileDB. */
+  static void loadNativeTileDB() {
+    try {
+      loadNativeLib("tiledb", true);
+    } catch (java.lang.UnsatisfiedLinkError e) {
+      // If a native library fails to link, we fall back to depending on the system
+      // dynamic linker to satisfy the requirement. Therefore, we do nothing here
+      // (if the library is not available via the system linker, a runtime error
+      // will occur later).
+    }
+  }
+
+  /** Finds and loads native TileDB JNI. */
+  static void loadNativeTileDBJNI() {
+    try {
+      loadNativeLib("tiledbjni", true);
+    } catch (java.lang.UnsatisfiedLinkError e) {
+      // If a native library fails to link, we fall back to depending on the system
+      // dynamic linker to satisfy the requirement. Therefore, we do nothing here
+      // (if the library is not available via the system linker, a runtime error
+      // will occur later).
+    }
+  }
 
   private static boolean contentsEquals(InputStream in1, InputStream in2) throws IOException {
     if (!(in1 instanceof BufferedInputStream)) {
@@ -156,31 +202,31 @@ public class tiledbJNILoader {
   }
 
   /**
-   * Extract the specified library file to the target folder
+   * Extract the specified library file from resources to the target directory.
    *
-   * @param libFolderForCurrentOS
-   * @param libraryFileName
-   * @param targetFolder
-   * @return
+   * @param libraryDir Path of directory containing native library
+   * @param libraryName Name of native library
+   * @param targetDir Path of target directory to extract library to
+   * @param mapLibraryName If true, transform libraryName with System.mapLibraryName
+   * @return File pointing to the extracted library
    */
   private static File extractLibraryFile(
-      String libFolderForCurrentOS, String libraryFileName, String targetFolder)
-      throws TileDBError {
-    String nativeLibraryFilePath =
-        new File(libFolderForCurrentOS, libraryFileName).getAbsolutePath();
+      String libraryDir, String libraryName, String targetDir, boolean mapLibraryName) {
+    String libraryFileName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
+    String nativeLibraryFilePath = new File(libraryDir, libraryFileName).getAbsolutePath();
 
     // Attach UUID to the native library file to ensure multiple class loaders can read the
     // libsnappy-java multiple times.
     String uuid = UUID.randomUUID().toString();
-    String extractedLibFileName = String.format("tiledb-%s-%s", uuid, libraryFileName);
-    File extractedLibFile = new File(targetFolder, extractedLibFileName);
+    String extractedLibFileName = String.format("%s-%s-%s", libraryName, uuid, libraryFileName);
+    File extractedLibFile = new File(targetDir, extractedLibFileName);
 
     try {
       // Extract a native library file into the target directory
       InputStream reader = null;
       FileOutputStream writer = null;
       try {
-        reader = tiledbJNILoader.class.getResourceAsStream(nativeLibraryFilePath);
+        reader = NativeLibLoader.class.getResourceAsStream(nativeLibraryFilePath);
         try {
           writer = new FileOutputStream(extractedLibFile);
 
@@ -217,11 +263,11 @@ public class tiledbJNILoader {
         InputStream nativeIn = null;
         InputStream extractedLibIn = null;
         try {
-          nativeIn = tiledbJNILoader.class.getResourceAsStream(nativeLibraryFilePath);
+          nativeIn = NativeLibLoader.class.getResourceAsStream(nativeLibraryFilePath);
           extractedLibIn = new FileInputStream(extractedLibFile);
 
           if (!contentsEquals(nativeIn, extractedLibIn)) {
-            throw new TileDBError(
+            throw new IOException(
                 String.format("Failed to write a native library file at %s", extractedLibFile));
           }
         } finally {
@@ -234,26 +280,31 @@ public class tiledbJNILoader {
         }
       }
 
-      return new File(targetFolder, extractedLibFileName);
+      return new File(targetDir, extractedLibFileName);
     } catch (IOException e) {
       e.printStackTrace(System.err);
       return null;
     }
   }
 
-  static File findNativeLibrary() throws TileDBError {
-    // Load an OS-dependent native library inside a jar file
+  /**
+   * Finds and extracts a native library from resources to a temporary directory on the filesystem.
+   *
+   * @param libraryName Name of native library
+   * @param mapLibraryName If true, transform libraryName with System.mapLibraryName
+   * @return File pointing to the extracted library
+   */
+  private static File findNativeLibrary(String libraryName, boolean mapLibraryName) {
+    String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
+    String libDir = new File(LIB_RESOURCE_DIR, getOSClassifier()).getAbsolutePath();
+    File libPath = new File(libDir, mappedLibraryName);
 
-    String tileDBJNINativeLibraryPath = new File("/lib", getOSClassifier()).getAbsolutePath();
-    File libPath =
-        new File(tileDBJNINativeLibraryPath, System.mapLibraryName(TILEDB_JNI_LIBRARY_NAME));
     boolean hasNativeLib = hasResource(libPath.getAbsolutePath());
-
     if (!hasNativeLib) {
       return null;
     }
 
-    // Temporary folder for the native lib. Use the value java.io.tmpdir
+    // Temporary folder for the extracted native lib.
     File tempFolder = new File(System.getProperty("java.io.tmpdir"));
     if (!tempFolder.exists()) {
       boolean created = tempFolder.mkdirs();
@@ -263,13 +314,27 @@ public class tiledbJNILoader {
     }
 
     // Extract and load a native library inside the jar file
-    return extractLibraryFile(
-        tileDBJNINativeLibraryPath,
-        System.mapLibraryName(TILEDB_JNI_LIBRARY_NAME),
-        tempFolder.getAbsolutePath());
+    return extractLibraryFile(libDir, libraryName, tempFolder.getAbsolutePath(), mapLibraryName);
+  }
+
+  /**
+   * Finds and loads a native library of the given name.
+   *
+   * @param libraryName Name of native library
+   * @param mapLibraryName If true, transform libraryName with System.mapLibraryName
+   */
+  private static void loadNativeLib(String libraryName, boolean mapLibraryName) {
+    File nativeLibFile = findNativeLibrary(libraryName, mapLibraryName);
+    if (nativeLibFile != null) {
+      // Load extracted or specified native library.
+      System.load(nativeLibFile.getAbsolutePath());
+    } else {
+      // Try loading preinstalled library (in the path -Djava.library.path)
+      System.loadLibrary(libraryName);
+    }
   }
 
   private static boolean hasResource(String path) {
-    return tiledbJNILoader.class.getResource(path) != null;
+    return NativeLibLoader.class.getResource(path) != null;
   }
 }

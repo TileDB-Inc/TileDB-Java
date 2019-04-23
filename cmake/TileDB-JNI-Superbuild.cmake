@@ -34,7 +34,7 @@ include (ExternalProject)
 # The base directory for building external projects.
 set(TILEDB_JNI_EP_BASE "${CMAKE_CURRENT_BINARY_DIR}/externals")
 set(TILEDB_JNI_EP_SOURCE_DIR "${TILEDB_JNI_EP_BASE}/src")
-set(TILEDB_JNI_EP_INSTALL_PREFIX "${TILEDB_JNI_EP_BASE}/install")
+set(TILEDB_JNI_EP_INSTALL_PREFIX "${RESOURCE_INSTALL_DIR}")
 
 # Variable that will hold a list of all the external projects added
 # as a part of the superbuild.
@@ -44,6 +44,7 @@ set(TILEDB_JNI_EXTERNAL_PROJECTS)
 set(INHERITED_CMAKE_ARGS
   -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
   -DTILEDB_JNI_EP_BASE=${TILEDB_JNI_EP_BASE}
+  -DRESOURCE_INSTALL_DIR=${RESOURCE_INSTALL_DIR}
 )
 
 ############################################################
