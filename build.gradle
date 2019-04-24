@@ -83,20 +83,20 @@ task cmakeTask(type: Exec) {
 }
 
 task makeTask(type: Exec) {
-    dependsOn 'cmakeTask'
     workingDir = buildDir
     executable = 'make'
     args "-j${Runtime.getRuntime().availableProcessors()}"
 }
+makeTask.dependsOn(cmakeTask)
 
-task installTask(type: Exec) {
-    dependsOn 'makeTask'
-    workingDir = "$buildDir/tiledb_jni"
+task makeInstallTask(type: Exec) {
+    workingDir = new File(buildDir, "tiledb_jni")
     executable = 'make'
     args 'install'
 }
+makeInstallTask.dependsOn(makeTask)
 
-assemble.dependsOn(installTask)
+assemble.dependsOn(makeInstallTask)
 
 task generateJNI(type: Exec) {
     workingDir = buildDir
