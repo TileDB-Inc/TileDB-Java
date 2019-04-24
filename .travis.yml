@@ -2,7 +2,7 @@ dist: xenial
 
 language: java
 jdk:
-  - oraclejdk11
+  - openjdk11
 
 notifications:
   email: false
@@ -33,7 +33,8 @@ matrix:
 
 install:
   # Build and install extension module
-  - ./gradlew assemble test
+  - sudo apt-get install libpthread-stubs0-dev
+  - ./gradlew assemble
 
 script:
   - ./gradlew checkFormat

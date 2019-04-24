@@ -1,25 +1,17 @@
 %module tiledb
 
 %pragma(java) jniclassimports=%{
-import static io.tiledb.libtiledb.tiledbJNILoader.TILEDB_JNI_LIBRARY_NAME;
-import static io.tiledb.libtiledb.tiledbJNILoader.findNativeLibrary;
-
-import java.io.File;
+import io.tiledb.libtiledb.NativeLibLoader;
 %}
 
 %pragma(java) jniclasscode=%{
   static {
     try {
-      File nativeLibFile = findNativeLibrary();
-      if (nativeLibFile != null) {
-        // Load extracted or specified tiledbjni native library.
-        System.load(nativeLibFile.getAbsolutePath());
-      } else {
-        // Load preinstalled tiledbjni (in the path -Djava.library.path)
-        System.loadLibrary(TILEDB_JNI_LIBRARY_NAME);
-      }
+      NativeLibLoader.loadNativeTileDB();
+      NativeLibLoader.loadNativeTileDBJNI();
     } catch (Exception e) {
-      System.err.println("Native code library failed to load. \n" + e);
+      System.err.println("Native code library failed to load");
+      e.printStackTrace();
       System.exit(1);
     }
   }
@@ -82,7 +74,6 @@ import java.io.File;
 %pointer_functions(tiledb_layout_t, tiledb_layout_tp);
 %pointer_functions(tiledb_filter_type_t, tiledb_filter_type_tp);
 %pointer_functions(tiledb_filter_option_t, tiledb_filter_option_tp);
-%pointer_functions(tiledb_compressor_t, tiledb_compressor_tp);
 %pointer_functions(tiledb_walk_order_t, tiledb_walk_order_tp);
 %pointer_functions(tiledb_vfs_mode_t, tiledb_vfs_mode_tp);
 %pointer_functions(tiledb_encryption_type_t, tiledb_encryption_type_tp);

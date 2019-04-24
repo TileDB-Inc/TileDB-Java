@@ -25,6 +25,7 @@
 package io.tiledb.java.api;
 
 import java.io.File;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -33,8 +34,6 @@ public class PerformanceTestDenseArray {
 
   private Context ctx;
   private int max;
-  int[] d;
-  private NativeArray id_data;
 
   @Rule public TemporaryFolder temp = new TemporaryFolder();
 
@@ -44,6 +43,9 @@ public class PerformanceTestDenseArray {
     for (max = 1000; max <= 100000000; max *= 10) {
       double sumRead = 0, sumWrite = 0;
       for (int i = 0; i <= iterations; i++) {
+        if (ctx != null) {
+          ctx.close();
+        }
         ctx = new Context();
         File arrayDir = temp.newFolder();
         String arrayURI = arrayDir.toString();
@@ -83,43 +85,44 @@ public class PerformanceTestDenseArray {
   }
 
   public void create(String arrayURI) throws Exception {
-    Dimension<Integer> d1 =
-        new Dimension<Integer>(
-            ctx, "d1", Integer.class, new Pair<Integer, Integer>(1, max), max / 10);
-    Domain domain = new Domain(ctx);
-    domain.addDimension(d1);
-    Attribute id = new Attribute(ctx, "id", Integer.class);
-    ArraySchema schema = new ArraySchema(ctx, ArrayType.TILEDB_DENSE);
-    schema.setDomain(domain);
-    schema.addAttribute(id);
-    Array.create(arrayURI, schema);
+    try (Dimension<Integer> d1 =
+            new Dimension<Integer>(
+                ctx, "d1", Integer.class, new Pair<Integer, Integer>(1, max), max / 10);
+        ArraySchema schema = new ArraySchema(ctx, ArrayType.TILEDB_DENSE);
+        Domain domain = new Domain(ctx);
+        Attribute id = new Attribute(ctx, "id", Integer.class)) {
+      domain.addDimension(d1);
+      schema.setDomain(domain);
+      schema.addAttribute(id);
+      Array.create(arrayURI, schema);
+    }
   }
 
   public void write(String arrayURI, int offset) throws Exception {
-    Array array = new Array(ctx, arrayURI, QueryType.TILEDB_WRITE);
-    Query query = new Query(array, QueryType.TILEDB_WRITE);
-    d = new int[max / 10];
-    for (int k = offset; k < offset + max / 10; k++) {
-      d[k - offset] = k;
+    try (Array array = new Array(ctx, arrayURI, QueryType.TILEDB_WRITE);
+        Query query = new Query(array, QueryType.TILEDB_WRITE)) {
+      int[] d = new int[max / 10];
+      for (int k = offset; k < offset + max / 10; k++) {
+        d[k - offset] = k;
+      }
+      try (NativeArray id_data = new NativeArray(ctx, d, Integer.class);
+          NativeArray sub =
+              new NativeArray(ctx, new int[] {offset, offset - 1 + max / 10}, Integer.class)) {
+        query.setBuffer("id", id_data);
+        query.setSubarray(sub);
+        query.submit();
+      }
     }
-    id_data = new NativeArray(ctx, d, Integer.class);
-    query.setBuffer("id", id_data);
-    query.setSubarray(
-        new NativeArray(ctx, new int[] {offset, offset - 1 + max / 10}, Integer.class));
-    query.submit();
-    query.close();
-    array.close();
   }
 
   private void read(String arrayURI) throws Exception {
-    Array array = new Array(ctx, arrayURI);
-    // Create query
-    Query query = new Query(array, QueryType.TILEDB_READ);
-    query.setBuffer("id", new NativeArray(ctx, (int) max, Integer.class));
-    query.submit();
-    int[] id_buff = (int[]) query.getBuffer("id");
-    int test = id_buff[100];
-    query.close();
-    array.close();
+    try (Array array = new Array(ctx, arrayURI);
+        Query query = new Query(array, QueryType.TILEDB_READ)) {
+      query.setBuffer("id", new NativeArray(ctx, (int) max, Integer.class));
+      query.submit();
+      int[] id_buff = (int[]) query.getBuffer("id");
+      int test = id_buff[100];
+      Assert.assertTrue(test > 0);
+    }
   }
 }

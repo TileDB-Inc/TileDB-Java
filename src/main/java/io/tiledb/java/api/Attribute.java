@@ -50,7 +50,7 @@ import io.tiledb.libtiledb.*;
  * Attribute a3 = new Attribute(ctx,"a3",Float.class);
  *
  * // Change compression scheme
- * a1.setCompressor(new Compressor(TILEDB_BLOSC_LZ4, -1));
+ * a1.setFilterList(new FilterList(ctx).addFilter(new LZ4Filter(ctx)));
  * a2.setCellValNum(TILEDB_VAR_NUM); // Variable sized character attribute (String)
  * a3.setCellValNum(2); // 2 floats stored per cell
  *
@@ -225,45 +225,6 @@ public class Attribute implements AutoCloseable {
    */
   public Attribute setCellVar() throws TileDBError {
     return setCellValNum(TILEDB_VAR_NUM);
-  }
-
-  /**
-   * @return The Attribute compressor.
-   * @exception TileDBError A TileDB exception
-   */
-  public Compressor getCompressor() throws TileDBError {
-    SWIGTYPE_p_tiledb_compressor_t compressor = tiledb.new_tiledb_compressor_tp();
-    SWIGTYPE_p_int level = tiledb.new_intp();
-    Compressor cmp;
-    try {
-      ctx.handleError(
-          tiledb.tiledb_attribute_get_compressor(ctx.getCtxp(), attributep, compressor, level));
-      cmp =
-          new Compressor(
-              CompressorType.fromSwigEnum(tiledb.tiledb_compressor_tp_value(compressor)),
-              tiledb.intp_value(level));
-
-    } finally {
-      tiledb.delete_intp(level);
-      tiledb.delete_tiledb_compressor_tp(compressor);
-    }
-    return cmp;
-  }
-
-  /**
-   * Sets the Attribute compressor.
-   *
-   * @param compressor The Compressor object to be used.
-   * @exception TileDBError A TileDB exception
-   */
-  public Attribute setCompressor(Compressor compressor) throws TileDBError {
-    ctx.handleError(
-        tiledb.tiledb_attribute_set_compressor(
-            ctx.getCtxp(),
-            attributep,
-            compressor.getCompressor().toSwigEnum(),
-            compressor.getLevel()));
-    return this;
   }
 
   /**

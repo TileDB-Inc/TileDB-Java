@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'io.tiledb'
-version '0.1.3'
+version '0.1.5'
 
 repositories {
     jcenter()
@@ -56,7 +56,7 @@ def String getProjectProperty(String propertyName)
 
 task cmakeTask(type: Exec) {
     workingDir = buildDir
-    executable = "cmake"
+    executable = 'cmake'
     List<String> buildArgs = new ArrayList<String>()
     buildArgs.add("..")
     String tiledb_git_repo = getProjectProperty('TILEDB_GIT_REPOSITORY')
@@ -84,20 +84,27 @@ task cmakeTask(type: Exec) {
 
 task makeTask(type: Exec) {
     workingDir = buildDir
-    executable = "make"
-    args "-j2"
+    executable = 'make'
+    args "-j${Runtime.getRuntime().availableProcessors()}"
 }
+makeTask.dependsOn(cmakeTask)
+
+task makeInstallTask(type: Exec) {
+    workingDir = new File(buildDir, "tiledb_jni")
+    executable = 'make'
+    args 'install'
+}
+makeInstallTask.dependsOn(makeTask)
+
+assemble.dependsOn(makeInstallTask)
 
 task generateJNI(type: Exec) {
     workingDir = buildDir
     executable = "../generate_tiledb_jni"
 }
 
-makeTask.dependsOn(cmakeTask)
-assemble.dependsOn(makeTask)
-
 test {
-    systemProperty "java.library.path", new File(buildDir, "tiledb_jni")
+    systemProperty "java.library.path", "$buildDir/install/lib/"
     testLogging {
         showStandardStreams = true
     }
@@ -121,7 +128,8 @@ task checkFormat(type: VerifyGoogleJavaFormat) {
 
 jar {
     into(new File('lib', osdetector.classifier).toString()) {
-        from files(new File(new File(buildDir, "tiledb_jni"), System.mapLibraryName("tiledbjni")))
+        from file("$buildDir/install/lib/${System.mapLibraryName("tiledb")}")
+        from file("$buildDir/install/lib/${System.mapLibraryName("tiledbjni")}")
     }
 }
 

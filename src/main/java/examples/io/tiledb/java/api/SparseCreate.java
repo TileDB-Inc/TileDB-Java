@@ -30,7 +30,6 @@
 package examples.io.tiledb.java.api;
 
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
-import static io.tiledb.java.api.CompressorType.*;
 import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 
@@ -56,9 +55,9 @@ public class SparseCreate {
     a2.setCellValNum(TILEDB_VAR_NUM);
     Attribute a3 = new Attribute(ctx, "a3", Float.class);
     a3.setCellValNum(2);
-    a1.setCompressor(new Compressor(TILEDB_LZ4, -1));
-    a2.setCompressor(new Compressor(TILEDB_GZIP, -1));
-    a3.setCompressor(new Compressor(TILEDB_ZSTD, -1));
+    a1.setFilterList(new FilterList(ctx).addFilter(new LZ4Filter(ctx)));
+    a2.setFilterList(new FilterList(ctx).addFilter(new GzipFilter(ctx)));
+    a3.setFilterList(new FilterList(ctx).addFilter(new ZstdFilter(ctx)));
 
     // Create array schema
     ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);

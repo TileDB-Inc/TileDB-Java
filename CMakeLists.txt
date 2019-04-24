@@ -46,7 +46,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # Don't use GNU extensions
 
 option(TILEDB_VERBOSE "Prints TileDB errors with verbosity" OFF)
-option(TILEDB_S3 "Enables S3/minio support using aws-cpp-sdk" OFF)
+option(TILEDB_S3 "Enables S3 support using aws-cpp-sdk" OFF)
 option(TILEDB_HDFS "Enables HDFS support using the official Hadoop JNI bindings" OFF)
 
 ############################################################
@@ -56,9 +56,14 @@ option(TILEDB_HDFS "Enables HDFS support using the official Hadoop JNI bindings"
 # Perform superbuild config and exit.
 if (TILEDB_JNI_SUPERBUILD)
   project(TileDB-JNI-Superbuild)
+
+  # Path to install everything to, for embedding in the jar.
+  set(RESOURCE_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/install")
+
   message(STATUS "Starting TileDB-JNI superbuild.")
   include("cmake/TileDB-JNI-Superbuild.cmake")
   message(STATUS "Install prefix is ${CMAKE_INSTALL_PREFIX}")
+  message(STATUS "Resource install path is ${RESOURCE_INSTALL_DIR}")
   # Stop processing this file here.
   return()
 endif()
@@ -68,7 +73,7 @@ message(STATUS "Starting TileDB-JNI regular build.")
 
 # Paths to locate the installed external projects.
 set(TILEDB_JNI_EP_SOURCE_DIR "${TILEDB_JNI_EP_BASE}/src")
-set(TILEDB_JNI_EP_INSTALL_PREFIX "${TILEDB_JNI_EP_BASE}/install")
+set(TILEDB_JNI_EP_INSTALL_PREFIX "${RESOURCE_INSTALL_DIR}")
 
 ############################################################
 # TileDB-JNI shared library target
@@ -106,3 +111,18 @@ else()
       TileDB::tiledb_shared
   )
 endif()
+
+# Set rpath to be relative to the .so.
+if (APPLE)
+  set_target_properties(tiledbjni PROPERTIES INSTALL_RPATH "@loader_path/")
+else()
+  set_target_properties(tiledbjni PROPERTIES INSTALL_RPATH "$ORIGIN/")
+endif()
+
+
+include(GNUInstallDirs)
+
+install(
+  TARGETS tiledbjni
+  LIBRARY DESTINATION "${RESOURCE_INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}"
+)
