@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'io.tiledb'
-version '0.1.5'
+version '0.1.5-SNAPSHOT'
 
 repositories {
     jcenter()
@@ -110,41 +110,12 @@ test {
     }
 }
 
-import com.github.sherter.googlejavaformatgradleplugin.GoogleJavaFormat
-import com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat
-
-task format(type: GoogleJavaFormat) {
-    source = sourceSets*.allJava
-    source 'swig/customCode'
-    include '**/*.java'
-}
-
-task checkFormat(type: VerifyGoogleJavaFormat) {
-    source = sourceSets*.allJava
-    source 'swig/customCode'
-    include '**/*.java'
-    ignoreFailures false
-}
-
 jar {
     into(new File('lib', osdetector.classifier).toString()) {
         from file("$buildDir/install/lib/${System.mapLibraryName("tiledb")}")
         from file("$buildDir/install/lib/${System.mapLibraryName("tiledbjni")}")
-    }
-}
-
-import org.gradle.plugins.signing.Sign
-gradle.taskGraph.whenReady { taskGraph ->
-    if (taskGraph.allTasks.any { it instanceof Sign }) {
-        allprojects { ext."signing.keyId" = System.getenv('GPG_KEY_ID') }
-        allprojects { ext."signing.secretKeyRingFile" = System.getenv('GPG_KEY_LOCATION') }
-        allprojects { ext."signing.password" = System.getenv('GPG_PASSPHRASE') }
-    }
-    // Do not sign archives by default (a local build without gpg keyring should succeed)
-    if (taskGraph.allTasks.any { it.name == 'build' || it.name == 'assemble' }) {
-        tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' }.each { task ->
-            task.enabled = false
-        }
+        from file("$buildDir/install/lib64/${System.mapLibraryName("tiledb")}")
+        from file("$buildDir/install/lib64/${System.mapLibraryName("tiledbjni")}")
     }
 }
 
@@ -162,6 +133,21 @@ artifacts {
     archives jar
     archives sourceJar
     archives javadocJar
+}
+
+import org.gradle.plugins.signing.Sign
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.allTasks.any { it instanceof Sign }) {
+        allprojects { ext."signing.keyId" = System.getenv('GPG_KEY_ID') }
+        allprojects { ext."signing.secretKeyRingFile" = System.getenv('GPG_KEY_LOCATION') }
+        allprojects { ext."signing.password" = System.getenv('GPG_PASSPHRASE') }
+    }
+    // Do not sign archives by default (a local build without gpg keyring should succeed)
+    if (taskGraph.allTasks.any { it.name == 'build' || it.name == 'assemble' }) {
+        tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' }.each { task ->
+            task.enabled = false
+        }
+    }
 }
 
 publishing {
@@ -214,4 +200,20 @@ publishing {
 signing {
     sign publishing.publications.mavenJava
     sign configurations.archives
+}
+
+import com.github.sherter.googlejavaformatgradleplugin.GoogleJavaFormat
+import com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat
+
+task format(type: GoogleJavaFormat) {
+    source = sourceSets*.allJava
+    source 'swig/customCode'
+    include '**/*.java'
+}
+
+task checkFormat(type: VerifyGoogleJavaFormat) {
+    source = sourceSets*.allJava
+    source 'swig/customCode'
+    include '**/*.java'
+    ignoreFailures false
 }
