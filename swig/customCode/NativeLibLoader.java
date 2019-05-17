@@ -216,7 +216,7 @@ public class NativeLibLoader {
     String nativeLibraryFilePath = new File(libraryDir, libraryFileName).getAbsolutePath();
 
     // Attach UUID to the native library file to ensure multiple class loaders can read the
-    // libsnappy-java multiple times.
+    // native lib multiple times.
     String uuid = UUID.randomUUID().toString();
     String extractedLibFileName = String.format("%s-%s-%s", libraryName, uuid, libraryFileName);
     File extractedLibFile = new File(targetDir, extractedLibFileName);

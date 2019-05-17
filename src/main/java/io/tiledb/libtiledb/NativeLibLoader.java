@@ -303,6 +303,7 @@ public class NativeLibLoader {
     if (!hasNativeLib) {
       return null;
     }
+
     // Temporary folder for the extracted native lib.
     File tempFolder = new File(System.getProperty("java.io.tmpdir"));
     if (!tempFolder.exists()) {
@@ -311,6 +312,7 @@ public class NativeLibLoader {
         // if created == false, it will fail eventually in the later part
       }
     }
+
     // Extract and load a native library inside the jar file
     return extractLibraryFile(libDir, libraryName, tempFolder.getAbsolutePath(), mapLibraryName);
   }
