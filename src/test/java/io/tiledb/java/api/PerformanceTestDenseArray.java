@@ -25,6 +25,7 @@
 package io.tiledb.java.api;
 
 import java.io.File;
+import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -117,7 +118,12 @@ public class PerformanceTestDenseArray {
 
   private void read(String arrayURI) throws Exception {
     try (Array array = new Array(ctx, arrayURI);
-        Query query = new Query(array, QueryType.TILEDB_READ)) {
+        Query query = new Query(array, QueryType.TILEDB_READ);
+        NativeArray subarray = new NativeArray(ctx, 2, Datatype.TILEDB_INT32)) {
+      HashMap<String, Pair> nonempty = array.nonEmptyDomain();
+      subarray.setItem(0, nonempty.get("d1").getFirst());
+      subarray.setItem(1, nonempty.get("d1").getSecond());
+      query.setSubarray(subarray);
       query.setBuffer("id", new NativeArray(ctx, (int) max, Integer.class));
       query.submit();
       int[] id_buff = (int[]) query.getBuffer("id");

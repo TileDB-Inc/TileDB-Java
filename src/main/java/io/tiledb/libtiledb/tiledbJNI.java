@@ -635,6 +635,54 @@ public class tiledbJNI {
 
   public static final native long[] uint64ArrayGet(long jarg1, int jarg2, int jarg3);
 
+  public static final native int tiledb_query_type_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_query_type_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_object_type_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_object_type_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_filesystem_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_filesystem_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_datatype_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_datatype_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_array_type_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_array_type_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_layout_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_layout_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_filter_type_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_filter_type_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_filter_option_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_filter_option_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_encryption_type_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_encryption_type_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_query_status_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_query_status_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_walk_order_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_walk_order_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_vfs_mode_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_vfs_mode_from_str(String jarg1, long jarg2);
+
   public static final native String tiledb_coords();
 
   public static final native long tiledb_var_num();
@@ -652,6 +700,35 @@ public class tiledbJNI {
   public static final native int tiledb_error_message(long jarg1, long jarg2);
 
   public static final native void tiledb_error_free(long jarg1);
+
+  public static final native int tiledb_buffer_alloc(long jarg1, long jarg2);
+
+  public static final native void tiledb_buffer_free(long jarg1);
+
+  public static final native int tiledb_buffer_set_type(long jarg1, long jarg2, int jarg3);
+
+  public static final native int tiledb_buffer_get_type(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_buffer_get_data(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_buffer_set_data(
+      long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4);
+
+  public static final native int tiledb_buffer_list_alloc(long jarg1, long jarg2);
+
+  public static final native void tiledb_buffer_list_free(long jarg1);
+
+  public static final native int tiledb_buffer_list_get_num_buffers(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_buffer_list_get_buffer(
+      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4);
+
+  public static final native int tiledb_buffer_list_get_total_size(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_buffer_list_flatten(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_config_alloc(long jarg1, long jarg2);
 
@@ -887,6 +964,29 @@ public class tiledbJNI {
   public static final native int tiledb_query_get_status(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_query_get_type(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_query_get_layout(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_query_add_range(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_query_get_range_num(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_query_get_range(
+      long jarg1,
+      long jarg2,
+      long jarg3,
+      java.math.BigInteger jarg4,
+      long jarg5,
+      long jarg6,
+      long jarg7);
+
+  public static final native int tiledb_query_get_est_result_size(
+      long jarg1, long jarg2, String jarg3, long jarg4);
+
+  public static final native int tiledb_query_get_est_result_size_var(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
   public static final native int tiledb_array_alloc(long jarg1, String jarg2, long jarg3);
 
