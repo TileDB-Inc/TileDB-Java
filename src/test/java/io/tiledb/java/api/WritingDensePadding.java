@@ -93,6 +93,7 @@ public class WritingDensePadding {
     // Create query
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
+    query.setSubarray(subarray);
     query.setBuffer("a", new NativeArray(ctx, 16, Integer.class));
 
     // Submit query

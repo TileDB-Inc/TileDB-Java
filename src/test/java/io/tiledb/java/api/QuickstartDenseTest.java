@@ -266,6 +266,7 @@ public class QuickstartDenseTest {
     // Create query
     Query query = new Query(my_dense_array, TILEDB_READ);
     query.setLayout(TILEDB_GLOBAL_ORDER);
+    query.setSubarray(subarray);
     query.setBuffer(
         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
     query.setBuffer(
