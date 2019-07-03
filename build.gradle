@@ -64,6 +64,7 @@ task cmakeTask(type: Exec) {
     String tiledb_verbose = getProjectProperty('TILEDB_VERBOSE')
     String tiledb_s3 = getProjectProperty('TILEDB_S3')
     String tiledb_hdfs = getProjectProperty('TILEDB_HDFS')
+    String tiledb_serialization = getProjectProperty('TILEDB_SERIALIZATION')
     if (tiledb_git_repo != null) {
 	    buildArgs.add("-DTILEDB_GIT_REPOSITORY=" + tiledb_git_repo)
     }
@@ -78,6 +79,9 @@ task cmakeTask(type: Exec) {
     }
     if (tiledb_hdfs != null) {
         buildArgs.add("-DTILEDB_HDFS=" + tiledb_hdfs)
+    }
+    if (tiledb_serialization != null) {
+        buildArgs.add("-DTILEDB_SERIALIZATION=" + tiledb_serialization)
     }
     args buildArgs
 }

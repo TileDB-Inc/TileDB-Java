@@ -30,6 +30,7 @@ matrix:
         CPPFLAGS="-march=x86-64"
         PUBLISH=1
         ORG_GRADLE_PROJECT_TILEDB_S3="ON"
+        ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION="ON"
 
 install:
   # Build and install extension module
