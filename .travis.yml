@@ -41,18 +41,19 @@ script:
   - ./gradlew checkFormat
   - ./gradlew test
 
-before_deploy:
-  - mkdir .travis
-  - echo "${GPG_SECRET_KEYS_ENC}" | base64 --decode > ${ENCRYPTED_GPG_KEY_LOCATION}
-  - openssl aes-256-cbc -K $encrypted_a2869fb015d7_key -iv $encrypted_a2869fb015d7_iv -in $ENCRYPTED_GPG_KEY_LOCATION -out $GPG_KEY_LOCATION -d
-  - ./gradlew properties -q | grep "version:" | awk '{print $2}'
+# Upload to sonatype oss for master snapshots
+after_success:
   - export PROJECT_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
-  # Upload to sonatype oss so it can make its way to maven central
-  - ./gradlew publishMavenJavaPublicationToMavenRepository
-  - ./gradlew closeAndReleaseRepository
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" && "$PUBLISH" == "1" && $(echo "${PROJECT_VERSION}" | grep "SNAPSHOT") ]]; then
+       source ci/upload_to_maven.sh;
+    fi
+
+before_deploy:
+  - source ci/upload_to_maven.sh
 
 deploy:
   provider: releases
+  overwrite: true
   api_key:
     secure: k05zguWwu4I7cGdSwysTCqM3gkEf31s5DWdUuDHvYX7W47biugdSfN4b31Rf2Gimsk3fK7AhV5Givfo30bl4Tv8FCgDgSz4rRR2jrdNkorzPWeYKFyexBnRRY3b4ETWdgNWeGlvRKppDtVlTOSpD4iE/xiyZs4cSiCsGSpHIZ8gw8VjtWnftTd3e0a8oFZ0FmPoV1FRkAslDs4I/KHDwVRXrpFlz3hwqn+SLyxjz4PeASH9fIJJ8ah/QmDPBEnl1zhWzm+tw6nEt5HozGI9FgkwvWCvMGjUSnyxeB/DiG0/rZYO6L5Tw8oBNjnTaJrS4FivxZ9FYcxZ86mCMehh8k03mmPKO/ijW7eRF424aRl/UvpyspvvDjq68omM+uxqBHCn2d+f2NAsosjlAf78gnHHss46sygj200/NbnzQ+HQWI2WhsGem1QO6e1EEiAz8dqln+XL6YZsQi4nWK7XGaT0uyPDUXmP7qasPLkBuDr36CeYAsqcDIEbjtHRIksHBElRX56ZxSygIGcb3Ok5gnmDS5SGY48i/OQSOhD3z1kr6yRGZehZGzNhRIhX70pLeZHuWNLzkJY1krZE1VtqFoxcylamtVpznbsC8ntDJPIyFaMAK+Lg3PA23DomyTQnO3WnkNK2RjKYJKX94ViMgmWeqbvXb/WSOKOOe4LnlXGw=
   skip_cleanup: true
