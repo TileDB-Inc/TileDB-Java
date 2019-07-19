@@ -139,20 +139,6 @@ artifacts {
     archives javadocJar
 }
 
-import org.gradle.plugins.signing.Sign
-gradle.taskGraph.whenReady { taskGraph ->
-    if (taskGraph.allTasks.any { it instanceof Sign }) {
-        allprojects { ext."signing.keyId" = System.getenv('GPG_KEY_ID') }
-        allprojects { ext."signing.secretKeyRingFile" = System.getenv('GPG_KEY_LOCATION') }
-        allprojects { ext."signing.password" = System.getenv('GPG_PASSPHRASE') }
-    }
-    // Do not sign archives by default (a local build without gpg keyring should succeed)
-    if (taskGraph.allTasks.any { it.name == 'build' || it.name == 'assemble' }) {
-        tasks.findAll { it.name == 'signArchives' || it.name == 'signDocsJar' || it.name == 'signTestJar' }.each { task ->
-            task.enabled = false
-        }
-    }
-}
 
 publishing {
     publications {
@@ -199,6 +185,14 @@ publishing {
             }
         }
     }
+}
+
+ext.isReleaseVersion = getProjectProperty('TILEDB_JAVA_RELEASE').toBoolean()
+tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
+    allprojects { ext."signing.keyId" = System.getenv('GPG_KEY_ID') }
+    allprojects { ext."signing.secretKeyRingFile" = System.getenv('GPG_KEY_LOCATION') }
+    allprojects { ext."signing.password" = System.getenv('GPG_PASSPHRASE') }
 }
 
 signing {
