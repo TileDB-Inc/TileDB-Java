@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 echo "Starting upload to maven"
+echo "ENCRYPTED_GPG_KEY_LOCATION=${ENCRYPTED_GPG_KEY_LOCATION}"
 mkdir .travis
 echo "${GPG_SECRET_KEYS_ENC}" | base64 --decode > ${ENCRYPTED_GPG_KEY_LOCATION}
 openssl aes-256-cbc -K $encrypted_a2869fb015d7_key -iv $encrypted_a2869fb015d7_iv -in $ENCRYPTED_GPG_KEY_LOCATION -out $GPG_KEY_LOCATION -d
