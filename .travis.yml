@@ -44,7 +44,7 @@ script:
 # Upload to sonatype oss for master snapshots
 after_success:
   - export PROJECT_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
-  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" && "$PUBLISH" == "1" && $(echo "${PROJECT_VERSION}" | grep "SNAPSHOT") ]]; then
+  - if [[ "$TRAVIS_BRANCH" == "ss/simplify-signing-test" && "$TRAVIS_PULL_REQUEST" == "false" && "$PUBLISH" == "1" && $(echo "${PROJECT_VERSION}" | grep "SNAPSHOT") ]]; then
        source ci/upload_to_maven.sh;
     fi
 
