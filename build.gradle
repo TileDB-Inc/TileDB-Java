@@ -109,6 +109,7 @@ task generateJNI(type: Exec) {
 
 test {
     systemProperty "java.library.path", "$buildDir/install/lib/"
+    systemProperty "java.library.path", "$buildDir/install/lib64/"
     testLogging {
         showStandardStreams = true
     }

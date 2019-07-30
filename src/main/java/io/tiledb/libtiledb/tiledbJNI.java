@@ -21,12 +21,11 @@ public class tiledbJNI {
     }
   }
 
-  public static final native int tiledb_query_submit_async_java(
-      long jarg1,
-      SWIGTYPE_p_tiledb_ctx_t jarg1_,
-      long jarg2,
-      SWIGTYPE_p_tiledb_query_t jarg2_,
-      Object jarg3);
+  // ------ the methods listed below are custom cxx JNI methods in
+  // src/main/c/custom/tiledb_custom.cxx -----------------
+  public static final native long java_callback();
+
+  public static final native long java_path_callback();
 
   public static final native int tiledb_object_walk_java(
       long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, int jarg3, Object jarg4);
@@ -34,9 +33,19 @@ public class tiledbJNI {
   public static final native int tiledb_object_ls_java(
       long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, Object jarg3);
 
-  public static final native long java_path_callback();
+  public static final native int tiledb_query_submit_async_java(
+      long jarg1,
+      SWIGTYPE_p_tiledb_ctx_t jarg1_,
+      long jarg2,
+      SWIGTYPE_p_tiledb_query_t jarg2_,
+      Object jarg3);
 
-  public static final native long java_callback();
+  public static final native int tiledb_query_set_direct_bytebuffer(
+      long jarg1, long jarg2, Object jarg3, long jarg4);
+
+  public static final native int tiledb_query_set_direct_bytebuffer_var(
+      long jarg1, long jarg2, Object jarg3, long jarg4, Object jarg5, long jarg6);
+  // -------------------------------------------------------------------------------------------------------------------
 
   public static final native long new_int32_tArray(int jarg1);
 

@@ -1102,7 +1102,6 @@ extern "C" {
     return jresult;
   }
 
-
   JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1object_1ls_1java(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jobject jarg3) {
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
@@ -1128,6 +1127,60 @@ extern "C" {
     return jresult;
   }
 
+  JNIEXPORT jint JNICALL Java_io_tiledb_tiledbJNI_tiledb_1query_1set_1direct_1bytebuffer(
+    JNIEnv* env, jclass self, jlong ctx_address, jlong query_address, jstring attribute, jobject buffer) {
+    (void) self;
+    if (ctx_address == 0 || query_address == 0 || buffer == NULL) {
+        // TODO: need to handle the null object case better, but for now don't segfault
+        return -1;
+    }
+    tiledb_ctx_t* ctx_ptr = (tiledb_ctx_t*) ctx_address;
+    tiledb_query_t* query_ptr = (tiledb_query_t*) query_address;
+    // attribute buffer sizes
+    jlong buffer_size = env->GetDirectBufferCapacity(buffer);
+    if (buffer_size == -1) {
+      return -1;
+    }
+    uint64_t c_buffer_size = (uint64_t) buffer_size;
+    void* c_buffer = env->GetDirectBufferAddress(buffer);
+    const char* c_attribute = env->GetStringUTFChars(attribute, 0);
+    int rc = tiledb_query_set_buffer(
+      ctx_ptr, query_ptr, c_attribute, c_buffer, &c_buffer_size);
+    env->ReleaseStringUTFChars(attribute, c_attribute);
+    return rc;
+  }
+
+  JNIEXPORT jint JNICALL Java_io_tiledb_tiledbJNI_tiledb_1query_1set_1direct_1bytebuffer_1var(
+    JNIEnv* env, jclass self, jlong ctx_address, jlong query_address, jstring attribute, jobject offsets, jobject buffer) {
+      (void) self;
+      if (query_address == 0 || offsets == NULL || buffer == NULL) {
+        // TODO: need to handle the null object case better, but for now don't segfault
+        return -1;
+      }
+      tiledb_ctx_t* ctx_ptr = (tiledb_ctx_t*) ctx_address;
+      tiledb_query_t* query_ptr = (tiledb_query_t*) query_address;
+      uint64_t c_offsets_size = 0;
+      uint64_t* c_offsets = NULL;
+      // offsets are not null for var-len attributes
+      jlong offsets_size = env->GetDirectBufferCapacity(offsets);
+      if (offsets_size == -1) {
+        return -1;
+      }
+      c_offsets_size = (uint64_t) offsets_size;
+      c_offsets = (uint64_t*) env->GetDirectBufferAddress(offsets);
+      // attribute buffer sizes
+      jlong buffer_size = env->GetDirectBufferCapacity(buffer);
+      if (buffer_size == -1) {
+        return -1;
+      }
+      uint64_t c_buffer_size = (uint64_t) buffer_size;
+      void* c_buffer = env->GetDirectBufferAddress(buffer);
+      const char* c_attribute = env->GetStringUTFChars(attribute, 0);
+      int rc = tiledb_query_set_buffer_var(
+                 ctx_ptr, query_ptr, c_attribute, c_offsets, &c_offsets_size, c_buffer, &c_buffer_size);
+      env->ReleaseStringUTFChars(attribute, c_attribute);
+      return rc;
+    }
 
 #ifdef __cplusplus
 }
