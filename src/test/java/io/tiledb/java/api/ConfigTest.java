@@ -24,6 +24,8 @@
 
 package io.tiledb.java.api;
 
+import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -35,36 +37,88 @@ public class ConfigTest {
   @Rule public TemporaryFolder temp = new TemporaryFolder();
 
   @Test
-  public void test() throws Exception {
-    Config config = new Config();
-
-    // Print the default config parameters
-    Map<String, String> defaultParams = config.parameters();
-    Assert.assertTrue(defaultParams.size() > 0);
-
-    // Get only the S3 settings
-    for (Map.Entry<String, String> p : config.parameters("vfs.s3").entrySet()) {
-      Assert.assertTrue(defaultParams.containsKey("vfs.s3" + p.getKey()));
+  public void testConfig() throws Exception {
+    try (Config config = new Config()) {
+      // Print the default config parameters
+      Map<String, String> defaultParams = config.parameters();
+      Assert.assertTrue(defaultParams.size() > 0);
     }
+  }
 
+  @Test
+  public void testConfigMapConstructor() throws Exception {
+    HashMap<String, String> settings = new HashMap<>();
     // Set values
-    config.set("vfs.s3.connect_timeout_ms", "5000");
-    config.set("vfs.s3.endpoint_override", "localhost:8888");
+    settings.put("vfs.s3.connect_timeout_ms", "5000");
+    settings.put("vfs.s3.endpoint_override", "localhost:8888");
+    try (Config config = new Config(settings)) {
+      Assert.assertEquals(config.get("vfs.s3.connect_timeout_ms"), "5000");
+      Assert.assertEquals(config.get("vfs.s3.endpoint_override"), "localhost:8888");
+    }
+  }
 
-    // Get values
-    Assert.assertEquals(config.get("vfs.s3.connect_timeout_ms"), "5000");
-    Assert.assertEquals(config.get("vfs.s3.endpoint_override"), "localhost:8888");
+  @Test
+  public void testConfigParamterFiltering() throws Exception {
+    // Get only the S3 settings
+    try (Config config = new Config()) {
+      Map<String, String> defaultParams = config.parameters();
+      for (Map.Entry<String, String> p : config.parameters("vfs.s3").entrySet()) {
+        Assert.assertTrue(defaultParams.containsKey("vfs.s3" + p.getKey()));
+      }
+    }
+  }
 
+  @Test
+  public void testConfigSetGetValues() throws Exception {
+    try (Config config = new Config()) {
+      // Set values
+      config.set("vfs.s3.connect_timeout_ms", "5000");
+      config.set("vfs.s3.endpoint_override", "localhost:8888");
+
+      // Get values
+      Assert.assertEquals(config.get("vfs.s3.connect_timeout_ms"), "5000");
+      Assert.assertEquals(config.get("vfs.s3.endpoint_override"), "localhost:8888");
+    }
+  }
+
+  @Test
+  public void testCtxConfig() throws Exception {
     // Assign a config object to a context and VFS
-    Context ctx = new Context(config);
-    Config ctxConfig = ctx.getConfig();
-    Assert.assertEquals(ctxConfig.get("vfs.s3.connect_timeout_ms"), "5000");
+    try (Config config = new Config()) {
+      config.set("vfs.s3.connect_timeout_ms", "5000");
+      try (Context ctx = new Context(config);
+          Config ctxConfig = ctx.getConfig()) {
+        Assert.assertEquals(ctxConfig.get("vfs.s3.connect_timeout_ms"), "5000");
+      }
+    }
+  }
 
+  @Test
+  public void testConfigSaveLoad() throws Exception {
     String configPath =
-        temp.getRoot().getAbsolutePath() + temp.getRoot().pathSeparator + "testConfig";
-    ctxConfig.saveToFile(configPath);
+        temp.getRoot().getAbsolutePath() + temp.getRoot().pathSeparator + "testConfigString";
+    try (Config config = new Config()) {
+      config.set("vfs.s3.connect_timeout_ms", "5000");
+      config.saveToFile(configPath);
+    }
+    // Try loading from a string path
+    try (Config loadConfig = new Config(configPath)) {
+      Assert.assertEquals(loadConfig.get("vfs.s3.connect_timeout_ms"), "5000");
+    }
+  }
 
-    Config loadConfig = new Config(configPath);
-    Assert.assertEquals(loadConfig.get("vfs.s3.connect_timeout_ms"), "5000");
+  @Test
+  public void testConfigSaveLoadURI() throws Exception {
+    String configPath =
+        temp.getRoot().getAbsolutePath() + temp.getRoot().pathSeparator + "testConfigStringURI";
+    URI configURI = new URI("file://" + configPath);
+    // Try lo
+    try (Config config = new Config()) {
+      config.set("vfs.s3.connect_timeout_ms", "5000");
+      config.saveToFile(configURI);
+    }
+    try (Config loadConfig = new Config(configURI)) {
+      Assert.assertEquals(loadConfig.get("vfs.s3.connect_timeout_ms"), "5000");
+    }
   }
 }

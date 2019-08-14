@@ -29,7 +29,9 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
+import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Sets configuration parameters for a TileDB Context.
@@ -78,8 +80,8 @@ public class Config implements AutoCloseable {
   }
 
   /**
-   * Constructor that takes as input a filename (URI) that stores the config parameters. The file
-   * must have the following (text) format:
+   * Constructor that takes as input a filename String (URI) that stores the config parameters. The
+   * file must have the following (text) format:
    *
    * <p>`{parameter} {value}`
    *
@@ -91,6 +93,47 @@ public class Config implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Config(String filename) throws TileDBError {
+    init(filename);
+  }
+
+  /**
+   * Constructor that takes as input a URI that stores the config parameters. The file must have the
+   * following (text) format:
+   *
+   * <p>`{parameter} {value}`
+   *
+   * <p>Anything following a `#` character is considered a comment and, thus, is ignored.
+   *
+   * <p>See `Config.set` for the various TileDB config parameters and allowed values.
+   *
+   * @param uri path to local config file (file://)
+   * @throws TileDBError A TileDB exception
+   */
+  public Config(URI uri) throws TileDBError {
+    String scheme = uri.getScheme();
+    if (!scheme.equals("file")) {
+      throw new TileDBError(
+          "Config can an only read from a local file scheme URI (file://), got: " + uri);
+    }
+    init(uri.getPath());
+  }
+
+  /**
+   * Constructor that takes as input a Map of config string parameters.
+   *
+   * @param config map of string, value tiledb config parameters
+   * @throws TileDBError A TileDB exception
+   */
+  public Config(Map<String, String> config) throws TileDBError {
+    // call the default constructor to init the config tiledb object handle
+    this();
+    // set the passed configuration parameters
+    for (Map.Entry<String, String> v : config.entrySet()) {
+      set(v.getKey(), v.getValue());
+    }
+  }
+
+  private void init(String filename) throws TileDBError {
     SWIGTYPE_p_p_tiledb_config_t _configpp = tiledb.new_tiledb_config_tpp();
     SWIGTYPE_p_p_tiledb_error_t _errorpp = tiledb.new_tiledb_error_tpp();
     try {
@@ -241,6 +284,21 @@ public class Config implements AutoCloseable {
     } finally {
       tiledb.delete_tiledb_error_tpp(errorpp);
     }
+  }
+
+  /**
+   * Saves config parameters to a local file system (file://) path.
+   *
+   * @param uri The URI of the file where the parameters will be written
+   * @throws TileDBError A TileDB exception
+   */
+  public void saveToFile(URI uri) throws TileDBError {
+    String scheme = uri.getScheme();
+    if (!scheme.equals("file")) {
+      throw new TileDBError(
+          "Config can an only save to a local file scheme URI (file://), got: " + uri);
+    }
+    saveToFile(uri.getPath());
   }
 
   private void next(SWIGTYPE_p_tiledb_config_iter_t iterp) throws TileDBError {
