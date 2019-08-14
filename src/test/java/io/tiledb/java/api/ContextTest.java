@@ -26,6 +26,7 @@ package io.tiledb.java.api;
 
 import static io.tiledb.java.api.Filesystem.*;
 
+import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -49,6 +50,16 @@ public class ContextTest {
           Config ctxConfig = ctx.getConfig()) {
         Assert.assertEquals("bar", ctxConfig.get("foo"));
       }
+    }
+  }
+
+  @Test
+  public void testContextConfigMap() throws Exception {
+    HashMap<String, String> config = new HashMap<>();
+    config.put("foo", "bar");
+    try (Context ctx = new Context(config);
+        Config ctxConfig = ctx.getConfig()) {
+      Assert.assertEquals("bar", ctxConfig.get("foo"));
     }
   }
 

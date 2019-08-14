@@ -29,6 +29,7 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
+import java.util.Map;
 
 /**
  * A TileDB context wraps a TileDB storage manager instance. Most objects and functions will require
@@ -57,8 +58,6 @@ public class Context implements AutoCloseable {
 
   private SWIGTYPE_p_p_tiledb_ctx_t ctxpp;
   private SWIGTYPE_p_tiledb_ctx_t ctxp;
-
-  private Config config;
   private ContextCallback errorHandler;
 
   /**
@@ -67,17 +66,31 @@ public class Context implements AutoCloseable {
    * @throws TileDBError if construction fails
    */
   public Context() throws TileDBError {
-    createContext(new Config());
+    try (Config config = new Config()) {
+      createContext(config);
+    }
   }
 
   /**
-   * Constructor. Creates a TileDB context with the given configuration.
+   * Creates a TileDB context with the given TileDB config object.
    *
    * @param config A TileDB Config object
    * @throws TileDBError if construction fails
    */
   public Context(Config config) throws TileDBError {
     createContext(config);
+  }
+
+  /**
+   * Creates a TileDB context with the given TileDB parameter, value settings.
+   *
+   * @param config A Map of TileDB setting, value string pairs
+   * @throws TileDBError if construction fails
+   */
+  public Context(Map<String, String> config) throws TileDBError {
+    try (Config tiledbConfig = new Config(config)) {
+      createContext(tiledbConfig);
+    }
   }
 
   /**
@@ -98,7 +111,9 @@ public class Context implements AutoCloseable {
    */
   public void handleError(int rc) throws TileDBError {
     // Do nothing if there is no error
-    if (rc == tiledb.TILEDB_OK) return;
+    if (rc == tiledb.TILEDB_OK) {
+      return;
+    }
 
     // Get error
     SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
@@ -154,7 +169,6 @@ public class Context implements AutoCloseable {
     }
     this.ctxpp = _ctxpp;
     this.ctxp = tiledb.tiledb_ctx_tpp_value(_ctxpp);
-    this.config = config;
     this.errorHandler = new ContextCallback();
   }
 
@@ -163,8 +177,14 @@ public class Context implements AutoCloseable {
   }
 
   /** @return A Config object containing all configuration values of the Context. */
-  public Config getConfig() {
-    return config;
+  public Config getConfig() throws TileDBError {
+    SWIGTYPE_p_p_tiledb_config_t _configpp = tiledb.new_tiledb_config_tpp();
+    int rc = tiledb.tiledb_ctx_get_config(ctxp, _configpp);
+    if (rc != tiledb.TILEDB_OK) {
+      tiledb.delete_tiledb_config_tpp(_configpp);
+      handleError(rc);
+    }
+    return new Config(_configpp);
   }
 
   /**
@@ -175,9 +195,6 @@ public class Context implements AutoCloseable {
       tiledb.tiledb_ctx_free(ctxpp);
       ctxp = null;
       ctxpp = null;
-    }
-    if (config != null) {
-      config.close();
     }
   }
 }
