@@ -26,8 +26,8 @@ matrix:
 
     - os: linux
       env:
-        CFLAGS="-march=x86-64"
-        CPPFLAGS="-march=x86-64"
+        CFLAGS="-march=core2 -mtune=haswell -mssse3"
+        CPPFLAGS="-march=core2 -mtune=haswell -mssse3"
         PUBLISH=1
         ORG_GRADLE_PROJECT_TILEDB_S3="ON"
         ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION="ON"
