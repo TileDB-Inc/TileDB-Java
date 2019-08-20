@@ -187,7 +187,7 @@ publishing {
     }
 }
 
-ext.isReleaseVersion = getProjectProperty('TILEDB_JAVA_RELEASE').toBoolean()
+Boolean isReleaseVersion = getProjectProperty('TILEDB_JAVA_RELEASE').toBoolean()
 tasks.withType(Sign) {
     onlyIf { isReleaseVersion }
     allprojects { ext."signing.keyId" = System.getenv('GPG_KEY_ID') }
