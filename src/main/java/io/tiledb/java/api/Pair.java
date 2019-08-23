@@ -24,7 +24,7 @@
 
 package io.tiledb.java.api;
 
-public class Pair<F, S> {
+public class Pair<F, S> implements java.io.Serializable {
   private F first;
   private S second;
 
