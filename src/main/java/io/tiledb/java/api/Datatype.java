@@ -23,8 +23,53 @@ public enum Datatype {
   TILEDB_STRING_UCS4,
   TILEDB_ANY;
 
+  /** @return Returns the TileDB Datatype size in Bytes * */
   public int getNativeSize() throws TileDBError {
     return tiledb.tiledb_datatype_size(this.toSwigEnum()).intValue();
+  }
+
+  /** @return True if the TileDB Datatype is a scalar, false otherwise (ex. String) * */
+  public boolean isStringType() {
+    switch (this) {
+      case TILEDB_STRING_ASCII:
+      case TILEDB_STRING_UTF8:
+      case TILEDB_STRING_UTF16:
+      case TILEDB_STRING_UTF32:
+      case TILEDB_STRING_UCS2:
+      case TILEDB_STRING_UCS4:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  /** @return True if the TileDB Datatype is an integer, false otherwise * */
+  public boolean isIntegerType() {
+    switch (this) {
+      case TILEDB_CHAR:
+      case TILEDB_INT8:
+      case TILEDB_UINT8:
+      case TILEDB_INT16:
+      case TILEDB_UINT16:
+      case TILEDB_INT32:
+      case TILEDB_UINT32:
+      case TILEDB_INT64:
+      case TILEDB_UINT64:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  /** @return True if the TileDB Datatype is a float or double, false otherwise * */
+  public boolean isRealType() {
+    switch (this) {
+      case TILEDB_FLOAT32:
+      case TILEDB_FLOAT64:
+        return true;
+      default:
+        return false;
+    }
   }
 
   protected tiledb_datatype_t toSwigEnum() throws TileDBError {
