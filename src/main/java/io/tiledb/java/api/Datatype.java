@@ -72,6 +72,52 @@ public enum Datatype {
     }
   }
 
+  /**
+   * Returns the equivalent java class for a given TileDB Type
+   *
+   * @return class
+   * @throws TileDBError
+   */
+  public Class javaClass() throws TileDBError {
+    switch (this) {
+      case TILEDB_INT32:
+        return Integer.class;
+      case TILEDB_INT64:
+        return Long.class;
+      case TILEDB_FLOAT32:
+        return Float.class;
+      case TILEDB_FLOAT64:
+        return Double.class;
+      case TILEDB_CHAR:
+        return Short.class;
+      case TILEDB_INT8:
+        return Byte.class;
+      case TILEDB_UINT8:
+        return Short.class;
+      case TILEDB_INT16:
+        return Short.class;
+      case TILEDB_UINT16:
+        return Integer.class;
+      case TILEDB_UINT32:
+        return Long.class;
+      case TILEDB_UINT64:
+        return Long.class;
+      case TILEDB_STRING_UTF8:
+        return String.class;
+      case TILEDB_STRING_UTF16:
+        return String.class;
+      case TILEDB_STRING_UTF32:
+        return String.class;
+      case TILEDB_STRING_UCS2:
+        return String.class;
+      case TILEDB_STRING_UCS4:
+        return String.class;
+      case TILEDB_ANY:
+      default:
+        throw new TileDBError("No such enum value" + this.name());
+    }
+  }
+
   protected tiledb_datatype_t toSwigEnum() throws TileDBError {
     switch (this) {
       case TILEDB_INT32:
