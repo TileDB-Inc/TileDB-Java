@@ -179,8 +179,11 @@ public class Query implements AutoCloseable {
       dimType = domain.getType();
     }
 
-    Types.typeCheck(Types.getNativeType(start.getClass()), dimType);
-    Types.typeCheck(Types.getNativeType(end.getClass()), dimType);
+    // We use java type check here because we can not tell the difference between unsigned and
+    // signed
+    // values coming from java, i.e. A UINT16 and INT32 are both Integer classes in java.
+    Types.javaTypeCheck(start.getClass(), dimType.javaClass());
+    Types.javaTypeCheck(end.getClass(), dimType.javaClass());
 
     try (NativeArray startArr = new NativeArray(ctx, 1, dimType);
         NativeArray endArr = new NativeArray(ctx, 1, dimType)) {

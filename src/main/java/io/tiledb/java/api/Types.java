@@ -128,4 +128,20 @@ public class Types {
     }
     return true;
   }
+
+  /**
+   * Checks two class types are equal
+   *
+   * @param first class to compare
+   * @param second class to compare
+   * @return true if classes are equal else false
+   * @throws TileDBError
+   */
+  public static boolean javaTypeCheck(Class first, Class second) throws TileDBError {
+    if (!first.equals(second)) {
+      throw new TileDBError(
+          "Type " + first.getName() + " is not equal to the default getType: " + second.getName());
+    }
+    return true;
+  }
 }
