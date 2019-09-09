@@ -498,6 +498,37 @@ public class Query implements AutoCloseable {
     return result;
   }
 
+  /**
+   * It is highly likely you want to use resultBufferElements.
+   *
+   * <p>resultBufferSizes used mostly for metric reporting.
+   *
+   * @return The size in bytes of the result buffers. This is a map from the attribute name to a
+   *     pair of values.
+   *     <p>The first is size in bytes for offsets of var size attributes, and the second is size in
+   *     bytes in the data buffer. For fixed sized attributes (and coordinates), the first is always
+   *     0.
+   * @exception TileDBError A TileDB exception
+   */
+  public HashMap<String, Pair<Long, Long>> resultBufferSizes() throws TileDBError {
+    HashMap<String, Pair<Long, Long>> result = new HashMap<String, Pair<Long, Long>>();
+    for (Map.Entry<String, NativeArray> entry : buffers_.entrySet()) {
+      String name = entry.getKey();
+      BigInteger val_nbytes = buffer_sizes_.get(name).getSecond().getitem(0);
+      result.put(name, new Pair<>(0l, val_nbytes.longValue()));
+    }
+    for (Map.Entry<String, Pair<NativeArray, NativeArray>> entry : var_buffers_.entrySet()) {
+      String name = entry.getKey();
+      Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
+
+      BigInteger off_nbytes = buffer_size.getFirst().getitem(0);
+
+      BigInteger val_nbytes = buffer_size.getSecond().getitem(0);
+      result.put(name, new Pair<Long, Long>(off_nbytes.longValue(), val_nbytes.longValue()));
+    }
+    return result;
+  }
+
   /** Clears all attribute buffers. */
   public synchronized void resetBuffers() {
     for (NativeArray buffer : buffers_.values()) {
