@@ -35,6 +35,22 @@ public class DatatypeTest {
     Datatype.TILEDB_UINT64,
   };
 
+  private final Datatype[] dateDtypes = {
+    Datatype.TILEDB_DATETIME_YEAR,
+    Datatype.TILEDB_DATETIME_MONTH,
+    Datatype.TILEDB_DATETIME_WEEK,
+    Datatype.TILEDB_DATETIME_DAY,
+    Datatype.TILEDB_DATETIME_HR,
+    Datatype.TILEDB_DATETIME_MIN,
+    Datatype.TILEDB_DATETIME_SEC,
+    Datatype.TILEDB_DATETIME_MS,
+    Datatype.TILEDB_DATETIME_US,
+    Datatype.TILEDB_DATETIME_NS,
+    Datatype.TILEDB_DATETIME_PS,
+    Datatype.TILEDB_DATETIME_FS,
+    Datatype.TILEDB_DATETIME_AS,
+  };
+
   private final Datatype[] otherDtypes = {
     Datatype.TILEDB_ANY,
   };
@@ -44,6 +60,7 @@ public class DatatypeTest {
     Collections.addAll(dtypes, stringDtypes);
     Collections.addAll(dtypes, integerDtypes);
     Collections.addAll(dtypes, realDtypes);
+    Collections.addAll(dtypes, dateDtypes);
     Collections.addAll(dtypes, otherDtypes);
     return dtypes;
   }
@@ -78,6 +95,18 @@ public class DatatypeTest {
         Assert.assertTrue(dtype.isIntegerType());
       } else {
         Assert.assertFalse(dtype.isIntegerType());
+      }
+    }
+  }
+
+  @Test
+  public void testIsDateDtypes() {
+    List<Datatype> dateDtypesList = Arrays.asList(dateDtypes);
+    for (Datatype dtype : allDatatypes()) {
+      if (dateDtypesList.contains(dtype)) {
+        Assert.assertTrue(dtype.isDateType());
+      } else {
+        Assert.assertFalse(dtype.isDateType());
       }
     }
   }
