@@ -182,6 +182,22 @@ public class NativeArray implements AutoCloseable {
         {
           return stringToBytes(buffer).length;
         }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+      case TILEDB_DATETIME_AS:
+        {
+          return ((long[]) buffer).length;
+        }
       default:
         {
           throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
@@ -258,6 +274,24 @@ public class NativeArray implements AutoCloseable {
           int8_tArray = Utils.newInt8_tArray(bytes);
           break;
         }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+      case TILEDB_DATETIME_AS:
+        {
+          size = ((long[]) buffer).length;
+          int64_tArray = Utils.newInt64_tArray((long[]) buffer);
+          break;
+        }
       default:
         {
           throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
@@ -322,6 +356,23 @@ public class NativeArray implements AutoCloseable {
           int8_tArray = new int8_tArray(size);
           break;
         }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+      case TILEDB_DATETIME_AS:
+        {
+          int64_tArray = new int64_tArray(size);
+          break;
+        }
       default:
         {
           throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
@@ -384,6 +435,22 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_CHAR:
         {
           return int8_tArray.getitem(index);
+        }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+      case TILEDB_DATETIME_AS:
+        {
+          return int64_tArray.getitem(index);
         }
       default:
         {
@@ -462,6 +529,23 @@ public class NativeArray implements AutoCloseable {
           }
           break;
         }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+      case TILEDB_DATETIME_AS:
+        {
+          int64_tArray.setitem(index, (long) value);
+          break;
+        }
       default:
         {
           throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
@@ -514,6 +598,21 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_CHAR:
         {
           return PointerUtils.toVoid(int8_tArray);
+        }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+        {
+          return PointerUtils.toVoid(int64_tArray);
         }
       default:
         {
@@ -602,6 +701,21 @@ public class NativeArray implements AutoCloseable {
         {
           return Utils.int8ArrayGet(int8_tArray, position, elements);
         }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+        {
+          return Utils.int64ArrayGet(int64_tArray, position, elements);
+        }
       default:
         {
           throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
@@ -661,6 +775,22 @@ public class NativeArray implements AutoCloseable {
           uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+        {
+          int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
+          break;
+        }
       default:
         {
           throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
@@ -718,6 +848,22 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_UINT64:
         {
           uint64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
+          break;
+        }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+        {
+          int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
       default:
