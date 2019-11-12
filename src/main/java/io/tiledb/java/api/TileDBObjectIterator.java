@@ -181,8 +181,7 @@ public class TileDBObjectIterator {
     @Override
     public int call(String path, tiledb_object_t type) {
       if ((type == tiledb_object_t.TILEDB_ARRAY && array)
-          || (type == tiledb_object_t.TILEDB_GROUP && group)
-          || (type == tiledb_object_t.TILEDB_KEY_VALUE && kv)) {
+          || (type == tiledb_object_t.TILEDB_GROUP && group)) {
         TileDBObject object = null;
         try {
           object = new TileDBObject(ctx, path, TileDBObjectType.fromSwigEnum(type));

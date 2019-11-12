@@ -99,9 +99,6 @@ public class TileDBObject {
       case TILEDB_INVALID:
         ret += "INVALID";
         break;
-      case TILEDB_KEY_VALUE:
-        ret += "KEYVALUE";
-        break;
     }
     ret += " \"" + uri + "\">";
     return ret;

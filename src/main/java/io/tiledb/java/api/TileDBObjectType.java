@@ -5,8 +5,7 @@ import io.tiledb.libtiledb.tiledb_object_t;
 public enum TileDBObjectType {
   TILEDB_INVALID,
   TILEDB_GROUP,
-  TILEDB_ARRAY,
-  TILEDB_KEY_VALUE;
+  TILEDB_ARRAY;
 
   protected tiledb_object_t toSwigEnum() throws TileDBError {
     switch (this) {
@@ -16,8 +15,6 @@ public enum TileDBObjectType {
         return tiledb_object_t.TILEDB_GROUP;
       case TILEDB_ARRAY:
         return tiledb_object_t.TILEDB_ARRAY;
-      case TILEDB_KEY_VALUE:
-        return tiledb_object_t.TILEDB_KEY_VALUE;
       default:
         throw new TileDBError("No such enum value" + this.name());
     }
@@ -31,8 +28,6 @@ public enum TileDBObjectType {
         return TILEDB_GROUP;
       case TILEDB_ARRAY:
         return TILEDB_ARRAY;
-      case TILEDB_KEY_VALUE:
-        return TILEDB_KEY_VALUE;
       default:
         throw new TileDBError("No such enum value" + e.name());
     }

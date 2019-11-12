@@ -90,10 +90,6 @@ import io.tiledb.libtiledb.NativeLibLoader;
 %pointer_functions(tiledb_query_t*, tiledb_query_tpp);
 %pointer_functions(tiledb_filter_t*, tiledb_filter_tpp);
 %pointer_functions(tiledb_filter_list_t*, tiledb_filter_list_tpp);
-%pointer_functions(tiledb_kv_t*, tiledb_kv_tpp);
-%pointer_functions(tiledb_kv_schema_t*, tiledb_kv_schema_tpp);
-%pointer_functions(tiledb_kv_item_t*, tiledb_kv_item_tpp);
-%pointer_functions(tiledb_kv_iter_t*, tiledb_kv_iter_tpp);
 %pointer_functions(tiledb_vfs_t*, tiledb_vfs_tpp);
 %pointer_functions(tiledb_vfs_fh_t*, tiledb_vfs_fh_tpp);
 
