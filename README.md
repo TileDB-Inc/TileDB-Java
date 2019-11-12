@@ -3,25 +3,13 @@
 # TileDB-Java
 [![Build Status](https://travis-ci.org/TileDB-Inc/TileDB-Java.svg?branch=master)](https://travis-ci.org/TileDB-Inc/TileDB-Java)
 
-## Installation
+`TileDB-Java` is a Java interface to the [TileDB Storage Engine](https://github.com/TileDB-Inc/TileDB).
 
-See [installation docs](https://docs.tiledb.com/developer/installation)
+## Quick Links
 
-## Quickstart
-
-See [quickstart docs](https://docs.tiledb.com/developer/quickstart)
-
-## Examples
-
-You can run the examples located in `src/main/java/examples` using you IDE or from a terminal.
-
-To run an example from the terminal use:
-
-`java -cp build/libs/tiledb-java-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
-
-You may need to explicitly define the java library path if not using the bundled jar:
-
-`java -Djava.library.path=".:<path/to/TileDB-Java/build/tiledb_jni>" -cp build/libs/tiledb-java-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
+- Installation: [https://docs.tiledb.com/developer/installation/building-from-source/java](https://docs.tiledb.com/developer/installation/building-from-source/java)
+- Quickstart: [https://docs.tiledb.com/developer/quickstart](https://docs.tiledb.com/developer/quickstart)
+- Full developer documentation for all APIs and integrations: [https://docs.tiledb.com/developer](https://docs.tiledb.com/developer)
 
 ## Development Notes
 
