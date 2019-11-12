@@ -54,13 +54,6 @@ extern "C" {
       return ret;
     };
     
-	TILEDB_EXPORT int tiledb_kv_schema_dump_stdout(
-    	tiledb_ctx_t* ctx, const tiledb_kv_schema_t* kv_schema){
-      int ret = tiledb_kv_schema_dump(ctx, kv_schema, stdout);
-      fflush(stdout);
-      return ret;
-    };
-    
 	TILEDB_EXPORT int tiledb_attribute_dump_stdout(
     	tiledb_ctx_t* ctx, const tiledb_attribute_t* attr){
       int ret = tiledb_attribute_dump(ctx, attr, stdout);
@@ -95,18 +88,6 @@ extern "C" {
         return TILEDB_ERR;
 
       int ret = tiledb_dimension_dump(ctx, dim, out);
-      fclose(out);
-
-      return ret;
-    };
-
-    TILEDB_EXPORT int tiledb_kv_schema_dump_file(
-    	tiledb_ctx_t* ctx, const tiledb_kv_schema_t* kv_schema, const char* filename){
-      FILE *out = (fopen(filename, "w"));
-      if(out == NULL)
-        return TILEDB_ERR;
-
-      int ret = tiledb_kv_schema_dump(ctx, kv_schema, out);
       fclose(out);
 
       return ret;
@@ -176,9 +157,6 @@ extern "C" {
       switch (type) {
         case TILEDB_ARRAY:
           printf("ARRAY");
-          break;
-        case TILEDB_KEY_VALUE:
-          printf("KEY_VALUE");
           break;
         case TILEDB_GROUP:
           printf("GROUP");
