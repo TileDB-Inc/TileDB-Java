@@ -121,6 +121,11 @@ jar {
         from file("$buildDir/install/lib64/${System.mapLibraryName("tiledb")}")
         from file("$buildDir/install/lib64/${System.mapLibraryName("tiledbjni")}")
     }
+
+    manifest {
+        attributes("Implementation-Title": "Gradle",
+                "Implementation-Version": version)
+    }
 }
 
 task sourceJar(type: Jar) {
