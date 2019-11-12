@@ -1,46 +1,15 @@
+<a href="https://tiledb.com"><img src="https://github.com/TileDB-Inc/TileDB/raw/dev/doc/source/_static/tiledb-logo_color_no_margin_@4x.png" alt="TileDB logo" width="400"></a>
+
 # TileDB-Java
 [![Build Status](https://travis-ci.org/TileDB-Inc/TileDB-Java.svg?branch=master)](https://travis-ci.org/TileDB-Inc/TileDB-Java)
 
-## Dependencies
+## Installation
 
-To build the JNI extension you need to install:
+See [installation docs](https://docs.tiledb.com/developer/installation)
 
-* Cmake (>=3.3)
-* JDK (>=1.8)
+## Quickstart
 
-## Build
-
-To build the library with the native library bundled in run:
-
-`./gradlew assemble`
-
-This will create the TileDB JNI library `build/tiledb_jni/libtiledbjni.dylib`. This will also download and build the [TileDB](https://github.com/TileDB-Inc/TileDB) library first, if it is not found installed in a global system path, in which case the native library gets placed in `build/externals/install/lib/libtiledb.dylib`.
-
-If you wish to build with a custom version of the native TileDB library, you can define the environment variable `TILEDB_HOME`, e.g.:
-
-`env TILEDB_HOME=/path/to/TileDB/dist ./gradlew assemble`
-Note that if you build with a custom native TileDB library it will only be bundled into the jar if the native static library was produced.
-
-### Enabling TileDB Backends During Superbuild
-
-If tiledb is not globally installed on the system where the JNI library is
-being compiled, the native TileDB Library will be compiled. There are
-multiple properties which can be configured including S3 and HDFS support.
-
-See [grade.properties](gradle.properties) for all properties which can be
-set for building.
-
-The properties can be set via the `-P` option to gradlew:
-
-```
-./gradlew -P TILEDB_S3=ON -P TILEDB_VERBOSE=ON
-```
-
-## Tests
-
-To run the tests use:
-
-`./gradlew test`
+See [quickstart docs](https://docs.tiledb.com/developer/quickstart)
 
 ## Examples
 
@@ -54,32 +23,6 @@ You may need to explicitly define the java library path if not using the bundled
 
 `java -Djava.library.path=".:<path/to/TileDB-Java/build/tiledb_jni>" -cp build/libs/tiledb-java-1.0-SNAPSHOT.jar examples.io.tiledb.libtiledb.TiledbArraySchema`
 
-## Format 
- 
-To auto-format the Java source code run:
+## Development Notes
 
-`./gradlew format`
-
-to check Java source code formatting:
-
-`./gradlew checkFormat`
-
-
-## Generate JNI bindings for TileDB C-API
-
-### Dependencies
-
-* Swig (>=3.0)
-
-For OSX swig is available using `brew install swig`
-
-Installation instructions for other operating systems can be found here:
-http://www.swig.org/Doc3.0/Preface.html#Preface_installation
-
-### Genrate bindings
-
-1) Set the ENV variable `TILEDB_HOME` to the install location of TileDB.
-
-2) Generate the JNI code using
-
-`env TILEDB_HOME=/path/to/TileDB/dist ./gradlew generateJNI`
+For misc development details see [Development Notes](https://github.com/TileDB-Inc/TileDB-Java/wiki/Developer-Notes) wiki entry.
