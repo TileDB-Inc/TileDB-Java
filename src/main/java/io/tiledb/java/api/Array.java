@@ -75,7 +75,7 @@ public class Array implements AutoCloseable {
   }
 
   /**
-   * Constructs an Array object opening the array for reading.
+   * Constructs an Array object opening the array for reading at a user-given timestamp (time-travelling).
    *
    * <pre><b>Example:</b>
    * {@code
@@ -85,6 +85,7 @@ public class Array implements AutoCloseable {
    *
    * @param ctx TileDB context
    * @param uri The array URI
+   * @param timestamp The timestamp
    * @exception TileDBError A TileDB exception
    */
   public Array(Context ctx, String uri, BigInteger timestamp) throws TileDBError {
