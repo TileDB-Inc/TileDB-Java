@@ -27,6 +27,8 @@ package io.tiledb.java.api;
 import static io.tiledb.java.api.QueryType.*;
 
 import io.tiledb.libtiledb.*;
+
+import java.math.BigInteger;
 import java.util.HashMap;
 
 /**
@@ -71,6 +73,23 @@ public class Array implements AutoCloseable {
    */
   public Array(Context ctx, String uri) throws TileDBError {
     openArray(ctx, uri, TILEDB_READ, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {});
+  }
+
+  /**
+   * Constructs an Array object opening the array for reading.
+   *
+   * <pre><b>Example:</b>
+   * {@code
+   *   Context ctx = new Context();
+   *   Array array new Array(ctx, "s3://bucket-name/array-name");
+   * }</pre>
+   *
+   * @param ctx TileDB context
+   * @param uri The array URI
+   * @exception TileDBError A TileDB exception
+   */
+  public Array(Context ctx, String uri, BigInteger timestamp) throws TileDBError {
+    openArray(ctx, uri, TILEDB_READ, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {}, timestamp);
   }
 
   /**
@@ -141,6 +160,44 @@ public class Array implements AutoCloseable {
                 encryption_type.toSwigEnum(),
                 keyArray.toVoidPointer(),
                 keyArray.getSize()));
+      } catch (TileDBError err) {
+        tiledb.delete_tiledb_array_tpp(_arraypp);
+        throw err;
+      }
+      _schema = new ArraySchema(ctx, uri, encryption_type, key);
+    }
+    this.ctx = ctx;
+    this.uri = uri;
+    this.query_type = query_type;
+    this.schema = _schema;
+    this.arraypp = _arraypp;
+    this.arrayp = _arrayp;
+  }
+
+  private synchronized void openArray(
+          Context ctx, String uri, QueryType query_type, EncryptionType encryption_type, byte[] key,
+          BigInteger timestamp)
+          throws TileDBError {
+    SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
+    try {
+      ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_array_tpp(_arraypp);
+      throw err;
+    }
+    SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
+    ArraySchema _schema;
+    try (NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
+      try {
+        ctx.handleError(
+                tiledb.tiledb_array_open_at_with_key(
+                        ctx.getCtxp(),
+                        _arrayp,
+                        query_type.toSwigEnum(),
+                        encryption_type.toSwigEnum(),
+                        keyArray.toVoidPointer(),
+                        keyArray.getSize(),
+                        timestamp));
       } catch (TileDBError err) {
         tiledb.delete_tiledb_array_tpp(_arraypp);
         throw err;
