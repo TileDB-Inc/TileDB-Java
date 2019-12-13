@@ -23,4 +23,3 @@ public class SWIGTYPE_p_p_tiledb_error_t {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

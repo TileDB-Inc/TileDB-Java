@@ -23,4 +23,3 @@ public class SWIGTYPE_p_double {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

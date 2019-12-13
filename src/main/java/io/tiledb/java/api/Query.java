@@ -280,12 +280,13 @@ public class Query implements AutoCloseable {
     }
 
     uint64_tArray offsets_array_size = new uint64_tArray(1);
-    uint64_tArray values_array_size =new uint64_tArray(1);
+    uint64_tArray values_array_size = new uint64_tArray(1);
 
     offsets_array_size.setitem(0, BigInteger.valueOf(0l));
     values_array_size.setitem(0, BigInteger.valueOf(buffer.getNBytes()));
 
-    Pair<uint64_tArray, uint64_tArray> buffer_sizes =  new Pair<>(offsets_array_size, values_array_size);
+    Pair<uint64_tArray, uint64_tArray> buffer_sizes =
+        new Pair<>(offsets_array_size, values_array_size);
 
     // Close previous buffers if they exist for this attribute
     if (buffers_.containsKey(attr)) {
@@ -298,14 +299,8 @@ public class Query implements AutoCloseable {
     // Set the actual TileDB buffer
     uint64_tArray buffer_size = buffer_sizes.getSecond();
     ctx.handleError(
-            tiledb.tiledb_query_set_buffer(
-                    ctx.getCtxp(),
-                    queryp,
-                    attr,
-                    buffer.toVoidPointer(),
-                    buffer_size.cast()
-            )
-    );
+        tiledb.tiledb_query_set_buffer(
+            ctx.getCtxp(), queryp, attr, buffer.toVoidPointer(), buffer_size.cast()));
 
     return this;
   }
@@ -339,13 +334,14 @@ public class Query implements AutoCloseable {
 
     uint64_tArray offsets_array = PointerUtils.uint64_tArrayFromVoid(offsets.toVoidPointer());
     uint64_tArray offsets_array_size = new uint64_tArray(1);
-    uint64_tArray values_array_size =new uint64_tArray(1);
+    uint64_tArray values_array_size = new uint64_tArray(1);
 
     offsets_array_size.setitem(0, BigInteger.valueOf(offsets.getNBytes()));
     values_array_size.setitem(0, BigInteger.valueOf(buffer.getNBytes()));
 
-    Pair<uint64_tArray, uint64_tArray> buffer_sizes =  new Pair<>(offsets_array_size, values_array_size);
-    
+    Pair<uint64_tArray, uint64_tArray> buffer_sizes =
+        new Pair<>(offsets_array_size, values_array_size);
+
     // Close previous buffers if they exist for this attribute
     if (var_buffers_.containsKey(attr)) {
       Pair<NativeArray, NativeArray> prev_buffers = var_buffers_.get(attr);
@@ -357,16 +353,14 @@ public class Query implements AutoCloseable {
     buffer_sizes_.put(attr, buffer_sizes);
 
     ctx.handleError(
-            tiledb.tiledb_query_set_buffer_var(
-                    ctx.getCtxp(),
-                    queryp,
-                    attr,
-                    offsets_array.cast(),
-                    offsets_array_size.cast(),
-                    buffer.toVoidPointer(),
-                    values_array_size.cast()
-            )
-    );
+        tiledb.tiledb_query_set_buffer_var(
+            ctx.getCtxp(),
+            queryp,
+            attr,
+            offsets_array.cast(),
+            offsets_array_size.cast(),
+            buffer.toVoidPointer(),
+            values_array_size.cast()));
 
     return this;
   }
@@ -599,7 +593,7 @@ public class Query implements AutoCloseable {
   public Query resetBufferSizes() {
     return resetBufferSizes(0l);
   }
-  
+
   /**
    * Return a Java primitive array object as a copy of the attribute buffer
    *
