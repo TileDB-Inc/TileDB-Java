@@ -27,7 +27,6 @@ package io.tiledb.java.api;
 import static io.tiledb.java.api.QueryType.*;
 
 import io.tiledb.libtiledb.*;
-
 import java.math.BigInteger;
 import java.util.HashMap;
 
@@ -210,9 +209,13 @@ public class Array implements AutoCloseable {
   }
 
   private synchronized void openArray(
-          Context ctx, String uri, QueryType query_type, EncryptionType encryption_type, byte[] key,
-          BigInteger timestamp)
-          throws TileDBError {
+      Context ctx,
+      String uri,
+      QueryType query_type,
+      EncryptionType encryption_type,
+      byte[] key,
+      BigInteger timestamp)
+      throws TileDBError {
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
       ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
@@ -225,14 +228,14 @@ public class Array implements AutoCloseable {
     try (NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
       try {
         ctx.handleError(
-                tiledb.tiledb_array_open_at_with_key(
-                        ctx.getCtxp(),
-                        _arrayp,
-                        query_type.toSwigEnum(),
-                        encryption_type.toSwigEnum(),
-                        keyArray.toVoidPointer(),
-                        keyArray.getSize(),
-                        timestamp));
+            tiledb.tiledb_array_open_at_with_key(
+                ctx.getCtxp(),
+                _arrayp,
+                query_type.toSwigEnum(),
+                encryption_type.toSwigEnum(),
+                keyArray.toVoidPointer(),
+                keyArray.getSize(),
+                timestamp));
       } catch (TileDBError err) {
         tiledb.delete_tiledb_array_tpp(_arraypp);
         throw err;
