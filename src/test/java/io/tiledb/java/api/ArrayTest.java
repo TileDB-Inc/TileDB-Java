@@ -1,17 +1,15 @@
 package io.tiledb.java.api;
 
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.HashMap;
-
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
-
-import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
-import static io.tiledb.java.api.QueryType.TILEDB_READ;
-import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 public class ArrayTest {
 
@@ -96,12 +94,13 @@ public class ArrayTest {
     return readArray(new Array(ctx, arrayURI));
   }
 
-  public long[] readArrayAt(BigInteger timestamp) throws TileDBError{
+  public long[] readArrayAt(BigInteger timestamp) throws TileDBError {
     return readArray(new Array(ctx, arrayURI, timestamp));
   }
 
-  public long[] readArrayAtEncrypted(BigInteger timestamp) throws TileDBError{
-    return readArray(new Array(ctx, arrayURI, TILEDB_READ, EncryptionType.TILEDB_AES_256_GCM, key, timestamp));
+  public long[] readArrayAtEncrypted(BigInteger timestamp) throws TileDBError {
+    return readArray(
+        new Array(ctx, arrayURI, TILEDB_READ, EncryptionType.TILEDB_AES_256_GCM, key, timestamp));
   }
 
   @Test
@@ -181,7 +180,6 @@ public class ArrayTest {
     insertArbitraryValues(new NativeArray(ctx, array_c, Long.class));
     long ts_c = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
 
-
     assert Arrays.equals(readArrayAt(BigInteger.valueOf(ts_a)), array_a);
     assert Arrays.equals(readArrayAt(BigInteger.valueOf(ts_b)), array_b);
     assert Arrays.equals(readArrayAt(BigInteger.valueOf(ts_c)), array_c);
@@ -206,7 +204,6 @@ public class ArrayTest {
     long[] array_c = new long[] {0, 0, 0, 0};
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_c, Long.class));
     long ts_c = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
-
 
     assert Arrays.equals(readArrayAtEncrypted(BigInteger.valueOf(ts_a)), array_a);
     assert Arrays.equals(readArrayAtEncrypted(BigInteger.valueOf(ts_b)), array_b);
