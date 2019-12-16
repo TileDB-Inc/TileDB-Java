@@ -306,6 +306,66 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Sets a buffer for a fixed-sized attribute.
+   *
+   * @param attr The attribute name.
+   * @param buffer NativeBuffer to be used for the attribute values.
+   * @param bufferElements The actual number of buffer elements
+   * @exception TileDBError A TileDB exception
+   */
+  public synchronized Query setBuffer(String attr, NativeArray buffer, long bufferElements)
+      throws TileDBError {
+    if (bufferElements <= 0) {
+      throw new TileDBError("Number of buffer elements must be >= 1");
+    }
+    if (bufferElements > buffer.getSize()) {
+      throw new TileDBError(
+          "Number of elements requested exceeds the number of elements in allocated buffer: "
+              + bufferElements
+              + " > "
+              + buffer.getSize());
+    }
+
+    try (ArraySchema schema = array.getSchema()) {
+      if (attr.equals(tiledb.tiledb_coords())) {
+        try (Domain domain = schema.getDomain()) {
+          Types.typeCheck(domain.getType(), buffer.getNativeType());
+        }
+      } else {
+        try (Attribute attribute = schema.getAttribute(attr)) {
+          Types.typeCheck(attribute.getType(), buffer.getNativeType());
+        }
+      }
+    }
+
+    uint64_tArray offsets_array_size = new uint64_tArray(1);
+    uint64_tArray values_array_size = new uint64_tArray(1);
+
+    offsets_array_size.setitem(0, BigInteger.valueOf(0l));
+    values_array_size.setitem(0, BigInteger.valueOf(bufferElements * buffer.getNativeTypeSize()));
+
+    Pair<uint64_tArray, uint64_tArray> buffer_sizes =
+        new Pair<>(offsets_array_size, values_array_size);
+
+    // Close previous buffers if they exist for this attribute
+    if (buffers_.containsKey(attr)) {
+      buffers_.get(attr).close();
+    }
+
+    buffers_.put(attr, buffer);
+    buffer_sizes_.put(attr, buffer_sizes);
+
+    // Set the actual TileDB buffer
+    uint64_tArray buffer_size = buffer_sizes.getSecond();
+
+    ctx.handleError(
+        tiledb.tiledb_query_set_buffer(
+            ctx.getCtxp(), queryp, attr, buffer.toVoidPointer(), buffer_size.cast()));
+
+    return this;
+  }
+
+  /**
    * Sets a buffer for a variable-sized getAttribute.
    *
    * @param attr Attribute name
@@ -338,6 +398,92 @@ public class Query implements AutoCloseable {
 
     offsets_array_size.setitem(0, BigInteger.valueOf(offsets.getNBytes()));
     values_array_size.setitem(0, BigInteger.valueOf(buffer.getNBytes()));
+
+    Pair<uint64_tArray, uint64_tArray> buffer_sizes =
+        new Pair<>(offsets_array_size, values_array_size);
+
+    // Close previous buffers if they exist for this attribute
+    if (var_buffers_.containsKey(attr)) {
+      Pair<NativeArray, NativeArray> prev_buffers = var_buffers_.get(attr);
+      prev_buffers.getFirst().close();
+      prev_buffers.getSecond().close();
+    }
+
+    var_buffers_.put(attr, new Pair<>(offsets, buffer));
+    buffer_sizes_.put(attr, buffer_sizes);
+
+    ctx.handleError(
+        tiledb.tiledb_query_set_buffer_var(
+            ctx.getCtxp(),
+            queryp,
+            attr,
+            offsets_array.cast(),
+            offsets_array_size.cast(),
+            buffer.toVoidPointer(),
+            values_array_size.cast()));
+
+    return this;
+  }
+
+  /**
+   * Sets a buffer for a variable-sized getAttribute.
+   *
+   * @param attr Attribute name
+   * @param offsets Offsets where a new element begins in the data buffer.
+   * @param buffer Buffer vector with elements of the attribute type.
+   * @param offsetElements The actual number of offset elements
+   * @param bufferElements The actual number of buffer elements
+   * @exception TileDBError A TileDB exception
+   */
+  public synchronized Query setBuffer(
+      String attr,
+      NativeArray offsets,
+      NativeArray buffer,
+      long offsetElements,
+      long bufferElements)
+      throws TileDBError {
+    Integer offsetSize = buffer.getSize();
+    Integer bufferSize = buffer.getSize();
+
+    if (offsetElements > offsetSize) {
+      throw new TileDBError(
+          "Number of offset elements requested exceeds the number of elements in allocated offset buffer: "
+              + offsetElements
+              + " > "
+              + offsetSize);
+    }
+    if (bufferElements > bufferSize) {
+      throw new TileDBError(
+          "Number of buffer elements requested exceeds the number of elements in allocated buffer"
+              + bufferElements
+              + " > "
+              + bufferSize);
+    }
+    if (attr.equals(tiledb.tiledb_coords())) {
+      throw new TileDBError("Cannot set coordinate buffer as variable sized.");
+    }
+
+    if (!offsets.getNativeType().equals(TILEDB_UINT64)) {
+      throw new TileDBError(
+          "Buffer offsets should be of getType TILEDB_UINT64 or Long. Found getType: "
+              + offsets.getNativeType());
+    }
+    if (offsetElements <= 0 || bufferElements <= 0) {
+      throw new TileDBError("Number of buffer elements must be >= 1");
+    }
+
+    // Type check the buffer native type matches the schema attribute type
+    try (ArraySchema schema = array.getSchema();
+        Attribute attribute = schema.getAttribute(attr)) {
+      Types.typeCheck(attribute.getType(), buffer.getNativeType());
+    }
+
+    uint64_tArray offsets_array = PointerUtils.uint64_tArrayFromVoid(offsets.toVoidPointer());
+    uint64_tArray offsets_array_size = new uint64_tArray(1);
+    uint64_tArray values_array_size = new uint64_tArray(1);
+
+    offsets_array_size.setitem(0, BigInteger.valueOf(offsetElements * offsets.getNativeTypeSize()));
+    values_array_size.setitem(0, BigInteger.valueOf(bufferElements * buffer.getNativeTypeSize()));
 
     Pair<uint64_tArray, uint64_tArray> buffer_sizes =
         new Pair<>(offsets_array_size, values_array_size);
