@@ -33,23 +33,23 @@ public class JavaArray {
    * Creates an empty JavaArray based on the given Datatype dt.
    *
    * @param dt The Datatype
-   * @param size The array size
+   * @param numElements The array capacity (number of elements)
    * @throws TileDBError
    */
-  public JavaArray(Datatype dt, int size) throws TileDBError {
+  public JavaArray(Datatype dt, int numElements) throws TileDBError {
     this.dataType = dt;
-    this.numElements = size;
+    this.numElements = numElements;
 
     Class c = Types.getJavaType(dt);
 
-    if (c == Integer.class) this.array = new int[size];
-    else if (c == Long.class) this.array = new long[size];
-    else if (c == Double.class) this.array = new double[size];
-    else if (c == Float.class) this.array = new float[size];
-    else if (c == Short.class) this.array = new short[size];
-    else if (c == Byte.class) this.array = new byte[size];
+    if (c == Integer.class) this.array = new int[numElements];
+    else if (c == Long.class) this.array = new long[numElements];
+    else if (c == Double.class) this.array = new double[numElements];
+    else if (c == Float.class) this.array = new float[numElements];
+    else if (c == Short.class) this.array = new short[numElements];
+    else if (c == Byte.class) this.array = new byte[numElements];
     else if (c == String.class) {
-      this.array = new byte[size];
+      this.array = new byte[numElements];
     }
   }
 
@@ -59,9 +59,6 @@ public class JavaArray {
    * @return The native Java array
    */
   public Object get() {
-    if (this.dataType.equals(Datatype.TILEDB_CHAR)) {
-      return new String((byte[]) array);
-    }
     return this.array;
   }
 
@@ -80,7 +77,7 @@ public class JavaArray {
    * @param position The position
    * @param o The element
    */
-  public void set(int position, int o) {
+  public void set(int position, int o) throws ArrayIndexOutOfBoundsException {
     ((int[]) array)[position] = o;
   }
 
@@ -90,7 +87,7 @@ public class JavaArray {
    * @param position The position
    * @param o The element
    */
-  public void set(int position, long o) {
+  public void set(int position, long o) throws ArrayIndexOutOfBoundsException {
     ((long[]) array)[position] = o;
   }
 
@@ -100,7 +97,7 @@ public class JavaArray {
    * @param position The position
    * @param o The element
    */
-  public void set(int position, float o) {
+  public void set(int position, float o) throws ArrayIndexOutOfBoundsException {
     ((float[]) array)[position] = o;
   }
 
@@ -110,7 +107,7 @@ public class JavaArray {
    * @param position The position
    * @param o The element
    */
-  public void set(int position, double o) {
+  public void set(int position, double o) throws ArrayIndexOutOfBoundsException {
     ((double[]) array)[position] = o;
   }
 
@@ -120,7 +117,7 @@ public class JavaArray {
    * @param position The position
    * @param o The element
    */
-  public void set(int position, byte o) {
+  public void set(int position, byte o) throws ArrayIndexOutOfBoundsException {
     ((byte[]) array)[position] = o;
   }
 
@@ -130,7 +127,7 @@ public class JavaArray {
    * @param position The position
    * @param o The element
    */
-  public void set(int position, short o) {
+  public void set(int position, short o) throws ArrayIndexOutOfBoundsException {
     ((short[]) array)[position] = o;
   }
 
@@ -140,7 +137,7 @@ public class JavaArray {
    * @param position The position
    * @param o The element
    */
-  public void set(int position, byte[] o) {
+  public void set(int position, byte[] o) throws ArrayIndexOutOfBoundsException {
     int curr = position;
     for (byte b : o) {
       ((byte[]) array)[curr] = b;

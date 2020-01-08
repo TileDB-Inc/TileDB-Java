@@ -147,6 +147,6 @@ public class JavaArrayTest {
     JavaArray testArray = new JavaArray(Datatype.TILEDB_CHAR, 4);
     Assert.assertNotNull(testArray);
 
-    Assert.assertEquals(((String) testArray.get()).length(), 4);
+    Assert.assertEquals(((byte[]) testArray.get()).length, 4);
   }
 }
