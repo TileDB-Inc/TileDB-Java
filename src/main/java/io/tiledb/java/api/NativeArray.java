@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 TileDB, Inc.
+ * Copyright (c) 2020 TileDB, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -98,6 +98,24 @@ public class NativeArray implements AutoCloseable {
     this.nativeType = Types.getNativeType(javaType);
     this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
     this.size = getSize(buffer);
+    createNativeArrayFromBuffer(buffer);
+  }
+
+  /**
+   * Creates a native array using a native datatype. It takes as input a Java buffer (i.e long[],
+   * int[]) and copies its values to the C native array.
+   *
+   * @param ctx A TileDB context
+   * @param buffer A Java array
+   * @param nativeType A TileDB datatype
+   * @param size The array size
+   * @exception TileDBError A TileDB exception
+   */
+  public NativeArray(Context ctx, Object buffer, Datatype nativeType, int size) throws TileDBError {
+    this.javaType = Types.getJavaType(nativeType);
+    this.nativeType = nativeType;
+    this.nativeTypeSize = tiledb.tiledb_datatype_size(this.nativeType.toSwigEnum()).intValue();
+    this.size = size;
     createNativeArrayFromBuffer(buffer);
   }
 
@@ -209,68 +227,57 @@ public class NativeArray implements AutoCloseable {
     switch (nativeType) {
       case TILEDB_FLOAT32:
         {
-          size = ((float[]) buffer).length;
           floatArray = Utils.newFloatArray((float[]) buffer);
           break;
         }
       case TILEDB_FLOAT64:
         {
-          size = ((double[]) buffer).length;
           doubleArray = Utils.newDoubleArray((double[]) buffer);
           break;
         }
       case TILEDB_INT8:
         {
-          size = ((byte[]) buffer).length;
           int8_tArray = Utils.newInt8_tArray((byte[]) buffer);
           break;
         }
       case TILEDB_INT16:
         {
-          size = ((short[]) buffer).length;
           int16_tArray = Utils.newInt16_tArray((short[]) buffer);
           break;
         }
       case TILEDB_INT32:
         {
-          size = ((int[]) buffer).length;
           int32_tArray = Utils.newInt32_tArray((int[]) buffer);
           break;
         }
       case TILEDB_INT64:
         {
-          size = ((long[]) buffer).length;
           int64_tArray = Utils.newInt64_tArray((long[]) buffer);
           break;
         }
       case TILEDB_UINT8:
         {
-          size = ((short[]) buffer).length;
           uint8_tArray = Utils.newUint8_tArray((short[]) buffer);
           break;
         }
       case TILEDB_UINT16:
         {
-          size = ((int[]) buffer).length;
           uint16_tArray = Utils.newUint16_tArray((int[]) buffer);
           break;
         }
       case TILEDB_UINT32:
         {
-          size = ((long[]) buffer).length;
           uint32_tArray = Utils.newUint32_tArray((long[]) buffer);
           break;
         }
       case TILEDB_UINT64:
         {
-          size = ((long[]) buffer).length;
           uint64_tArray = Utils.newInt64_tArray((long[]) buffer);
           break;
         }
       case TILEDB_CHAR:
         {
           byte[] bytes = stringToBytes(buffer);
-          size = bytes.length;
           int8_tArray = Utils.newInt8_tArray(bytes);
           break;
         }
@@ -288,7 +295,6 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_FS:
       case TILEDB_DATETIME_AS:
         {
-          size = ((long[]) buffer).length;
           int64_tArray = Utils.newInt64_tArray((long[]) buffer);
           break;
         }
