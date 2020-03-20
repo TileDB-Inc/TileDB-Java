@@ -46,6 +46,50 @@ public class PointerUtils {
     return new SWIGTYPE_p_void(uint64_tArray.getCPtr(p), false);
   }
 
+  public static long toCPtr(int32_tArray p) {
+    return int32_tArray.getCPtr(p);
+  }
+
+  public static long toCPtr(int64_tArray p) {
+    return int64_tArray.getCPtr(p);
+  }
+
+  public static long toCPtr(charArray p) {
+    return charArray.getCPtr(p);
+  }
+
+  public static long toCPtr(floatArray p) {
+    return floatArray.getCPtr(p);
+  }
+
+  public static long toCPtr(doubleArray p) {
+    return doubleArray.getCPtr(p);
+  }
+
+  public static long toCPtr(int8_tArray p) {
+    return int8_tArray.getCPtr(p);
+  }
+
+  public static long toCPtr(uint8_tArray p) {
+    return uint8_tArray.getCPtr(p);
+  }
+
+  public static long toCPtr(int16_tArray p) {
+    return int16_tArray.getCPtr(p);
+  }
+
+  public static long toCPtr(uint16_tArray p) {
+    return uint16_tArray.getCPtr(p);
+  }
+
+  public static long toCPtr(uint32_tArray p) {
+    return uint32_tArray.getCPtr(p);
+  }
+
+  public static long toCPtr(uint64_tArray p) {
+    return uint64_tArray.getCPtr(p);
+  }
+
   public static int32_tArray int32_tArrayFromVoid(SWIGTYPE_p_void p) {
     return new int32_tArray(SWIGTYPE_p_void.getCPtr(p), false);
   }

@@ -559,7 +559,7 @@ public class NativeArray implements AutoCloseable {
     }
   }
 
-  protected SWIGTYPE_p_void toVoidPointer() throws TileDBError {
+  public SWIGTYPE_p_void toVoidPointer() throws TileDBError {
     switch (nativeType) {
       case TILEDB_FLOAT32:
         {
@@ -619,6 +619,74 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_FS:
         {
           return PointerUtils.toVoid(int64_tArray);
+        }
+      default:
+        {
+          throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
+        }
+    }
+  }
+
+  public long toCPointer() throws TileDBError {
+    switch (nativeType) {
+      case TILEDB_FLOAT32:
+        {
+          return PointerUtils.toCPtr(floatArray);
+        }
+      case TILEDB_FLOAT64:
+        {
+          return PointerUtils.toCPtr(doubleArray);
+        }
+      case TILEDB_INT8:
+        {
+          return PointerUtils.toCPtr(int8_tArray);
+        }
+      case TILEDB_INT16:
+        {
+          return PointerUtils.toCPtr(int16_tArray);
+        }
+      case TILEDB_INT32:
+        {
+          return PointerUtils.toCPtr(int32_tArray);
+        }
+      case TILEDB_INT64:
+        {
+          return PointerUtils.toCPtr(int64_tArray);
+        }
+      case TILEDB_UINT8:
+        {
+          return PointerUtils.toCPtr(uint8_tArray);
+        }
+      case TILEDB_UINT16:
+        {
+          return PointerUtils.toCPtr(uint16_tArray);
+        }
+      case TILEDB_UINT32:
+        {
+          return PointerUtils.toCPtr(uint32_tArray);
+        }
+      case TILEDB_UINT64:
+        {
+          return PointerUtils.toCPtr(uint64_tArray);
+        }
+      case TILEDB_CHAR:
+        {
+          return PointerUtils.toCPtr(int8_tArray);
+        }
+      case TILEDB_DATETIME_YEAR:
+      case TILEDB_DATETIME_MONTH:
+      case TILEDB_DATETIME_WEEK:
+      case TILEDB_DATETIME_DAY:
+      case TILEDB_DATETIME_HR:
+      case TILEDB_DATETIME_MIN:
+      case TILEDB_DATETIME_SEC:
+      case TILEDB_DATETIME_MS:
+      case TILEDB_DATETIME_US:
+      case TILEDB_DATETIME_NS:
+      case TILEDB_DATETIME_PS:
+      case TILEDB_DATETIME_FS:
+        {
+          return PointerUtils.toCPtr(int64_tArray);
         }
       default:
         {
