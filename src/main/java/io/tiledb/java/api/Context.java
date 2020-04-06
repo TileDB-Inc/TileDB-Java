@@ -170,9 +170,6 @@ public class Context implements AutoCloseable {
     this.ctxpp = _ctxpp;
     this.ctxp = tiledb.tiledb_ctx_tpp_value(_ctxpp);
     this.errorHandler = new ContextCallback();
-
-    // Set default tags
-    setDefaultTags();
   }
 
   protected SWIGTYPE_p_tiledb_ctx_t getCtxp() {
@@ -188,40 +185,6 @@ public class Context implements AutoCloseable {
       handleError(rc);
     }
     return new Config(_configpp);
-  }
-
-  /**
-   * Set context tasks
-   *
-   * @param key to set
-   * @param value value to set
-   * @throws TileDBError
-   */
-  public void setTag(String key, String value) throws TileDBError {
-    handleError(tiledb.tiledb_ctx_set_tag(ctxp, key, value));
-  }
-
-  /**
-   * Set default context tags
-   *
-   * @throws TileDBError
-   */
-  private void setDefaultTags() throws TileDBError {
-    setTag("x-tiledb-api-language", "java");
-    Package pkg = Context.class.getPackage();
-    if (pkg != null) {
-      String version = pkg.getImplementationVersion();
-      if (version != null) {
-        setTag("x-tiledb-api-language-version", version);
-      }
-    }
-    String platform =
-        System.getProperty("os.name")
-            + "-"
-            + System.getProperty("os.verions")
-            + "-"
-            + System.getProperty("os.arch");
-    setTag("x-tiledb-api-sys-platform", platform);
   }
 
   /**

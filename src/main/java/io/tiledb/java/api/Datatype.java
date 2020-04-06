@@ -205,32 +205,6 @@ public enum Datatype {
         return tiledb_datatype_t.TILEDB_STRING_UCS4;
       case TILEDB_ANY:
         return tiledb_datatype_t.TILEDB_ANY;
-      case TILEDB_DATETIME_YEAR:
-        return tiledb_datatype_t.TILEDB_DATETIME_YEAR;
-      case TILEDB_DATETIME_MONTH:
-        return tiledb_datatype_t.TILEDB_DATETIME_MONTH;
-      case TILEDB_DATETIME_WEEK:
-        return tiledb_datatype_t.TILEDB_DATETIME_WEEK;
-      case TILEDB_DATETIME_DAY:
-        return tiledb_datatype_t.TILEDB_DATETIME_DAY;
-      case TILEDB_DATETIME_HR:
-        return tiledb_datatype_t.TILEDB_DATETIME_HR;
-      case TILEDB_DATETIME_MIN:
-        return tiledb_datatype_t.TILEDB_DATETIME_MIN;
-      case TILEDB_DATETIME_SEC:
-        return tiledb_datatype_t.TILEDB_DATETIME_SEC;
-      case TILEDB_DATETIME_MS:
-        return tiledb_datatype_t.TILEDB_DATETIME_MS;
-      case TILEDB_DATETIME_US:
-        return tiledb_datatype_t.TILEDB_DATETIME_US;
-      case TILEDB_DATETIME_NS:
-        return tiledb_datatype_t.TILEDB_DATETIME_NS;
-      case TILEDB_DATETIME_PS:
-        return tiledb_datatype_t.TILEDB_DATETIME_PS;
-      case TILEDB_DATETIME_FS:
-        return tiledb_datatype_t.TILEDB_DATETIME_FS;
-      case TILEDB_DATETIME_AS:
-        return tiledb_datatype_t.TILEDB_DATETIME_AS;
       default:
         throw new TileDBError("No such enum value" + this.name());
     }
@@ -274,32 +248,6 @@ public enum Datatype {
         return TILEDB_STRING_UCS4;
       case TILEDB_ANY:
         return TILEDB_ANY;
-      case TILEDB_DATETIME_YEAR:
-        return TILEDB_DATETIME_YEAR;
-      case TILEDB_DATETIME_MONTH:
-        return TILEDB_DATETIME_MONTH;
-      case TILEDB_DATETIME_WEEK:
-        return TILEDB_DATETIME_WEEK;
-      case TILEDB_DATETIME_DAY:
-        return TILEDB_DATETIME_DAY;
-      case TILEDB_DATETIME_HR:
-        return TILEDB_DATETIME_HR;
-      case TILEDB_DATETIME_MIN:
-        return TILEDB_DATETIME_MIN;
-      case TILEDB_DATETIME_SEC:
-        return TILEDB_DATETIME_SEC;
-      case TILEDB_DATETIME_MS:
-        return TILEDB_DATETIME_MS;
-      case TILEDB_DATETIME_US:
-        return TILEDB_DATETIME_US;
-      case TILEDB_DATETIME_NS:
-        return TILEDB_DATETIME_NS;
-      case TILEDB_DATETIME_PS:
-        return TILEDB_DATETIME_PS;
-      case TILEDB_DATETIME_FS:
-        return TILEDB_DATETIME_FS;
-      case TILEDB_DATETIME_AS:
-        return TILEDB_DATETIME_AS;
       default:
         throw new TileDBError("No such enum value" + e.name());
     }

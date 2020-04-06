@@ -101,8 +101,8 @@ public class QueryTest {
     Query query = new Query(array, TILEDB_READ);
 
     // Slice only rows 1, 2 and cols 2, 3, 4
-    query.addRange(0, (int) 1, (int) 2);
-    query.addRange(1, (int) 2, (int) 4);
+    int[] subarray = {1,2,2,4};
+    query.setSubarray(new NativeArray(ctx, subarray, int.class));
     query.setLayout(TILEDB_ROW_MAJOR);
 
     // Prepare the vector that will hold the result
