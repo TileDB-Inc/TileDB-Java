@@ -8,18 +8,18 @@
 
 package io.tiledb.libtiledb;
 
-public class SWIGTYPE_p_p_unsigned_long_long {
+public class SWIGTYPE_p_p_tiledb_kv_t {
   private transient long swigCPtr;
 
-  protected SWIGTYPE_p_p_unsigned_long_long(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+  protected SWIGTYPE_p_p_tiledb_kv_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
     swigCPtr = cPtr;
   }
 
-  protected SWIGTYPE_p_p_unsigned_long_long() {
+  protected SWIGTYPE_p_p_tiledb_kv_t() {
     swigCPtr = 0;
   }
 
-  protected static long getCPtr(SWIGTYPE_p_p_unsigned_long_long obj) {
+  protected static long getCPtr(SWIGTYPE_p_p_tiledb_kv_t obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
