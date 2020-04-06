@@ -50,6 +50,10 @@ if (NOT TILEDB_FOUND)
         -DTILEDB_S3=${TILEDB_S3}
         -DTILEDB_HDFS=${TILEDB_HDFS}
         -DTILEDB_FORCE_ALL_DEPS=ON
+        -DTILEDB_WERROR=OFF
+        -E CXXFLAGS="-Wno-error=deprecated-copy"
+        -E CXX_FLAGS="-Wno-error=deprecated-copy"
+        -E CFLAGS="-Wno-error=deprecated-copy"
       UPDATE_COMMAND ""
       INSTALL_COMMAND
         ${CMAKE_COMMAND} --build . --target install-tiledb
