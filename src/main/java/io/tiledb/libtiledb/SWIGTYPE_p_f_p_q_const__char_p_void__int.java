@@ -11,7 +11,8 @@ package io.tiledb.libtiledb;
 public class SWIGTYPE_p_f_p_q_const__char_p_void__int {
   private transient long swigCPtr;
 
-  protected SWIGTYPE_p_f_p_q_const__char_p_void__int(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+  protected SWIGTYPE_p_f_p_q_const__char_p_void__int(
+      long cPtr, @SuppressWarnings("unused") boolean futureUse) {
     swigCPtr = cPtr;
   }
 
@@ -23,4 +24,3 @@ public class SWIGTYPE_p_f_p_q_const__char_p_void__int {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

@@ -23,4 +23,3 @@ public class SWIGTYPE_p_unsigned_short {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

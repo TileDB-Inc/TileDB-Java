@@ -57,5 +57,4 @@ public class floatArray {
     long cPtr = tiledbJNI.floatArray_frompointer(SWIGTYPE_p_float.getCPtr(t));
     return (cPtr == 0) ? null : new floatArray(cPtr, false);
   }
-
 }

@@ -23,4 +23,3 @@ public class SWIGTYPE_p_tiledb_vfs_mode_t {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

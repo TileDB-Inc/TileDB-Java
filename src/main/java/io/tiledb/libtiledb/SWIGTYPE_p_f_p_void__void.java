@@ -23,4 +23,3 @@ public class SWIGTYPE_p_f_p_void__void {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-
