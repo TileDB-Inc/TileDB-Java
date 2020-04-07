@@ -88,18 +88,25 @@ public class VCFReadTest {
 
     Query query = new Query(vcf_array, TILEDB_READ);
     query.setBuffer("pos", posData);
-    query.setCoordinates(coords);
     query.setBuffer("qual", qualData);
     query.setBuffer("alleles", allelesOffsets, allelesData);
     query.setBuffer("filter_ids", filterIdsOffsets, filterIdsData);
 
+    query.setCoordinates(coords);
 
     query.setLayout(TILEDB_ROW_MAJOR);
+
+    query.setSubarray(new NativeArray(ctx, new long[]{1, 1, 53435, 3435976}, Datatype.TILEDB_UINT32));
+
     while (query.getQueryStatus() != QueryStatus.TILEDB_COMPLETED){
       query.submit();
 
       long[] posResults = (long[])query.getBuffer("pos");
       float[] qual = (float[])query.getBuffer("qual");
+      byte[] alleles = (byte[])query.getBuffer("alleles");
+      long[] allelesOffs = (long[])query.getVarBuffer("alleles");
+      int[] filterIds = (int[])query.getBuffer("filter_ids");
+      long[] filterIdsOffs = (long[])query.getVarBuffer("filter_ids");
       long[] coordsData = (long[]) query.getBuffer(TILEDB_COORDS);
 
       long numResults = query.resultBufferElements().get(TILEDB_COORDS).getSecond() / vcf_array.getSchema().getDomain().getNDim();
@@ -107,7 +114,29 @@ public class VCFReadTest {
 
       for (int r=0; r<numResults; ++r) {
         long i = coordsData[2 * r], j = coordsData[2 * r + 1];
-        System.out.printf("(%d, %d) -> |%d|%f|\n", i, j, posResults[r], qual[r]);
+
+        int allelesStartPos = (int)allelesOffs[r];
+        int allelesEndPos;
+
+        int filterIdsStartPos = (int)filterIdsOffs[r];
+        int filterIdsEndPos;
+
+        String allelesStr;
+        int[] f_ids;
+
+        if (r == numResults-1) {
+          allelesStr = new String(Arrays.copyOfRange(alleles, allelesStartPos, alleles.length));
+          //f_ids = Arrays.copyOfRange(filterIds, filterIdsStartPos, filterIds.length);
+        }
+        else {
+          allelesEndPos = (int)allelesOffs[r+1] - 1;
+          filterIdsEndPos = (int)filterIdsOffs[r+1] - 1;
+          allelesStr = new String(Arrays.copyOfRange(alleles, allelesStartPos, allelesEndPos));
+          //f_ids = Arrays.copyOfRange(filterIds, filterIdsStartPos, filterIdsEndPos);
+        }
+        //
+        System.out.printf("(%d, %d) -> |%d|%f|%s|%s|\n", i, j, posResults[r], qual[r], allelesStr, "");
+
       }
     }
   }
