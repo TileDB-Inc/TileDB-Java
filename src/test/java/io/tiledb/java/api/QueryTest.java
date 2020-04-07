@@ -102,21 +102,17 @@ public class QueryTest {
 
     // Slice only rows 1, 2 and cols 2, 3, 4
     int[] subarray = {1, 2, 2, 4};
-    query.setSubarray(new NativeArray(ctx, subarray, int.class));
+    query.setSubarray(new NativeArray(ctx, subarray, Integer.class));
     query.setLayout(TILEDB_ROW_MAJOR);
 
     // Prepare the vector that will hold the result
     // (of size 6 elements for "a1" and 12 elements for "a2" since
     // it stores two floats per cell)
 
-    NativeArray a1Array = new NativeArray(ctx, 6, Character.class);
-    NativeArray a2Array = new NativeArray(ctx, 12, Float.class);
+    NativeArray a1Array = new NativeArray(ctx, 3, Character.class);
+    NativeArray a2Array = new NativeArray(ctx, 6, Float.class);
     query.setBuffer("a1", a1Array);
     query.setBuffer("a2", a2Array);
-
-    // set the number of buffer elements to a size smaller than the read buffer size
-    query.setBufferElements("a1", 3);
-    query.setBufferElements("a2", 6);
 
     // Submit query
     query.submit();
