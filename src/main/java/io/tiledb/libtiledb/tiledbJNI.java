@@ -818,6 +818,18 @@ public class tiledbJNI {
 
   public static final native void tiledb_dimension_free(long jarg1);
 
+  public static final native int tiledb_dimension_set_filter_list(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_set_cell_val_num(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_get_filter_list(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_get_cell_val_num(
+      long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_dimension_get_name(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_dimension_get_type(long jarg1, long jarg2, long jarg3);
@@ -834,6 +846,12 @@ public class tiledbJNI {
   public static final native void tiledb_array_schema_free(long jarg1);
 
   public static final native int tiledb_array_schema_add_attribute(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_array_schema_set_allows_dups(
+      long jarg1, long jarg2, int jarg3);
+
+  public static final native int tiledb_array_schema_get_allows_dups(
       long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_schema_set_domain(long jarg1, long jarg2, long jarg3);
@@ -932,6 +950,15 @@ public class tiledbJNI {
   public static final native int tiledb_query_add_range(
       long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
 
+  public static final native int tiledb_query_add_range_var(
+      long jarg1,
+      long jarg2,
+      long jarg3,
+      long jarg4,
+      java.math.BigInteger jarg5,
+      long jarg6,
+      java.math.BigInteger jarg7);
+
   public static final native int tiledb_query_get_range_num(
       long jarg1, long jarg2, long jarg3, long jarg4);
 
@@ -943,6 +970,12 @@ public class tiledbJNI {
       long jarg5,
       long jarg6,
       long jarg7);
+
+  public static final native int tiledb_query_get_range_var_size(
+      long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_query_get_range_var(
+      long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
 
   public static final native int tiledb_query_get_est_result_size(
       long jarg1, long jarg2, String jarg3, long jarg4);
@@ -1004,8 +1037,28 @@ public class tiledbJNI {
   public static final native int tiledb_array_consolidate_with_key(
       long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, long jarg6);
 
+  public static final native int tiledb_array_vacuum(long jarg1, String jarg2, long jarg3);
+
   public static final native int tiledb_array_get_non_empty_domain(
       long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_array_get_non_empty_domain_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_array_get_non_empty_domain_from_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_array_get_non_empty_domain_var_size_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_array_get_non_empty_domain_var_size_from_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_array_get_non_empty_domain_var_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_array_get_non_empty_domain_var_from_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
 
   public static final native int tiledb_array_max_buffer_size(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
