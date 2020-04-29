@@ -35,11 +35,6 @@ public class QueryTest {
     }
   }
 
-  @Test
-  public void test() throws Exception {
-    arrayRead();
-  }
-
   public void arrayCreate() throws Exception {
     // The array will be 4x4 with dimensions "rows" and "cols", with domain [1,4].
     Dimension<Integer> rows =
@@ -94,29 +89,32 @@ public class QueryTest {
     array.close();
   }
 
-  private void arrayRead() throws Exception {
+  @Test
+  public void arrayReadTest() throws Exception {
     Array array = new Array(ctx, arrayURI, TILEDB_READ);
 
     // Create query
     Query query = new Query(array, TILEDB_READ);
 
     // Slice only rows 1, 2 and cols 2, 3, 4
-    query.addRange(0, (int) 1, (int) 2);
-    query.addRange(1, (int) 2, (int) 4);
+    query.addRange(0, 1, 2);
+    query.addRange(1, 2, 4);
     query.setLayout(TILEDB_ROW_MAJOR);
 
     // Prepare the vector that will hold the result
     // (of size 6 elements for "a1" and 12 elements for "a2" since
     // it stores two floats per cell)
 
-    NativeArray a1Array = new NativeArray(ctx, 6, Character.class);
-    NativeArray a2Array = new NativeArray(ctx, 12, Float.class);
+    // Get the first 6 elements of each attribute/dimension
+    NativeArray dim1Array = new NativeArray(ctx, 6, Integer.class);
+    NativeArray dim2Array = new NativeArray(ctx, 6, Integer.class);
+    NativeArray a1Array = new NativeArray(ctx, 12, Character.class);
+    NativeArray a2Array = new NativeArray(ctx, 6, Float.class);
+
+    query.setBuffer("rows", dim1Array);
+    query.setBuffer("cols", dim2Array);
     query.setBuffer("a1", a1Array);
     query.setBuffer("a2", a2Array);
-
-    // set the number of buffer elements to a size smaller than the read buffer size
-    query.setBufferElements("a1", 3);
-    query.setBufferElements("a2", 6);
 
     // Submit query
     query.submit();
@@ -126,16 +124,58 @@ public class QueryTest {
     Assert.assertEquals(Long.valueOf(3), resultElements.get("a1").getSecond());
     Assert.assertEquals(Long.valueOf(6), resultElements.get("a2").getSecond());
 
+    int[] dim1 = (int[]) query.getBuffer("rows");
+    int[] dim2 = (int[]) query.getBuffer("cols");
     byte[] a1 = (byte[]) query.getBuffer("a1");
     float[] a2 = (float[]) query.getBuffer("a2");
 
+    Assert.assertArrayEquals(new int[] {1, 1, 1}, dim1);
+    Assert.assertArrayEquals(new int[] {2, 3, 4}, dim2);
     Assert.assertArrayEquals(new byte[] {'b', 'c', 'd'}, a1);
-    float[] expected_a2 = new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f};
-    Assert.assertArrayEquals(expected_a2, a2, 0.01f);
+    Assert.assertArrayEquals(new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f}, a2, 0.01f);
 
+    dim1Array.close();
+    dim2Array.close();
     a1Array.close();
     a2Array.close();
     query.close();
     array.close();
+  }
+
+  @Test
+  public void arrayReadDimensionsTest() throws Exception {
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    Query query = new Query(array, TILEDB_READ);
+
+    query.addRange(0, 1, 4);
+    query.addRange(1, 1, 4);
+    query.setLayout(TILEDB_ROW_MAJOR);
+
+    // Get the first 6 elements of each attribute/dimension
+    NativeArray dim1Array = new NativeArray(ctx, 16, Integer.class);
+    NativeArray dim2Array = new NativeArray(ctx, 16, Integer.class);
+
+    query.setBuffer("rows", dim1Array);
+    query.setBuffer("cols", dim2Array);
+
+    // Submit query
+    query.submit();
+
+    HashMap<String, Pair<Long, Long>> resultElements = query.resultBufferElements();
+
+    Assert.assertEquals(Long.valueOf(16), resultElements.get("rows").getSecond());
+    Assert.assertEquals(Long.valueOf(16), resultElements.get("cols").getSecond());
+
+    int[] dim1 = (int[]) query.getBuffer("rows");
+    int[] dim2 = (int[]) query.getBuffer("cols");
+
+    Assert.assertArrayEquals(new int[] {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4}, dim1);
+    Assert.assertArrayEquals(new int[] {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4}, dim2);
+
+    query.close();
+    array.close();
+    dim1Array.close();
+    dim2Array.close();
   }
 }
