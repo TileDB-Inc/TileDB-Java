@@ -482,6 +482,65 @@ public class Array implements AutoCloseable {
   }
 
   /**
+   * Given a dimension's index, return the bounding coordinates for that dimension.
+   *
+   * @param index THe dimension's index
+   * @return A Pair that contains the dimension's bounds
+   * @exception TileDBError A TileDB exception
+   */
+  public Pair getNonEmptyDomainFromIndex(long index) throws TileDBError {
+    checkIsOpen();
+    Pair p;
+    try (Domain domain = schema.getDomain();
+        NativeArray domainArray =
+            new NativeArray(ctx, 2 * (int) domain.getRank(), domain.getType())) {
+
+      SWIGTYPE_p_int emptyp = tiledb.new_intp();
+      try {
+        ctx.handleError(
+            tiledb.tiledb_array_get_non_empty_domain_from_index(
+                ctx.getCtxp(), arrayp, index, domainArray.toVoidPointer(), emptyp));
+        if (tiledb.intp_value(emptyp) == 1) {
+          System.out.println("Returning empty pair");
+          return Pair.empty();
+        }
+      } finally {
+        tiledb.delete_intp(emptyp);
+      }
+
+      return new Pair(domainArray.getItem(0), domainArray.getItem(1));
+    }
+  }
+
+  /**
+   * Given a dimension's name, return the bounding coordinates for that dimension.
+   *
+   * @param name THe dimension's name
+   * @return A Pair that contains the dimension's bounds
+   * @exception TileDBError A TileDB exception
+   */
+  public Pair getNonEmptyDomainFromName(String name) throws TileDBError {
+    checkIsOpen();
+    HashMap<String, Pair> ret = new HashMap<String, Pair>();
+    try (Domain domain = schema.getDomain();
+        NativeArray domainArray =
+            new NativeArray(ctx, 2 * (int) domain.getRank(), domain.getType())) {
+      SWIGTYPE_p_int emptyp = tiledb.new_intp();
+      try {
+        ctx.handleError(
+            tiledb.tiledb_array_get_non_empty_domain_from_name(
+                ctx.getCtxp(), arrayp, name, domainArray.toVoidPointer(), emptyp));
+        if (tiledb.intp_value(emptyp) == 1) {
+          return Pair.empty();
+        }
+      } finally {
+        tiledb.delete_intp(emptyp);
+      }
+      return new Pair(domainArray.getItem(0), domainArray.getItem(1));
+    }
+  }
+
+  /**
    * Compute an upper bound on the buffer elements needed to read a subarray.
    *
    * @param subarray Domain subarray
