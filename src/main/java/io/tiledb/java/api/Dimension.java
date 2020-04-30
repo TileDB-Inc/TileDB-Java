@@ -216,6 +216,39 @@ public class Dimension<T> implements AutoCloseable {
   }
 
   /**
+   * Gets the list of filtes associated with the dimension
+   *
+   * @return A FilterList instance
+   * @throws TileDBError A TileDB exception
+   */
+  public FilterList getFilterList() throws TileDBError {
+    FilterList filterlist;
+    SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_dimension_get_filter_list(ctx.getCtxp(), dimensionp, filterlistpp));
+      filterlist = new FilterList(ctx, filterlistpp);
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_filter_list_tpp(filterlistpp);
+      throw err;
+    }
+    return filterlist;
+  }
+
+  /**
+   * Sets the Dimension FilterList.
+   *
+   * @param filters A TileDB FilterList
+   * @throws TileDBError A TileDB exception
+   */
+  public Dimension<T> setFilterList(FilterList filters) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_dimension_set_filter_list(
+            ctx.getCtxp(), dimensionp, filters.getFilterListp()));
+    return this;
+  }
+
+  /**
    * @return A string representation of the extent.
    * @throws TileDBError A TileDB exception
    */

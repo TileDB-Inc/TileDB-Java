@@ -9,11 +9,28 @@ public class DimensionTest {
   public void testDimension() throws Exception {
     try (Context ctx = new Context();
         Dimension<Integer> dim = new Dimension<>(ctx, "d1", Integer.class, new Pair<>(1, 10), 10)) {
+      try (FilterList filterList = new FilterList(ctx)) {
+        filterList.addFilter(new GzipFilter(ctx, 3));
+        filterList.addFilter(new Bzip2Filter(ctx, 1));
+        filterList.addFilter(new DoubleDeltaFilter(ctx, -1));
+        dim.setFilterList(filterList);
+      }
       Assert.assertEquals("d1", dim.getName());
       Assert.assertEquals(Datatype.TILEDB_INT32, dim.getType());
       Assert.assertEquals((Integer) 10, dim.getTileExtent());
       Assert.assertEquals((Integer) 1, dim.getDomain().getFirst());
       Assert.assertEquals((Integer) 10, dim.getDomain().getSecond());
+
+      // Filter List Tests
+      FilterList filterList = dim.getFilterList();
+      Assert.assertEquals(GzipFilter.class, filterList.getFilter(0).getClass());
+      Assert.assertEquals(3, ((GzipFilter) filterList.getFilter(0)).getLevel());
+
+      Assert.assertEquals(Bzip2Filter.class, filterList.getFilter(1).getClass());
+      Assert.assertEquals(1, ((Bzip2Filter) filterList.getFilter(1)).getLevel());
+
+      Assert.assertEquals(DoubleDeltaFilter.class, filterList.getFilter(2).getClass());
+      Assert.assertEquals(-1, ((DoubleDeltaFilter) filterList.getFilter(2)).getLevel());
     }
   }
 
