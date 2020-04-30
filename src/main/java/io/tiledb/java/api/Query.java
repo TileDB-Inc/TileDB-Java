@@ -260,21 +260,23 @@ public class Query implements AutoCloseable {
   }
 
   /**
-   * Sets a buffer for a fixed-sized attribute.
+   * Sets a buffer for a fixed-sized attribute or dimension.
    *
-   * @param attr The attribute name.
+   * @param attr The attribute/dimension name.
    * @param buffer NativeBuffer to be used for the attribute values.
    * @exception TileDBError A TileDB exception
    */
   public synchronized Query setBuffer(String attr, NativeArray buffer) throws TileDBError {
     try (ArraySchema schema = array.getSchema()) {
-      if (attr.equals(tiledb.tiledb_coords())) {
-        try (Domain domain = schema.getDomain()) {
+      try (Domain domain = schema.getDomain()) {
+        if (attr.equals(tiledb.tiledb_coords())) {
           Types.typeCheck(domain.getType(), buffer.getNativeType());
-        }
-      } else {
-        try (Attribute attribute = schema.getAttribute(attr)) {
-          Types.typeCheck(attribute.getType(), buffer.getNativeType());
+        } else if (domain.hasDimension(attr)) {
+          Types.typeCheck(domain.getType(), buffer.getNativeType());
+        } else {
+          try (Attribute attribute = schema.getAttribute(attr)) {
+            Types.typeCheck(attribute.getType(), buffer.getNativeType());
+          }
         }
       }
     }
@@ -327,13 +329,15 @@ public class Query implements AutoCloseable {
     }
 
     try (ArraySchema schema = array.getSchema()) {
-      if (attr.equals(tiledb.tiledb_coords())) {
-        try (Domain domain = schema.getDomain()) {
+      try (Domain domain = schema.getDomain()) {
+        if (attr.equals(tiledb.tiledb_coords())) {
           Types.typeCheck(domain.getType(), buffer.getNativeType());
-        }
-      } else {
-        try (Attribute attribute = schema.getAttribute(attr)) {
-          Types.typeCheck(attribute.getType(), buffer.getNativeType());
+        } else if (domain.hasDimension(attr)) {
+          Types.typeCheck(domain.getType(), buffer.getNativeType());
+        } else {
+          try (Attribute attribute = schema.getAttribute(attr)) {
+            Types.typeCheck(attribute.getType(), buffer.getNativeType());
+          }
         }
       }
     }
