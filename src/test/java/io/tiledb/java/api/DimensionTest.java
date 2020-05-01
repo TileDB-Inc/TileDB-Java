@@ -55,4 +55,24 @@ public class DimensionTest {
       Assert.assertEquals("d1", dim.getName());
     }
   }
+
+  @Test
+  public void testSetCellValNum() throws Exception {
+    try (Context ctx = new Context();
+        Dimension<Integer> dim =
+            new Dimension<>(ctx, "d1", Datatype.TILEDB_INT32, new Pair<>(1, 10), 10)) {
+
+      dim.setCellValNum(1);
+    }
+  }
+
+  @Test
+  public void testGetCellValNum() throws Exception {
+    try (Context ctx = new Context();
+        Dimension<Integer> dim =
+            new Dimension<>(ctx, "d1", Datatype.TILEDB_INT32, new Pair<>(1, 10), 10)) {
+
+      Assert.assertEquals(1, dim.getCellValNum());
+    }
+  }
 }

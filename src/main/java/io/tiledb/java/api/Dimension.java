@@ -249,6 +249,38 @@ public class Dimension<T> implements AutoCloseable {
   }
 
   /**
+   * Sets the number of values per cell for the dimension.
+   *
+   * @param cellValNum The number of values per cell
+   * @throws TileDBError
+   */
+  public void setCellValNum(long cellValNum) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_dimension_set_cell_val_num(ctx.getCtxp(), dimensionp, cellValNum));
+    } catch (TileDBError error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves the number of values per cell for the dimension.
+   *
+   * @return The number of values per cell
+   * @throws TileDBError
+   */
+  public long getCellValNum() throws TileDBError {
+    SWIGTYPE_p_unsigned_int uint = tiledb.new_uintp();
+    try {
+      ctx.handleError(tiledb.tiledb_dimension_get_cell_val_num(ctx.getCtxp(), dimensionp, uint));
+
+      return tiledb.uintp_value(uint);
+    } catch (TileDBError error) {
+      throw error;
+    }
+  }
+
+  /**
    * @return A string representation of the extent.
    * @throws TileDBError A TileDB exception
    */
