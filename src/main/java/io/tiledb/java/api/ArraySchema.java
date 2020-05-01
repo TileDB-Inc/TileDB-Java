@@ -595,6 +595,41 @@ public class ArraySchema implements AutoCloseable {
     return filterlist;
   }
 
+  /**
+   * Sets whether the array can allow coordinate duplicates or not. Applicable only to sparse arrays
+   * (it errors out if set to `1` for dense arrays).
+   *
+   * @param allowsDups The allowDups parameter, which allows duplicate coordinates to be inserted
+   *     it's set to `1`
+   * @throws TileDBError
+   */
+  public void setAllowDups(int allowsDups) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_set_allows_dups(ctx.getCtxp(), getSchemap(), allowsDups));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Checks wether duplicate coordinates are allowed in the array schema
+   *
+   * @return `1` if duplicate coordinates are allowed in that array schema
+   * @throws TileDBError
+   */
+  public int getAllowDups() throws TileDBError {
+    try {
+      SWIGTYPE_p_int allowsDupsPtr = tiledb.new_intp();
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_allows_dups(ctx.getCtxp(), getSchemap(), allowsDupsPtr));
+
+      return tiledb.intp_value(allowsDupsPtr);
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
   protected SWIGTYPE_p_tiledb_array_schema_t getSchemap() {
     return schemap;
   }
