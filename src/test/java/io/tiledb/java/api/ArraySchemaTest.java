@@ -4,19 +4,23 @@ import org.junit.*;
 
 public class ArraySchemaTest {
 
-  public ArraySchema schemaCreate(Context ctx) throws Exception {
+  public ArraySchema schemaCreate(Context ctx, ArrayType arrayType) throws TileDBError {
     Dimension<Long> d1 =
         new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
 
     Attribute a1 = new Attribute(ctx, "a1", Integer.class);
-    ArraySchema schema = new ArraySchema(ctx, ArrayType.TILEDB_DENSE);
+    ArraySchema schema = new ArraySchema(ctx, arrayType);
     schema.setTileOrder(Layout.TILEDB_ROW_MAJOR);
     schema.setCellOrder(Layout.TILEDB_ROW_MAJOR);
     schema.setDomain(domain);
     schema.addAttribute(a1);
     return schema;
+  }
+
+  public ArraySchema schemaCreate(Context ctx) throws TileDBError {
+    return schemaCreate(ctx, ArrayType.TILEDB_DENSE);
   }
 
   @Test
@@ -77,6 +81,32 @@ public class ArraySchemaTest {
       Assert.assertTrue(domain.hasDimension("d1"));
       Assert.assertFalse(domain.hasDimension(""));
       Assert.assertFalse(domain.hasDimension("a1"));
+    }
+  }
+
+  @Test
+  public void testArraySchemaGetAllowDups() throws Exception {
+    try (Context ctx = new Context();
+        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE); ) {
+      Assert.assertNotEquals(1, schema.getAllowDups());
+    }
+  }
+
+  @Test
+  public void testArraySchemaSetAllowDups() throws Exception {
+    try (Context ctx = new Context();
+        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE); ) {
+      schema.setAllowDups(1);
+    }
+  }
+
+  @Test
+  public void testArraySchemaGetSetAllowDups() throws Exception {
+    try (Context ctx = new Context();
+        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE); ) {
+      Assert.assertNotEquals(1, schema.getAllowDups());
+      schema.setAllowDups(1);
+      Assert.assertEquals(1, schema.getAllowDups());
     }
   }
 }
