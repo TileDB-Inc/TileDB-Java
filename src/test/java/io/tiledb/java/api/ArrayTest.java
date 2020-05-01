@@ -209,4 +209,42 @@ public class ArrayTest {
     assert Arrays.equals(readArrayAtEncrypted(BigInteger.valueOf(ts_b)), array_b);
     assert Arrays.equals(readArrayAtEncrypted(BigInteger.valueOf(ts_c)), array_c);
   }
+
+  @Test
+  public void testArraygetNonEmptyDomainFromIndex() throws Exception {
+    Array.create(arrayURI, schemaCreate());
+
+    long[] array_a = new long[] {1, 2, 3, 6};
+    insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
+
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    Assert.assertEquals(1L, array.getNonEmptyDomainFromIndex(0).getFirst());
+    Assert.assertEquals(4L, array.getNonEmptyDomainFromIndex(0).getSecond());
+
+    try {
+      array.getNonEmptyDomainFromIndex(1);
+      Assert.fail();
+    } catch (TileDBError error) {
+    }
+  }
+
+  @Test
+  public void testArraygetNonEmptyDomainFromName() throws Exception {
+    Array.create(arrayURI, schemaCreate());
+
+    long[] array_a = new long[] {1, 2, 3, 6};
+    insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
+
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    Assert.assertEquals(1L, array.getNonEmptyDomainFromName("d1").getFirst());
+    Assert.assertEquals(4L, array.getNonEmptyDomainFromName("d1").getSecond());
+
+    try {
+      array.getNonEmptyDomainFromName("d2");
+      Assert.fail();
+    } catch (TileDBError error) {
+    }
+  }
 }

@@ -28,6 +28,8 @@ public class Pair<F, S> implements java.io.Serializable {
   private F first;
   private S second;
 
+  private Pair() {}
+
   public Pair(F first, S second) {
     this.first = first;
     this.second = second;
@@ -47,5 +49,14 @@ public class Pair<F, S> implements java.io.Serializable {
 
   public void setSecond(S second) {
     this.second = second;
+  }
+
+  /**
+   * Returns an empty Pair
+   *
+   * @return The Pair
+   */
+  public static Pair empty() {
+    return new Pair();
   }
 }
