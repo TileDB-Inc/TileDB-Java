@@ -714,6 +714,13 @@ public class Array implements AutoCloseable {
     return new Pair(keyString, result);
   }
 
+  /**
+   * Checks if the key is present in the Array metadata
+   *
+   * @param key a key to retrieve from the metadata key-value
+   * @return true if the key is present in the metadata, false if it is not
+   * @throws TileDBError A TileDB exception
+   */
   public Boolean hasMetadataKey(String key) throws TileDBError {
     checkIsOpen();
 
@@ -729,6 +736,27 @@ public class Array implements AutoCloseable {
     tiledb.delete_tiledb_datatype_tp(value_type);
 
     return result;
+  }
+
+  /**
+   * Puts a metadata key-value item to an open array. The array must be opened in WRITE mode,
+   * otherwise the function will error out.
+   *
+   * @param key a key to assign to the input value
+   * @param value the metadata to put into the Array metadata
+   * @throws TileDBError A TileDB exception
+   */
+  public void putMetadata(String key, NativeArray value) throws TileDBError {
+    checkIsOpen();
+
+    ctx.handleError(
+        tiledb.tiledb_array_put_metadata(
+            ctx.getCtxp(),
+            arrayp,
+            key,
+            value.getNativeType().toSwigEnum(),
+            value.getSize(),
+            value.toVoidPointer()));
   }
 
   /** @return The TileDB Context object associated with the Array instance. */
