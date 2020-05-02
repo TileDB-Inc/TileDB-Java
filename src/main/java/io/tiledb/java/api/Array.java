@@ -615,6 +615,122 @@ public class Array implements AutoCloseable {
     return ret;
   }
 
+  /**
+   * Get a metadata key-value item from an open array. The array must be opened in READ mode,
+   * otherwise the function will error out.
+   *
+   * @param key a key to retrieve from the metadata key-value
+   * @param nativeType The Datatype
+   * @return NativeArray which contains the metadata
+   * @throws TileDBError A TileDB exception
+   */
+  public NativeArray getMetadata(String key, Datatype nativeType) throws TileDBError {
+    checkIsOpen();
+
+    SWIGTYPE_p_p_void resultArrpp = tiledb.new_voidpArray(0);
+    SWIGTYPE_p_unsigned_int value_num = tiledb.new_uintp();
+    SWIGTYPE_p_tiledb_datatype_t value_type =
+        tiledb.copy_tiledb_datatype_tp(nativeType.toSwigEnum());
+
+    ctx.handleError(
+        tiledb.tiledb_array_get_metadata(
+            ctx.getCtxp(), arrayp, key, value_type, value_num, resultArrpp));
+
+    long value = tiledb.uintp_value(value_num);
+    NativeArray result = new NativeArray(ctx, nativeType, resultArrpp, (int) value);
+
+    tiledb.delete_uintp(value_num);
+    tiledb.delete_tiledb_datatype_tp(value_type);
+
+    return result;
+  }
+
+  /**
+   * Deletes a metadata key-value item from an open array. The array must be opened in WRITE mode,
+   * otherwise the function will error out.
+   *
+   * @param key a key to delete from the metadata key-value
+   * @throws TileDBError A TileDB exception
+   */
+  public void deleteMetadata(String key) throws TileDBError {
+    checkIsOpen();
+
+    ctx.handleError(tiledb.tiledb_array_delete_metadata(ctx.getCtxp(), arrayp, key));
+  }
+
+  /**
+   * Gets the number of metadata items in an open array. The array must be opened in READ mode,
+   * otherwise the function will error out.
+   *
+   * @return the number of metadata items
+   * @throws TileDBError A TileDB exception
+   */
+  public BigInteger getMetadataNum() throws TileDBError {
+    checkIsOpen();
+
+    SWIGTYPE_p_unsigned_long_long value_num = tiledb.new_ullp();
+
+    ctx.handleError(tiledb.tiledb_array_get_metadata_num(ctx.getCtxp(), arrayp, value_num));
+
+    BigInteger value = tiledb.ullp_value(value_num);
+
+    tiledb.delete_ullp(value_num);
+
+    return value;
+  }
+
+  /**
+   * Gets a metadata item from an open array using an index. The array must be opened in READ mode,
+   * otherwise the function will error out.
+   *
+   * @param index index to retrieve metadata from
+   * @return a pair, key and the metadata NativeArray
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair getMetadataFromIndex(BigInteger index) throws TileDBError {
+    checkIsOpen();
+
+    SWIGTYPE_p_p_char key = tiledb.new_charpp();
+    SWIGTYPE_p_unsigned_int key_len = tiledb.new_uintp();
+    SWIGTYPE_p_tiledb_datatype_t value_type = tiledb.new_tiledb_datatype_tp();
+    SWIGTYPE_p_unsigned_int value_num = tiledb.new_uintp();
+    SWIGTYPE_p_p_void value = tiledb.new_voidpArray(0);
+
+    ctx.handleError(
+        tiledb.tiledb_array_get_metadata_from_index(
+            ctx.getCtxp(), arrayp, index, key, key_len, value_type, value_num, value));
+
+    String keyString = tiledb.charpp_value(key);
+    long valueLength = tiledb.uintp_value(value_num);
+    Datatype nativeType = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
+
+    NativeArray result = new NativeArray(ctx, nativeType, value, (int) valueLength);
+
+    tiledb.delete_uintp(value_num);
+    tiledb.delete_uintp(key_len);
+    tiledb.delete_charpp(key);
+    tiledb.delete_tiledb_datatype_tp(value_type);
+
+    return new Pair(keyString, result);
+  }
+
+  public Boolean hasMetadataKey(String key) throws TileDBError {
+    checkIsOpen();
+
+    SWIGTYPE_p_tiledb_datatype_t value_type = tiledb.new_tiledb_datatype_tp();
+    SWIGTYPE_p_int has_key = tiledb.new_intp();
+
+    ctx.handleError(
+        tiledb.tiledb_array_has_metadata_key(ctx.getCtxp(), arrayp, key, value_type, has_key));
+
+    Boolean result = tiledb.intp_value(has_key) > 0;
+
+    tiledb.delete_intp(has_key);
+    tiledb.delete_tiledb_datatype_tp(value_type);
+
+    return result;
+  }
+
   /** @return The TileDB Context object associated with the Array instance. */
   public Context getCtx() {
     return ctx;
