@@ -715,7 +715,8 @@ public class Array implements AutoCloseable {
   }
 
   /**
-   * Checks if the key is present in the Array metadata
+   * Checks if the key is present in the Array metadata. The array must be opened in READ mode,
+   * otherwise the function will error out.
    *
    * @param key a key to retrieve from the metadata key-value
    * @return true if the key is present in the metadata, false if it is not

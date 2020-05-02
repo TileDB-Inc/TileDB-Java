@@ -247,4 +247,96 @@ public class ArrayTest {
     } catch (TileDBError error) {
     }
   }
+
+  @Test
+  public void testArrayMetadata() throws Exception {
+    Array.create(arrayURI, schemaCreate());
+
+    long[] array_a = new long[] {1, 2, 3, 6};
+    insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
+
+    Array arrayw = new Array(ctx, arrayURI, TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    NativeArray metadataInt =
+        new NativeArray(
+            ctx,
+            new int[] {
+              0, 1, 2, 3, 4, 5, 6, 7,
+              8, 9, 10, 11, 12, 13, 14, 15
+            },
+            Integer.class);
+
+    NativeArray metadataFloat =
+        new NativeArray(
+            ctx,
+            new float[] {
+              0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
+              4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f,
+              8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f,
+              12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+            },
+            Float.class);
+
+    String intKey = "md-int";
+    String floatKey = "md-float";
+    Assert.assertEquals(false, array.hasMetadataKey(intKey));
+    Assert.assertEquals(false, array.hasMetadataKey(floatKey));
+    Assert.assertEquals(0, array.getMetadataNum().intValue());
+    array.close();
+
+    arrayw.putMetadata(intKey, metadataInt);
+    arrayw.putMetadata(floatKey, metadataFloat);
+    // commit changes
+    arrayw.close();
+
+    // open a new session
+    Array arrayn = new Array(ctx, arrayURI, TILEDB_READ);
+
+    Assert.assertEquals(true, arrayn.hasMetadataKey(intKey));
+    Assert.assertEquals(true, arrayn.hasMetadataKey(floatKey));
+    Assert.assertEquals(2, arrayn.getMetadataNum().intValue());
+
+    NativeArray metadataIntActual = arrayn.getMetadata(intKey, Datatype.TILEDB_INT32);
+    NativeArray metadataFloatActual = arrayn.getMetadata(floatKey, Datatype.TILEDB_FLOAT32);
+
+    Assert.assertNotNull(metadataIntActual);
+    Assert.assertNotNull(metadataFloatActual);
+
+    Assert.assertArrayEquals(
+        (int[]) metadataInt.toJavaArray(), (int[]) metadataIntActual.toJavaArray());
+    Assert.assertArrayEquals(
+        (float[]) metadataFloat.toJavaArray(), (float[]) metadataFloatActual.toJavaArray(), 1e-10f);
+
+    // fromIndex tests
+    String[] keys = new String[] {floatKey, intKey};
+    for (int i = 0; i < arrayn.getMetadataNum().intValue(); i++) {
+      Pair<String, NativeArray> p = arrayn.getMetadataFromIndex(BigInteger.valueOf(i));
+      Assert.assertEquals(p.getFirst(), keys[i]);
+      if (i == 0) {
+        Assert.assertArrayEquals(
+            (float[]) metadataFloat.toJavaArray(), (float[]) p.getSecond().toJavaArray(), 1e-10f);
+      } else {
+        Assert.assertArrayEquals(
+            (int[]) metadataInt.toJavaArray(), (int[]) p.getSecond().toJavaArray());
+      }
+    }
+
+    arrayn.close();
+
+    // open a new write session
+    Array arrayd = new Array(ctx, arrayURI, TILEDB_WRITE);
+
+    arrayd.deleteMetadata(intKey);
+    arrayd.deleteMetadata(floatKey);
+    arrayd.close();
+
+    // open a new session to check the deletion
+    Array arraydn = new Array(ctx, arrayURI, TILEDB_READ);
+    Assert.assertEquals(false, arraydn.hasMetadataKey(intKey));
+    Assert.assertEquals(false, arraydn.hasMetadataKey(floatKey));
+    Assert.assertEquals(0, arraydn.getMetadataNum().intValue());
+
+    arraydn.close();
+  }
 }
