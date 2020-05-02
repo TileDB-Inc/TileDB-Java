@@ -34,6 +34,16 @@ public class ArrayTest {
     ctx.close();
   }
 
+  private Object[] getArray(Object val) {
+    if (val instanceof Object[]) return (Object[]) val;
+    int arrlength = java.lang.reflect.Array.getLength(val);
+    Object[] outputArray = new Object[arrlength];
+    for (int i = 0; i < arrlength; i++) {
+      outputArray[i] = java.lang.reflect.Array.get(val, i);
+    }
+    return outputArray;
+  }
+
   public ArraySchema schemaCreate() throws Exception {
     Dimension<Long> d1 =
         new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
@@ -287,7 +297,7 @@ public class ArrayTest {
 
     arrayw.putMetadata(intKey, metadataInt);
     arrayw.putMetadata(floatKey, metadataFloat);
-    // commit changes
+    // submit changes
     arrayw.close();
 
     // open a new session
@@ -309,17 +319,13 @@ public class ArrayTest {
         (float[]) metadataFloat.toJavaArray(), (float[]) metadataFloatActual.toJavaArray(), 1e-10f);
 
     // fromIndex tests
-    String[] keys = new String[] {floatKey, intKey};
+    String[] expectedKeys = new String[] {floatKey, intKey};
+    Object[] expectedArrays = new Object[] {metadataFloat.toJavaArray(), metadataInt.toJavaArray()};
+
     for (int i = 0; i < arrayn.getMetadataNum().intValue(); i++) {
       Pair<String, NativeArray> p = arrayn.getMetadataFromIndex(BigInteger.valueOf(i));
-      Assert.assertEquals(p.getFirst(), keys[i]);
-      if (i == 0) {
-        Assert.assertArrayEquals(
-            (float[]) metadataFloat.toJavaArray(), (float[]) p.getSecond().toJavaArray(), 1e-10f);
-      } else {
-        Assert.assertArrayEquals(
-            (int[]) metadataInt.toJavaArray(), (int[]) p.getSecond().toJavaArray());
-      }
+      Assert.assertEquals(expectedKeys[i], p.getFirst());
+      Assert.assertArrayEquals(getArray(expectedArrays[i]), getArray(p.getSecond().toJavaArray()));
     }
 
     arrayn.close();

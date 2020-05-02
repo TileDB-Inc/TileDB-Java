@@ -684,10 +684,10 @@ public class Array implements AutoCloseable {
    * otherwise the function will error out.
    *
    * @param index index to retrieve metadata from
-   * @return a pair, key and the metadata NativeArray
+   * @return a pair, key and the metadata
    * @throws TileDBError A TileDB exception
    */
-  public Pair getMetadataFromIndex(BigInteger index) throws TileDBError {
+  public Pair<String, NativeArray> getMetadataFromIndex(BigInteger index) throws TileDBError {
     checkIsOpen();
 
     SWIGTYPE_p_p_char key = tiledb.new_charpp();
@@ -711,7 +711,7 @@ public class Array implements AutoCloseable {
     tiledb.delete_charpp(key);
     tiledb.delete_tiledb_datatype_tp(value_type);
 
-    return new Pair(keyString, result);
+    return new Pair<String, NativeArray>(keyString, result);
   }
 
   /**
