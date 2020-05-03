@@ -1,5 +1,6 @@
 package io.tiledb.java.api;
 
+import static io.tiledb.java.api.Datatype.*;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
@@ -309,37 +310,50 @@ public class ArrayTest {
     String floatKey = "md-float";
     String doubleKey = "md-double";
 
-    Assert.assertFalse(array.hasMetadataKey(byteKey));
-    Assert.assertFalse(array.hasMetadataKey(shortKey));
-    Assert.assertFalse(array.hasMetadataKey(intKey));
-    Assert.assertFalse(array.hasMetadataKey(floatKey));
-    Assert.assertFalse(array.hasMetadataKey(doubleKey));
+    // metadata keys sorted in a lexicographic ordering
+    String[] keys = new String[] {byteKey, doubleKey, floatKey, intKey, shortKey};
+    Datatype[] types =
+        new Datatype[] {TILEDB_INT8, TILEDB_FLOAT64, TILEDB_FLOAT32, TILEDB_INT32, TILEDB_INT16};
+    int keysNum = keys.length;
+    NativeArray[] nativeArrays =
+        new NativeArray[] {metadataByte, metadataDouble, metadataFloat, metadataInt, metadataShort};
+    Object[] expectedArrays =
+        new Object[] {
+          metadataByte.toJavaArray(),
+          metadataDouble.toJavaArray(),
+          metadataFloat.toJavaArray(),
+          metadataInt.toJavaArray(),
+          metadataShort.toJavaArray()
+        };
+
+    for (int i = 0; i < keysNum; i++) {
+      Assert.assertFalse(array.hasMetadataKey(keys[i]));
+    }
+
     Assert.assertEquals(0, array.getMetadataNum().intValue());
     array.close();
 
-    arrayw.putMetadata(byteKey, metadataByte);
-    arrayw.putMetadata(shortKey, metadataShort);
-    arrayw.putMetadata(intKey, metadataInt);
-    arrayw.putMetadata(floatKey, metadataFloat);
-    arrayw.putMetadata(doubleKey, metadataDouble);
+    for (int i = 0; i < keysNum; i++) {
+      arrayw.putMetadata(keys[i], nativeArrays[i]);
+    }
     // submit changes
     arrayw.close();
 
     // open a new session
     Array arrayn = new Array(ctx, arrayURI, TILEDB_READ);
 
-    Assert.assertTrue(arrayn.hasMetadataKey(byteKey));
-    Assert.assertTrue(arrayn.hasMetadataKey(shortKey));
-    Assert.assertTrue(arrayn.hasMetadataKey(intKey));
-    Assert.assertTrue(arrayn.hasMetadataKey(floatKey));
-    Assert.assertTrue(arrayn.hasMetadataKey(doubleKey));
-    Assert.assertEquals(5, arrayn.getMetadataNum().intValue());
+    for (int i = 0; i < keysNum; i++) {
+      Assert.assertTrue(arrayn.hasMetadataKey(keys[i]));
+    }
 
-    NativeArray metadataByteActual = arrayn.getMetadata(byteKey, Datatype.TILEDB_INT8);
-    NativeArray metadataShortActual = arrayn.getMetadata(shortKey, Datatype.TILEDB_INT16);
-    NativeArray metadataIntActual = arrayn.getMetadata(intKey, Datatype.TILEDB_INT32);
-    NativeArray metadataFloatActual = arrayn.getMetadata(floatKey, Datatype.TILEDB_FLOAT32);
-    NativeArray metadataDoubleActual = arrayn.getMetadata(doubleKey, Datatype.TILEDB_FLOAT64);
+    Assert.assertEquals(keysNum, arrayn.getMetadataNum().intValue());
+
+    // manual extraction of metadata
+    NativeArray metadataByteActual = arrayn.getMetadata(byteKey, TILEDB_INT8);
+    NativeArray metadataShortActual = arrayn.getMetadata(shortKey, TILEDB_INT16);
+    NativeArray metadataIntActual = arrayn.getMetadata(intKey, TILEDB_INT32);
+    NativeArray metadataFloatActual = arrayn.getMetadata(floatKey, TILEDB_FLOAT32);
+    NativeArray metadataDoubleActual = arrayn.getMetadata(doubleKey, TILEDB_FLOAT64);
 
     Assert.assertNotNull(metadataByteActual);
     Assert.assertNotNull(metadataShortActual);
@@ -360,22 +374,23 @@ public class ArrayTest {
         (double[]) metadataDoubleActual.toJavaArray(),
         1e-10d);
 
-    // fromIndex tests
-    // metadata keys sorted in a lexicographic ordering
-    String[] expectedKeys = new String[] {byteKey, doubleKey, floatKey, intKey, shortKey};
-    Object[] expectedArrays =
-        new Object[] {
-          metadataByte.toJavaArray(),
-          metadataDouble.toJavaArray(),
-          metadataFloat.toJavaArray(),
-          metadataInt.toJavaArray(),
-          metadataShort.toJavaArray()
-        };
+    // exctracion of metadata without specifying the Datatype
+    for (int i = 0; i < keysNum; i++) {
+      NativeArray a = arrayn.getMetadata(keys[i]);
+      Assert.assertNotNull(a);
+      Assert.assertEquals(types[i], a.getNativeType());
+      Assert.assertEquals(nativeArrays[i].getNativeType(), a.getNativeType());
+      Assert.assertArrayEquals(getArray(expectedArrays[i]), getArray(a.toJavaArray()));
+    }
 
+    // fromIndex tests
     for (int i = 0; i < arrayn.getMetadataNum().intValue(); i++) {
-      Pair<String, NativeArray> p = arrayn.getMetadataFromIndex(BigInteger.valueOf(i));
-      Assert.assertEquals(expectedKeys[i], p.getFirst());
-      Assert.assertArrayEquals(getArray(expectedArrays[i]), getArray(p.getSecond().toJavaArray()));
+      Pair<String, NativeArray> p = arrayn.getMetadataFromIndex(i);
+      NativeArray a = p.getSecond();
+      Assert.assertEquals(keys[i], p.getFirst());
+      Assert.assertEquals(types[i], a.getNativeType());
+      Assert.assertEquals(nativeArrays[i].getNativeType(), a.getNativeType());
+      Assert.assertArrayEquals(getArray(expectedArrays[i]), getArray(a.toJavaArray()));
     }
 
     arrayn.close();
@@ -383,20 +398,19 @@ public class ArrayTest {
     // open a new write session
     Array arrayd = new Array(ctx, arrayURI, TILEDB_WRITE);
 
-    arrayd.deleteMetadata(byteKey);
-    arrayd.deleteMetadata(shortKey);
-    arrayd.deleteMetadata(intKey);
-    arrayd.deleteMetadata(floatKey);
-    arrayd.deleteMetadata(doubleKey);
+    for (int i = 0; i < keysNum; i++) {
+      arrayd.deleteMetadata(keys[i]);
+    }
+
     arrayd.close();
 
     // open a new session to check the deletion
     Array arraydn = new Array(ctx, arrayURI, TILEDB_READ);
-    Assert.assertFalse(arraydn.hasMetadataKey(byteKey));
-    Assert.assertFalse(arraydn.hasMetadataKey(shortKey));
-    Assert.assertFalse(arraydn.hasMetadataKey(intKey));
-    Assert.assertFalse(arraydn.hasMetadataKey(floatKey));
-    Assert.assertFalse(arraydn.hasMetadataKey(doubleKey));
+
+    for (int i = 0; i < keysNum; i++) {
+      Assert.assertFalse(arraydn.hasMetadataKey(keys[i]));
+    }
+
     Assert.assertEquals(0, arraydn.getMetadataNum().intValue());
 
     arraydn.close();

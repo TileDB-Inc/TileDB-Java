@@ -620,6 +620,18 @@ public class Array implements AutoCloseable {
    * otherwise the function will error out.
    *
    * @param key a key to retrieve from the metadata key-value
+   * @return NativeArray which contains the metadata
+   * @throws TileDBError A TileDB exception
+   */
+  public NativeArray getMetadata(String key) throws TileDBError {
+    return getMetadata(key, null);
+  }
+
+  /**
+   * Get a metadata key-value item from an open array. The array must be opened in READ mode,
+   * otherwise the function will error out.
+   *
+   * @param key a key to retrieve from the metadata key-value
    * @param nativeType The Datatype
    * @return NativeArray which contains the metadata
    * @throws TileDBError A TileDB exception
@@ -630,14 +642,18 @@ public class Array implements AutoCloseable {
     SWIGTYPE_p_p_void resultArrpp = tiledb.new_voidpArray(0);
     SWIGTYPE_p_unsigned_int value_num = tiledb.new_uintp();
     SWIGTYPE_p_tiledb_datatype_t value_type =
-        tiledb.copy_tiledb_datatype_tp(nativeType.toSwigEnum());
+        (nativeType == null)
+            ? tiledb.new_tiledb_datatype_tp()
+            : tiledb.copy_tiledb_datatype_tp(nativeType.toSwigEnum());
 
     ctx.handleError(
         tiledb.tiledb_array_get_metadata(
             ctx.getCtxp(), arrayp, key, value_type, value_num, resultArrpp));
 
+    Datatype derivedNativeType = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
+
     long value = tiledb.uintp_value(value_num);
-    NativeArray result = new NativeArray(ctx, nativeType, resultArrpp, (int) value);
+    NativeArray result = new NativeArray(ctx, derivedNativeType, resultArrpp, (int) value);
 
     tiledb.delete_uintp(value_num);
     tiledb.delete_tiledb_datatype_tp(value_type);
@@ -677,6 +693,18 @@ public class Array implements AutoCloseable {
     tiledb.delete_ullp(value_num);
 
     return value;
+  }
+
+  /**
+   * Gets a metadata item from an open array using an index. The array must be opened in READ mode,
+   * otherwise the function will error out.
+   *
+   * @param index index to retrieve metadata from
+   * @return a pair, key and the metadata
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<String, NativeArray> getMetadataFromIndex(long index) throws TileDBError {
+    return getMetadataFromIndex(BigInteger.valueOf(index));
   }
 
   /**
