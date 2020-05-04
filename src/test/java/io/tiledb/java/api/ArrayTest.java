@@ -421,9 +421,6 @@ public class ArrayTest {
   public void testArrayGetMetadataMap() throws Exception {
     Array.create(arrayURI, schemaCreate());
 
-    long[] array_a = new long[] {1, 2, 3, 6};
-    insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
-
     Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
 
     NativeArray metadataByte = new NativeArray(ctx, new byte[] {-7, -6, -5, 0, 100}, Byte.class);
@@ -555,5 +552,35 @@ public class ArrayTest {
         Assert.assertEquals(nativeArrays[i].getItem(0), value);
       }
     }
+  }
+
+  @Test
+  public void testArrayPutMetadataOverload() throws Exception {
+    Array.create(arrayURI, schemaCreate());
+
+    long[] array_a = new long[] {1, 2, 3, 6};
+    insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
+
+    Array arrayw = new Array(ctx, arrayURI, TILEDB_WRITE);
+
+    String floatKey = "md-float";
+    float[] metadataFloat =
+        new float[] {
+          0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
+          4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f,
+          8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f,
+          12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+        };
+
+    arrayw.putMetadata(floatKey, metadataFloat);
+    arrayw.close();
+
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    float[] metadataFloatActual = (float[]) array.getMetadata(floatKey).toJavaArray();
+
+    Assert.assertArrayEquals(metadataFloat, metadataFloatActual, 1e-10f);
+
+    array.close();
   }
 }
