@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Map;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
@@ -414,5 +415,145 @@ public class ArrayTest {
     Assert.assertEquals(0, arraydn.getMetadataNum().intValue());
 
     arraydn.close();
+  }
+
+  @Test
+  public void testArrayGetMetadataMap() throws Exception {
+    Array.create(arrayURI, schemaCreate());
+
+    long[] array_a = new long[] {1, 2, 3, 6};
+    insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
+
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+
+    NativeArray metadataByte = new NativeArray(ctx, new byte[] {-7, -6, -5, 0, 100}, Byte.class);
+
+    NativeArray metadataShort = new NativeArray(ctx, new short[] {18, 19, 20, 21}, Short.class);
+
+    NativeArray metadataInt =
+        new NativeArray(
+            ctx,
+            new int[] {
+              0, 1, 2, 3, 4, 5, 6, 7,
+              8, 9, 10, 11, 12, 13, 14, 15
+            },
+            Integer.class);
+
+    NativeArray metadataFloat =
+        new NativeArray(
+            ctx,
+            new float[] {
+              0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
+              4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f,
+              8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f,
+              12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+            },
+            Float.class);
+
+    NativeArray metadataDouble =
+        new NativeArray(
+            ctx,
+            new double[] {
+              1.1d, 1.2d, 2.1d, 2.2d, 3.1d, 3.2d, 4.1d, 4.2d,
+              5.1d, 5.2d, 6.1d, 6.2d, 7.1d, 7.2d, 8.1d, 8.2d,
+              9.1d, 9.2d, 10.1d, 10.2d, 11.1d, 11.2d, 12.1d, 12.2d,
+              13.1d, 14.2d, 14.1d, 14.2d, 15.1d, 15.2d, 16.1d, 16.2d
+            },
+            Double.class);
+
+    NativeArray metadataByteSingle = new NativeArray(ctx, new byte[] {-7}, Byte.class);
+    NativeArray metadataShortSingle = new NativeArray(ctx, new short[] {1}, Short.class);
+    NativeArray metadataIntSingle = new NativeArray(ctx, new int[] {1}, Integer.class);
+    NativeArray metadataDoubleSingle = new NativeArray(ctx, new double[] {1.0}, Double.class);
+    NativeArray metadataFloatSingle = new NativeArray(ctx, new float[] {1.0f}, Float.class);
+
+    String byteKey = "md-byte";
+    String shortKey = "md-short";
+    String intKey = "md-int";
+    String floatKey = "md-float";
+    String doubleKey = "md-double";
+
+    String byteSingleKey = "byte-single";
+    String shortSingleKey = "short-single";
+    String intSingleKey = "int-single";
+    String floatSingleKey = "float-single";
+    String doubleSingleKey = "double-single";
+
+    // metadata keys sorted in a lexicographic ordering
+    String[] keys =
+        new String[] {
+          byteKey,
+          doubleKey,
+          floatKey,
+          intKey,
+          shortKey,
+          byteSingleKey,
+          doubleSingleKey,
+          floatSingleKey,
+          shortSingleKey,
+          intSingleKey
+        };
+    Datatype[] types =
+        new Datatype[] {
+          TILEDB_INT8,
+          TILEDB_FLOAT64,
+          TILEDB_FLOAT32,
+          TILEDB_INT32,
+          TILEDB_INT16,
+          TILEDB_INT8,
+          TILEDB_FLOAT64,
+          TILEDB_FLOAT32,
+          TILEDB_INT32,
+          TILEDB_INT16
+        };
+
+    int keysNum = keys.length;
+    NativeArray[] nativeArrays =
+        new NativeArray[] {
+          metadataByte,
+          metadataDouble,
+          metadataFloat,
+          metadataInt,
+          metadataShort,
+          metadataByteSingle,
+          metadataDoubleSingle,
+          metadataFloatSingle,
+          metadataIntSingle,
+          metadataShortSingle
+        };
+
+    for (int i = 0; i < keysNum; i++) {
+      array.putMetadata(keys[i], nativeArrays[i]);
+    }
+    // submit changes
+    array.close();
+
+    // open a new session
+    array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    Map<String, Object> metadata = array.getMetadataMap();
+
+    for (int i = 0; i < keys.length; ++i) {
+      String key = keys[i];
+      Object value = metadata.get(key);
+
+      // Check if the key is contained in the metadata
+      Assert.assertTrue(metadata.containsKey(key));
+
+      Class c = types[i].javaClass();
+
+      if (value instanceof NativeArray) {
+        // Check array types
+        Assert.assertEquals(c, ((NativeArray) value).getJavaType());
+
+        // Check array elements
+        for (int idx = 0; idx < nativeArrays[i].getSize(); ++idx) {
+          Assert.assertEquals(((NativeArray) value).getItem(idx), nativeArrays[i].getItem(idx));
+        }
+      } else {
+        Assert.assertEquals(c, value.getClass());
+        Assert.assertEquals(nativeArrays[i].getItem(0), value);
+      }
+    }
   }
 }

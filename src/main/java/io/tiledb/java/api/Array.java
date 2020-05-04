@@ -29,6 +29,7 @@ import static io.tiledb.java.api.QueryType.*;
 import io.tiledb.libtiledb.*;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing a TileDB array object.
@@ -740,6 +741,26 @@ public class Array implements AutoCloseable {
     tiledb.delete_tiledb_datatype_tp(value_type);
 
     return new Pair<String, NativeArray>(keyString, result);
+  }
+
+  /**
+   * Returns a HashMap with all array metadata in a key-value manner.
+   *
+   * @return The metadata
+   * @throws TileDBError
+   */
+  public Map<String, Object> getMetadataMap() throws TileDBError {
+    Map<String, Object> result = new HashMap<>();
+
+    for (int i = 0; i < this.getMetadataNum().intValue(); ++i) {
+      Pair meta = this.getMetadataFromIndex(i);
+      String key = meta.getFirst().toString();
+      NativeArray value = (NativeArray) meta.getSecond();
+      if (value.getSize() == 1) result.put(key, value.getItem(0));
+      else result.put(key, value);
+    }
+
+    return result;
   }
 
   /**
