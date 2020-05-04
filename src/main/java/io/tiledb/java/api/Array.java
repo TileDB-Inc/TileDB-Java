@@ -772,6 +772,18 @@ public class Array implements AutoCloseable {
    * otherwise the function will error out.
    *
    * @param key a key to assign to the input value
+   * @param buffer the metadata to put into the Array metadata
+   * @throws TileDBError A TileDB exception
+   */
+  public void putMetadata(String key, Object buffer) throws TileDBError {
+    putMetadata(key, new NativeArray(ctx, buffer, buffer.getClass()));
+  }
+
+  /**
+   * Puts a metadata key-value item to an open array. The array must be opened in WRITE mode,
+   * otherwise the function will error out.
+   *
+   * @param key a key to assign to the input value
    * @param value the metadata to put into the Array metadata
    * @throws TileDBError A TileDB exception
    */
