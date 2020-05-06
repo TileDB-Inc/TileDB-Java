@@ -111,6 +111,7 @@ public class Types {
         {
           return Long.class;
         }
+      case TILEDB_STRING_ASCII:
       case TILEDB_CHAR:
         {
           return String.class;

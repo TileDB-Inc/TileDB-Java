@@ -96,23 +96,31 @@ public class Dimension<T> implements AutoCloseable {
   private void createImpl(Context ctx, String name, Datatype dimType, Pair<T, T> domain, T extent)
       throws TileDBError {
     SWIGTYPE_p_p_tiledb_dimension_t dimensionpp = tiledb.new_tiledb_dimension_tpp();
-    try (NativeArray domainBuffer = new NativeArray(ctx, 2, dimType);
-        NativeArray tileExtent = new NativeArray(ctx, 1, dimType)) {
-      domainBuffer.setItem(0, domain.getFirst());
-      domainBuffer.setItem(1, domain.getSecond());
-      tileExtent.setItem(0, extent);
+
+    if (dimType.equals(Datatype.TILEDB_STRING_ASCII)) {
       ctx.handleError(
           tiledb.tiledb_dimension_alloc(
-              ctx.getCtxp(),
-              name,
-              dimType.toSwigEnum(),
-              domainBuffer.toVoidPointer(),
-              tileExtent.toVoidPointer(),
-              dimensionpp));
-    } catch (Exception err) {
-      tiledb.delete_tiledb_dimension_tpp(dimensionpp);
-      throw err;
+              ctx.getCtxp(), name, dimType.toSwigEnum(), null, null, dimensionpp));
+    } else {
+      try (NativeArray domainBuffer = new NativeArray(ctx, 2, dimType);
+          NativeArray tileExtent = new NativeArray(ctx, 1, dimType)) {
+        domainBuffer.setItem(0, domain.getFirst());
+        domainBuffer.setItem(1, domain.getSecond());
+        tileExtent.setItem(0, extent);
+        ctx.handleError(
+            tiledb.tiledb_dimension_alloc(
+                ctx.getCtxp(),
+                name,
+                dimType.toSwigEnum(),
+                domainBuffer.toVoidPointer(),
+                tileExtent.toVoidPointer(),
+                dimensionpp));
+      } catch (Exception err) {
+        tiledb.delete_tiledb_dimension_tpp(dimensionpp);
+        throw err;
+      }
     }
+
     this.ctx = ctx;
     this.name = name;
     this.domain = domain;

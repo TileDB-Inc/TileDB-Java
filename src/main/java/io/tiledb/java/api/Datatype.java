@@ -161,6 +161,8 @@ public enum Datatype {
         return String.class;
       case TILEDB_STRING_UCS4:
         return String.class;
+      case TILEDB_STRING_ASCII:
+        return String.class;
       case TILEDB_ANY:
       default:
         throw new TileDBError("No such enum value" + this.name());
