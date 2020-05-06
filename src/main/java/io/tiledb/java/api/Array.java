@@ -521,7 +521,6 @@ public class Array implements AutoCloseable {
    */
   public Pair getNonEmptyDomainFromName(String name) throws TileDBError {
     checkIsOpen();
-    HashMap<String, Pair> ret = new HashMap<String, Pair>();
     try (Domain domain = schema.getDomain();
         NativeArray domainArray =
             new NativeArray(ctx, 2 * (int) domain.getRank(), domain.getType())) {

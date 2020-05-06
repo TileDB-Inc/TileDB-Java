@@ -202,6 +202,104 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Adds a 1D variable-sized range along a subarray dimension, which is in the form (start, end).
+   * Applicable only to variable-sized dimensions.
+   *
+   * @param dimIdx The index of the dimension to add the range to
+   * @param start The range start
+   * @param end The range end
+   * @return This query
+   * @throws TileDBError A TileDB exception
+   */
+  public synchronized Query addRangeVar(int dimIdx, String start, String end) throws TileDBError {
+    Datatype dimType;
+    try (ArraySchema schema = array.getSchema();
+        Domain domain = schema.getDomain()) {
+      dimType = domain.getType();
+    }
+
+    Types.javaTypeCheck(start.getClass(), dimType.javaClass());
+    Types.javaTypeCheck(end.getClass(), dimType.javaClass());
+
+    try (NativeArray startArr = new NativeArray(ctx, 1, dimType);
+        NativeArray endArr = new NativeArray(ctx, 1, dimType)) {
+      startArr.setItem(0, start);
+      endArr.setItem(0, end);
+
+      ctx.handleError(
+          tiledb.tiledb_query_add_range_var(
+              ctx.getCtxp(),
+              queryp,
+              dimIdx,
+              startArr.toVoidPointer(),
+              BigInteger.valueOf(start.length()),
+              endArr.toVoidPointer(),
+              BigInteger.valueOf(end.length())));
+    }
+
+    return this;
+  }
+
+  /**
+   * Retrieves a range's start and end size for a given variable-length dimensions at a given range
+   * index.
+   *
+   * @param dimIdx The index of the dimension to add the range to
+   * @return This query
+   * @throws TileDBError A TileDB exception
+   */
+  public synchronized Pair<Long, Long> getRangeVarSize(int dimIdx, BigInteger rangeIdx)
+      throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
+    SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_query_get_range_var_size(
+              ctx.getCtxp(), queryp, dimIdx, rangeIdx, startSize, endSize));
+
+      return new Pair(
+          tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+    } catch (TileDBError error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves a specific range of the query subarray along a given variable-length dimension.
+   *
+   * @param dimIdx The index of the dimension to add the range to
+   * @return This query
+   * @throws TileDBError A TileDB exception
+   */
+  public synchronized Pair<String, String> getRangeVar(int dimIdx, BigInteger rangeIdx)
+      throws TileDBError {
+    Datatype dimType;
+    try (ArraySchema schema = array.getSchema();
+        Domain domain = schema.getDomain()) {
+      dimType = domain.getType();
+    }
+
+    Pair<Long, Long> size = this.getRangeVarSize(dimIdx, rangeIdx);
+
+    try (NativeArray startArr = new NativeArray(ctx, size.getFirst().intValue(), dimType);
+        NativeArray endArr = new NativeArray(ctx, size.getSecond().intValue(), dimType)) {
+
+      ctx.handleError(
+          tiledb.tiledb_query_get_range_var(
+              ctx.getCtxp(),
+              queryp,
+              dimIdx,
+              rangeIdx,
+              startArr.toVoidPointer(),
+              endArr.toVoidPointer()));
+
+      Object start = new String((byte[]) startArr.toJavaArray());
+      Object end = new String((byte[]) endArr.toJavaArray());
+      return new Pair(start, end);
+    }
+  }
+
+  /**
    * Retrieves the number of ranges of the query subarray along a given dimension.
    *
    * @param dimIdx The index of the dimension whose range number to retrieve
@@ -272,7 +370,7 @@ public class Query implements AutoCloseable {
         if (attr.equals(tiledb.tiledb_coords())) {
           Types.typeCheck(domain.getType(), buffer.getNativeType());
         } else if (domain.hasDimension(attr)) {
-          Types.typeCheck(domain.getType(), buffer.getNativeType());
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
         } else {
           try (Attribute attribute = schema.getAttribute(attr)) {
             Types.typeCheck(attribute.getType(), buffer.getNativeType());
@@ -333,7 +431,7 @@ public class Query implements AutoCloseable {
         if (attr.equals(tiledb.tiledb_coords())) {
           Types.typeCheck(domain.getType(), buffer.getNativeType());
         } else if (domain.hasDimension(attr)) {
-          Types.typeCheck(domain.getType(), buffer.getNativeType());
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
         } else {
           try (Attribute attribute = schema.getAttribute(attr)) {
             Types.typeCheck(attribute.getType(), buffer.getNativeType());
@@ -391,9 +489,18 @@ public class Query implements AutoCloseable {
     }
 
     // Type check the buffer native type matches the schema attribute type
-    try (ArraySchema schema = array.getSchema();
-        Attribute attribute = schema.getAttribute(attr)) {
-      Types.typeCheck(attribute.getType(), buffer.getNativeType());
+    try (ArraySchema schema = array.getSchema()) {
+      try (Domain domain = schema.getDomain()) {
+        if (attr.equals(tiledb.tiledb_coords())) {
+          Types.typeCheck(domain.getType(), buffer.getNativeType());
+        } else if (domain.hasDimension(attr)) {
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
+        } else {
+          try (Attribute attribute = schema.getAttribute(attr)) {
+            Types.typeCheck(attribute.getType(), buffer.getNativeType());
+          }
+        }
+      }
     }
 
     uint64_tArray offsets_array = PointerUtils.uint64_tArrayFromVoid(offsets.toVoidPointer());

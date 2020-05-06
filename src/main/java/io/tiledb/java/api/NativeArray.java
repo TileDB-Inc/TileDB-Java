@@ -196,6 +196,7 @@ public class NativeArray implements AutoCloseable {
         {
           return ((long[]) buffer).length;
         }
+      case TILEDB_STRING_ASCII:
       case TILEDB_CHAR:
         {
           return stringToBytes(buffer).length;
@@ -275,6 +276,7 @@ public class NativeArray implements AutoCloseable {
           uint64_tArray = Utils.newInt64_tArray((long[]) buffer);
           break;
         }
+      case TILEDB_STRING_ASCII:
       case TILEDB_CHAR:
         {
           byte[] bytes = stringToBytes(buffer);
@@ -357,6 +359,7 @@ public class NativeArray implements AutoCloseable {
           uint64_tArray = new int64_tArray(size);
           break;
         }
+      case TILEDB_STRING_ASCII:
       case TILEDB_CHAR:
         {
           int8_tArray = new int8_tArray(size);
@@ -438,6 +441,7 @@ public class NativeArray implements AutoCloseable {
         {
           return uint64_tArray.getitem(index);
         }
+      case TILEDB_STRING_ASCII:
       case TILEDB_CHAR:
         {
           return int8_tArray.getitem(index);
@@ -527,6 +531,7 @@ public class NativeArray implements AutoCloseable {
           uint64_tArray.setitem(index, (long) value);
           break;
         }
+      case TILEDB_STRING_ASCII:
       case TILEDB_CHAR:
         {
           for (byte b : stringToBytes(value)) {
@@ -601,6 +606,7 @@ public class NativeArray implements AutoCloseable {
         {
           return PointerUtils.toVoid(uint64_tArray);
         }
+      case TILEDB_STRING_ASCII:
       case TILEDB_CHAR:
         {
           return PointerUtils.toVoid(int8_tArray);
@@ -771,6 +777,7 @@ public class NativeArray implements AutoCloseable {
         {
           return Utils.int64ArrayGet(uint64_tArray, position, elements);
         }
+      case TILEDB_STRING_ASCII:
       case TILEDB_CHAR:
         {
           return Utils.int8ArrayGet(int8_tArray, position, elements);
