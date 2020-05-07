@@ -260,7 +260,7 @@ public class Dimension<T> implements AutoCloseable {
    * Sets the number of values per cell for the dimension.
    *
    * @param cellValNum The number of values per cell
-   * @throws TileDBError
+   * @throws TileDBError TileDBError A TileDB error
    */
   public void setCellValNum(long cellValNum) throws TileDBError {
     try {
@@ -275,7 +275,7 @@ public class Dimension<T> implements AutoCloseable {
    * Retrieves the number of values per cell for the dimension.
    *
    * @return The number of values per cell
-   * @throws TileDBError
+   * @throws TileDBError TileDBError A TileDB error
    */
   public long getCellValNum() throws TileDBError {
     SWIGTYPE_p_unsigned_int uint = tiledb.new_uintp();
@@ -286,6 +286,16 @@ public class Dimension<T> implements AutoCloseable {
     } catch (TileDBError error) {
       throw error;
     }
+  }
+
+  /**
+   * Checks whether the dimension is var-sized
+   *
+   * @return True if the dimension is var-sized (e.g. String) and False otherwise
+   * @throws TileDBError A TileDB error
+   */
+  public boolean isVar() throws TileDBError {
+    return this.getCellValNum() == Constants.TILEDB_VAR_NUM;
   }
 
   /**

@@ -2,6 +2,7 @@ package io.tiledb.java.api;
 
 import static io.tiledb.java.api.Datatype.*;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
@@ -17,6 +18,7 @@ public class ArrayTest {
 
   private Context ctx;
   private String arrayURI;
+  private String dimName;
   private String attributeName;
   private byte[] key;
 
@@ -26,6 +28,7 @@ public class ArrayTest {
   public void setup() throws Exception {
     ctx = new Context();
     arrayURI = temp.getRoot().toString();
+    dimName = "d1";
     attributeName = "a1";
     String keyString = "0123456789abcdeF0123456789abcdeF";
     key = keyString.getBytes(StandardCharsets.US_ASCII);
@@ -46,20 +49,48 @@ public class ArrayTest {
     return outputArray;
   }
 
-  public ArraySchema schemaCreate() throws Exception {
+  public ArraySchema schemaCreate(ArrayType type) throws TileDBError {
     Dimension<Long> d1 =
         new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
 
     Attribute a1 = new Attribute(ctx, attributeName, Long.class);
-    ArraySchema schema = new ArraySchema(ctx, ArrayType.TILEDB_DENSE);
+    ArraySchema schema = new ArraySchema(ctx, type);
     schema.setTileOrder(Layout.TILEDB_ROW_MAJOR);
     schema.setCellOrder(Layout.TILEDB_ROW_MAJOR);
     schema.setDomain(domain);
     schema.addAttribute(a1);
     schema.check();
     return schema;
+  }
+
+  public ArraySchema schemaCreate() throws TileDBError {
+    return schemaCreate(ArrayType.TILEDB_DENSE);
+  }
+
+  public ArraySchema schemaStringDimsCreate(ArrayType arrayType) throws Exception {
+    Dimension<Long> d1 = new Dimension<Long>(ctx, "d1", TILEDB_STRING_ASCII, null, null);
+    Domain domain = new Domain(ctx);
+    domain.addDimension(d1);
+
+    ArraySchema schema = new ArraySchema(ctx, arrayType);
+
+    schema.setDomain(domain);
+    schema.check();
+    return schema;
+  }
+
+  public void insertArbitraryValuesVarSize(
+      Array array, String attrName, NativeArray a_data, NativeArray a_offsets, Layout layout)
+      throws TileDBError {
+    // Create query
+    try (Query query = new Query(array, TILEDB_WRITE)) {
+      query.setLayout(layout).setBuffer(attrName, a_offsets, a_data);
+      query.submit();
+      query.finalizeQuery();
+    }
+    array.close();
   }
 
   public void insertArbitraryValuesMeth(Array array, NativeArray a_data) throws TileDBError {
@@ -258,6 +289,78 @@ public class ArrayTest {
       Assert.fail();
     } catch (TileDBError error) {
     }
+  }
+
+  @Test
+  public void testArrayGetNonEmptyDomainVarSizeFromIndex() throws Exception {
+    Array.create(arrayURI, schemaStringDimsCreate(ArrayType.TILEDB_SPARSE));
+    NativeArray data = new NativeArray(ctx, "aabbccddee", TILEDB_STRING_ASCII);
+    NativeArray offsets = new NativeArray(ctx, new long[] {0, 2, 4, 6}, TILEDB_UINT64);
+    insertArbitraryValuesVarSize(
+        new Array(ctx, arrayURI, TILEDB_WRITE), dimName, data, offsets, TILEDB_UNORDERED);
+
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    Pair<BigInteger, BigInteger> size = array.getNonEmptyDomainVarSizeFromIndex(0);
+
+    Assert.assertEquals(2, size.getFirst().intValue());
+    Assert.assertEquals(4, size.getSecond().intValue());
+  }
+
+  @Test
+  public void testArrayGetNonEmptyDomainVarSizeFromName() throws Exception {
+    Array.create(arrayURI, schemaStringDimsCreate(ArrayType.TILEDB_SPARSE));
+    NativeArray data = new NativeArray(ctx, "aabbccddee", TILEDB_STRING_ASCII);
+    NativeArray offsets = new NativeArray(ctx, new long[] {0, 2, 4, 6}, TILEDB_UINT64);
+    insertArbitraryValuesVarSize(
+        new Array(ctx, arrayURI, TILEDB_WRITE), dimName, data, offsets, TILEDB_UNORDERED);
+
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    Pair<BigInteger, BigInteger> size = array.getNonEmptyDomainVarSizeFromName(dimName);
+
+    Assert.assertEquals(2, size.getFirst().intValue());
+    Assert.assertEquals(4, size.getSecond().intValue());
+  }
+
+  @Test
+  public void testArrayGetNonEmptyDomainVarFromIndex() throws Exception {
+    Array.create(arrayURI, schemaStringDimsCreate(ArrayType.TILEDB_SPARSE));
+    NativeArray data = new NativeArray(ctx, "aabbccddee", TILEDB_STRING_ASCII);
+    NativeArray offsets = new NativeArray(ctx, new long[] {0, 2, 4, 6}, TILEDB_UINT64);
+    insertArbitraryValuesVarSize(
+        new Array(ctx, arrayURI, TILEDB_WRITE), dimName, data, offsets, TILEDB_UNORDERED);
+
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    Pair<String, String> size1 = array.getNonEmptyDomainVarFromIndex(0);
+    Pair<String, String> size2 = array.getNonEmptyDomainFromIndex(0);
+
+    Assert.assertEquals("aa", size1.getFirst());
+    Assert.assertEquals("ddee", size1.getSecond());
+
+    Assert.assertEquals("aa", size2.getFirst());
+    Assert.assertEquals("ddee", size2.getSecond());
+  }
+
+  @Test
+  public void testArrayGetNonEmptyDomainVarFromName() throws Exception {
+    Array.create(arrayURI, schemaStringDimsCreate(ArrayType.TILEDB_SPARSE));
+    NativeArray data = new NativeArray(ctx, "aabbccddee", TILEDB_STRING_ASCII);
+    NativeArray offsets = new NativeArray(ctx, new long[] {0, 2, 4, 6}, TILEDB_UINT64);
+    insertArbitraryValuesVarSize(
+        new Array(ctx, arrayURI, TILEDB_WRITE), dimName, data, offsets, TILEDB_UNORDERED);
+
+    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+    Pair<String, String> size1 = array.getNonEmptyDomainVarFromName(dimName);
+    Pair<String, String> size2 = array.getNonEmptyDomainFromName(dimName);
+
+    Assert.assertEquals("aa", size1.getFirst());
+    Assert.assertEquals("ddee", size1.getSecond());
+
+    Assert.assertEquals("aa", size2.getFirst());
+    Assert.assertEquals("ddee", size2.getSecond());
   }
 
   @Test

@@ -10,7 +10,6 @@ import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import org.junit.After;
 import org.junit.Assert;
@@ -271,17 +270,7 @@ public class QueryTest {
         String[] results = new String[offsets.length];
         int start = 0, end;
 
-        // Convert bytes to string array
-        for (int i = 0; i < offsets.length; ++i) {
-          if (i < offsets.length - 1) {
-            end = (int) offsets[i + 1];
-            results[i] = new String(Arrays.copyOfRange(data, start, end));
-            start = end;
-          } else {
-            end = data.length;
-            results[i] = new String(Arrays.copyOfRange(data, start, end));
-          }
-        }
+        results = Util.bytesToStrings(offsets, data);
 
         Assert.assertArrayEquals(new String[] {"aa", "bb", "cc", "dd", "ee"}, results);
       }
@@ -303,7 +292,7 @@ public class QueryTest {
       byte[] data = (byte[]) q.getBuffer("d1");
       long[] offsets = q.getVarBuffer("d1");
 
-      Assert.assertArrayEquals(new String[] {"aa"}, bytesToStrings(offsets, data));
+      Assert.assertArrayEquals(new String[] {"aa"}, Util.bytesToStrings(offsets, data));
 
       q.close();
       d_data.close();
@@ -321,7 +310,7 @@ public class QueryTest {
       data = (byte[]) q.getBuffer("d1");
       offsets = q.getVarBuffer("d1");
 
-      Assert.assertArrayEquals(new String[] {"dd", "ee"}, bytesToStrings(offsets, data));
+      Assert.assertArrayEquals(new String[] {"dd", "ee"}, Util.bytesToStrings(offsets, data));
 
       // An invalid dimentions should throw an error
       d_data = new NativeArray(ctx, 20, Datatype.TILEDB_STRING_ASCII);
@@ -422,24 +411,5 @@ public class QueryTest {
       Assert.assertEquals(rangeStart3.length(), (long) size3.getFirst());
       Assert.assertEquals(rangeEnd3.length(), (long) size3.getSecond());
     }
-  }
-
-  public static String[] bytesToStrings(long[] offsets, byte[] data) {
-    String[] results = new String[offsets.length];
-    int start = 0, end;
-
-    // Convert bytes to string array
-    for (int i = 0; i < offsets.length; ++i) {
-      if (i < offsets.length - 1) {
-        end = (int) offsets[i + 1];
-        results[i] = new String(Arrays.copyOfRange(data, start, end));
-        start = end;
-      } else {
-        end = data.length;
-        results[i] = new String(Arrays.copyOfRange(data, start, end));
-      }
-    }
-
-    return results;
   }
 }

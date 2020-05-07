@@ -456,34 +456,24 @@ public class Array implements AutoCloseable {
    */
   public HashMap<String, Pair> nonEmptyDomain() throws TileDBError {
     checkIsOpen();
-    HashMap<String, Pair> ret = new HashMap<String, Pair>();
-    try (Domain domain = schema.getDomain();
-        NativeArray domainArray =
-            new NativeArray(ctx, 2 * (int) domain.getRank(), domain.getType())) {
-      SWIGTYPE_p_int emptyp = tiledb.new_intp();
-      try {
-        ctx.handleError(
-            tiledb.tiledb_array_get_non_empty_domain(
-                ctx.getCtxp(), arrayp, domainArray.toVoidPointer(), emptyp));
-        if (tiledb.intp_value(emptyp) == 1) {
-          return ret;
-        }
-      } finally {
-        tiledb.delete_intp(emptyp);
+    HashMap<String, Pair> ret = new HashMap<>();
+    try {
+      Domain domain = schema.getDomain();
+      long numDims = domain.getNDim();
+      for (long dimIdx = 0; dimIdx < numDims; ++dimIdx) {
+        Dimension dimension = domain.getDimension(dimIdx);
+        Pair p = getNonEmptyDomainFromIndex(dimIdx);
+        ret.put(dimension.getName(), p);
       }
-      for (int i = 0; i < domain.getRank(); i++) {
-        try (Dimension d = domain.getDimension(i)) {
-          ret.put(
-              d.getName(),
-              new Pair(domainArray.getItem((2 * i) + 0), domainArray.getItem((2 * i) + 1)));
-        }
-      }
+    } catch (TileDBError error) {
+      throw error;
     }
     return ret;
   }
 
   /**
-   * Given a dimension's index, return the bounding coordinates for that dimension.
+   * Given a dimension's index, return the bounding coordinates for that dimension. The method
+   * checks if the dimension is var-sized or not, and it works for both cases.
    *
    * @param index THe dimension's index
    * @return A Pair that contains the dimension's bounds
@@ -491,10 +481,11 @@ public class Array implements AutoCloseable {
    */
   public Pair getNonEmptyDomainFromIndex(long index) throws TileDBError {
     checkIsOpen();
-    Pair p;
     try (Domain domain = schema.getDomain();
         NativeArray domainArray =
             new NativeArray(ctx, 2 * (int) domain.getRank(), domain.getType())) {
+
+      if (domain.getDimension(index).isVar()) return getNonEmptyDomainVarFromIndex(index);
 
       SWIGTYPE_p_int emptyp = tiledb.new_intp();
       try {
@@ -514,7 +505,8 @@ public class Array implements AutoCloseable {
   }
 
   /**
-   * Given a dimension's name, return the bounding coordinates for that dimension.
+   * Given a dimension's name, return the bounding coordinates for that dimension. The method checks
+   * if the dimension is var-sized or not, and it works for both cases.
    *
    * @param name THe dimension's name
    * @return A Pair that contains the dimension's bounds
@@ -525,6 +517,9 @@ public class Array implements AutoCloseable {
     try (Domain domain = schema.getDomain();
         NativeArray domainArray =
             new NativeArray(ctx, 2 * (int) domain.getRank(), domain.getType())) {
+
+      if (domain.getDimension(name).isVar()) return this.getNonEmptyDomainVarFromName(name);
+
       SWIGTYPE_p_int emptyp = tiledb.new_intp();
       try {
         ctx.handleError(
@@ -538,6 +533,111 @@ public class Array implements AutoCloseable {
       }
       return new Pair(domainArray.getItem(0), domainArray.getItem(1));
     }
+  }
+
+  /**
+   * Retrieves the non-empty domain range sizes from an array for a given dimension index. This is
+   * the union of the non-empty domains of the array fragments on the given dimension. Applicable
+   * only to var-sized dimensions.
+   *
+   * @param index The dimension index
+   * @return The non-empty domain range sizes
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<BigInteger, BigInteger> getNonEmptyDomainVarSizeFromIndex(long index)
+      throws TileDBError {
+    SWIGTYPE_p_int emptyp = tiledb.new_intp();
+    SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
+    SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+
+    ctx.handleError(
+        tiledb.tiledb_array_get_non_empty_domain_var_size_from_index(
+            ctx.getCtxp(), arrayp, index, startSize, endSize, emptyp));
+
+    return new Pair(tiledb.ullp_value(startSize), tiledb.ullp_value(endSize));
+  }
+
+  /**
+   * Retrieves the non-empty domain range sizes from an array for a given dimension name. This is
+   * the union of the non-empty domains of the array fragments on the given dimension. Applicable
+   * only to var-sized dimensions.
+   *
+   * @param name The dimension name
+   * @return The non-empty domain range sizes
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<BigInteger, BigInteger> getNonEmptyDomainVarSizeFromName(String name)
+      throws TileDBError {
+    SWIGTYPE_p_int emptyp = tiledb.new_intp();
+    SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
+    SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+
+    ctx.handleError(
+        tiledb.tiledb_array_get_non_empty_domain_var_size_from_name(
+            ctx.getCtxp(), arrayp, name, startSize, endSize, emptyp));
+
+    return new Pair(tiledb.ullp_value(startSize), tiledb.ullp_value(endSize));
+  }
+
+  /**
+   * Retrieves the non-empty domain from an array for a given dimension index. This is the union of
+   * the non-empty domains of the array fragments on the given dimension. Applicable only to
+   * var-sized dimensions.
+   *
+   * @param index The dimension index
+   * @return The non-empty domain
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<String, String> getNonEmptyDomainVarFromIndex(long index) throws TileDBError {
+    SWIGTYPE_p_int emptyp = tiledb.new_intp();
+
+    Dimension dim = this.schema.getDomain().getDimension(index);
+    Pair<BigInteger, BigInteger> size = this.getNonEmptyDomainVarSizeFromIndex(index);
+
+    Datatype dimType = dim.getType();
+    int startSize = size.getFirst().intValue();
+    int endSize = size.getSecond().intValue();
+
+    NativeArray start = new NativeArray(ctx, startSize, dimType);
+    NativeArray end = new NativeArray(ctx, endSize, dimType);
+
+    ctx.handleError(
+        tiledb.tiledb_array_get_non_empty_domain_var_from_index(
+            ctx.getCtxp(), arrayp, index, start.toVoidPointer(), end.toVoidPointer(), emptyp));
+
+    return new Pair(
+        new String((byte[]) start.toJavaArray()), new String((byte[]) end.toJavaArray()));
+  }
+
+  /**
+   * Retrieves the non-empty domain from an array for a given dimension name. This is the union of
+   * the non-empty domains of the array fragments on the given dimension. Applicable only to
+   * var-sized dimensions.
+   *
+   * @param name The dimension name
+   * @return The non-empty domain
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<String, String> getNonEmptyDomainVarFromName(String name) throws TileDBError {
+    SWIGTYPE_p_int emptyp = tiledb.new_intp();
+
+    Dimension dim = this.schema.getDomain().getDimension(name);
+
+    Pair<BigInteger, BigInteger> size = this.getNonEmptyDomainVarSizeFromName(name);
+
+    Datatype dimType = dim.getType();
+    int startSize = size.getFirst().intValue();
+    int endSize = size.getSecond().intValue();
+
+    NativeArray start = new NativeArray(ctx, startSize, dimType);
+    NativeArray end = new NativeArray(ctx, endSize, dimType);
+
+    ctx.handleError(
+        tiledb.tiledb_array_get_non_empty_domain_var_from_name(
+            ctx.getCtxp(), arrayp, name, start.toVoidPointer(), end.toVoidPointer(), emptyp));
+
+    return new Pair(
+        new String((byte[]) start.toJavaArray()), new String((byte[]) end.toJavaArray()));
   }
 
   /**

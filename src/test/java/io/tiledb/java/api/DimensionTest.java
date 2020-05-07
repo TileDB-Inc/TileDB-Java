@@ -67,6 +67,18 @@ public class DimensionTest {
   }
 
   @Test
+  public void testIsVar() throws Exception {
+    try (Context ctx = new Context();
+        Dimension<Integer> dim1 =
+            new Dimension<>(ctx, "d1", Datatype.TILEDB_INT32, new Pair<>(1, 10), 10);
+        Dimension dim2 = new Dimension(ctx, "d2", Datatype.TILEDB_STRING_ASCII, null, null)) {
+
+      Assert.assertFalse(dim1.isVar());
+      Assert.assertTrue(dim2.isVar());
+    }
+  }
+
+  @Test
   public void testGetCellValNum() throws Exception {
     try (Context ctx = new Context();
         Dimension<Integer> dim =
