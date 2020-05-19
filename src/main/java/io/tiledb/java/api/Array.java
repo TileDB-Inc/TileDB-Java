@@ -482,8 +482,7 @@ public class Array implements AutoCloseable {
   public Pair getNonEmptyDomainFromIndex(long index) throws TileDBError {
     checkIsOpen();
     try (Domain domain = schema.getDomain();
-        NativeArray domainArray =
-            new NativeArray(ctx, 2 * (int) domain.getRank(), domain.getType())) {
+        NativeArray domainArray = new NativeArray(ctx, 2, domain.getDimension(index).getType())) {
 
       if (domain.getDimension(index).isVar()) return getNonEmptyDomainVarFromIndex(index);
 
@@ -515,8 +514,7 @@ public class Array implements AutoCloseable {
   public Pair getNonEmptyDomainFromName(String name) throws TileDBError {
     checkIsOpen();
     try (Domain domain = schema.getDomain();
-        NativeArray domainArray =
-            new NativeArray(ctx, 2 * (int) domain.getRank(), domain.getType())) {
+        NativeArray domainArray = new NativeArray(ctx, 2, domain.getDimension(name).getType())) {
 
       if (domain.getDimension(name).isVar()) return this.getNonEmptyDomainVarFromName(name);
 

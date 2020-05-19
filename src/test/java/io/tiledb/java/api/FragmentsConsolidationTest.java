@@ -112,6 +112,8 @@ public class FragmentsConsolidationTest {
 
   public void arrayWrite3() throws Exception {
     // Prepare cell buffers
+    NativeArray rows = new NativeArray(ctx, new int[] {1, 3}, Integer.class);
+    NativeArray cols = new NativeArray(ctx, new int[] {1, 4}, Integer.class);
     NativeArray data = new NativeArray(ctx, new int[] {201, 202}, Integer.class);
 
     NativeArray coords = new NativeArray(ctx, new int[] {1, 1, 3, 4}, Integer.class);
@@ -120,8 +122,9 @@ public class FragmentsConsolidationTest {
     Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(array);
     query.setLayout(TILEDB_UNORDERED);
+    query.setBuffer("rows", rows);
+    query.setBuffer("cols", cols);
     query.setBuffer("a", data);
-    query.setCoordinates(coords);
     // Submit query
     query.submit();
     query.close();
@@ -140,24 +143,23 @@ public class FragmentsConsolidationTest {
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setSubarray(subarray);
     query.setBuffer("a", new NativeArray(ctx, 16, Integer.class));
-    query.setCoordinates(new NativeArray(ctx, 32, Integer.class));
+    query.setBuffer("rows", new NativeArray(ctx, 16, Integer.class));
+    query.setBuffer("cols", new NativeArray(ctx, 16, Integer.class));
 
     // Submit query
     query.submit();
     // Print cell values (assumes all getAttributes are read)
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
+    int[] rows = (int[]) query.getBuffer("rows");
+    int[] cols = (int[]) query.getBuffer("cols");
     int[] data = (int[]) query.getBuffer("a");
-    int[] coords = (int[]) query.getCoordinates();
     query.close();
     array.close();
 
-    Assert.assertArrayEquals(
-        coords,
-        new int[] {
-          1, 1, 1, 2, 1, 3, 1, 4, 2, 1, 2, 2, 2, 3, 2, 4, 3, 1, 3, 2, 3, 3, 3, 4, 4, 1, 4, 2, 4, 3,
-          4, 4
-        });
+    Assert.assertArrayEquals(rows, new int[] {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4});
+    Assert.assertArrayEquals(cols, new int[] {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4});
+
     Assert.assertArrayEquals(
         data,
         new int[] {

@@ -42,10 +42,8 @@ public class AsyncTest {
 
   public void arrayCreate() throws Exception {
     // Create getDimensions
-    Dimension<Integer> rows =
-        new Dimension<Integer>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
-    Dimension<Integer> cols =
-        new Dimension<Integer>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+    Dimension<Integer> rows = new Dimension(ctx, "rows", Integer.class, new Pair(1, 4), 2);
+    Dimension<Integer> cols = new Dimension(ctx, "cols", Integer.class, new Pair(1, 4), 2);
 
     // Create and set getDomain
     Domain domain = new Domain(ctx);
@@ -65,18 +63,20 @@ public class AsyncTest {
   }
 
   public void arrayWrite() throws Exception {
+    NativeArray d1_data = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Integer.class);
+    NativeArray d2_data = new NativeArray(ctx, new int[] {1, 1, 2, 3}, Integer.class);
+
     // Prepare cell buffers
     NativeArray data = new NativeArray(ctx, new int[] {1, 2, 3, 4}, Integer.class);
-
-    NativeArray coords_buff =
-        new NativeArray(ctx, new int[] {1, 1, 2, 1, 2, 2, 4, 3}, Integer.class);
 
     // Create query
     Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(array);
     query.setLayout(TILEDB_GLOBAL_ORDER);
+    query.setBuffer("rows", d1_data);
+    query.setBuffer("cols", d2_data);
     query.setBuffer("a", data);
-    query.setCoordinates(coords_buff);
+
     // Submit query
     query.submitAsync();
 
@@ -102,9 +102,13 @@ public class AsyncTest {
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer(
-        "a", new NativeArray(ctx, max_sizes.get("a").getSecond().intValue(), Integer.class));
-    query.setCoordinates(
+        "rows",
         new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Integer.class));
+    query.setBuffer(
+        "cols",
+        new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Integer.class));
+    query.setBuffer(
+        "a", new NativeArray(ctx, max_sizes.get("a").getSecond().intValue(), Integer.class));
 
     // Submit query with callback
     query.submitAsync(new ReadCallback());
@@ -119,14 +123,16 @@ public class AsyncTest {
     // Print cell values (assumes all getAttributes are read)
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
+    int[] rows = (int[]) query.getBuffer("rows");
+    int[] cols = (int[]) query.getBuffer("cols");
     int[] data = (int[]) query.getBuffer("a");
-    int[] coords = (int[]) query.getCoordinates();
 
     query.close();
     array.close();
 
     Assert.assertTrue(callbackCalled);
-    Assert.assertArrayEquals(coords, new int[] {1, 1, 2, 1, 2, 2, 4, 3});
+    Assert.assertArrayEquals(rows, new int[] {1, 2, 2, 4});
+    Assert.assertArrayEquals(cols, new int[] {1, 1, 2, 3});
     Assert.assertArrayEquals(data, new int[] {1, 2, 3, 4});
   }
 
