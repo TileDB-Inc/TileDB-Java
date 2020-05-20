@@ -174,7 +174,7 @@ public class Query implements AutoCloseable {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
         Domain domain = schema.getDomain()) {
-      dimType = domain.getType();
+      dimType = domain.getDimension(dimIdx).getType();
     }
 
     // We use java type check here because we can not tell the difference between unsigned and
@@ -215,7 +215,7 @@ public class Query implements AutoCloseable {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
         Domain domain = schema.getDomain()) {
-      dimType = domain.getType();
+      dimType = domain.getDimension(dimIdx).getType();
     }
 
     Types.javaTypeCheck(start.getClass(), dimType.javaClass());
@@ -276,7 +276,7 @@ public class Query implements AutoCloseable {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
         Domain domain = schema.getDomain()) {
-      dimType = domain.getType();
+      dimType = domain.getDimension(dimIdx).getType();
     }
 
     Pair<Long, Long> size = this.getRangeVarSize(dimIdx, rangeIdx);
@@ -325,7 +325,7 @@ public class Query implements AutoCloseable {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
         Domain domain = schema.getDomain()) {
-      dimType = domain.getType();
+      dimType = domain.getDimension(dimIdx).getType();
     }
 
     SWIGTYPE_p_p_void startArrpp = tiledb.new_voidpArray(1);
@@ -368,7 +368,7 @@ public class Query implements AutoCloseable {
     try (ArraySchema schema = array.getSchema()) {
       try (Domain domain = schema.getDomain()) {
         if (attr.equals(tiledb.tiledb_coords())) {
-          Types.typeCheck(domain.getType(), buffer.getNativeType());
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
         } else if (domain.hasDimension(attr)) {
           Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
         } else {
@@ -429,7 +429,7 @@ public class Query implements AutoCloseable {
     try (ArraySchema schema = array.getSchema()) {
       try (Domain domain = schema.getDomain()) {
         if (attr.equals(tiledb.tiledb_coords())) {
-          Types.typeCheck(domain.getType(), buffer.getNativeType());
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
         } else if (domain.hasDimension(attr)) {
           Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
         } else {
@@ -492,7 +492,7 @@ public class Query implements AutoCloseable {
     try (ArraySchema schema = array.getSchema()) {
       try (Domain domain = schema.getDomain()) {
         if (attr.equals(tiledb.tiledb_coords())) {
-          Types.typeCheck(domain.getType(), buffer.getNativeType());
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
         } else if (domain.hasDimension(attr)) {
           Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
         } else {
@@ -748,6 +748,7 @@ public class Query implements AutoCloseable {
    * @return The query result coordinate buffer.
    * @exception TileDBError A TileDB exception
    */
+  @Deprecated
   public Object getCoordinates() throws TileDBError {
     return getBuffer(tiledb.tiledb_coords());
   }

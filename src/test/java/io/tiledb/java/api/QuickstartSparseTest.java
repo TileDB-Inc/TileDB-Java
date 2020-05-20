@@ -106,6 +106,11 @@ public class QuickstartSparseTest {
   }
 
   public void arrayWrite() throws Exception {
+    NativeArray d1_buffer =
+        new NativeArray(ctx, new long[] {1, 1, 1, 2, 3, 4, 3, 3}, Datatype.TILEDB_INT64);
+    NativeArray d2_buffer =
+        new NativeArray(ctx, new long[] {1, 2, 4, 3, 1, 2, 3, 4}, Datatype.TILEDB_INT64);
+
     // Prepare cell buffers
     NativeArray a1_data = new NativeArray(ctx, new int[] {0, 1, 2, 3, 4, 5, 6, 7}, Integer.class);
     NativeArray a2_offsets =
@@ -121,18 +126,15 @@ public class QuickstartSparseTest {
             },
             Float.class);
 
-    NativeArray coords_buff =
-        new NativeArray(
-            ctx, new long[] {1, 1, 1, 2, 1, 4, 2, 3, 3, 1, 4, 2, 3, 3, 3, 4}, Long.class);
-
     // Create query
     Array my_sparse_array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(my_sparse_array);
     query.setLayout(TILEDB_GLOBAL_ORDER);
+    query.setBuffer("d1", d1_buffer);
+    query.setBuffer("d2", d2_buffer);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);
-    query.setCoordinates(coords_buff);
 
     // Submit query
     query.submit();
@@ -173,6 +175,14 @@ public class QuickstartSparseTest {
     Query query = new Query(my_sparse_array, TILEDB_READ);
     query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setSubarray(subarray);
+
+    query.setBuffer(
+        "d1",
+        new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
+
+    query.setBuffer(
+        "d2",
+        new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
     query.setBuffer(
         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
     query.setBuffer(
@@ -181,8 +191,6 @@ public class QuickstartSparseTest {
         new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
     query.setBuffer(
         "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
-    query.setCoordinates(
-        new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
 
     // Submit query
     query.submit();
@@ -190,14 +198,16 @@ public class QuickstartSparseTest {
 
     // Print cell values (assumes all getAttributes are read)
     HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
+    long[] d1 = (long[]) query.getBuffer("d1");
+    long[] d2 = (long[]) query.getBuffer("d2");
     int[] a1_buff = (int[]) query.getBuffer("a1");
     long[] a2_offsets = (long[]) query.getVarBuffer("a2");
     byte[] a2_data = (byte[]) query.getBuffer("a2");
     float[] a3_buff = (float[]) query.getBuffer("a3");
-    long[] coords = (long[]) query.getBuffer(TILEDB_COORDS);
 
     // check coords
-    Assert.assertArrayEquals(coords, new long[] {1, 1, 1, 2, 1, 4, 2, 3, 3, 1, 4, 2, 3, 3, 3, 4});
+    Assert.assertArrayEquals(d1, new long[] {1, 1, 1, 2, 3, 4, 3, 3});
+    Assert.assertArrayEquals(d2, new long[] {1, 2, 4, 3, 1, 2, 3, 4});
 
     // check a1
     Assert.assertArrayEquals(a1_buff, new int[] {0, 1, 2, 3, 4, 5, 6, 7});
