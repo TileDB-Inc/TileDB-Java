@@ -51,6 +51,18 @@ public class NativeLibLoader {
     }
   }
 
+  /** Finds and loads native Intel Thread Building Blocks. */
+  static void loadNativeTBB() {
+    try {
+      loadNativeLib("tbb", true);
+    } catch (java.lang.UnsatisfiedLinkError e) {
+      // If a native library fails to link, we fall back to depending on the system
+      // dynamic linker to satisfy the requirement. Therefore, we do nothing here
+      // (if the library is not available via the system linker, a runtime error
+      // will occur later).
+    }
+  }
+
   /** Finds and loads native TileDB JNI. */
   static void loadNativeTileDBJNI() {
     try {

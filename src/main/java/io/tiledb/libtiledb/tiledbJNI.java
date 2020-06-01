@@ -12,6 +12,7 @@ public class tiledbJNI {
 
   static {
     try {
+      NativeLibLoader.loadNativeTBB();
       NativeLibLoader.loadNativeTileDB();
       NativeLibLoader.loadNativeTileDBJNI();
     } catch (Exception e) {

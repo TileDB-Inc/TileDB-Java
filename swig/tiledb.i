@@ -7,6 +7,7 @@ import io.tiledb.libtiledb.NativeLibLoader;
 %pragma(java) jniclasscode=%{
   static {
     try {
+      NativeLibLoader.loadNativeTBB();
       NativeLibLoader.loadNativeTileDB();
       NativeLibLoader.loadNativeTileDBJNI();
     } catch (Exception e) {
