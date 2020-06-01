@@ -44,44 +44,20 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-def String getProjectProperty(String propertyName)
-{
-    String property = null
-    if (hasProperty(propertyName))
-    {
-        property = this.properties[propertyName]
-    }
-    return property
-}
-
 task cmakeTask(type: Exec) {
     workingDir = buildDir
     executable = 'cmake'
-    List<String> buildArgs = new ArrayList<String>()
-    buildArgs.add("..")
-    String tiledb_git_repo = getProjectProperty('TILEDB_GIT_REPOSITORY')
-    String tiledb_git_tag = getProjectProperty('TILEDB_GIT_TAG')
-    String tiledb_verbose = getProjectProperty('TILEDB_VERBOSE')
-    String tiledb_s3 = getProjectProperty('TILEDB_S3')
-    String tiledb_hdfs = getProjectProperty('TILEDB_HDFS')
-    String tiledb_serialization = getProjectProperty('TILEDB_SERIALIZATION')
-    if (tiledb_git_repo != null) {
-	    buildArgs.add("-DTILEDB_GIT_REPOSITORY=" + tiledb_git_repo)
-    }
-    if (tiledb_git_tag != null) {
-        buildArgs.add("-DTILEDB_GIT_TAG=" + tiledb_git_tag)
-    }
-    if (tiledb_verbose != null) {
-        buildArgs.add("-DTILEDB_VERBOSE=" + tiledb_verbose)
-    }
-    if (tiledb_s3 != null) {
-        buildArgs.add("-DTILEDB_S3=" + tiledb_s3)
-    }
-    if (tiledb_hdfs != null) {
-        buildArgs.add("-DTILEDB_HDFS=" + tiledb_hdfs)
-    }
-    if (tiledb_serialization != null) {
-        buildArgs.add("-DTILEDB_SERIALIZATION=" + tiledb_serialization)
+    [
+        "TILEDB_GIT_REPOSITORY",
+        "TILEDB_GIT_TAG",
+        "TILEDB_VERBOSE",
+        "TILEDB_S3",
+        "TILEDB_HDFS",
+        "TILEDB_SERIALIZATION"
+    ].each { v ->
+        if (project.hasProperty(v)) {
+            buildArgs << "-D${v}=${project.property(v)}"
+        }
     }
     args buildArgs
 }
