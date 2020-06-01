@@ -3,34 +3,26 @@ package io.tiledb.java.api;
 import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.List;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class ObjectTest {
+
+  @Rule public TemporaryFolder temp = new TemporaryFolder();
+
   private Context ctx;
+
+  private Path root;
 
   @Before
   public void setup() throws Exception {
     ctx = new Context();
-    if (Files.exists(Paths.get("my_group"))) {
-      TileDBObject.remove(ctx, "my_group");
-    }
-    if (Files.exists(Paths.get("my_group2"))) TileDBObject.remove(ctx, "my_group2");
-  }
-
-  @After
-  public void teardown() throws Exception {
-    if (Files.exists(Paths.get("my_group"))) {
-      TileDBObject.remove(ctx, "my_group");
-    }
-    if (Files.exists(Paths.get("my_group2"))) {
-      TileDBObject.remove(ctx, "my_group2");
-    }
+    root = temp.getRoot().toPath();
   }
 
   @Test
@@ -73,22 +65,22 @@ public class ObjectTest {
   }
 
   private void moveRemoveObject() throws Exception {
-    TileDBObject.move(ctx, "my_group", "my_group2");
-    TileDBObject.remove(ctx, "my_group2/dense_arrays");
-    TileDBObject.remove(ctx, "my_group2/sparse_arrays/array_C");
+    TileDBObject.move(ctx, root.resolve("my_group").toString(), root.resolve("my_group2").toString());
+    TileDBObject.remove(ctx, root.resolve("my_group2/dense_arrays").toString());
+    TileDBObject.remove(ctx, root.resolve("my_group2/sparse_arrays/array_C").toString());
   }
 
   private void createHierarchy() throws Exception {
     // Create groups
-    Group group1 = new Group(ctx, "my_group");
-    Group group2 = new Group(ctx, "my_group/dense_arrays");
-    Group group3 = new Group(ctx, "my_group/sparse_arrays");
+    new Group(ctx, root.resolve("my_group").toString());
+    new Group(ctx, root.resolve("my_group/dense_arrays").toString());
+    new Group(ctx, root.resolve("my_group/sparse_arrays").toString());
 
     // Create arrays
-    createArray("my_group/dense_arrays/array_A", TILEDB_DENSE);
-    createArray("my_group/dense_arrays/array_B", TILEDB_DENSE);
-    createArray("my_group/sparse_arrays/array_C", TILEDB_SPARSE);
-    createArray("my_group/sparse_arrays/array_D", TILEDB_SPARSE);
+    createArray(root.resolve("my_group/dense_arrays/array_A").toString(), TILEDB_DENSE);
+    createArray(root.resolve("my_group/dense_arrays/array_B").toString(), TILEDB_DENSE);
+    createArray(root.resolve("my_group/sparse_arrays/array_C").toString(), TILEDB_SPARSE);
+    createArray(root.resolve("my_group/sparse_arrays/array_D").toString(), TILEDB_SPARSE);
   }
 
   private void createArray(String arrayURI, ArrayType type) throws Exception {
@@ -116,20 +108,20 @@ public class ObjectTest {
   }
 
   private void listTest(String uri, String[] expected) throws Exception {
-    TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, uri);
+    TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, root.resolve(uri).toString());
     List<TileDBObject> objs = obj_iter.getAllObjects();
     assertUriEndsWith(objs, expected);
   }
 
   private void listPreorderTest(String uri, String[] expected) throws Exception {
-    TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, uri);
+    TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, root.resolve(uri).toString());
     obj_iter.setRecursive(WalkOrder.TILEDB_PREORDER);
     List<TileDBObject> objs = obj_iter.getAllObjects();
     assertUriEndsWith(objs, expected);
   }
 
   private void listPostorderTest(String uri, String[] expected) throws Exception {
-    TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, uri);
+    TileDBObjectIterator obj_iter = new TileDBObjectIterator(ctx, root.resolve(uri).toString());
     obj_iter.setRecursive(WalkOrder.TILEDB_POSTORDER);
     List<TileDBObject> objs = obj_iter.getAllObjects();
     assertUriEndsWith(objs, expected);
