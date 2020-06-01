@@ -87,6 +87,8 @@ import org.apache.tools.ant.taskdefs.condition.Os
 test {
     useJUnit()
 
+    maxHeapSize = '1G'
+
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         systemProperty "java.library.path", "$buildDir\\install\\bin;$buildDir\\tiledb_jni\\Release"
     } else {
