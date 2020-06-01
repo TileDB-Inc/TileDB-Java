@@ -84,7 +84,7 @@ task generateJNI(type: Exec) {
 }
 
 test {
-    systemProperty "java.library.path", "$buildDir/install/lib/"
+    systemProperty "java.library.path", "$buildDir/install/lib:$buildDir/install/lib64:$buildDir/install/bin:$buildDir/tiledb_jni:$buildDir/tiledb_jni/Release"
     testLogging {
         showStandardStreams = true
     }
@@ -92,10 +92,14 @@ test {
 
 jar {
     into(new File('lib', osdetector.classifier).toString()) {
+        // Linux and macOS
         from file("$buildDir/install/lib/${System.mapLibraryName("tiledb")}")
-        from file("$buildDir/install/lib/${System.mapLibraryName("tiledbjni")}")
         from file("$buildDir/install/lib64/${System.mapLibraryName("tiledb")}")
-        from file("$buildDir/install/lib64/${System.mapLibraryName("tiledbjni")}")
+        from file("$buildDir/tiledb_jni/${System.mapLibraryName("tiledbjni")}")
+        // Windows
+        from file("$buildDir/install/bin/${System.mapLibraryName("tbb")}")
+        from file("$buildDir/install/bin/${System.mapLibraryName("tiledb")}")
+        from file("$buildDir/tiledb_jni/Release/${System.mapLibraryName("tiledbjni")}")
     }
 
     manifest {
