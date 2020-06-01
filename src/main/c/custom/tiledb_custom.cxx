@@ -694,7 +694,7 @@ extern "C" {
     jintArray jresult = jenv->NewIntArray(sz);
     if (!jresult)
       return NULL;
-    jenv->SetIntArrayRegion(jresult, 0, sz, arr);
+    jenv->SetIntArrayRegion(jresult, 0, sz, (jint*) arr);
     return jresult;
   }
 
