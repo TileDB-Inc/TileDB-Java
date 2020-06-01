@@ -69,21 +69,14 @@ task cmakeTask(type: Exec) {
     args buildArgs
 }
 
-task makeTask(type: Exec) {
+task cmakeBuildTask(type: Exec) {
     workingDir = buildDir
-    executable = 'make'
-    args "-j${Runtime.getRuntime().availableProcessors()}"
+    executable = 'cmake'
+    args "--build", ".", "--config", "release"
 }
-makeTask.dependsOn(cmakeTask)
+cmakeBuildTask.dependsOn(cmakeTask)
 
-task makeInstallTask(type: Exec) {
-    workingDir = new File(buildDir, "tiledb_jni")
-    executable = 'make'
-    args 'install'
-}
-makeInstallTask.dependsOn(makeTask)
-
-assemble.dependsOn(makeInstallTask)
+assemble.dependsOn(cmakeBuildTask)
 
 task generateJNI(type: Exec) {
     workingDir = buildDir
