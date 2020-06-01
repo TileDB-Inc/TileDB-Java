@@ -10,5 +10,8 @@ build_script:
   - mkdir build
   - gradlew assemble
 
+test_script:
+  - gradlew test
+
 artifacts:
   - path: 'build\libs\*'
