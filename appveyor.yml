@@ -1,0 +1,14 @@
+version: 0.2.7.{build}
+
+image: Visual Studio 2019
+platform:
+  - x64
+
+build: off
+
+build_script:
+  - mkdir build
+  - gradlew assemble
+
+artifacts:
+  - path: 'build\libs\*'
