@@ -47,6 +47,13 @@ dependencies {
 task cmakeTask(type: Exec) {
     workingDir = buildDir
     executable = 'cmake'
+    def buildArgs = [".."]
+    if (project.properties.TILEDB_CMAKE_GENERATOR) {
+        buildArgs << "-G" << project.properties.TILEDB_CMAKE_GENERATOR
+    }
+    if (project.properties.TILEDB_CMAKE_ARCHITECTURE) {
+        buildArgs << "-A" << project.properties.TILEDB_CMAKE_ARCHITECTURE
+    }
     [
         "TILEDB_GIT_REPOSITORY",
         "TILEDB_GIT_TAG",
