@@ -41,7 +41,7 @@ sourceSets {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testImplementation 'junit:junit:4.12'
 }
 
 task cmakeTask(type: Exec) {
@@ -85,11 +85,14 @@ task generateJNI(type: Exec) {
 
 import org.apache.tools.ant.taskdefs.condition.Os
 test {
+    useJUnit()
+
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         systemProperty "java.library.path", "$buildDir\\install\\bin;$buildDir\\tiledb_jni\\Release"
     } else {
         systemProperty "java.library.path", "$buildDir/install/lib:$buildDir/install/lib64:$buildDir/tiledb_jni"
     }
+
     testLogging {
         showStandardStreams = true
     }

@@ -13,5 +13,4 @@ pluginManagement {
         }
     }
 }
-enableFeaturePreview('STABLE_PUBLISHING')
 rootProject.name = 'tiledb-java'
