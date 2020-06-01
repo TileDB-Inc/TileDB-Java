@@ -83,8 +83,13 @@ task generateJNI(type: Exec) {
     executable = "../generate_tiledb_jni"
 }
 
+import org.apache.tools.ant.taskdefs.condition.Os
 test {
-    systemProperty "java.library.path", "$buildDir/install/lib:$buildDir/install/lib64:$buildDir/install/bin:$buildDir/tiledb_jni:$buildDir/tiledb_jni/Release"
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        systemProperty "java.library.path", "$buildDir\\install\\bin;$buildDir\\tiledb_jni\\Release"
+    } else {
+        systemProperty "java.library.path", "$buildDir/install/lib:$buildDir/install/lib64:$buildDir/tiledb_jni"
+    }
     testLogging {
         showStandardStreams = true
     }
