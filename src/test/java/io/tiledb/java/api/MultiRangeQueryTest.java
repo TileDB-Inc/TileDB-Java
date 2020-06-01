@@ -5,33 +5,26 @@ import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class MultiRangeQueryTest {
+
+  @Rule public TemporaryFolder temp = new TemporaryFolder();
+
   private Context ctx;
-  private String arrayURI = "multi_range_query";
+  private String arrayURI;
 
   @Before
   public void setup() throws Exception {
     ctx = new Context();
-    if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
-    }
+    arrayURI = temp.getRoot().toPath().resolve("multi_range_query").toString();
     arrayCreate();
     arrayWrite();
-  }
-
-  @After
-  public void teardown() throws Exception {
-    if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
-    }
   }
 
   @Test
@@ -82,65 +75,63 @@ public class MultiRangeQueryTest {
             Float.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
-    Query query = new Query(array);
-    query.setLayout(TILEDB_ROW_MAJOR);
-    query.setBuffer("a1", a1);
-    query.setBuffer("a2", a2);
-    // Submit query
-    query.submit();
-    query.close();
-    array.close();
+    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+         Query query = new Query(array)) {
+      query.setLayout(TILEDB_ROW_MAJOR);
+      query.setBuffer("a1", a1);
+      query.setBuffer("a2", a2);
+      // Submit query
+      query.submit();
+    }
   }
 
   private void arrayRead() throws Exception {
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+    // Create array and query
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+         Query query = new Query(array, TILEDB_READ)) {
 
-    // Create query
-    Query query = new Query(array, TILEDB_READ);
+      // Slice only rows 1, 2 and cols 2, 3, 4
+      query.addRange(0, (int) 1, (int) 2);
+      query.addRange(1, (int) 2, (int) 4);
+      query.setLayout(TILEDB_ROW_MAJOR);
 
-    // Slice only rows 1, 2 and cols 2, 3, 4
-    query.addRange(0, (int) 1, (int) 2);
-    query.addRange(1, (int) 2, (int) 4);
-    query.setLayout(TILEDB_ROW_MAJOR);
+      Assert.assertEquals(1, query.getRangeNum(0));
+      Assert.assertEquals(1, query.getRangeNum(1));
+      Assert.assertEquals(1, query.getRange(0, 0).getFirst());
+      Assert.assertEquals(2, query.getRange(0, 0).getSecond());
+      Assert.assertEquals(2, query.getRange(1, 0).getFirst());
+      Assert.assertEquals(4, query.getRange(1, 0).getSecond());
 
-    Assert.assertEquals(1, query.getRangeNum(0));
-    Assert.assertEquals(1, query.getRangeNum(1));
-    Assert.assertEquals(1, query.getRange(0, 0).getFirst());
-    Assert.assertEquals(2, query.getRange(0, 0).getSecond());
-    Assert.assertEquals(2, query.getRange(1, 0).getFirst());
-    Assert.assertEquals(4, query.getRange(1, 0).getSecond());
+      // Prepare the vector that will hold the result
+      // (of size 6 elements for "a1" and 12 elements for "a2" since
+      // it stores two floats per cell)
+      query.setBuffer("a1", new NativeArray(ctx, 6, Character.class));
+      query.setBuffer("a2", new NativeArray(ctx, 12, Float.class));
 
-    // Prepare the vector that will hold the result
-    // (of size 6 elements for "a1" and 12 elements for "a2" since
-    // it stores two floats per cell)
-    query.setBuffer("a1", new NativeArray(ctx, 6, Character.class));
-    query.setBuffer("a2", new NativeArray(ctx, 12, Float.class));
+      // Submit query
+      query.submit();
 
-    // Submit query
-    query.submit();
+      HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
+      Assert.assertNotNull(result_el);
 
-    HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
+      byte[] a1 = (byte[]) query.getBuffer("a1");
+      float[] a2 = (float[]) query.getBuffer("a2");
 
-    byte[] a1 = (byte[]) query.getBuffer("a1");
-    float[] a2 = (float[]) query.getBuffer("a2");
+      Assert.assertArrayEquals(a1, new byte[] {'b', 'c', 'd', 'f', 'g', 'h'});
 
-    query.close();
-    array.close();
-
-    Assert.assertArrayEquals(a1, new byte[] {'b', 'c', 'd', 'f', 'g', 'h'});
-
-    float[] expected_a2 =
-        new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f};
-    for (int i = 0; i < a2.length; i++) {
-      Assert.assertEquals(a2[i], expected_a2[i], 0.01f);
+      float[] expected_a2 =
+          new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f};
+      for (int i = 0; i < a2.length; i++) {
+        Assert.assertEquals(a2[i], expected_a2[i], 0.01f);
+      }
     }
   }
 
   @Test(expected = TileDBError.class)
   public void wrongDatatype() throws Exception {
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
-    Query query = new Query(array, TILEDB_READ);
-    query.addRange(0, (long) 1, (long) 2);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+         Query query = new Query(array, TILEDB_READ)) {
+      query.addRange(0, (long) 1, (long) 2);
+    }
   }
 }
