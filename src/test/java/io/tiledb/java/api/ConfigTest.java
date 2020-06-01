@@ -25,6 +25,7 @@
 package io.tiledb.java.api;
 
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
@@ -96,7 +97,7 @@ public class ConfigTest {
   @Test
   public void testConfigSaveLoad() throws Exception {
     String configPath =
-        temp.getRoot().getAbsolutePath() + temp.getRoot().pathSeparator + "testConfigString";
+        temp.getRoot().toPath().resolve("testConfigString").toString();
     try (Config config = new Config()) {
       config.set("vfs.s3.connect_timeout_ms", "5000");
       config.saveToFile(configPath);
@@ -109,9 +110,9 @@ public class ConfigTest {
 
   @Test
   public void testConfigSaveLoadURI() throws Exception {
-    String configPath =
-        temp.getRoot().getAbsolutePath() + temp.getRoot().pathSeparator + "testConfigStringURI";
-    URI configURI = new URI("file://" + configPath);
+    Path configPath =
+        temp.getRoot().toPath().resolve("testConfigStringURI");
+    URI configURI = configPath.toUri();
     // Try lo
     try (Config config = new Config()) {
       config.set("vfs.s3.connect_timeout_ms", "5000");
