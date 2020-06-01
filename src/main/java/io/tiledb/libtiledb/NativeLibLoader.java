@@ -213,7 +213,7 @@ public class NativeLibLoader {
   private static File extractLibraryFile(
       String libraryDir, String libraryName, String targetDir, boolean mapLibraryName) {
     String libraryFileName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
-    String nativeLibraryFilePath = new File(libraryDir, libraryFileName).getAbsolutePath();
+    String nativeLibraryFilePath = libraryDir + "/" + libraryFileName;
 
     // Attach UUID to the native library file to ensure multiple class loaders can read the
     // native lib multiple times.
@@ -296,10 +296,10 @@ public class NativeLibLoader {
    */
   private static File findNativeLibrary(String libraryName, boolean mapLibraryName) {
     String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
-    String libDir = new File(LIB_RESOURCE_DIR, getOSClassifier()).getAbsolutePath();
-    File libPath = new File(libDir, mappedLibraryName);
+    String libDir = LIB_RESOURCE_DIR + "/" + getOSClassifier();
+    String libPath = libDir + "/" + mappedLibraryName;
 
-    boolean hasNativeLib = hasResource(libPath.getAbsolutePath());
+    boolean hasNativeLib = hasResource(libPath);
     if (!hasNativeLib) {
       return null;
     }
