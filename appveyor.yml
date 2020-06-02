@@ -10,7 +10,7 @@ build_script:
   - gradlew assemble
 
 test_script:
-  - gradlew test
+  - gradlew --info test
 # Check that the NativeLibLoader functions correctly
   - ps: $(ls build\libs\tiledb-java-*.jar | % {$Env:CLASSPATH += $_.FullName + ";"})
   - ps: java examples.io.tiledb.java.api.TileDBVersion
