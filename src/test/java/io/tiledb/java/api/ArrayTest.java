@@ -206,18 +206,21 @@ public class ArrayTest {
 
     long[] array_a = new long[] {1, 2, 3, 6};
     insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
-    Thread.sleep(2000);
+    Thread.sleep(1000);
     long ts_a = System.currentTimeMillis();
+    Thread.sleep(1000);
 
     long[] array_b = new long[] {1, 1, 1, 1};
     insertArbitraryValues(new NativeArray(ctx, array_b, Long.class));
-    Thread.sleep(2000);
+    Thread.sleep(1000);
     long ts_b = System.currentTimeMillis();
+    Thread.sleep(1000);
 
     long[] array_c = new long[] {0, 0, 0, 0};
     insertArbitraryValues(new NativeArray(ctx, array_c, Long.class));
-    Thread.sleep(2000);
+    Thread.sleep(1000);
     long ts_c = System.currentTimeMillis();
+    Thread.sleep(1000);
 
     Assert.assertArrayEquals(array_a, readArrayAt(BigInteger.valueOf(ts_a)));
     Assert.assertArrayEquals(array_b, readArrayAt(BigInteger.valueOf(ts_b)));
@@ -230,18 +233,21 @@ public class ArrayTest {
 
     long[] array_a = new long[] {1, 2, 3, 6};
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_a, Long.class));
-    Thread.sleep(2000);
+    Thread.sleep(1000);
     long ts_a = System.currentTimeMillis();
+    Thread.sleep(1000);
 
     long[] array_b = new long[] {1, 1, 1, 1};
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_b, Long.class));
-    Thread.sleep(2000);
+    Thread.sleep(1000);
     long ts_b = System.currentTimeMillis();
+    Thread.sleep(1000);
 
     long[] array_c = new long[] {0, 0, 0, 0};
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_c, Long.class));
-    Thread.sleep(2000);
+    Thread.sleep(1000);
     long ts_c = System.currentTimeMillis();
+    Thread.sleep(1000);
 
     Assert.assertArrayEquals(array_a, readArrayAtEncrypted(BigInteger.valueOf(ts_a)));
     Assert.assertArrayEquals(array_b, readArrayAtEncrypted(BigInteger.valueOf(ts_b)));
