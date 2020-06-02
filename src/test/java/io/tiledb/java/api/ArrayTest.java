@@ -210,13 +210,13 @@ public class ArrayTest {
     insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
     long ts_a = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
 
-    Thread.sleep(1000);
+    Thread.sleep(2000);
 
     long[] array_b = new long[] {1, 1, 1, 1};
     insertArbitraryValues(new NativeArray(ctx, array_b, Long.class));
     long ts_b = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
 
-    Thread.sleep(1000);
+    Thread.sleep(2000);
 
     long[] array_c = new long[] {0, 0, 0, 0};
     insertArbitraryValues(new NativeArray(ctx, array_c, Long.class));
@@ -235,13 +235,13 @@ public class ArrayTest {
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_a, Long.class));
     long ts_a = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
 
-    Thread.sleep(1000);
+    Thread.sleep(2000);
 
     long[] array_b = new long[] {1, 1, 1, 1};
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_b, Long.class));
     long ts_b = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
 
-    Thread.sleep(1000);
+    Thread.sleep(2000);
 
     long[] array_c = new long[] {0, 0, 0, 0};
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_c, Long.class));
