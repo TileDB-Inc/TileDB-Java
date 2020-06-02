@@ -12,6 +12,8 @@ build_script:
 
 test_script:
   - gradlew test
+# Check that the NativeLibLoader functions correctly
+  - java -cp build\libs\tiledb-java-*.jar examples.io.tiledb.java.api.TileDBVersion
 
 artifacts:
   - path: 'build\libs\*'
