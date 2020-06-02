@@ -371,6 +371,35 @@ public class Array implements AutoCloseable {
   }
 
   /**
+   * Cleans up the array, such as consolidated fragments and array metadata. Note that this will
+   * coarsen the granularity of time traveling (see docs for more information).
+   *
+   * <p>This method uses as the vacuum configuration the configuration instance that is encapsulated
+   * in the context (ctx) instance (ctx.getConfig()).
+   *
+   * @param arrayURI The array URI
+   * @param ctx The TileDB context
+   * @throws TileDBError A TileDB exception
+   */
+  public static void vacuum(Context ctx, String arrayURI) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_array_vacuum(ctx.getCtxp(), arrayURI, ctx.getConfig().getConfigp()));
+  }
+
+  /**
+   * Cleans up the array, such as consolidated fragments and array metadata. Note that this will
+   * coarsen the granularity of time traveling (see docs for more information).
+   *
+   * @param arrayURI The array URI
+   * @param ctx The TileDB context
+   * @param config The TileDB config that will be used for the vacuum process
+   * @throws TileDBError A TileDB exception
+   */
+  public static void vacuum(Context ctx, String arrayURI, Config config) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_array_vacuum(ctx.getCtxp(), arrayURI, config.getConfigp()));
+  }
+
+  /**
    * Checks if a given URI is an existing TileDB array object
    *
    * @param ctx TileDB context object
