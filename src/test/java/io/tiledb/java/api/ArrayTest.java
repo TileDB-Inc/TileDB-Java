@@ -9,7 +9,6 @@ import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Map;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
@@ -154,8 +153,9 @@ public class ArrayTest {
     Assert.assertTrue(Array.exists(ctx, arrayURI));
 
     // Test that we can load the schema
-    ArraySchema schema = new ArraySchema(ctx, arrayURI);
-    Assert.assertEquals(schema.getArrayType(), ArrayType.TILEDB_DENSE);
+    try (ArraySchema schema = new ArraySchema(ctx, arrayURI)) {
+      Assert.assertEquals(schema.getArrayType(), ArrayType.TILEDB_DENSE);
+    }
   }
 
   @Test
@@ -166,15 +166,16 @@ public class ArrayTest {
     Assert.assertTrue(Array.exists(ctx, arrayURI));
 
     // Test that we can decrypt the array
-    ArraySchema schema = new ArraySchema(ctx, arrayURI, EncryptionType.TILEDB_AES_256_GCM, key);
-    Assert.assertEquals(schema.getArrayType(), ArrayType.TILEDB_DENSE);
+    try (ArraySchema schema = new ArraySchema(ctx, arrayURI, EncryptionType.TILEDB_AES_256_GCM, key)) {
+      Assert.assertEquals(schema.getArrayType(), ArrayType.TILEDB_DENSE);
+    }
   }
 
   @Test(expected = TileDBError.class)
   public void testLoadingEncryptedArrayNoKeyErrors() throws Exception {
     // Test that we can create the encrypted array
     Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
-    ArraySchema schema = new ArraySchema(ctx, arrayURI);
+    new ArraySchema(ctx, arrayURI).close();
   }
 
   @Test(expected = TileDBError.class)
@@ -182,12 +183,11 @@ public class ArrayTest {
     // Test that we can create the encrypted array
     Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
     String keyString = "0123456789abcdeF0123456789abcdeZ";
-    ArraySchema schema =
         new ArraySchema(
             ctx,
             arrayURI,
             EncryptionType.TILEDB_AES_256_GCM,
-            keyString.getBytes(StandardCharsets.US_ASCII));
+            keyString.getBytes(StandardCharsets.US_ASCII)).close();
   }
 
   @Test(expected = TileDBError.class)
@@ -195,12 +195,11 @@ public class ArrayTest {
     // Test that we can create the encrypted array
     Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
     String keyString = "0123456789abcdeF0123456789a";
-    ArraySchema schema =
         new ArraySchema(
             ctx,
             arrayURI,
             EncryptionType.TILEDB_AES_256_GCM,
-            keyString.getBytes(StandardCharsets.US_ASCII));
+            keyString.getBytes(StandardCharsets.US_ASCII)).close();
   }
 
   @Test
@@ -260,15 +259,16 @@ public class ArrayTest {
     long[] array_a = new long[] {1, 2, 3, 6};
     insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
 
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
 
-    Assert.assertEquals(1L, array.getNonEmptyDomainFromIndex(0).getFirst());
-    Assert.assertEquals(4L, array.getNonEmptyDomainFromIndex(0).getSecond());
+      Assert.assertEquals(1L, array.getNonEmptyDomainFromIndex(0).getFirst());
+      Assert.assertEquals(4L, array.getNonEmptyDomainFromIndex(0).getSecond());
 
-    try {
-      array.getNonEmptyDomainFromIndex(1);
-      Assert.fail();
-    } catch (TileDBError error) {
+      try {
+        array.getNonEmptyDomainFromIndex(1);
+        Assert.fail();
+      } catch (TileDBError error) {
+      }
     }
   }
 
@@ -279,15 +279,16 @@ public class ArrayTest {
     long[] array_a = new long[] {1, 2, 3, 6};
     insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
 
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
 
-    Assert.assertEquals(1L, array.getNonEmptyDomainFromName("d1").getFirst());
-    Assert.assertEquals(4L, array.getNonEmptyDomainFromName("d1").getSecond());
+      Assert.assertEquals(1L, array.getNonEmptyDomainFromName("d1").getFirst());
+      Assert.assertEquals(4L, array.getNonEmptyDomainFromName("d1").getSecond());
 
-    try {
-      array.getNonEmptyDomainFromName("d2");
-      Assert.fail();
-    } catch (TileDBError error) {
+      try {
+        array.getNonEmptyDomainFromName("d2");
+        Assert.fail();
+      } catch (TileDBError error) {
+      }
     }
   }
 
@@ -299,12 +300,13 @@ public class ArrayTest {
     insertArbitraryValuesVarSize(
         new Array(ctx, arrayURI, TILEDB_WRITE), dimName, data, offsets, TILEDB_UNORDERED);
 
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
 
-    Pair<BigInteger, BigInteger> size = array.getNonEmptyDomainVarSizeFromIndex(0);
+      Pair<BigInteger, BigInteger> size = array.getNonEmptyDomainVarSizeFromIndex(0);
 
-    Assert.assertEquals(2, size.getFirst().intValue());
-    Assert.assertEquals(4, size.getSecond().intValue());
+      Assert.assertEquals(2, size.getFirst().intValue());
+      Assert.assertEquals(4, size.getSecond().intValue());
+    }
   }
 
   @Test
@@ -315,12 +317,13 @@ public class ArrayTest {
     insertArbitraryValuesVarSize(
         new Array(ctx, arrayURI, TILEDB_WRITE), dimName, data, offsets, TILEDB_UNORDERED);
 
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
 
-    Pair<BigInteger, BigInteger> size = array.getNonEmptyDomainVarSizeFromName(dimName);
+      Pair<BigInteger, BigInteger> size = array.getNonEmptyDomainVarSizeFromName(dimName);
 
-    Assert.assertEquals(2, size.getFirst().intValue());
-    Assert.assertEquals(4, size.getSecond().intValue());
+      Assert.assertEquals(2, size.getFirst().intValue());
+      Assert.assertEquals(4, size.getSecond().intValue());
+    }
   }
 
   @Test
@@ -331,16 +334,17 @@ public class ArrayTest {
     insertArbitraryValuesVarSize(
         new Array(ctx, arrayURI, TILEDB_WRITE), dimName, data, offsets, TILEDB_UNORDERED);
 
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
 
-    Pair<String, String> size1 = array.getNonEmptyDomainVarFromIndex(0);
-    Pair<String, String> size2 = array.getNonEmptyDomainFromIndex(0);
+      Pair<String, String> size1 = array.getNonEmptyDomainVarFromIndex(0);
+      Pair<String, String> size2 = array.getNonEmptyDomainFromIndex(0);
 
-    Assert.assertEquals("aa", size1.getFirst());
-    Assert.assertEquals("ddee", size1.getSecond());
+      Assert.assertEquals("aa", size1.getFirst());
+      Assert.assertEquals("ddee", size1.getSecond());
 
-    Assert.assertEquals("aa", size2.getFirst());
-    Assert.assertEquals("ddee", size2.getSecond());
+      Assert.assertEquals("aa", size2.getFirst());
+      Assert.assertEquals("ddee", size2.getSecond());
+    }
   }
 
   @Test
@@ -351,16 +355,17 @@ public class ArrayTest {
     insertArbitraryValuesVarSize(
         new Array(ctx, arrayURI, TILEDB_WRITE), dimName, data, offsets, TILEDB_UNORDERED);
 
-    Array array = new Array(ctx, arrayURI, TILEDB_READ);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
 
-    Pair<String, String> size1 = array.getNonEmptyDomainVarFromName(dimName);
-    Pair<String, String> size2 = array.getNonEmptyDomainFromName(dimName);
+      Pair<String, String> size1 = array.getNonEmptyDomainVarFromName(dimName);
+      Pair<String, String> size2 = array.getNonEmptyDomainFromName(dimName);
 
-    Assert.assertEquals("aa", size1.getFirst());
-    Assert.assertEquals("ddee", size1.getSecond());
+      Assert.assertEquals("aa", size1.getFirst());
+      Assert.assertEquals("ddee", size1.getSecond());
 
-    Assert.assertEquals("aa", size2.getFirst());
-    Assert.assertEquals("ddee", size2.getSecond());
+      Assert.assertEquals("aa", size2.getFirst());
+      Assert.assertEquals("ddee", size2.getSecond());
+    }
   }
 
   @Test
@@ -524,7 +529,7 @@ public class ArrayTest {
   public void testArrayGetMetadataMap() throws Exception {
     Array.create(arrayURI, schemaCreate());
 
-    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+
 
     NativeArray metadataByte = new NativeArray(ctx, new byte[] {-7, -6, -5, 0, 100}, Byte.class);
 
@@ -622,37 +627,38 @@ public class ArrayTest {
           metadataShortSingle
         };
 
-    for (int i = 0; i < keysNum; i++) {
-      array.putMetadata(keys[i], nativeArrays[i]);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE)) {
+      for (int i = 0; i < keysNum; i++) {
+        array.putMetadata(keys[i], nativeArrays[i]);
+      }
     }
-    // submit changes
-    array.close();
 
     // open a new session
-    array = new Array(ctx, arrayURI, TILEDB_READ);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
 
-    Map<String, Object> metadata = array.getMetadataMap();
+      Map<String, Object> metadata = array.getMetadataMap();
 
-    for (int i = 0; i < keys.length; ++i) {
-      String key = keys[i];
-      Object value = metadata.get(key);
+      for (int i = 0; i < keys.length; ++i) {
+        String key = keys[i];
+        Object value = metadata.get(key);
 
-      // Check if the key is contained in the metadata
-      Assert.assertTrue(metadata.containsKey(key));
+        // Check if the key is contained in the metadata
+        Assert.assertTrue(metadata.containsKey(key));
 
-      Class c = types[i].javaClass();
+        Class<?> c = types[i].javaClass();
 
-      if (value instanceof NativeArray) {
-        // Check array types
-        Assert.assertEquals(c, ((NativeArray) value).getJavaType());
+        if (value instanceof NativeArray) {
+          // Check array types
+          Assert.assertEquals(c, ((NativeArray) value).getJavaType());
 
-        // Check array elements
-        for (int idx = 0; idx < nativeArrays[i].getSize(); ++idx) {
-          Assert.assertEquals(((NativeArray) value).getItem(idx), nativeArrays[i].getItem(idx));
+          // Check array elements
+          for (int idx = 0; idx < nativeArrays[i].getSize(); ++idx) {
+            Assert.assertEquals(((NativeArray) value).getItem(idx), nativeArrays[i].getItem(idx));
+          }
+        } else {
+          Assert.assertEquals(c, value.getClass());
+          Assert.assertEquals(nativeArrays[i].getItem(0), value);
         }
-      } else {
-        Assert.assertEquals(c, value.getClass());
-        Assert.assertEquals(nativeArrays[i].getItem(0), value);
       }
     }
   }
