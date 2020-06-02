@@ -223,9 +223,9 @@ public class ArrayTest {
     insertArbitraryValues(new NativeArray(ctx, array_c, Long.class));
     long ts_c = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
 
-    assert Arrays.equals(readArrayAt(BigInteger.valueOf(ts_a)), array_a);
-    assert Arrays.equals(readArrayAt(BigInteger.valueOf(ts_b)), array_b);
-    assert Arrays.equals(readArrayAt(BigInteger.valueOf(ts_c)), array_c);
+    Assert.assertArrayEquals(array_a, readArrayAt(BigInteger.valueOf(ts_a)));
+    Assert.assertArrayEquals(array_b, readArrayAt(BigInteger.valueOf(ts_b)));
+    Assert.assertArrayEquals(array_c, readArrayAt(BigInteger.valueOf(ts_c)));
   }
 
   @Test
@@ -248,9 +248,9 @@ public class ArrayTest {
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_c, Long.class));
     long ts_c = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
 
-    assert Arrays.equals(readArrayAtEncrypted(BigInteger.valueOf(ts_a)), array_a);
-    assert Arrays.equals(readArrayAtEncrypted(BigInteger.valueOf(ts_b)), array_b);
-    assert Arrays.equals(readArrayAtEncrypted(BigInteger.valueOf(ts_c)), array_c);
+    Assert.assertArrayEquals(array_a, readArrayAtEncrypted(BigInteger.valueOf(ts_a)));
+    Assert.assertArrayEquals(array_b, readArrayAtEncrypted(BigInteger.valueOf(ts_b)));
+    Assert.assertArrayEquals(array_c, readArrayAtEncrypted(BigInteger.valueOf(ts_c)));
   }
 
   @Test
