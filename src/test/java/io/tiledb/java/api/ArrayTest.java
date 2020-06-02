@@ -206,19 +206,19 @@ public class ArrayTest {
 
     long[] array_a = new long[] {1, 2, 3, 6};
     insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
-    long ts_a = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
+    long ts_a = System.currentTimeMillis();
 
     Thread.sleep(2000);
 
     long[] array_b = new long[] {1, 1, 1, 1};
     insertArbitraryValues(new NativeArray(ctx, array_b, Long.class));
-    long ts_b = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
+    long ts_b = System.currentTimeMillis();
 
     Thread.sleep(2000);
 
     long[] array_c = new long[] {0, 0, 0, 0};
     insertArbitraryValues(new NativeArray(ctx, array_c, Long.class));
-    long ts_c = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
+    long ts_c = System.currentTimeMillis();
 
     Assert.assertArrayEquals(array_a, readArrayAt(BigInteger.valueOf(ts_a)));
     Assert.assertArrayEquals(array_b, readArrayAt(BigInteger.valueOf(ts_b)));
@@ -231,19 +231,19 @@ public class ArrayTest {
 
     long[] array_a = new long[] {1, 2, 3, 6};
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_a, Long.class));
-    long ts_a = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
+    long ts_a = System.currentTimeMillis();
 
     Thread.sleep(2000);
 
     long[] array_b = new long[] {1, 1, 1, 1};
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_b, Long.class));
-    long ts_b = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
+    long ts_b = System.currentTimeMillis();
 
     Thread.sleep(2000);
 
     long[] array_c = new long[] {0, 0, 0, 0};
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_c, Long.class));
-    long ts_c = new Timestamp(System.currentTimeMillis()).toInstant().toEpochMilli();
+    long ts_c = System.currentTimeMillis();
 
     Assert.assertArrayEquals(array_a, readArrayAtEncrypted(BigInteger.valueOf(ts_a)));
     Assert.assertArrayEquals(array_b, readArrayAtEncrypted(BigInteger.valueOf(ts_b)));
