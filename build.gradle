@@ -1,5 +1,5 @@
 plugins {
-   id 'java'
+   id 'java-library'
    id 'idea'
    id 'maven-publish'
    id 'signing'
@@ -112,9 +112,10 @@ jar {
         from file("$buildDir/tiledb_jni/Release/${System.mapLibraryName("tiledbjni")}")
     }
 
+
     manifest {
         attributes("Implementation-Title": "Gradle",
-                "Implementation-Version": version)
+                "Implementation-Version": archiveVersion)
     }
 }
 
