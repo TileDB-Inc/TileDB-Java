@@ -7,7 +7,6 @@ platform:
 build: off
 
 build_script:
-  - mkdir build
   - gradlew assemble
 
 test_script:
