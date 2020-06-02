@@ -96,8 +96,7 @@ public class ConfigTest {
 
   @Test
   public void testConfigSaveLoad() throws Exception {
-    String configPath =
-        temp.getRoot().toPath().resolve("testConfigString").toString();
+    String configPath = temp.getRoot().toPath().resolve("testConfigString").toString();
     try (Config config = new Config()) {
       config.set("vfs.s3.connect_timeout_ms", "5000");
       config.saveToFile(configPath);
@@ -110,8 +109,7 @@ public class ConfigTest {
 
   @Test
   public void testConfigSaveLoadURI() throws Exception {
-    Path configPath =
-        temp.getRoot().toPath().resolve("testConfigStringURI");
+    Path configPath = temp.getRoot().toPath().resolve("testConfigStringURI");
     URI configURI = configPath.toUri();
     // Try lo
     try (Config config = new Config()) {

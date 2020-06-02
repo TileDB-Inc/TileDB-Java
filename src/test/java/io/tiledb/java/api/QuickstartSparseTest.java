@@ -165,7 +165,7 @@ public class QuickstartSparseTest {
     // Create query
     try (Query query = new Query(my_sparse_array, TILEDB_READ)) {
       query.setLayout(TILEDB_GLOBAL_ORDER);
-     query.setSubarray(subarray);
+      query.setSubarray(subarray);
 
       query.setBuffer(
           "d1",
@@ -175,7 +175,7 @@ public class QuickstartSparseTest {
           "d2",
           new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
       query.setBuffer(
-         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
+          "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
       query.setBuffer(
           "a2",
           new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
@@ -214,8 +214,8 @@ public class QuickstartSparseTest {
       // check a3
       float[] a3_expected =
           new float[] {
-            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f,
-            7.2f
+            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f,
+            7.1f, 7.2f
           };
       Assert.assertEquals(a3_buff.length, a3_expected.length);
       for (int i = 0; i < a3_buff.length; i++) {

@@ -8,7 +8,6 @@ import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.util.Map;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
@@ -106,7 +105,8 @@ public class ArrayTest {
   }
 
   public void insertArbitraryValuesEncrypted(NativeArray a_data) throws TileDBError {
-    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE, EncryptionType.TILEDB_AES_256_GCM, key)) {
+    try (Array array =
+        new Array(ctx, arrayURI, TILEDB_WRITE, EncryptionType.TILEDB_AES_256_GCM, key)) {
       insertArbitraryValuesMeth(array, a_data);
     }
   }
@@ -164,7 +164,8 @@ public class ArrayTest {
     Assert.assertTrue(Array.exists(ctx, arrayURI));
 
     // Test that we can decrypt the array
-    try (ArraySchema schema = new ArraySchema(ctx, arrayURI, EncryptionType.TILEDB_AES_256_GCM, key)) {
+    try (ArraySchema schema =
+        new ArraySchema(ctx, arrayURI, EncryptionType.TILEDB_AES_256_GCM, key)) {
       Assert.assertEquals(schema.getArrayType(), ArrayType.TILEDB_DENSE);
     }
   }
@@ -181,11 +182,12 @@ public class ArrayTest {
     // Test that we can create the encrypted array
     Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
     String keyString = "0123456789abcdeF0123456789abcdeZ";
-        new ArraySchema(
+    new ArraySchema(
             ctx,
             arrayURI,
             EncryptionType.TILEDB_AES_256_GCM,
-            keyString.getBytes(StandardCharsets.US_ASCII)).close();
+            keyString.getBytes(StandardCharsets.US_ASCII))
+        .close();
   }
 
   @Test(expected = TileDBError.class)
@@ -193,11 +195,12 @@ public class ArrayTest {
     // Test that we can create the encrypted array
     Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
     String keyString = "0123456789abcdeF0123456789a";
-        new ArraySchema(
+    new ArraySchema(
             ctx,
             arrayURI,
             EncryptionType.TILEDB_AES_256_GCM,
-            keyString.getBytes(StandardCharsets.US_ASCII)).close();
+            keyString.getBytes(StandardCharsets.US_ASCII))
+        .close();
   }
 
   @Test
@@ -300,8 +303,7 @@ public class ArrayTest {
     NativeArray data = new NativeArray(ctx, "aabbccddee", TILEDB_STRING_ASCII);
     NativeArray offsets = new NativeArray(ctx, new long[] {0, 2, 4, 6}, TILEDB_UINT64);
     try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE)) {
-      insertArbitraryValuesVarSize(
-          array, dimName, data, offsets, TILEDB_UNORDERED);
+      insertArbitraryValuesVarSize(array, dimName, data, offsets, TILEDB_UNORDERED);
     }
 
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
@@ -319,8 +321,7 @@ public class ArrayTest {
     NativeArray data = new NativeArray(ctx, "aabbccddee", TILEDB_STRING_ASCII);
     NativeArray offsets = new NativeArray(ctx, new long[] {0, 2, 4, 6}, TILEDB_UINT64);
     try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE)) {
-      insertArbitraryValuesVarSize(
-          array, dimName, data, offsets, TILEDB_UNORDERED);
+      insertArbitraryValuesVarSize(array, dimName, data, offsets, TILEDB_UNORDERED);
     }
 
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
@@ -338,8 +339,7 @@ public class ArrayTest {
     NativeArray data = new NativeArray(ctx, "aabbccddee", TILEDB_STRING_ASCII);
     NativeArray offsets = new NativeArray(ctx, new long[] {0, 2, 4, 6}, TILEDB_UINT64);
     try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE)) {
-      insertArbitraryValuesVarSize(
-          array, dimName, data, offsets, TILEDB_UNORDERED);
+      insertArbitraryValuesVarSize(array, dimName, data, offsets, TILEDB_UNORDERED);
     }
 
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
@@ -361,8 +361,7 @@ public class ArrayTest {
     NativeArray data = new NativeArray(ctx, "aabbccddee", TILEDB_STRING_ASCII);
     NativeArray offsets = new NativeArray(ctx, new long[] {0, 2, 4, 6}, TILEDB_UINT64);
     try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE)) {
-      insertArbitraryValuesVarSize(
-          array, dimName, data, offsets, TILEDB_UNORDERED);
+      insertArbitraryValuesVarSize(array, dimName, data, offsets, TILEDB_UNORDERED);
     }
 
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ)) {
@@ -538,8 +537,6 @@ public class ArrayTest {
   @Test
   public void testArrayGetMetadataMap() throws Exception {
     Array.create(arrayURI, schemaCreate());
-
-
 
     NativeArray metadataByte = new NativeArray(ctx, new byte[] {-7, -6, -5, 0, 100}, Byte.class);
 

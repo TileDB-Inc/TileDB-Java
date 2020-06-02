@@ -29,7 +29,6 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
-
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;

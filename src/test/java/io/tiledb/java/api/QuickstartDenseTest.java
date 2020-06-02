@@ -220,9 +220,9 @@ public class QuickstartDenseTest {
       // check a3
       float[] a3_expected =
           new float[] {
-            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f,
-            7.2f, 8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f, 12.1f, 12.2f, 13.1f, 13.2f,
-            14.1f, 14.2f, 15.1f, 15.2f
+            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f,
+            7.1f, 7.2f, 8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f, 12.1f, 12.2f, 13.1f,
+            13.2f, 14.1f, 14.2f, 15.1f, 15.2f
           };
       Assert.assertEquals(a3_buff.length, a3_expected.length);
       for (int i = 0; i < a3_buff.length; i++) {
@@ -307,9 +307,9 @@ public class QuickstartDenseTest {
       // check a3
       float[] a3_expected =
           new float[] {
-            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f,
-            7.2f, 8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f, 12.1f, 12.2f, 13.1f, 13.2f,
-            14.1f, 14.2f, 15.1f, 15.2f
+            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f,
+            7.1f, 7.2f, 8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f, 12.1f, 12.2f, 13.1f,
+            13.2f, 14.1f, 14.2f, 15.1f, 15.2f
           };
       Assert.assertEquals(a3_buff.length, a3_expected.length);
       for (int i = 0; i < a3_buff.length; i++) {

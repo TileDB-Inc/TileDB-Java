@@ -54,15 +54,16 @@ public class NativeLibLoader {
     } catch (IOException e) {
       e.printStackTrace(System.err);
     }
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      try (Stream<Path> walk = Files.walk(tempDir)) {
-        walk.sorted(Comparator.reverseOrder())
-          .map(Path::toFile)
-          .forEach(File::delete);
-      } catch (IOException e) {
-        e.printStackTrace(System.err);
-      }
-    }));
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread(
+                () -> {
+                  try (Stream<Path> walk = Files.walk(tempDir)) {
+                    walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                  } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                  }
+                }));
   }
 
   /** Finds and loads native TileDB. */
@@ -256,7 +257,7 @@ public class NativeLibLoader {
     try {
       // Extract a native library file into the target directory
       try (InputStream reader = NativeLibLoader.class.getResourceAsStream(nativeLibraryFilePath);
-           FileOutputStream writer = new FileOutputStream(extractedLibFile.toFile())) {
+          FileOutputStream writer = new FileOutputStream(extractedLibFile.toFile())) {
 
         byte[] buffer = new byte[8192];
         int bytesRead = 0;
@@ -267,12 +268,11 @@ public class NativeLibLoader {
 
       // Set executable (x) flag to enable Java to load the native library on
       // UNIX platforms
-      PosixFileAttributeView view = Files.getFileAttributeView(
-          extractedLibFile, PosixFileAttributeView.class);
+      PosixFileAttributeView view =
+          Files.getFileAttributeView(extractedLibFile, PosixFileAttributeView.class);
       if (view != null) {
         // On a UNIX platform
-        Set<PosixFilePermission> permissions =
-            view.readAttributes().permissions();
+        Set<PosixFilePermission> permissions = view.readAttributes().permissions();
         permissions.add(PosixFilePermission.OWNER_READ);
         permissions.add(PosixFilePermission.OWNER_WRITE);
         permissions.add(PosixFilePermission.OWNER_EXECUTE);

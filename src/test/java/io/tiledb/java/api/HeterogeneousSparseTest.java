@@ -57,8 +57,11 @@ public class HeterogeneousSparseTest {
   }
 
   public void arrayCreate() throws Exception {
-    Dimension<Integer> d1 = new Dimension<Integer>(ctx, "d1", Datatype.TILEDB_STRING_ASCII, null, null);
-    Dimension<Integer> d2 = new Dimension<Integer>(ctx, "d2", Datatype.TILEDB_INT32, new Pair<Integer, Integer>(0, 100), 2);
+    Dimension<Integer> d1 =
+        new Dimension<Integer>(ctx, "d1", Datatype.TILEDB_STRING_ASCII, null, null);
+    Dimension<Integer> d2 =
+        new Dimension<Integer>(
+            ctx, "d2", Datatype.TILEDB_INT32, new Pair<Integer, Integer>(0, 100), 2);
 
     // Create and set getDomain
     Domain domain = new Domain(ctx);
@@ -87,7 +90,7 @@ public class HeterogeneousSparseTest {
 
     // Create query
     try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
-         Query query = new Query(array)) {
+        Query query = new Query(array)) {
       query.setLayout(TILEDB_GLOBAL_ORDER);
 
       query.setBuffer("d1", d1_off, d1_data);

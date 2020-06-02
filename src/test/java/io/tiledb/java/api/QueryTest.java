@@ -8,10 +8,7 @@ import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 import java.math.BigInteger;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -83,7 +80,7 @@ public class QueryTest {
 
       // Create query
       try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
-           Query query = new Query(array)) {
+          Query query = new Query(array)) {
         query.setLayout(TILEDB_ROW_MAJOR);
         query.setBuffer("a1", a1);
         query.setBuffer("a2", a2);
@@ -96,7 +93,7 @@ public class QueryTest {
     public void arrayReadTest() throws Exception {
       // Create array and query
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
-           Query query = new Query(array, TILEDB_READ)) {
+          Query query = new Query(array, TILEDB_READ)) {
 
         // Slice only rows 1, 2 and cols 2, 3, 4
         query.addRange(0, 1, 2);
@@ -192,7 +189,8 @@ public class QueryTest {
 
     public void arrayCreate() throws TileDBError {
       // The array will be 4x4 with dimensions "rows" and "cols", with domain [1,4].
-      Dimension<Integer> d1 = new Dimension<Integer>(ctx, "d1", Datatype.TILEDB_STRING_ASCII, null, null);
+      Dimension<Integer> d1 =
+          new Dimension<Integer>(ctx, "d1", Datatype.TILEDB_STRING_ASCII, null, null);
 
       // Create and set getDomain
       Domain domain = new Domain(ctx);

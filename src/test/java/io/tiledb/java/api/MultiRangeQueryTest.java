@@ -76,7 +76,7 @@ public class MultiRangeQueryTest {
 
     // Create query
     try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
-         Query query = new Query(array)) {
+        Query query = new Query(array)) {
       query.setLayout(TILEDB_ROW_MAJOR);
       query.setBuffer("a1", a1);
       query.setBuffer("a2", a2);
@@ -88,7 +88,7 @@ public class MultiRangeQueryTest {
   private void arrayRead() throws Exception {
     // Create array and query
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
-         Query query = new Query(array, TILEDB_READ)) {
+        Query query = new Query(array, TILEDB_READ)) {
 
       // Slice only rows 1, 2 and cols 2, 3, 4
       query.addRange(0, (int) 1, (int) 2);
@@ -130,7 +130,7 @@ public class MultiRangeQueryTest {
   @Test(expected = TileDBError.class)
   public void wrongDatatype() throws Exception {
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
-         Query query = new Query(array, TILEDB_READ)) {
+        Query query = new Query(array, TILEDB_READ)) {
       query.addRange(0, (long) 1, (long) 2);
     }
   }

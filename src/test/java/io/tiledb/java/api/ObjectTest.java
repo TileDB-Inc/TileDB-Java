@@ -65,7 +65,8 @@ public class ObjectTest {
   }
 
   private void moveRemoveObject() throws Exception {
-    TileDBObject.move(ctx, root.resolve("my_group").toString(), root.resolve("my_group2").toString());
+    TileDBObject.move(
+        ctx, root.resolve("my_group").toString(), root.resolve("my_group2").toString());
     TileDBObject.remove(ctx, root.resolve("my_group2/dense_arrays").toString());
     TileDBObject.remove(ctx, root.resolve("my_group2/sparse_arrays/array_C").toString());
   }
