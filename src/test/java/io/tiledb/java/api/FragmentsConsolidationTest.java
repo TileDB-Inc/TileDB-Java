@@ -5,6 +5,7 @@ import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class FragmentsConsolidationTest {
   }
 
   @Test
-  public void test() throws Exception {
+  public void testConsolidate() throws Exception {
     // create array
     arrayCreate();
     // updates
@@ -46,6 +47,32 @@ public class FragmentsConsolidationTest {
     Array.consolidate(ctx, arrayURI);
     // verify consolidation
     arrayRead();
+  }
+
+  @Test
+  public void testVacuum() throws Exception {
+    // create array
+    arrayCreate();
+    // updates
+    arrayWrite1();
+    arrayWrite2();
+    arrayWrite3();
+    // consolidate
+    Array.consolidate(ctx, arrayURI);
+    Array.vacuum(ctx, arrayURI);
+    // verify consolidation
+    arrayRead();
+
+    // verify vacuum
+    File f = new File(arrayURI);
+    int nFiles = 0;
+    for (File file : f.listFiles())
+      if (file.isDirectory() && !file.getName().equals("__meta")) {
+        System.out.println(file.getAbsolutePath());
+        nFiles++;
+      }
+
+    Assert.assertEquals(1, nFiles);
   }
 
   public void arrayCreate() throws Exception {
