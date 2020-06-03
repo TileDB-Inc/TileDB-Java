@@ -31,8 +31,12 @@ public class ArrayConsolidateExample {
   public static void main(String[] args) throws Exception {
     // Create TileDB context
     Context ctx = new Context();
+    String arrayURI = "my_dense_array";
 
     // Consolidate array
-    Array.consolidate(ctx, "my_dense_array");
+    Array.consolidate(ctx, arrayURI);
+
+    // Vacuum array
+    Array.vacuum(ctx, arrayURI);
   }
 }
