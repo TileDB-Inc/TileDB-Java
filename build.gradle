@@ -2,6 +2,7 @@ plugins {
    id 'java'
    id 'idea'
    id 'maven-publish'
+   id "de.marcphilipp.nexus-publish" version "0.4.0"
    id 'signing'
    id 'com.github.sherter.google-java-format' version '0.7.1'
    id 'io.codearte.nexus-staging' version '0.12.0'
@@ -192,16 +193,15 @@ publishing {
             }
         }
     }
+}
 
+nexusPublishing {
     repositories {
         maven {
-            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            credentials {
-                username System.getenv('SONATYPE_USERNAME')
-                password System.getenv('SONATYPE_PASSWORD')
-            }
+            nexusUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            snapshotRepositoryUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+            username = System.getenv('SONATYPE_USERNAME')
+            password = System.getenv('SONATYPE_PASSWORD')
         }
     }
 }
