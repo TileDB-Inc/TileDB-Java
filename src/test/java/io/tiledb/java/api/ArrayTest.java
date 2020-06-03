@@ -104,9 +104,23 @@ public class ArrayTest {
     }
   }
 
+  public void insertArbitraryValues(NativeArray a_data, BigInteger timestamp) throws TileDBError {
+    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE, timestamp)) {
+      insertArbitraryValuesMeth(array, a_data);
+    }
+  }
+
   public void insertArbitraryValuesEncrypted(NativeArray a_data) throws TileDBError {
     try (Array array =
         new Array(ctx, arrayURI, TILEDB_WRITE, EncryptionType.TILEDB_AES_256_GCM, key)) {
+      insertArbitraryValuesMeth(array, a_data);
+    }
+  }
+
+  public void insertArbitraryValuesEncrypted(NativeArray a_data, BigInteger timestamp)
+      throws TileDBError {
+    try (Array array =
+        new Array(ctx, arrayURI, TILEDB_WRITE, EncryptionType.TILEDB_AES_256_GCM, key, timestamp)) {
       insertArbitraryValuesMeth(array, a_data);
     }
   }
@@ -208,26 +222,20 @@ public class ArrayTest {
     Array.create(arrayURI, schemaCreate());
 
     long[] array_a = new long[] {1, 2, 3, 6};
-    insertArbitraryValues(new NativeArray(ctx, array_a, Long.class));
-    Thread.sleep(1000);
-    long ts_a = System.currentTimeMillis();
-    Thread.sleep(1000);
+    BigInteger ts_a = BigInteger.valueOf(10L);
+    insertArbitraryValues(new NativeArray(ctx, array_a, Long.class), ts_a);
 
     long[] array_b = new long[] {1, 1, 1, 1};
-    insertArbitraryValues(new NativeArray(ctx, array_b, Long.class));
-    Thread.sleep(1000);
-    long ts_b = System.currentTimeMillis();
-    Thread.sleep(1000);
+    BigInteger ts_b = BigInteger.valueOf(20L);
+    insertArbitraryValues(new NativeArray(ctx, array_b, Long.class), ts_b);
 
     long[] array_c = new long[] {0, 0, 0, 0};
-    insertArbitraryValues(new NativeArray(ctx, array_c, Long.class));
-    Thread.sleep(1000);
-    long ts_c = System.currentTimeMillis();
-    Thread.sleep(1000);
+    BigInteger ts_c = BigInteger.valueOf(30L);
+    insertArbitraryValues(new NativeArray(ctx, array_c, Long.class), ts_c);
 
-    Assert.assertArrayEquals(array_a, readArrayAt(BigInteger.valueOf(ts_a)));
-    Assert.assertArrayEquals(array_b, readArrayAt(BigInteger.valueOf(ts_b)));
-    Assert.assertArrayEquals(array_c, readArrayAt(BigInteger.valueOf(ts_c)));
+    Assert.assertArrayEquals(array_a, readArrayAt(ts_a));
+    Assert.assertArrayEquals(array_b, readArrayAt(ts_b));
+    Assert.assertArrayEquals(array_c, readArrayAt(ts_c));
   }
 
   @Test
@@ -235,26 +243,20 @@ public class ArrayTest {
     Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
 
     long[] array_a = new long[] {1, 2, 3, 6};
-    insertArbitraryValuesEncrypted(new NativeArray(ctx, array_a, Long.class));
-    Thread.sleep(1000);
-    long ts_a = System.currentTimeMillis();
-    Thread.sleep(1000);
+    BigInteger ts_a = BigInteger.valueOf(10L);
+    insertArbitraryValuesEncrypted(new NativeArray(ctx, array_a, Long.class), ts_a);
 
     long[] array_b = new long[] {1, 1, 1, 1};
-    insertArbitraryValuesEncrypted(new NativeArray(ctx, array_b, Long.class));
-    Thread.sleep(1000);
-    long ts_b = System.currentTimeMillis();
-    Thread.sleep(1000);
+    BigInteger ts_b = BigInteger.valueOf(20L);
+    insertArbitraryValuesEncrypted(new NativeArray(ctx, array_b, Long.class), ts_b);
 
     long[] array_c = new long[] {0, 0, 0, 0};
-    insertArbitraryValuesEncrypted(new NativeArray(ctx, array_c, Long.class));
-    Thread.sleep(1000);
-    long ts_c = System.currentTimeMillis();
-    Thread.sleep(1000);
+    BigInteger ts_c = BigInteger.valueOf(30L);
+    insertArbitraryValuesEncrypted(new NativeArray(ctx, array_c, Long.class), ts_c);
 
-    Assert.assertArrayEquals(array_a, readArrayAtEncrypted(BigInteger.valueOf(ts_a)));
-    Assert.assertArrayEquals(array_b, readArrayAtEncrypted(BigInteger.valueOf(ts_b)));
-    Assert.assertArrayEquals(array_c, readArrayAtEncrypted(BigInteger.valueOf(ts_c)));
+    Assert.assertArrayEquals(array_a, readArrayAtEncrypted(ts_a));
+    Assert.assertArrayEquals(array_b, readArrayAtEncrypted(ts_b));
+    Assert.assertArrayEquals(array_c, readArrayAtEncrypted(ts_c));
   }
 
   @Test
