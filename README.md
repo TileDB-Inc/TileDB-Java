@@ -1,7 +1,7 @@
 <a href="https://tiledb.com"><img src="https://github.com/TileDB-Inc/TileDB/raw/dev/doc/source/_static/tiledb-logo_color_no_margin_@4x.png" alt="TileDB logo" width="400"></a>
 
 # TileDB-Java
-[![Build Status](https://travis-ci.org/TileDB-Inc/TileDB-Java.svg?branch=master)](https://travis-ci.org/TileDB-Inc/TileDB-Java)
+[![Build Status](https://dev.azure.com/TileDB-Inc/CI/_apis/build/status/TileDB-Inc.TileDB-Java?branchName=master)](https://dev.azure.com/TileDB-Inc/CI/_build/latest?definitionId=21&branchName=master)
 
 `TileDB-Java` is a Java interface to the [TileDB Storage Engine](https://github.com/TileDB-Inc/TileDB).
 
