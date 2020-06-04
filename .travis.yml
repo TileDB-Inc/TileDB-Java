@@ -38,8 +38,7 @@ install:
   - ./gradlew assemble
 
 script:
-  - ./gradlew checkFormat
-  - ./gradlew --info test
+  - source ci/upload_to_maven.sh
 
 # Upload to sonatype oss for master snapshots
 after_success:

@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'io.tiledb'
-version '0.2.8-SNAPSHOT'
+version '0.2.8-test2-SNAPSHOT'
 
 repositories {
     jcenter()
@@ -18,11 +18,6 @@ repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
-}
-
-nexusStaging {
-    username = System.getenv('SONATYPE_USERNAME')
-    password = System.getenv('SONATYPE_PASSWORD')
 }
 
 sourceCompatibility = 1.8
@@ -189,6 +184,12 @@ publishing {
         }
     }
 }
+
+nexusStaging {
+    username = System.getenv('SONATYPE_USERNAME')
+    password = System.getenv('SONATYPE_PASSWORD')
+}
+
 
 nexusPublishing {
     repositories {
