@@ -30,32 +30,23 @@ import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-@SuppressWarnings("ALL")
 public class HeterogeneousSparseTest {
 
+  @Rule public TemporaryFolder temp = new TemporaryFolder();
+
   private Context ctx;
-  private String arrayURI = "my_sparse_array";
+  private String arrayURI;
 
   @Before
   public void setup() throws Exception {
     ctx = new Context();
-    if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
-    }
-  }
-
-  @After
-  public void teardown() throws Exception {
-    if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
-    }
+    arrayURI = temp.getRoot().toPath().resolve("my_sparse_array").toString();
   }
 
   @Test
@@ -66,8 +57,11 @@ public class HeterogeneousSparseTest {
   }
 
   public void arrayCreate() throws Exception {
-    Dimension d1 = new Dimension(ctx, "d1", Datatype.TILEDB_STRING_ASCII, null, null);
-    Dimension d2 = new Dimension(ctx, "d2", Datatype.TILEDB_INT32, new Pair(0, 100), 2);
+    Dimension<Integer> d1 =
+        new Dimension<Integer>(ctx, "d1", Datatype.TILEDB_STRING_ASCII, null, null);
+    Dimension<Integer> d2 =
+        new Dimension<Integer>(
+            ctx, "d2", Datatype.TILEDB_INT32, new Pair<Integer, Integer>(0, 100), 2);
 
     // Create and set getDomain
     Domain domain = new Domain(ctx);
@@ -95,20 +89,19 @@ public class HeterogeneousSparseTest {
     NativeArray a1 = new NativeArray(ctx, new int[] {1, 2, 3, 4, 5}, Integer.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
-    Query query = new Query(array);
-    query.setLayout(TILEDB_GLOBAL_ORDER);
+    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+        Query query = new Query(array)) {
+      query.setLayout(TILEDB_GLOBAL_ORDER);
 
-    query.setBuffer("d1", d1_off, d1_data);
-    query.setBuffer("d2", d2_data);
-    query.setBuffer("a1", a1);
+      query.setBuffer("d1", d1_off, d1_data);
+      query.setBuffer("d2", d2_data);
+      query.setBuffer("a1", a1);
 
-    // Submit query
-    query.submit();
+      // Submit query
+      query.submit();
 
-    query.finalizeQuery();
-    query.close();
-    array.close();
+      query.finalizeQuery();
+    }
   }
 
   private void arrayRead() throws Exception {
@@ -117,25 +110,26 @@ public class HeterogeneousSparseTest {
 
     NativeArray d2_data = new NativeArray(ctx, 20, Datatype.TILEDB_INT32);
 
-    Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ);
-    q.setLayout(TILEDB_GLOBAL_ORDER);
+    try (Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ)) {
+      q.setLayout(TILEDB_GLOBAL_ORDER);
 
-    q.setBuffer("d1", d_off, d_data);
-    q.setBuffer("d2", d2_data);
+      q.setBuffer("d1", d_off, d_data);
+      q.setBuffer("d2", d2_data);
 
-    q.addRangeVar(0, "a", "z");
+      q.addRangeVar(0, "a", "z");
 
-    q.submit();
+      q.submit();
 
-    byte[] data = (byte[]) q.getBuffer("d1");
-    long[] offsets = q.getVarBuffer("d1");
-    int[] d2 = (int[]) q.getBuffer("d2");
+      byte[] data = (byte[]) q.getBuffer("d1");
+      long[] offsets = q.getVarBuffer("d1");
+      int[] d2 = (int[]) q.getBuffer("d2");
 
-    String[] results = new String[offsets.length];
+      String[] results = new String[offsets.length];
 
-    results = Util.bytesToStrings(offsets, data);
+      results = Util.bytesToStrings(offsets, data);
 
-    Assert.assertArrayEquals(results, new String[] {"aa", "bb", "cc", "dd", "ee"});
-    Assert.assertArrayEquals(d2, new int[] {1, 4, 9, 10, 12});
+      Assert.assertArrayEquals(results, new String[] {"aa", "bb", "cc", "dd", "ee"});
+      Assert.assertArrayEquals(d2, new int[] {1, 4, 9, 10, 12});
+    }
   }
 }

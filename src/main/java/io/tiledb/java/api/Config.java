@@ -29,6 +29,7 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
+import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,7 +116,7 @@ public class Config implements AutoCloseable {
       throw new TileDBError(
           "Config can an only read from a local file scheme URI (file://), got: " + uri);
     }
-    init(uri.getPath());
+    init(new File(uri).getAbsolutePath());
   }
 
   /**
@@ -298,7 +299,7 @@ public class Config implements AutoCloseable {
       throw new TileDBError(
           "Config can an only save to a local file scheme URI (file://), got: " + uri);
     }
-    saveToFile(uri.getPath());
+    saveToFile(new File(uri).getAbsolutePath());
   }
 
   private void next(SWIGTYPE_p_tiledb_config_iter_t iterp) throws TileDBError {

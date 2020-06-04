@@ -3,7 +3,7 @@ package io.tiledb.java.api;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -62,16 +62,16 @@ public class VFSTest {
   public void testVFSIsFile() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      File fooFile = tmp.newFile("foo");
-      File barDir = tmp.newFolder("bar");
+      Path fooFile = tmp.newFile("foo").toPath();
+      Path barDir = tmp.newFolder("bar").toPath();
 
       Assert.assertTrue(vfs.isFile(fooFile.toString()));
       // workaround for TileDB #1097
-      Assert.assertTrue(vfs.isFile(URI.create("file://".concat(fooFile.getPath()))));
+      Assert.assertTrue(vfs.isFile(new File(fooFile.toUri()).toString()));
 
       Assert.assertFalse(vfs.isFile(barDir.toString()));
       // workaround for TileDB #1097
-      Assert.assertFalse(vfs.isFile(URI.create("file://".concat(barDir.getPath()))));
+      Assert.assertFalse(vfs.isFile(barDir.toUri()));
     }
   }
 
@@ -79,16 +79,16 @@ public class VFSTest {
   public void testVFSIsDir() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      File fooFile = tmp.newFile("foo");
-      File barDir = tmp.newFolder("bar");
+      Path fooFile = tmp.newFile("foo").toPath();
+      Path barDir = tmp.newFolder("bar").toPath();
 
       Assert.assertTrue(vfs.isDirectory(barDir.toString()));
       // workaround for TileDB #1097
-      Assert.assertTrue(vfs.isDirectory(URI.create("file://".concat(barDir.getPath()))));
+      Assert.assertTrue(vfs.isDirectory(barDir.toUri()));
 
       Assert.assertFalse(vfs.isDirectory(fooFile.toString()));
       // workaround for TileDB #1097
-      Assert.assertFalse(vfs.isDirectory(URI.create("file://".concat(fooFile.getPath()))));
+      Assert.assertFalse(vfs.isDirectory(fooFile.toUri()));
     }
   }
 
@@ -96,8 +96,8 @@ public class VFSTest {
   public void testVFSCreateDirectory() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String dirPath = Paths.get(tmp.getRoot().toString(), "foo").toString();
-      String newDir = vfs.createDirectory(dirPath);
+      Path dirPath = tmp.getRoot().toPath().resolve("foo");
+      String newDir = vfs.createDirectory(dirPath.toString());
       Assert.assertTrue(vfs.isDirectory(newDir));
     }
   }
@@ -106,9 +106,9 @@ public class VFSTest {
   public void testVFSCreateFile() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String filePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      vfs.createFile(filePath);
-      Assert.assertTrue(vfs.isFile(filePath));
+      Path filePath = tmp.getRoot().toPath().resolve("bar");
+      String newFile = vfs.createFile(filePath.toString());
+      Assert.assertTrue(vfs.isFile(newFile));
     }
   }
 
@@ -116,9 +116,8 @@ public class VFSTest {
   public void testVFSCreateFileURI() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String filePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      URI fileURI = URI.create("file://".concat(filePath));
-      vfs.createFile(fileURI);
+      Path filePath = tmp.getRoot().toPath().resolve("bar");
+      URI fileURI = vfs.createFile(filePath.toUri());
       Assert.assertTrue(vfs.isFile(fileURI));
     }
   }
@@ -127,13 +126,14 @@ public class VFSTest {
   public void testVFSRemoveDirectory() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String dirPath = Paths.get(tmp.getRoot().toString(), "bar").toString();
+      Path dirPath = tmp.getRoot().toPath().resolve("bar");
 
-      vfs.createDirectory(dirPath);
-      Assert.assertTrue(vfs.isDirectory(dirPath));
+      String newDir = vfs.createDirectory(dirPath.toString());
+      Assert.assertTrue(vfs.isDirectory(newDir));
 
-      vfs.removeDirectory(dirPath);
-      Assert.assertFalse(vfs.isDirectory(dirPath));
+      vfs.removeDirectory(newDir);
+      Assert.assertFalse(vfs.isFile(newDir));
+      Assert.assertFalse(vfs.isDirectory(newDir));
     }
   }
 
@@ -141,14 +141,14 @@ public class VFSTest {
   public void testVFSRemoveDirectoryURI() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String dirPath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      URI dirURI = URI.create("file://".concat(dirPath));
+      Path dirPath = tmp.getRoot().toPath().resolve("bar");
 
-      vfs.createDirectory(dirURI);
-      Assert.assertTrue(vfs.isDirectory(dirURI));
+      URI newDir = vfs.createDirectory(dirPath.toUri());
+      Assert.assertTrue(vfs.isDirectory(newDir));
 
-      vfs.removeDirectory(dirURI);
-      Assert.assertFalse(vfs.isDirectory(dirURI));
+      vfs.removeDirectory(newDir);
+      Assert.assertFalse(vfs.isFile(newDir));
+      Assert.assertFalse(vfs.isDirectory(newDir));
     }
   }
 
@@ -156,13 +156,14 @@ public class VFSTest {
   public void testVFSRemoveFile() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String filePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
+      Path filePath = tmp.getRoot().toPath().resolve("bar");
 
-      vfs.createFile(filePath);
-      Assert.assertTrue(vfs.isFile(filePath));
+      String newFile = vfs.createFile(filePath.toString());
+      Assert.assertTrue(vfs.isFile(newFile));
 
-      vfs.removeFile(filePath);
-      Assert.assertFalse(vfs.isFile(filePath));
+      vfs.removeFile(newFile);
+      Assert.assertFalse(vfs.isFile(newFile));
+      Assert.assertFalse(vfs.isDirectory(newFile));
     }
   }
 
@@ -170,14 +171,14 @@ public class VFSTest {
   public void testVFSRemoveFileURI() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String filePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      URI fileURI = URI.create("file://".concat(filePath));
+      Path filePath = tmp.getRoot().toPath().resolve("bar");
 
-      vfs.createFile(fileURI);
-      Assert.assertTrue(vfs.isFile(fileURI));
+      URI newFile = vfs.createFile(filePath.toUri());
+      Assert.assertTrue(vfs.isFile(newFile));
 
-      vfs.removeFile(fileURI);
-      Assert.assertFalse(vfs.isFile(fileURI));
+      vfs.removeFile(newFile);
+      Assert.assertFalse(vfs.isFile(newFile));
+      Assert.assertFalse(vfs.isDirectory(newFile));
     }
   }
 
@@ -185,11 +186,12 @@ public class VFSTest {
   public void testVFSFileSize() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String filePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      vfs.createFile(filePath);
-      Assert.assertEquals(vfs.fileSize(filePath), 0L);
-      Files.write(Paths.get(filePath), new byte[] {1, 2, 3});
-      Assert.assertEquals(vfs.fileSize(filePath), 3L);
+      Path filePath = tmp.getRoot().toPath().resolve("bar");
+
+      String newFile = vfs.createFile(filePath.toString());
+      Assert.assertEquals(vfs.fileSize(newFile), 0L);
+      Files.write(filePath, new byte[] {1, 2, 3});
+      Assert.assertEquals(vfs.fileSize(newFile), 3L);
     }
   }
 
@@ -198,15 +200,15 @@ public class VFSTest {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
       // create directory
-      String sourcePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      vfs.createDirectory(sourcePath);
-      Assert.assertTrue(vfs.isDirectory(sourcePath));
+      Path sourcePath = tmp.getRoot().toPath().resolve("bar");
+      vfs.createDirectory(sourcePath.toString());
+      Assert.assertTrue(vfs.isDirectory(sourcePath.toString()));
 
       // rename, move directory
-      String destPath = Paths.get(tmp.getRoot().toString(), "baz").toString();
-      vfs.moveDirectory(sourcePath, destPath);
-      Assert.assertFalse(vfs.isDirectory(sourcePath));
-      Assert.assertTrue(vfs.isDirectory(destPath));
+      Path destPath = tmp.getRoot().toPath().resolve("baz");
+      vfs.moveDirectory(sourcePath.toString(), destPath.toString());
+      Assert.assertFalse(vfs.isDirectory(sourcePath.toString()));
+      Assert.assertTrue(vfs.isDirectory(destPath.toString()));
     }
   }
 
@@ -215,15 +217,13 @@ public class VFSTest {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
       // create directory
-      String sourcePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      URI sourceURI = URI.create("file://".concat(sourcePath));
-      vfs.createDirectory(sourceURI);
+      Path sourcePath = tmp.getRoot().toPath().resolve("bar");
+      URI sourceURI = vfs.createDirectory(sourcePath.toUri());
       Assert.assertTrue(vfs.isDirectory(sourceURI));
 
       // rename, move directory
-      String destPath = Paths.get(tmp.getRoot().toString(), "baz").toString();
-      URI destURI = URI.create("file://".concat(destPath));
-      vfs.moveDirectory(sourceURI, destURI);
+      Path destPath = tmp.getRoot().toPath().resolve("baz");
+      URI destURI = vfs.moveDirectory(sourceURI, destPath.toUri());
       Assert.assertFalse(vfs.isDirectory(sourceURI));
       Assert.assertTrue(vfs.isDirectory(destURI));
     }
@@ -234,15 +234,15 @@ public class VFSTest {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
       // create file
-      String sourcePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      vfs.createFile(sourcePath);
-      Assert.assertTrue(vfs.isFile(sourcePath));
+      Path sourcePath = tmp.getRoot().toPath().resolve("bar");
+      vfs.createFile(sourcePath.toString());
+      Assert.assertTrue(vfs.isFile(sourcePath.toString()));
 
       // rename, move file
-      String destPath = Paths.get(tmp.getRoot().toString(), "baz").toString();
-      vfs.moveFile(sourcePath, destPath);
-      Assert.assertFalse(vfs.isFile(sourcePath));
-      Assert.assertTrue(vfs.isFile(destPath));
+      Path destPath = tmp.getRoot().toPath().resolve("baz");
+      vfs.moveFile(sourcePath.toString(), destPath.toString());
+      Assert.assertFalse(vfs.isFile(sourcePath.toString()));
+      Assert.assertTrue(vfs.isFile(destPath.toString()));
     }
   }
 
@@ -251,15 +251,13 @@ public class VFSTest {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
       // create file
-      String sourcePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      URI sourceURI = URI.create("file://".concat(sourcePath));
-      vfs.createFile(sourceURI);
+      Path sourcePath = tmp.getRoot().toPath().resolve("bar");
+      URI sourceURI = vfs.createFile(sourcePath.toUri());
       Assert.assertTrue(vfs.isFile(sourceURI));
 
       // rename, move file
-      String destPath = Paths.get(tmp.getRoot().toString(), "baz").toString();
-      URI destURI = URI.create("file://".concat(destPath));
-      vfs.moveFile(sourceURI, destURI);
+      Path destPath = tmp.getRoot().toPath().resolve("baz");
+      URI destURI = vfs.moveFile(sourceURI, destPath.toUri());
       Assert.assertFalse(vfs.isFile(sourceURI));
       Assert.assertTrue(vfs.isFile(destURI));
     }
@@ -269,7 +267,7 @@ public class VFSTest {
   public void testVFSWriteRead() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String sourcePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
+      String sourcePath = tmp.getRoot().toPath().resolve("bar").toString();
       vfs.write(sourcePath, new byte[] {1, 2, 3});
       Assert.assertEquals(vfs.fileSize(sourcePath), 3L);
       byte[] resultBytes = vfs.readAllBytes(sourcePath);
@@ -286,9 +284,8 @@ public class VFSTest {
   public void testVFSWriteReadEmpty() throws Exception {
     try (Context ctx = new Context();
         VFS vfs = new VFS(ctx)) {
-      String sourcePath = Paths.get(tmp.getRoot().toString(), "bar").toString();
-      URI sourceURI = URI.create("file://".concat(sourcePath));
-      vfs.write(sourceURI, new byte[] {});
+      Path sourcePath = tmp.getRoot().toPath().resolve("bar");
+      URI sourceURI = vfs.write(sourcePath.toUri(), new byte[] {});
       Assert.assertEquals(vfs.fileSize(sourceURI), 0L);
       byte[] resultBytes = vfs.readAllBytes(sourceURI);
       Assert.assertTrue(Arrays.equals(new byte[] {}, resultBytes));

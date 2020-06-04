@@ -1,10 +1,10 @@
 plugins {
-   id 'java'
+   id 'java-library'
    id 'idea'
    id 'maven-publish'
    id "de.marcphilipp.nexus-publish" version "0.4.0"
    id 'signing'
-   id 'com.github.sherter.google-java-format' version '0.7.1'
+   id 'com.github.sherter.google-java-format' version '0.8'
    id 'io.codearte.nexus-staging' version '0.12.0'
    id 'com.google.osdetector' version '1.6.0'
 }
@@ -42,74 +42,64 @@ sourceSets {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-}
-
-def String getProjectProperty(String propertyName)
-{
-    String property = null
-    if (hasProperty(propertyName))
-    {
-        property = this.properties[propertyName]
-    }
-    return property
+    testImplementation 'junit:junit:4.12'
 }
 
 task cmakeTask(type: Exec) {
+    doFirst {
+        mkdir buildDir
+    }
+
     workingDir = buildDir
     executable = 'cmake'
-    List<String> buildArgs = new ArrayList<String>()
-    buildArgs.add("..")
-    String tiledb_git_repo = getProjectProperty('TILEDB_GIT_REPOSITORY')
-    String tiledb_git_tag = getProjectProperty('TILEDB_GIT_TAG')
-    String tiledb_verbose = getProjectProperty('TILEDB_VERBOSE')
-    String tiledb_s3 = getProjectProperty('TILEDB_S3')
-    String tiledb_hdfs = getProjectProperty('TILEDB_HDFS')
-    String tiledb_serialization = getProjectProperty('TILEDB_SERIALIZATION')
-    if (tiledb_git_repo != null) {
-	    buildArgs.add("-DTILEDB_GIT_REPOSITORY=" + tiledb_git_repo)
+    def buildArgs = [".."]
+    if (project.properties.TILEDB_CMAKE_GENERATOR) {
+        buildArgs << "-G" << project.properties.TILEDB_CMAKE_GENERATOR
     }
-    if (tiledb_git_tag != null) {
-        buildArgs.add("-DTILEDB_GIT_TAG=" + tiledb_git_tag)
+    if (project.properties.TILEDB_CMAKE_ARCHITECTURE) {
+        buildArgs << "-A" << project.properties.TILEDB_CMAKE_ARCHITECTURE
     }
-    if (tiledb_verbose != null) {
-        buildArgs.add("-DTILEDB_VERBOSE=" + tiledb_verbose)
-    }
-    if (tiledb_s3 != null) {
-        buildArgs.add("-DTILEDB_S3=" + tiledb_s3)
-    }
-    if (tiledb_hdfs != null) {
-        buildArgs.add("-DTILEDB_HDFS=" + tiledb_hdfs)
-    }
-    if (tiledb_serialization != null) {
-        buildArgs.add("-DTILEDB_SERIALIZATION=" + tiledb_serialization)
+    [
+        "TILEDB_GIT_REPOSITORY",
+        "TILEDB_GIT_TAG",
+        "TILEDB_VERBOSE",
+        "TILEDB_S3",
+        "TILEDB_HDFS",
+        "TILEDB_SERIALIZATION"
+    ].each { v ->
+        if (project.hasProperty(v)) {
+            buildArgs << "-D${v}=${project.property(v)}"
+        }
     }
     args buildArgs
 }
 
-task makeTask(type: Exec) {
+task cmakeBuildTask(type: Exec) {
     workingDir = buildDir
-    executable = 'make'
-    args "-j${Runtime.getRuntime().availableProcessors()}"
+    executable = 'cmake'
+    args "--build", ".", "--config", "release"
 }
-makeTask.dependsOn(cmakeTask)
+cmakeBuildTask.dependsOn(cmakeTask)
 
-task makeInstallTask(type: Exec) {
-    workingDir = new File(buildDir, "tiledb_jni")
-    executable = 'make'
-    args 'install'
-}
-makeInstallTask.dependsOn(makeTask)
-
-assemble.dependsOn(makeInstallTask)
+assemble.dependsOn(cmakeBuildTask)
 
 task generateJNI(type: Exec) {
     workingDir = buildDir
     executable = "../generate_tiledb_jni"
 }
 
+import org.apache.tools.ant.taskdefs.condition.Os
 test {
-    systemProperty "java.library.path", "$buildDir/install/lib/"
+    useJUnit()
+
+    maxHeapSize = '1G'
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        systemProperty "java.library.path", "$buildDir\\install\\bin;$buildDir\\tiledb_jni\\Release"
+    } else {
+        systemProperty "java.library.path", "$buildDir/install/lib:$buildDir/install/lib64:$buildDir/tiledb_jni"
+    }
+
     testLogging {
         showStandardStreams = true
     }
@@ -117,15 +107,20 @@ test {
 
 jar {
     into(new File('lib', osdetector.classifier).toString()) {
+        // Linux and macOS
         from file("$buildDir/install/lib/${System.mapLibraryName("tiledb")}")
-        from file("$buildDir/install/lib/${System.mapLibraryName("tiledbjni")}")
         from file("$buildDir/install/lib64/${System.mapLibraryName("tiledb")}")
-        from file("$buildDir/install/lib64/${System.mapLibraryName("tiledbjni")}")
+        from file("$buildDir/tiledb_jni/${System.mapLibraryName("tiledbjni")}")
+        // Windows
+        from file("$buildDir/install/bin/${System.mapLibraryName("tbb")}")
+        from file("$buildDir/install/bin/${System.mapLibraryName("tiledb")}")
+        from file("$buildDir/tiledb_jni/Release/${System.mapLibraryName("tiledbjni")}")
     }
+
 
     manifest {
         attributes("Implementation-Title": "Gradle",
-                "Implementation-Version": version)
+                "Implementation-Version": archiveVersion)
     }
 }
 

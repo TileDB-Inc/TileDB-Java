@@ -27,9 +27,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Comparator;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /** Helper class that finds native libraries embedded as resources and loads them dynamically. */
 public class NativeLibLoader {
@@ -39,10 +45,43 @@ public class NativeLibLoader {
   /** Path (relative to jar) where native libraries are located. */
   private static final String LIB_RESOURCE_DIR = "/lib";
 
+  /** Temporary directory where native libraries will be extracted. */
+  private static Path tempDir;
+
+  static {
+    try {
+      tempDir = Files.createTempDirectory("tileDbNativeLibLoader");
+    } catch (IOException e) {
+      e.printStackTrace(System.err);
+    }
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread(
+                () -> {
+                  try (Stream<Path> walk = Files.walk(tempDir)) {
+                    walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                  } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                  }
+                }));
+  }
+
   /** Finds and loads native TileDB. */
   static void loadNativeTileDB() {
     try {
       loadNativeLib("tiledb", true);
+    } catch (java.lang.UnsatisfiedLinkError e) {
+      // If a native library fails to link, we fall back to depending on the system
+      // dynamic linker to satisfy the requirement. Therefore, we do nothing here
+      // (if the library is not available via the system linker, a runtime error
+      // will occur later).
+    }
+  }
+
+  /** Finds and loads native Intel Thread Building Blocks. */
+  static void loadNativeTBB() {
+    try {
+      loadNativeLib("tbb", true);
     } catch (java.lang.UnsatisfiedLinkError e) {
       // If a native library fails to link, we fall back to depending on the system
       // dynamic linker to satisfy the requirement. Therefore, we do nothing here
@@ -206,56 +245,38 @@ public class NativeLibLoader {
    *
    * @param libraryDir Path of directory containing native library
    * @param libraryName Name of native library
-   * @param targetDir Path of target directory to extract library to
    * @param mapLibraryName If true, transform libraryName with System.mapLibraryName
    * @return File pointing to the extracted library
    */
-  private static File extractLibraryFile(
-      String libraryDir, String libraryName, String targetDir, boolean mapLibraryName) {
+  private static Path extractLibraryFile(
+      String libraryDir, String libraryName, boolean mapLibraryName) {
     String libraryFileName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
-    String nativeLibraryFilePath = new File(libraryDir, libraryFileName).getAbsolutePath();
-
-    // Attach UUID to the native library file to ensure multiple class loaders can read the
-    // native lib multiple times.
-    String uuid = UUID.randomUUID().toString();
-    String extractedLibFileName = String.format("%s-%s-%s", libraryName, uuid, libraryFileName);
-    File extractedLibFile = new File(targetDir, extractedLibFileName);
+    String nativeLibraryFilePath = libraryDir + "/" + libraryFileName;
+    Path extractedLibFile = tempDir.resolve(libraryFileName);
 
     try {
       // Extract a native library file into the target directory
-      InputStream reader = null;
-      FileOutputStream writer = null;
-      try {
-        reader = NativeLibLoader.class.getResourceAsStream(nativeLibraryFilePath);
-        try {
-          writer = new FileOutputStream(extractedLibFile);
+      try (InputStream reader = NativeLibLoader.class.getResourceAsStream(nativeLibraryFilePath);
+          FileOutputStream writer = new FileOutputStream(extractedLibFile.toFile())) {
 
-          byte[] buffer = new byte[8192];
-          int bytesRead = 0;
-          while ((bytesRead = reader.read(buffer)) != -1) {
-            writer.write(buffer, 0, bytesRead);
-          }
-        } finally {
-          if (writer != null) {
-            writer.close();
-          }
+        byte[] buffer = new byte[8192];
+        int bytesRead = 0;
+        while ((bytesRead = reader.read(buffer)) != -1) {
+          writer.write(buffer, 0, bytesRead);
         }
-      } finally {
-        if (reader != null) {
-          reader.close();
-        }
-
-        // Delete the extracted lib file on JVM exit.
-        extractedLibFile.deleteOnExit();
       }
 
-      // Set executable (x) flag to enable Java to load the native library
-      boolean success =
-          extractedLibFile.setReadable(true)
-              && extractedLibFile.setWritable(true, true)
-              && extractedLibFile.setExecutable(true);
-      if (!success) {
-        // Setting file flag may fail, but in this case another error will be thrown in later phase
+      // Set executable (x) flag to enable Java to load the native library on
+      // UNIX platforms
+      PosixFileAttributeView view =
+          Files.getFileAttributeView(extractedLibFile, PosixFileAttributeView.class);
+      if (view != null) {
+        // On a UNIX platform
+        Set<PosixFilePermission> permissions = view.readAttributes().permissions();
+        permissions.add(PosixFilePermission.OWNER_READ);
+        permissions.add(PosixFilePermission.OWNER_WRITE);
+        permissions.add(PosixFilePermission.OWNER_EXECUTE);
+        view.setPermissions(permissions);
       }
 
       // Check whether the contents are properly copied from the resource folder
@@ -264,7 +285,7 @@ public class NativeLibLoader {
         InputStream extractedLibIn = null;
         try {
           nativeIn = NativeLibLoader.class.getResourceAsStream(nativeLibraryFilePath);
-          extractedLibIn = new FileInputStream(extractedLibFile);
+          extractedLibIn = new FileInputStream(extractedLibFile.toFile());
 
           if (!contentsEquals(nativeIn, extractedLibIn)) {
             throw new IOException(
@@ -280,7 +301,7 @@ public class NativeLibLoader {
         }
       }
 
-      return new File(targetDir, extractedLibFileName);
+      return extractedLibFile;
     } catch (IOException e) {
       e.printStackTrace(System.err);
       return null;
@@ -294,27 +315,18 @@ public class NativeLibLoader {
    * @param mapLibraryName If true, transform libraryName with System.mapLibraryName
    * @return File pointing to the extracted library
    */
-  private static File findNativeLibrary(String libraryName, boolean mapLibraryName) {
+  private static Path findNativeLibrary(String libraryName, boolean mapLibraryName) {
     String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
-    String libDir = new File(LIB_RESOURCE_DIR, getOSClassifier()).getAbsolutePath();
-    File libPath = new File(libDir, mappedLibraryName);
+    String libDir = LIB_RESOURCE_DIR + "/" + getOSClassifier();
+    String libPath = libDir + "/" + mappedLibraryName;
 
-    boolean hasNativeLib = hasResource(libPath.getAbsolutePath());
+    boolean hasNativeLib = hasResource(libPath);
     if (!hasNativeLib) {
       return null;
     }
 
-    // Temporary folder for the extracted native lib.
-    File tempFolder = new File(System.getProperty("java.io.tmpdir"));
-    if (!tempFolder.exists()) {
-      boolean created = tempFolder.mkdirs();
-      if (!created) {
-        // if created == false, it will fail eventually in the later part
-      }
-    }
-
     // Extract and load a native library inside the jar file
-    return extractLibraryFile(libDir, libraryName, tempFolder.getAbsolutePath(), mapLibraryName);
+    return extractLibraryFile(libDir, libraryName, mapLibraryName);
   }
 
   /**
@@ -324,10 +336,10 @@ public class NativeLibLoader {
    * @param mapLibraryName If true, transform libraryName with System.mapLibraryName
    */
   private static void loadNativeLib(String libraryName, boolean mapLibraryName) {
-    File nativeLibFile = findNativeLibrary(libraryName, mapLibraryName);
+    Path nativeLibFile = findNativeLibrary(libraryName, mapLibraryName);
     if (nativeLibFile != null) {
       // Load extracted or specified native library.
-      System.load(nativeLibFile.getAbsolutePath());
+      System.load(nativeLibFile.toString());
     } else {
       // Try loading preinstalled library (in the path -Djava.library.path)
       System.loadLibrary(libraryName);

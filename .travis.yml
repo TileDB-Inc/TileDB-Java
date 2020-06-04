@@ -39,7 +39,7 @@ install:
 
 script:
   - ./gradlew checkFormat
-  - ./gradlew test
+  - ./gradlew --info test
 
 # Upload to sonatype oss for master snapshots
 after_success:

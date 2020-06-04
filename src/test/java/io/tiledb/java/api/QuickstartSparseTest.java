@@ -32,34 +32,25 @@ import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-@SuppressWarnings("ALL")
 public class QuickstartSparseTest {
 
+  @Rule public TemporaryFolder temp = new TemporaryFolder();
+
   private Context ctx;
-  private String arrayURI = "my_sparse_array";
+  private String arrayURI;
 
   @Before
   public void setup() throws Exception {
     ctx = new Context();
-    if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
-    }
-  }
-
-  @After
-  public void teardown() throws Exception {
-    if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
-    }
+    arrayURI = temp.getRoot().toPath().resolve("my_sparse_array").toString();
   }
 
   @Test
@@ -144,7 +135,7 @@ public class QuickstartSparseTest {
 
   private void arrayRead() throws Exception {
     // Print non-empty getDomain
-    Array my_sparse_array = new Array(ctx, "my_sparse_array");
+    Array my_sparse_array = new Array(ctx, arrayURI);
     HashMap<String, Pair> dom = my_sparse_array.nonEmptyDomain();
 
     Assert.assertEquals(dom.get("d1").getFirst(), 1l);
@@ -172,63 +163,64 @@ public class QuickstartSparseTest {
     // }
 
     // Create query
-    Query query = new Query(my_sparse_array, TILEDB_READ);
-    query.setLayout(TILEDB_GLOBAL_ORDER);
-    query.setSubarray(subarray);
+    try (Query query = new Query(my_sparse_array, TILEDB_READ)) {
+      query.setLayout(TILEDB_GLOBAL_ORDER);
+      query.setSubarray(subarray);
 
-    query.setBuffer(
-        "d1",
-        new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
+      query.setBuffer(
+          "d1",
+          new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
 
-    query.setBuffer(
-        "d2",
-        new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
-    query.setBuffer(
-        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
-    query.setBuffer(
-        "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
-    query.setBuffer(
-        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
+      query.setBuffer(
+          "d2",
+          new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
+      query.setBuffer(
+          "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
+      query.setBuffer(
+          "a2",
+          new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
+          new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
+      query.setBuffer(
+          "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
 
-    // Submit query
-    query.submit();
-    // System.out.println("Query submitted: " + query.submit() );
+      // Submit query
+      query.submit();
+      // System.out.println("Query submitted: " + query.submit() );
 
-    // Print cell values (assumes all getAttributes are read)
-    HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
-    long[] d1 = (long[]) query.getBuffer("d1");
-    long[] d2 = (long[]) query.getBuffer("d2");
-    int[] a1_buff = (int[]) query.getBuffer("a1");
-    long[] a2_offsets = (long[]) query.getVarBuffer("a2");
-    byte[] a2_data = (byte[]) query.getBuffer("a2");
-    float[] a3_buff = (float[]) query.getBuffer("a3");
+      // Print cell values (assumes all getAttributes are read)
+      HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
+      long[] d1 = (long[]) query.getBuffer("d1");
+      long[] d2 = (long[]) query.getBuffer("d2");
+      int[] a1_buff = (int[]) query.getBuffer("a1");
+      long[] a2_offsets = (long[]) query.getVarBuffer("a2");
+      byte[] a2_data = (byte[]) query.getBuffer("a2");
+      float[] a3_buff = (float[]) query.getBuffer("a3");
 
-    // check coords
-    Assert.assertArrayEquals(d1, new long[] {1, 1, 1, 2, 3, 4, 3, 3});
-    Assert.assertArrayEquals(d2, new long[] {1, 2, 4, 3, 1, 2, 3, 4});
+      // check coords
+      Assert.assertArrayEquals(d1, new long[] {1, 1, 1, 2, 3, 4, 3, 3});
+      Assert.assertArrayEquals(d2, new long[] {1, 2, 4, 3, 1, 2, 3, 4});
 
-    // check a1
-    Assert.assertArrayEquals(a1_buff, new int[] {0, 1, 2, 3, 4, 5, 6, 7});
+      // check a1
+      Assert.assertArrayEquals(a1_buff, new int[] {0, 1, 2, 3, 4, 5, 6, 7});
 
-    // check a2
-    String[] a2_expected = new String[] {"a", "bb", "ccc", "dddd", "e", "ff", "ggg", "hhhh"};
-    for (int i = 0; i < a2_offsets.length; i++) {
-      int end = (i == a2_offsets.length - 1) ? a2_data.length : (int) a2_offsets[i + 1];
-      String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end));
-      Assert.assertEquals(a2_value, a2_expected[i]);
-    }
+      // check a2
+      String[] a2_expected = new String[] {"a", "bb", "ccc", "dddd", "e", "ff", "ggg", "hhhh"};
+      for (int i = 0; i < a2_offsets.length; i++) {
+        int end = (i == a2_offsets.length - 1) ? a2_data.length : (int) a2_offsets[i + 1];
+        String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end));
+        Assert.assertEquals(a2_value, a2_expected[i]);
+      }
 
-    // check a3
-    float[] a3_expected =
-        new float[] {
-          0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f,
-          7.2f
-        };
-    Assert.assertEquals(a3_buff.length, a3_expected.length);
-    for (int i = 0; i < a3_buff.length; i++) {
-      Assert.assertEquals(a3_buff[i], a3_expected[i], 0.01f);
+      // check a3
+      float[] a3_expected =
+          new float[] {
+            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f,
+            7.1f, 7.2f
+          };
+      Assert.assertEquals(a3_buff.length, a3_expected.length);
+      for (int i = 0; i < a3_buff.length; i++) {
+        Assert.assertEquals(a3_buff[i], a3_expected[i], 0.01f);
+      }
     }
 
     // System.out.println("Result num: " + a1_buff.length );

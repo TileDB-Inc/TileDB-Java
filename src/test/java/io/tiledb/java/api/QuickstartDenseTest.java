@@ -29,35 +29,26 @@ import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-@SuppressWarnings("ALL")
 public class QuickstartDenseTest {
 
+  @Rule public TemporaryFolder temp = new TemporaryFolder();
+
   private Context ctx;
-  private String arrayURI = "my_dense_array";
+  private String arrayURI;
   private boolean callbackCalled = false;
 
   @Before
   public void setup() throws Exception {
     ctx = new Context();
-    if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
-    }
-  }
-
-  @After
-  public void teardown() throws Exception {
-    if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
-    }
+    arrayURI = temp.getRoot().toPath().resolve("my_dense_array").toString();
   }
 
   @Test
@@ -186,56 +177,57 @@ public class QuickstartDenseTest {
     // }
 
     // Create query
-    Query query = new Query(my_dense_array, TILEDB_READ);
-    query.setLayout(TILEDB_GLOBAL_ORDER);
-    query.setSubarray(subarray);
-    query.setBuffer(
-        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
-    query.setBuffer(
-        "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
-    query.setBuffer(
-        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
+    try (Query query = new Query(my_dense_array, TILEDB_READ)) {
+      query.setLayout(TILEDB_GLOBAL_ORDER);
+      query.setSubarray(subarray);
+      query.setBuffer(
+          "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
+      query.setBuffer(
+          "a2",
+          new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
+          new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
+      query.setBuffer(
+          "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
 
-    // Submit query
-    query.submit();
-    // System.out.println("Query submitted: " + query.submit() );
+      // Submit query
+      query.submit();
+      // System.out.println("Query submitted: " + query.submit() );
 
-    // Print cell values (assumes all getAttributes are read)
-    HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
+      // Print cell values (assumes all getAttributes are read)
+      HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
-    int[] a1_buff = (int[]) query.getBuffer("a1");
-    long[] a2_offsets = (long[]) query.getVarBuffer("a2");
-    byte[] a2_data = (byte[]) query.getBuffer("a2");
-    float[] a3_buff = (float[]) query.getBuffer("a3");
+      int[] a1_buff = (int[]) query.getBuffer("a1");
+      long[] a2_offsets = (long[]) query.getVarBuffer("a2");
+      byte[] a2_data = (byte[]) query.getBuffer("a2");
+      float[] a3_buff = (float[]) query.getBuffer("a3");
 
-    // check a1
-    Assert.assertArrayEquals(
-        a1_buff, new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-    // check a2
-    String[] a2_expected =
-        new String[] {
-          "a", "bb", "ccc", "dddd", "e", "ff", "ggg", "hhhh", "i", "jj", "kkk", "llll", "m", "nn",
-          "ooo", "pppp"
-        };
+      // check a1
+      Assert.assertArrayEquals(
+          a1_buff, new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+      // check a2
+      String[] a2_expected =
+          new String[] {
+            "a", "bb", "ccc", "dddd", "e", "ff", "ggg", "hhhh", "i", "jj", "kkk", "llll", "m", "nn",
+            "ooo", "pppp"
+          };
 
-    for (int i = 0; i < a2_offsets.length; i++) {
-      int end = (i == a2_offsets.length - 1) ? a2_data.length : (int) a2_offsets[i + 1];
-      String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end));
-      Assert.assertEquals(a2_value, a2_expected[i]);
-    }
+      for (int i = 0; i < a2_offsets.length; i++) {
+        int end = (i == a2_offsets.length - 1) ? a2_data.length : (int) a2_offsets[i + 1];
+        String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end));
+        Assert.assertEquals(a2_value, a2_expected[i]);
+      }
 
-    // check a3
-    float[] a3_expected =
-        new float[] {
-          0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f,
-          7.2f, 8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f, 12.1f, 12.2f, 13.1f, 13.2f,
-          14.1f, 14.2f, 15.1f, 15.2f
-        };
-    Assert.assertEquals(a3_buff.length, a3_expected.length);
-    for (int i = 0; i < a3_buff.length; i++) {
-      Assert.assertEquals(a3_buff[i], a3_expected[i], 0.01f);
+      // check a3
+      float[] a3_expected =
+          new float[] {
+            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f,
+            7.1f, 7.2f, 8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f, 12.1f, 12.2f, 13.1f,
+            13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+          };
+      Assert.assertEquals(a3_buff.length, a3_expected.length);
+      for (int i = 0; i < a3_buff.length; i++) {
+        Assert.assertEquals(a3_buff[i], a3_expected[i], 0.01f);
+      }
     }
 
     // System.out.println("Result num: " + a1_buff.length );
@@ -264,64 +256,65 @@ public class QuickstartDenseTest {
     HashMap<String, Pair<Long, Long>> max_sizes = my_dense_array.maxBufferElements(subarray);
 
     // Create query
-    Query query = new Query(my_dense_array, TILEDB_READ);
-    query.setLayout(TILEDB_GLOBAL_ORDER);
-    query.setSubarray(subarray);
-    query.setBuffer(
-        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
-    query.setBuffer(
-        "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
-    query.setBuffer(
-        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
+    try (Query query = new Query(my_dense_array, TILEDB_READ)) {
+      query.setLayout(TILEDB_GLOBAL_ORDER);
+      query.setSubarray(subarray);
+      query.setBuffer(
+          "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
+      query.setBuffer(
+          "a2",
+          new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
+          new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
+      query.setBuffer(
+          "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
 
-    // Submit query with callback
-    query.submitAsync(new ReadCallback());
+      // Submit query with callback
+      query.submitAsync(new ReadCallback());
 
-    // Wait for query to complete
-    QueryStatus status;
-    do {
-      // Wait till query is done
-      status = query.getQueryStatus();
-    } while (status == QueryStatus.TILEDB_INPROGRESS);
+      // Wait for query to complete
+      QueryStatus status;
+      do {
+        // Wait till query is done
+        status = query.getQueryStatus();
+      } while (status == QueryStatus.TILEDB_INPROGRESS);
 
-    // Print cell values (assumes all getAttributes are read)
-    HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
+      // Print cell values (assumes all getAttributes are read)
+      HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
-    int[] a1_buff = (int[]) query.getBuffer("a1");
-    long[] a2_offsets = (long[]) query.getVarBuffer("a2");
-    byte[] a2_data = (byte[]) query.getBuffer("a2");
-    float[] a3_buff = (float[]) query.getBuffer("a3");
+      int[] a1_buff = (int[]) query.getBuffer("a1");
+      long[] a2_offsets = (long[]) query.getVarBuffer("a2");
+      byte[] a2_data = (byte[]) query.getBuffer("a2");
+      float[] a3_buff = (float[]) query.getBuffer("a3");
 
-    Assert.assertTrue(callbackCalled);
+      Assert.assertTrue(callbackCalled);
 
-    // check a1
-    Assert.assertArrayEquals(
-        a1_buff, new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-    // check a2
-    String[] a2_expected =
-        new String[] {
-          "a", "bb", "ccc", "dddd", "e", "ff", "ggg", "hhhh", "i", "jj", "kkk", "llll", "m", "nn",
-          "ooo", "pppp"
-        };
+      // check a1
+      Assert.assertArrayEquals(
+          a1_buff, new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+      // check a2
+      String[] a2_expected =
+          new String[] {
+            "a", "bb", "ccc", "dddd", "e", "ff", "ggg", "hhhh", "i", "jj", "kkk", "llll", "m", "nn",
+            "ooo", "pppp"
+          };
 
-    for (int i = 0; i < a2_offsets.length; i++) {
-      int end = (i == a2_offsets.length - 1) ? a2_data.length : (int) a2_offsets[i + 1];
-      String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end));
-      Assert.assertEquals(a2_value, a2_expected[i]);
-    }
+      for (int i = 0; i < a2_offsets.length; i++) {
+        int end = (i == a2_offsets.length - 1) ? a2_data.length : (int) a2_offsets[i + 1];
+        String a2_value = new String(Arrays.copyOfRange(a2_data, (int) a2_offsets[i], end));
+        Assert.assertEquals(a2_value, a2_expected[i]);
+      }
 
-    // check a3
-    float[] a3_expected =
-        new float[] {
-          0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f,
-          7.2f, 8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f, 12.1f, 12.2f, 13.1f, 13.2f,
-          14.1f, 14.2f, 15.1f, 15.2f
-        };
-    Assert.assertEquals(a3_buff.length, a3_expected.length);
-    for (int i = 0; i < a3_buff.length; i++) {
-      Assert.assertEquals(a3_buff[i], a3_expected[i], 0.01f);
+      // check a3
+      float[] a3_expected =
+          new float[] {
+            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f,
+            7.1f, 7.2f, 8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f, 12.1f, 12.2f, 13.1f,
+            13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+          };
+      Assert.assertEquals(a3_buff.length, a3_expected.length);
+      for (int i = 0; i < a3_buff.length; i++) {
+        Assert.assertEquals(a3_buff[i], a3_expected[i], 0.01f);
+      }
     }
 
     // System.out.println("Result num: " + a1_buff.length );
@@ -345,29 +338,30 @@ public class QuickstartDenseTest {
     Array my_dense_array = new Array(ctx, arrayURI);
 
     // Create query
-    Query query = new Query(my_dense_array, TILEDB_READ);
-    query.setLayout(TILEDB_GLOBAL_ORDER);
-    long[] subarray = {1l, 4l, 1l, 4l};
-    query.setSubarray(new NativeArray(ctx, subarray, Long.class));
-    query.setBuffer("a1", new NativeArray(ctx, 4, Integer.class));
+    try (Query query = new Query(my_dense_array, TILEDB_READ)) {
+      query.setLayout(TILEDB_GLOBAL_ORDER);
+      long[] subarray = {1l, 4l, 1l, 4l};
+      query.setSubarray(new NativeArray(ctx, subarray, Long.class));
+      query.setBuffer("a1", new NativeArray(ctx, 4, Integer.class));
 
-    // Loop until the query is completed
+      // Loop until the query is completed
 
-    // System.out.println("a1\n---");
-    int nsubmits = 0;
-    do {
-      // System.out.println("Reading cells...");
-      query.submit();
+      // System.out.println("a1\n---");
+      int nsubmits = 0;
+      do {
+        // System.out.println("Reading cells...");
+        query.submit();
 
-      int[] a1_buff = (int[]) query.getBuffer("a1");
-      int[] a1_expected =
-          new int[] {nsubmits * 4 + 0, nsubmits * 4 + 1, nsubmits * 4 + 2, nsubmits * 4 + 3};
-      Assert.assertArrayEquals(a1_buff, a1_expected);
-      nsubmits += 1;
-      // for (int i =0; i< a1_buff.length; i++){
-      //  System.out.println(a1_buff[i]);
-      // }
-    } while (query.getQueryStatus() == QueryStatus.TILEDB_INCOMPLETE);
+        int[] a1_buff = (int[]) query.getBuffer("a1");
+        int[] a1_expected =
+            new int[] {nsubmits * 4 + 0, nsubmits * 4 + 1, nsubmits * 4 + 2, nsubmits * 4 + 3};
+        Assert.assertArrayEquals(a1_buff, a1_expected);
+        nsubmits += 1;
+        // for (int i =0; i< a1_buff.length; i++){
+        //  System.out.println(a1_buff[i]);
+        // }
+      } while (query.getQueryStatus() == QueryStatus.TILEDB_INCOMPLETE);
+    }
   }
 
   private class ReadCallback implements Callback {

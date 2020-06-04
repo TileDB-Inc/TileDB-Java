@@ -694,7 +694,7 @@ extern "C" {
     jintArray jresult = jenv->NewIntArray(sz);
     if (!jresult)
       return NULL;
-    jenv->SetIntArrayRegion(jresult, 0, sz, arr);
+    jenv->SetIntArrayRegion(jresult, 0, sz, (jint*) arr);
     return jresult;
   }
 
@@ -844,7 +844,8 @@ extern "C" {
     for(int i = 0; i<sz; i++){
       short_arr[i] = (jshort)arr[i];
     }
-    jenv->ReleaseShortArrayElements(jresult, short_arr, 0);
+    jenv->SetShortArrayRegion(jresult, 0, sz, short_arr);
+    delete short_arr;
     return jresult;
   }
 
@@ -894,7 +895,8 @@ extern "C" {
     for(int i = 0; i<sz; i++){
       int_arr[i] = (jint)arr[i];
     }
-    jenv->ReleaseIntArrayElements(jresult, int_arr, 0);
+    jenv->SetIntArrayRegion(jresult, 0, sz, int_arr);
+    delete int_arr;
     return jresult;
   }
 
@@ -921,7 +923,8 @@ extern "C" {
     for(int i = 0; i<sz; i++){
       long_arr[i] = (jlong)arr[i];
     }
-    jenv->ReleaseLongArrayElements(jresult, long_arr, 0);
+    jenv->SetLongArrayRegion(jresult, 0, sz, long_arr);
+    delete long_arr;
     return jresult;
   }
 
@@ -949,7 +952,8 @@ extern "C" {
     for(int i = 0; i<sz; i++){
       long_arr[i] = (jlong)arr[i];
     }
-    jenv->ReleaseLongArrayElements(jresult, long_arr, 0);
+    jenv->SetLongArrayRegion(jresult, 0, sz, long_arr);
+    delete long_arr;
     return jresult;
   }
 

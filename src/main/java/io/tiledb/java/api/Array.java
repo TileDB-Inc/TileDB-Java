@@ -72,7 +72,7 @@ public class Array implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Array(Context ctx, String uri) throws TileDBError {
-    openArray(ctx, uri, TILEDB_READ, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {});
+    this(ctx, uri, TILEDB_READ);
   }
 
   /**
@@ -91,7 +91,7 @@ public class Array implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Array(Context ctx, String uri, BigInteger timestamp) throws TileDBError {
-    openArray(ctx, uri, TILEDB_READ, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {}, timestamp);
+    this(ctx, uri, TILEDB_READ, timestamp);
   }
 
   /**
@@ -110,7 +110,29 @@ public class Array implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public Array(Context ctx, String uri, QueryType query_type) throws TileDBError {
-    openArray(ctx, uri, query_type, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {});
+    this(ctx, uri, query_type, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {});
+  }
+
+  /**
+   * Constructs an Array object, opening the array for the given query type at a user-given
+   * timestamp (time-travelling).
+   *
+   * <pre><b>Example:</b>
+   * {@code
+   * Context ctx = new Context();
+   * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ);
+   * }
+   * </pre>
+   *
+   * @param ctx TileDB context
+   * @param uri The array URI
+   * @param query_type Query type to open the array for.
+   * @param timestamp The timestamp
+   * @exception TileDBError A TileDB exception
+   */
+  public Array(Context ctx, String uri, QueryType query_type, BigInteger timestamp)
+      throws TileDBError {
+    this(ctx, uri, query_type, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {}, timestamp);
   }
 
   /**
