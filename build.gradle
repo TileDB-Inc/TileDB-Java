@@ -46,6 +46,10 @@ dependencies {
 }
 
 task cmakeTask(type: Exec) {
+    File jniLibs = new File(buildDir.path + "/tiledb_jni")
+    File tiledbLibs = new File(buildDir.path + "/install/lib")
+
+    onlyIf { !buildDir.exists() || !jniLibs.exists() || !tiledbLibs.exists() }
     doFirst {
         mkdir buildDir
     }
@@ -75,6 +79,14 @@ task cmakeTask(type: Exec) {
 }
 
 task cmakeBuildTask(type: Exec) {
+    File jniLibs = new File(buildDir.path + "/tiledb_jni")
+    File tiledbLibs = new File(buildDir.path + "/install/lib")
+
+    onlyIf { !buildDir.exists() || !jniLibs.exists() || !tiledbLibs.exists() }
+    doFirst {
+        mkdir buildDir
+    }
+
     workingDir = buildDir
     executable = 'cmake'
     args "--build", ".", "--config", "release"
@@ -106,17 +118,20 @@ test {
 }
 
 jar {
-    into(new File('lib', osdetector.classifier).toString()) {
+    into(new File('lib').toString()) {
         // Linux and macOS
-        from file("$buildDir/install/lib/${System.mapLibraryName("tiledb")}")
-        from file("$buildDir/install/lib64/${System.mapLibraryName("tiledb")}")
-        from file("$buildDir/tiledb_jni/${System.mapLibraryName("tiledbjni")}")
-        // Windows
-        from file("$buildDir/install/bin/${System.mapLibraryName("tbb")}")
-        from file("$buildDir/install/bin/${System.mapLibraryName("tiledb")}")
-        from file("$buildDir/tiledb_jni/Release/${System.mapLibraryName("tiledbjni")}")
-    }
+        from file("$buildDir/install/lib/libtiledb.dylib")
+        from file("$buildDir/install/lib64/libtiledb.so")
+        from file("$buildDir/tiledb_jni/libtiledbjni.so")
 
+        from file("$buildDir/install/lib/libtiledb.dylib")
+        from file("$buildDir/tiledb_jni/libtiledbjni.dylib")
+
+        // Windows
+        from file("$buildDir/install/bin/tbb.dll")
+        from file("$buildDir/install/bin/tiledb.dll")
+        from file("$buildDir/tiledb_jni/Release/tiledbjni.dll")
+    }
 
     manifest {
         attributes("Implementation-Title": "Gradle",
@@ -208,6 +223,8 @@ signing {
 
 import com.github.sherter.googlejavaformatgradleplugin.GoogleJavaFormat
 import com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat
+
+import java.nio.file.Files
 
 task format(type: GoogleJavaFormat) {
     source = sourceSets*.allJava

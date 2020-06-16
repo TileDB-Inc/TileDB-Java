@@ -12,33 +12,73 @@ trigger:
     include:
       - "*"
 
-jobs:
-    - job: Windows
-      strategy:
-        matrix:
-          VS2019:
-            imageName: 'windows-2019'
-            TILEDB_S3: ON
-      pool:
-        vmImage: $(imageName)
-      steps:
-        - task: Gradle@2
-          inputs:
-            workingDirectory: ''
-            gradleWrapperFile: 'gradlew.bat'
-            gradleOptions: '-Xmx3072m'
-            javaHomeOption: 'JDKVersion'
-            jdkVersionOption: 'default'
-            tasks: 'assemble test'
+stages:
+  - stage: CI
+    condition: not(startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+    jobs:
+      - job: Windows
+        strategy:
+          matrix:
+            VS2019:
+              imageName: 'windows-2019'
+              TILEDB_S3: ON
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - task: Gradle@2
+            inputs:
+              workingDirectory: ''
+              gradleWrapperFile: 'gradlew.bat'
+              gradleOptions: '-Xmx3072m'
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: 'default'
+              tasks: 'checkFormat assemble test'
 
-    - job: Linux_OSX
-      strategy:
-        matrix:
-          ubuntu_18:
-            imageName: 'ubuntu-18.04'
-          macOS:
-            imageName: 'macOS-10.14'
-      pool:
-        vmImage: $(imageName)
-      steps:
-        - template: ci/tiledb-java-azure.yml
+      - job: Linux_OSX
+        strategy:
+          matrix:
+            ubuntu_18:
+              imageName: 'ubuntu-18.04'
+            macOS:
+              imageName: 'macOS-10.14'
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - template: ci/tiledb-java-linux_osx.yml
+
+  - stage: BuildNativeLibs
+    condition: or(startsWith(variables['Build.SourceBranch'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+    jobs:
+      - job: Linux_OSX
+        strategy:
+          matrix:
+            ubuntu_18:
+              imageName: 'ubuntu-18.04'
+            macOS:
+              imageName: 'macOS-10.14'
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - template: ci/tiledb-java-linux_osx-release.yml
+      - job: Windows
+        strategy:
+          matrix:
+            windows_19:
+              imageName: 'windows-2019'
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - template: ci/tiledb-java-windows-release.yml
+
+  - stage: Release
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags')
+    jobs:
+      - job: All_OS
+        strategy:
+          matrix:
+            ubuntu_18:
+              imageName: 'ubuntu-18.04'
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - template: ci/tiledb-java-final-jar.yml

@@ -1,18 +1,27 @@
 steps:
   - bash: |
+      unset SYSTEM
       set -e pipefail
       open /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
       sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -allowUntrusted -target /
     condition: eq(variables['Agent.OS'], 'Darwin')
     displayName: 'Install system headers (OSX only)'
 
+
   - bash: |
       unset SYSTEM
-      ls
-      ./gradlew assemble
       ./gradlew checkFormat
+    displayName: 'Check Format'
+
+  - bash: |
+      unset SYSTEM
+      ./gradlew assemble
+    displayName: 'Assemble'
+
+  - bash: |
+      unset SYSTEM
       ./gradlew test
-    displayName: 'Build and Test (Ubuntu and OSX)'
+    displayName: 'Test'
 
   - bash: |
       set -e pipefail
