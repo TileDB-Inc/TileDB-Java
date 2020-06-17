@@ -6,7 +6,7 @@ steps:
       unset SYSTEM
       set +e
 
-      mv ../libraries/* .
+      #mv ../libraries/* .
 
       mkdir -p ./build/install/lib
       mkdir ./build/install/lib64
@@ -55,15 +55,22 @@ steps:
     condition: failed() # only run this job if the build step failed
     displayName: "Print log files (failed build only)"
 
-  - task: PublishBuildArtifacts@1
+#  - task: PublishBuildArtifacts@1
+#    inputs:
+#      pathtoPublish: $(Build.BinariesDirectory)
+#      artifactName: final-jar
+#    condition: succeeded()
+
+  - task: GithubRelease@0
+    displayName: 'GitHub Release'
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags')
     inputs:
-      pathtoPublish: $(Build.BinariesDirectory)
-      artifactName: final-jar
-    condition: succeeded()
+      gitHubConnection: github_tiledb
+      repositoryName: TileDB-Inc/TileDB-Java
+      action: "create"
+      assets: $(Build.BinariesDirectory)/*.jar
 
   - bash: |
-      echo "USERNAME"
-      echo $SONATYPE_USERNAME
       ./ci/upload_to_maven.sh
     env:
       GPG_KEY_ID: $(GPG_KEY_ID)
@@ -71,4 +78,4 @@ steps:
       GPG_SECRET_KEYS_ENC: $(GPG_SECRET_KEYS_ENC)
       SONATYPE_USERNAME: $(SONATYPE_USERNAME)
       SONATYPE_PASSWORD: $(SONATYPE_PASSWORD)
-    displayName: "Publish"
+    displayName: "Publish to Maven"
