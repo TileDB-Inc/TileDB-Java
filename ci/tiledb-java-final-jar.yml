@@ -5,6 +5,7 @@ steps:
   - bash: |
       unset SYSTEM
       set +e
+
       mv ../libraries/* .
 
       mkdir -p ./build/install/lib
@@ -59,3 +60,15 @@ steps:
       pathtoPublish: $(Build.BinariesDirectory)
       artifactName: final-jar
     condition: succeeded()
+
+  - bash: |
+      echo "USERNAME"
+      echo $SONATYPE_USERNAME
+      ./ci/upload_to_maven.sh
+    env:
+      GPG_KEY_ID: $(GPG_KEY_ID)
+      GPG_PASSPHRASE: $(GPG_PASSPHRASE)
+      GPG_SECRET_KEYS_ENC: $(GPG_SECRET_KEYS_ENC)
+      SONATYPE_USERNAME: $(SONATYPE_USERNAME)
+      SONATYPE_PASSWORD: $(SONATYPE_PASSWORD)
+    displayName: "Publish"

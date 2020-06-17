@@ -69,7 +69,6 @@ stages:
           vmImage: $(imageName)
         steps:
           - template: ci/tiledb-java-windows-release.yml
-
   - stage: Release
     condition: startsWith(variables['Build.SourceBranch'], 'refs/tags')
     jobs:
