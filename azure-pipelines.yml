@@ -13,65 +13,124 @@ trigger:
       - "*"
 
 stages:
-#  - stage: CI
-#    condition: not(startsWith(variables['Build.SourceBranch'], 'refs/tags'))
-#    jobs:
-#      - job: Windows
-#        strategy:
-#          matrix:
-#            VS2019:
-#              imageName: 'windows-2019'
-#              TILEDB_S3: ON
-#        pool:
-#          vmImage: $(imageName)
-#        steps:
-#          - task: Gradle@2
-#            inputs:
-#              workingDirectory: ''
-#              gradleWrapperFile: 'gradlew.bat'
-#              gradleOptions: '-Xmx3072m'
-#              javaHomeOption: 'JDKVersion'
-#              jdkVersionOption: 'default'
-#              tasks: 'checkFormat assemble test'
-#
-#      - job: Linux_OSX
-#        strategy:
-#          matrix:
-#            ubuntu_18:
-#              imageName: 'ubuntu-18.04'
-#            macOS:
-#              imageName: 'macOS-10.14'
-#        pool:
-#          vmImage: $(imageName)
-#        steps:
-#          - template: ci/tiledb-java-linux_osx.yml
-#
-#  - stage: BuildNativeLibs
-#    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
-#    jobs:
-#      - job: Linux_OSX
-#        strategy:
-#          matrix:
-#            ubuntu_18:
-#              imageName: 'ubuntu-18.04'
-#            macOS:
-#              imageName: 'macOS-10.14'
-#        pool:
-#          vmImage: $(imageName)
-#        steps:
-#          - template: ci/tiledb-java-linux_osx-release.yml
-#      - job: Windows
-#        strategy:
-#          matrix:
-#            windows_19:
-#              imageName: 'windows-2019'
-#        pool:
-#          vmImage: $(imageName)
-#        steps:
-#          - template: ci/tiledb-java-windows-release.yml
+  - stage: CI
+    condition: not(startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+    jobs:
+      - job: Windows
+        strategy:
+          matrix:
+            VS2019:
+              imageName: 'windows-2019'
+              TILEDB_S3: ON
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - task: Gradle@2
+            inputs:
+              workingDirectory: ''
+              gradleWrapperFile: 'gradlew.bat'
+              gradleOptions: '-Xmx3072m'
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: 'default'
+              tasks: 'checkFormat assemble test'
 
-  - stage: Release
-    condition: or(eq(startsWith(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+      - job: Linux_OSX
+        strategy:
+          matrix:
+            ubuntu_18:
+              imageName: 'ubuntu-18.04'
+            macOS:
+              imageName: 'macOS-10.14'
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - template: ci/tiledb-java-linux_osx.yml
+
+  - stage: BuildNativeLibs
+    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+    jobs:
+      - job: Linux_OSX
+        strategy:
+          matrix:
+            ubuntu_18:
+              imageName: 'ubuntu-18.04'
+            macOS:
+              imageName: 'macOS-10.14'
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - template: ci/tiledb-java-linux_osx-release.yml
+      - job: Windows
+        strategy:
+          matrix:
+            windows_19:
+              imageName: 'windows-2019'
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - template: ci/tiledb-java-windows-release.yml
+
+  - stage: GitHubRelease
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags')
+    jobs:
+      - job: All_OS
+        strategy:
+          matrix:
+            ubuntu_18:
+              imageName: 'ubuntu-18.04'
+        pool:
+          vmImage: $(imageName)
+
+        steps:
+          - download: current
+            patterns: '**/*.tar.gz'
+
+          - bash: |
+              unset SYSTEM
+              set +e
+
+              mv ../libraries/* .
+
+              mkdir -p ./build/install/lib
+              mkdir ./build/install/lib64
+              mkdir ./build/tiledb_jni/
+              mkdir ./build/tiledb_jni/Release
+              mkdir ./build/install/bin
+
+              for arch in $(ls | grep .tar.gz)
+              do
+              tar -xf $arch
+              done
+
+              # OSX
+              mv libtiledb.dylib ./build/install/lib
+              mv libtiledbjni.dylib ./build/tiledb_jni
+
+              # Linux
+              cp libtiledb.so ./build/install/lib
+              mv libtiledb.so ./build/install/lib64
+              mv libtiledbjni.so ./build/tiledb_jni
+
+              # Windows
+              mv tbb.dll ./build/install/bin
+              mv tiledb.dll ./build/install/bin
+              mv tiledbjni.dll ./build/tiledb_jni/Release
+
+              ./gradlew assemble
+
+              cp build/libs/*.jar $BUILD_BINARIESDIRECTORY
+
+          - task: GithubRelease@0
+            displayName: 'GitHub Release'
+            inputs:
+              gitHubConnection: github_tiledb
+              repositoryName: TileDB-Inc/TileDB-Java
+              tag: $(Build.SourceBranchName)
+              action: "edit"
+              assets: $(Build.BinariesDirectory)/jars/*.jar
+
+  - stage: FinalJar
+    condition: or( eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
     jobs:
       - job: All_OS
         strategy:

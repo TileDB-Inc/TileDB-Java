@@ -6,7 +6,7 @@ steps:
       unset SYSTEM
       set +e
 
-      #mv ../libraries/* .
+      mv ../libraries/* .
 
       mkdir -p ./build/install/lib
       mkdir ./build/install/lib64
@@ -35,8 +35,6 @@ steps:
 
       ./gradlew assemble
 
-      PROJECT_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
-
       cp build/libs/*.jar $BUILD_BINARIESDIRECTORY
 
     displayName: 'Building the Fat Jar'
@@ -55,20 +53,12 @@ steps:
     condition: failed() # only run this job if the build step failed
     displayName: "Print log files (failed build only)"
 
-#  - task: PublishBuildArtifacts@1
-#    inputs:
-#      pathtoPublish: $(Build.BinariesDirectory)
-#      artifactName: final-jar
-#    condition: succeeded()
-
-  - task: GithubRelease@0
-    displayName: 'GitHub Release'
-    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags')
+  - task: PublishBuildArtifacts@1
     inputs:
-      gitHubConnection: github_tiledb
-      repositoryName: TileDB-Inc/TileDB-Java
-      action: "create"
-      assets: $(Build.BinariesDirectory)/*.jar
+      pathtoPublish: $(Build.BinariesDirectory)
+      artifactName: final-jar
+    condition: succeeded()
+
 
   - bash: |
       ./ci/upload_to_maven.sh
