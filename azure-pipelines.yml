@@ -13,62 +13,62 @@ trigger:
       - "*"
 
 stages:
-  - stage: CI
-    condition: not(startsWith(variables['Build.SourceBranch'], 'refs/tags'))
-    jobs:
-      - job: Windows
-        strategy:
-          matrix:
-            VS2019:
-              imageName: 'windows-2019'
-              TILEDB_S3: ON
-        pool:
-          vmImage: $(imageName)
-        steps:
-          - task: Gradle@2
-            inputs:
-              workingDirectory: ''
-              gradleWrapperFile: 'gradlew.bat'
-              gradleOptions: '-Xmx3072m'
-              javaHomeOption: 'JDKVersion'
-              jdkVersionOption: 'default'
-              tasks: 'checkFormat assemble test'
-
-      - job: Linux_OSX
-        strategy:
-          matrix:
-            ubuntu_18:
-              imageName: 'ubuntu-18.04'
-            macOS:
-              imageName: 'macOS-10.14'
-        pool:
-          vmImage: $(imageName)
-        steps:
-          - template: ci/tiledb-java-linux_osx.yml
-
-  - stage: BuildNativeLibs
-    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
-    jobs:
-      - job: Linux_OSX
-        strategy:
-          matrix:
-            ubuntu_18:
-              imageName: 'ubuntu-18.04'
-            macOS:
-              imageName: 'macOS-10.14'
-        pool:
-          vmImage: $(imageName)
-        steps:
-          - template: ci/tiledb-java-linux_osx-release.yml
-      - job: Windows
-        strategy:
-          matrix:
-            windows_19:
-              imageName: 'windows-2019'
-        pool:
-          vmImage: $(imageName)
-        steps:
-          - template: ci/tiledb-java-windows-release.yml
+#  - stage: CI
+#    condition: not(startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+#    jobs:
+#      - job: Windows
+#        strategy:
+#          matrix:
+#            VS2019:
+#              imageName: 'windows-2019'
+#              TILEDB_S3: ON
+#        pool:
+#          vmImage: $(imageName)
+#        steps:
+#          - task: Gradle@2
+#            inputs:
+#              workingDirectory: ''
+#              gradleWrapperFile: 'gradlew.bat'
+#              gradleOptions: '-Xmx3072m'
+#              javaHomeOption: 'JDKVersion'
+#              jdkVersionOption: 'default'
+#              tasks: 'checkFormat assemble test'
+#
+#      - job: Linux_OSX
+#        strategy:
+#          matrix:
+#            ubuntu_18:
+#              imageName: 'ubuntu-18.04'
+#            macOS:
+#              imageName: 'macOS-10.14'
+#        pool:
+#          vmImage: $(imageName)
+#        steps:
+#          - template: ci/tiledb-java-linux_osx.yml
+#
+#  - stage: BuildNativeLibs
+#    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+#    jobs:
+#      - job: Linux_OSX
+#        strategy:
+#          matrix:
+#            ubuntu_18:
+#              imageName: 'ubuntu-18.04'
+#            macOS:
+#              imageName: 'macOS-10.14'
+#        pool:
+#          vmImage: $(imageName)
+#        steps:
+#          - template: ci/tiledb-java-linux_osx-release.yml
+#      - job: Windows
+#        strategy:
+#          matrix:
+#            windows_19:
+#              imageName: 'windows-2019'
+#        pool:
+#          vmImage: $(imageName)
+#        steps:
+#          - template: ci/tiledb-java-windows-release.yml
 
   - stage: GitHubRelease
     condition: startsWith(variables['Build.SourceBranch'], 'refs/tags')
@@ -89,7 +89,7 @@ stages:
               unset SYSTEM
               set +e
 
-              mv ../libraries/* .
+              #mv ../libraries/* .
 
               mkdir -p ./build/install/lib
               mkdir ./build/install/lib64
@@ -118,7 +118,14 @@ stages:
 
               ./gradlew assemble
 
-              cp build/libs/*.jar $BUILD_BINARIESDIRECTORY
+              echo "ls"
+              ls
+
+              echo "ls build"
+              ls ./build
+
+              mkdir $BUILD_BINARIESDIRECTORY/jars
+              cp ./build/libs/*.jar $BUILD_BINARIESDIRECTORY/jars
 
           - task: GithubRelease@0
             displayName: 'GitHub Release'
