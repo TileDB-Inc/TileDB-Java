@@ -118,7 +118,8 @@ stages:
 
               ./gradlew assemble
 
-              cp build/libs/*.jar $BUILD_BINARIESDIRECTORY
+              mkdir $BUILD_BINARIESDIRECTORY/jars
+              cp ./build/libs/*.jar $BUILD_BINARIESDIRECTORY/jars
 
           - task: GithubRelease@0
             displayName: 'GitHub Release'
