@@ -12,4 +12,3 @@ export PROJECT_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print
 if [[ ! $(echo "${PROJECT_VERSION}" | grep "SNAPSHOT") ]]; then
   ./gradlew closeAndReleaseRepository
 fi
-echo "Update to maven completed"
