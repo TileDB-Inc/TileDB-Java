@@ -4,12 +4,12 @@ plugins {
    id 'maven-publish'
    id 'signing'
    id 'com.github.sherter.google-java-format' version '0.8'
-   id 'io.codearte.nexus-staging' version '0.12.0'
+   id 'io.codearte.nexus-staging' version '0.21.2'
    id 'com.google.osdetector' version '1.6.0'
 }
 
 group 'io.tiledb'
-version '0.3.0-SNAPSHOT'
+version '0.0.1-test'
 
 repositories {
     jcenter()
@@ -215,7 +215,6 @@ publishing {
         }
     }
 }
-
 
 signing {
     sign publishing.publications.mavenJava
