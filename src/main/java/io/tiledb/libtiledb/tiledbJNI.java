@@ -1188,6 +1188,10 @@ public class tiledbJNI {
 
   public static final native int tiledb_stats_dump_str(long jarg1);
 
+  public static final native int tiledb_stats_raw_dump(long jarg1);
+
+  public static final native int tiledb_stats_raw_dump_str(long jarg1);
+
   public static final native int tiledb_stats_free_str(long jarg1);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);

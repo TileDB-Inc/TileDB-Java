@@ -9503,6 +9503,34 @@ SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1stats_1dump_1
 }
 
 
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1stats_1raw_1dump(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  FILE *arg1 = (FILE *) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(FILE **)&jarg1; 
+  result = (int32_t)tiledb_stats_raw_dump(arg1);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1stats_1raw_1dump_1str(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  char **arg1 = (char **) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(char ***)&jarg1; 
+  result = (int32_t)tiledb_stats_raw_dump_str(arg1);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1stats_1free_1str(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jint jresult = 0 ;
   char **arg1 = (char **) 0 ;

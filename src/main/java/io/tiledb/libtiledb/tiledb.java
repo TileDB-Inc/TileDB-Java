@@ -3155,6 +3155,14 @@ public class tiledb implements tiledbConstants {
     return tiledbJNI.tiledb_stats_dump_str(SWIGTYPE_p_p_char.getCPtr(out));
   }
 
+  public static int tiledb_stats_raw_dump(SWIGTYPE_p_FILE out) {
+    return tiledbJNI.tiledb_stats_raw_dump(SWIGTYPE_p_FILE.getCPtr(out));
+  }
+
+  public static int tiledb_stats_raw_dump_str(SWIGTYPE_p_p_char out) {
+    return tiledbJNI.tiledb_stats_raw_dump_str(SWIGTYPE_p_p_char.getCPtr(out));
+  }
+
   public static int tiledb_stats_free_str(SWIGTYPE_p_p_char out) {
     return tiledbJNI.tiledb_stats_free_str(SWIGTYPE_p_p_char.getCPtr(out));
   }
