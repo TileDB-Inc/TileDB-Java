@@ -8,6 +8,8 @@ import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -170,6 +172,115 @@ public class QueryTest {
       array.close();
       dim1Array.close();
       dim2Array.close();
+    }
+  }
+
+  public static class NIODenseTests {
+
+    @Rule public TemporaryFolder temp = new TemporaryFolder();
+
+    private String arrayURI;
+
+    @Before
+    public void setup() throws Exception {
+      ctx = new Context();
+      arrayURI = temp.getRoot().toPath().resolve("query").toString();
+      arrayCreate();
+      arrayWrite();
+    }
+
+    public void arrayCreate() throws Exception {
+      // The array will be 4x4 with dimensions "rows" and "cols", with domain [1,4].
+      Dimension<Integer> rows =
+          new Dimension<>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+      Dimension<Integer> cols =
+          new Dimension<>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+
+      // Create and set getDomain
+      Domain domain = new Domain(ctx);
+      domain.addDimension(rows);
+      domain.addDimension(cols);
+
+      // Add two attributes "a1" and "a2", so each (i,j) cell can store
+      // a character on "a1" and a vector of two floats on "a2".
+      Attribute a1 = new Attribute(ctx, "a1", Character.class);
+      Attribute a2 = new Attribute(ctx, "a2", Float.class);
+      a2.setCellValNum(2);
+
+      ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
+      schema.setTileOrder(TILEDB_ROW_MAJOR);
+      schema.setCellOrder(TILEDB_ROW_MAJOR);
+      schema.setDomain(domain);
+      schema.addAttribute(a1);
+      schema.addAttribute(a2);
+
+      Array.create(arrayURI, schema);
+    }
+
+    public void arrayWrite() throws Exception {
+      String str = "abcdefghijklmnop";
+      float[] floatArr =
+          new float[] {
+            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
+            4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f,
+            8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f,
+            12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+          };
+
+      ByteBuffer a1 = ByteBuffer.allocateDirect(1 * str.length());
+      ByteBuffer a2 = ByteBuffer.allocateDirect(4 * floatArr.length);
+
+      a1.order(ByteOrder.nativeOrder());
+      a2.order(ByteOrder.nativeOrder());
+
+      for (int i = 0; i < floatArr.length; ++i) {
+        if (i < str.length()) a1.put((byte) str.charAt(i));
+        a2.putFloat(floatArr[i]);
+      }
+
+      // Create query
+      try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+          Query query = new Query(array)) {
+
+        query.setLayout(TILEDB_ROW_MAJOR);
+        query.setBuffer("a1", a1);
+        query.setBuffer("a2", a2);
+        // Submit query
+        query.submit();
+      }
+    }
+
+    @Test
+    public void queryTestNIOReadDims() throws Exception {
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+      Query query = new Query(array, TILEDB_READ);
+
+      int bufferSize = 16;
+
+      ByteBuffer d1 = query.setBuffer("rows", bufferSize);
+      ByteBuffer d2 = query.setBuffer("cols", bufferSize);
+      ByteBuffer a1 = query.setBuffer("a1", bufferSize);
+      ByteBuffer a2 = query.setBuffer("a2", bufferSize);
+
+      query.addRange(0, 1, 4);
+      query.addRange(1, 1, 4);
+
+      query.setLayout(TILEDB_ROW_MAJOR);
+
+      while (query.getQueryStatus() != QueryStatus.TILEDB_COMPLETED) {
+        query.submit();
+
+        while (d1.hasRemaining() && d2.hasRemaining() && a1.hasRemaining() && a2.hasRemaining()) {
+
+          System.out.printf(
+              "%d, %d -> [%s, %f]\n", d1.getInt(), d2.getInt(), (char) a1.get(), a2.getFloat());
+        }
+        d1.clear();
+        d2.clear();
+        a1.clear();
+        a2.clear();
+      }
     }
   }
 

@@ -28,6 +28,8 @@ import static io.tiledb.java.api.Datatype.TILEDB_UINT64;
 
 import io.tiledb.libtiledb.*;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -465,6 +467,78 @@ public class Query implements AutoCloseable {
             ctx.getCtxp(), queryp, attr, buffer.toVoidPointer(), buffer_size.cast()));
 
     return this;
+  }
+
+  /**
+   * * Sets a NIO ByteBuffer
+   *
+   * @param attr The attribute
+   * @param bufferElements
+   * @return The NIO ByteBuffer
+   * @throws TileDBError
+   */
+  public synchronized ByteBuffer setBuffer(String attr, long bufferElements) throws TileDBError {
+    if (bufferElements <= 0) {
+      throw new TileDBError("Number of buffer elements must be >= 1");
+    }
+
+    Datatype dt;
+
+    try (ArraySchema schema = array.getSchema()) {
+      try (Domain domain = schema.getDomain()) {
+        if (domain.hasDimension(attr)) {
+          dt = domain.getDimension(attr).getType();
+        } else {
+          try (Attribute attribute = schema.getAttribute(attr)) {
+            dt = attribute.getType();
+          }
+        }
+      }
+    }
+
+    int size = Util.castLongToInt(bufferElements * dt.getNativeSize());
+
+    ByteBuffer buffer = ByteBuffer.allocateDirect(size);
+
+    buffer.order(ByteOrder.nativeOrder());
+
+    uint64_tArray values_array_size = new uint64_tArray(1);
+    values_array_size.setitem(0, BigInteger.valueOf(size));
+
+    ctx.handleError(
+        tiledb.tiledb_query_set_buffer_nio(
+            ctx.getCtxp(), queryp, attr, buffer, values_array_size.cast()));
+
+    return buffer;
+  }
+
+  public synchronized ByteBuffer setBuffer(String attr, ByteBuffer buffer) throws TileDBError {
+    if (buffer.capacity() <= 0) {
+      throw new TileDBError("Number of buffer elements must be >= 1");
+    }
+
+    Datatype dt;
+
+    try (ArraySchema schema = array.getSchema()) {
+      try (Domain domain = schema.getDomain()) {
+        if (domain.hasDimension(attr)) {
+          dt = domain.getDimension(attr).getType();
+        } else {
+          try (Attribute attribute = schema.getAttribute(attr)) {
+            dt = attribute.getType();
+          }
+        }
+      }
+    }
+
+    uint64_tArray values_array_size = new uint64_tArray(1);
+    values_array_size.setitem(0, BigInteger.valueOf(buffer.capacity()));
+
+    ctx.handleError(
+        tiledb.tiledb_query_set_buffer_nio(
+            ctx.getCtxp(), queryp, attr, buffer, values_array_size.cast()));
+
+    return buffer;
   }
 
   /**
