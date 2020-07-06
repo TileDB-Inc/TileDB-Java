@@ -8,6 +8,8 @@
 
 package io.tiledb.libtiledb;
 
+import java.nio.ByteBuffer;
+
 public class tiledbJNI {
 
   static {
@@ -920,6 +922,9 @@ public class tiledbJNI {
   public static final native int tiledb_query_set_buffer(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
+  public static final native int tiledb_query_set_buffer_nio(
+      long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
+
   public static final native int tiledb_query_set_buffer_var(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6, long jarg7);
 
@@ -1187,6 +1192,10 @@ public class tiledbJNI {
   public static final native int tiledb_stats_dump(long jarg1);
 
   public static final native int tiledb_stats_dump_str(long jarg1);
+
+  public static final native int tiledb_stats_raw_dump(long jarg1);
+
+  public static final native int tiledb_stats_raw_dump_str(long jarg1);
 
   public static final native int tiledb_stats_free_str(long jarg1);
 

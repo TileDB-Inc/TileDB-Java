@@ -8,6 +8,8 @@ import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -170,6 +172,271 @@ public class QueryTest {
       array.close();
       dim1Array.close();
       dim2Array.close();
+    }
+  }
+
+  public static class NIODenseTests {
+
+    @Rule public TemporaryFolder temp = new TemporaryFolder();
+
+    private String arrayURI;
+
+    @Before
+    public void setup() throws Exception {
+      ctx = new Context();
+      arrayURI = temp.getRoot().toPath().resolve("query").toString();
+      arrayCreate();
+      arrayWrite();
+    }
+
+    public void arrayCreate() throws Exception {
+      // The array will be 4x4 with dimensions "rows" and "cols", with domain [1,4].
+      Dimension<Integer> rows =
+          new Dimension<>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+      Dimension<Integer> cols =
+          new Dimension<>(ctx, "cols", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+
+      // Create and set getDomain
+      Domain domain = new Domain(ctx);
+      domain.addDimension(rows);
+      domain.addDimension(cols);
+
+      // Add two attributes "a1" and "a2", so each (i,j) cell can store
+      // a character on "a1" and a vector of two floats on "a2".
+      Attribute a1 = new Attribute(ctx, "a1", Character.class);
+      Attribute a2 = new Attribute(ctx, "a2", Float.class);
+      a2.setCellValNum(2);
+
+      ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
+      schema.setTileOrder(TILEDB_ROW_MAJOR);
+      schema.setCellOrder(TILEDB_ROW_MAJOR);
+      schema.setDomain(domain);
+      schema.addAttribute(a1);
+      schema.addAttribute(a2);
+
+      Array.create(arrayURI, schema);
+    }
+
+    public void arrayWrite() throws Exception {
+      String str = "abcdefghijklmnop";
+      float[] floatArr =
+          new float[] {
+            0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
+            4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f,
+            8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f,
+            12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+          };
+
+      ByteBuffer a1 = ByteBuffer.allocateDirect(1 * str.length());
+      ByteBuffer a2 = ByteBuffer.allocateDirect(4 * floatArr.length);
+
+      a1.order(ByteOrder.nativeOrder());
+      a2.order(ByteOrder.nativeOrder());
+
+      for (int i = 0; i < floatArr.length; ++i) {
+        if (i < str.length()) a1.put((byte) str.charAt(i));
+        a2.putFloat(floatArr[i]);
+      }
+
+      // Create query
+      try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+          Query query = new Query(array)) {
+
+        query.setLayout(TILEDB_ROW_MAJOR);
+        query.setBuffer("a1", a1);
+        query.setBuffer("a2", a2);
+        // Submit query
+        query.submit();
+      }
+    }
+
+    @Test
+    public void queryTestNIOReadArray() throws Exception {
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+      Query query = new Query(array, TILEDB_READ);
+
+      int bufferSize = 4;
+
+      ByteBuffer d1 = query.setBuffer("rows", bufferSize);
+      ByteBuffer d2 = query.setBuffer("cols", bufferSize);
+
+      query.addRange(0, 1, 4);
+      query.addRange(1, 1, 4);
+
+      query.setLayout(TILEDB_ROW_MAJOR);
+
+      int[] d1_result = new int[16];
+      int[] d2_result = new int[16];
+      int idx = 0;
+
+      while (query.getQueryStatus() != QueryStatus.TILEDB_COMPLETED) {
+        query.submit();
+
+        while (d1.hasRemaining() && d2.hasRemaining()) {
+          d1_result[idx] = d1.getInt();
+          d2_result[idx] = d2.getInt();
+          idx++;
+        }
+        d1.clear();
+        d2.clear();
+      }
+
+      Assert.assertArrayEquals(
+          new int[] {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4}, d1_result);
+      Assert.assertArrayEquals(
+          new int[] {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4}, d2_result);
+    }
+
+    @Test
+    public void arrayReadTest() throws Exception {
+      // Create array and query
+      try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+          Query query = new Query(array, TILEDB_READ)) {
+
+        // Slice only rows 1, 2 and cols 2, 3, 4
+        query.addRange(0, 1, 2);
+        query.addRange(1, 2, 4);
+        query.setLayout(TILEDB_ROW_MAJOR);
+
+        ByteBuffer dim1Buffer = query.setBuffer("rows", 3);
+        ByteBuffer dim2Buffer = query.setBuffer("cols", 3);
+        ByteBuffer a1Buffer = query.setBuffer("a1", 3);
+        ByteBuffer a2Buffer = query.setBuffer("a2", 6);
+
+        // Submit query
+        query.submit();
+
+        int[] dim1 = new int[3];
+        int[] dim2 = new int[3];
+        byte[] a1 = new byte[3];
+        float[] a2 = new float[6];
+
+        int idx = 0;
+        while (dim1Buffer.hasRemaining()) {
+          dim1[idx++] = dim1Buffer.getInt();
+        }
+
+        idx = 0;
+        while (dim2Buffer.hasRemaining()) {
+          dim2[idx++] = dim2Buffer.getInt();
+        }
+
+        idx = 0;
+        while (a1Buffer.hasRemaining()) {
+          a1[idx++] = a1Buffer.get();
+        }
+
+        idx = 0;
+        while (a2Buffer.hasRemaining()) {
+          a2[idx++] = a2Buffer.getFloat();
+        }
+
+        Assert.assertArrayEquals(new int[] {1, 1, 1}, dim1);
+        Assert.assertArrayEquals(new int[] {2, 3, 4}, dim2);
+        Assert.assertArrayEquals(new byte[] {'b', 'c', 'd'}, a1);
+        Assert.assertArrayEquals(new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f}, a2, 0.01f);
+      }
+    }
+
+    @Test
+    public void arrayReadTestCustomBufferWithDifferentOrder() throws Exception {
+      // Create array and query
+      try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+          Query query = new Query(array, TILEDB_READ)) {
+
+        // Slice only rows 1, 2 and cols 2, 3, 4
+        query.addRange(0, 1, 2);
+        query.addRange(1, 2, 4);
+        query.setLayout(TILEDB_ROW_MAJOR);
+
+        // Set the opposite byte order from the native system
+        ByteOrder order =
+            ByteOrder.nativeOrder().equals(ByteOrder.BIG_ENDIAN)
+                ? ByteOrder.LITTLE_ENDIAN
+                : ByteOrder.BIG_ENDIAN;
+
+        ByteBuffer dim1Buffer =
+            query.setBuffer("rows", ByteBuffer.allocateDirect(3 * 4).order(order));
+        ByteBuffer dim2Buffer =
+            query.setBuffer("cols", ByteBuffer.allocateDirect(3 * 4).order(order));
+        ByteBuffer a1Buffer = query.setBuffer("a1", ByteBuffer.allocateDirect(3).order(order));
+        ByteBuffer a2Buffer = query.setBuffer("a2", ByteBuffer.allocateDirect(6 * 4).order(order));
+
+        // Submit query
+        query.submit();
+
+        int[] dim1 = new int[3];
+        int[] dim2 = new int[3];
+        byte[] a1 = new byte[3];
+        float[] a2 = new float[6];
+
+        int idx = 0;
+        while (dim1Buffer.hasRemaining()) {
+          dim1[idx++] = dim1Buffer.getInt();
+        }
+
+        idx = 0;
+        while (dim2Buffer.hasRemaining()) {
+          dim2[idx++] = dim2Buffer.getInt();
+        }
+
+        idx = 0;
+        while (a1Buffer.hasRemaining()) {
+          a1[idx++] = a1Buffer.get();
+        }
+
+        idx = 0;
+        while (a2Buffer.hasRemaining()) {
+          a2[idx++] = a2Buffer.getFloat();
+        }
+
+        Assert.assertArrayEquals(new int[] {1, 1, 1}, dim1);
+        Assert.assertArrayEquals(new int[] {2, 3, 4}, dim2);
+        Assert.assertArrayEquals(new byte[] {'b', 'c', 'd'}, a1);
+        Assert.assertArrayEquals(new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f}, a2, 0.01f);
+      }
+    }
+
+    @Test
+    public void queryTestNIOGetByteBuffer() throws Exception {
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+      Query query = new Query(array, TILEDB_READ);
+
+      int bufferSize = 16;
+
+      query.setBuffer("rows", bufferSize);
+
+      Assert.assertEquals(query.getByteBuffer("rows").capacity(), bufferSize * 4);
+      Assert.assertTrue(query.getByteBuffer("rows").isDirect());
+      Assert.assertEquals(query.getByteBuffer("rows").order(), ByteOrder.nativeOrder());
+    }
+
+    @Test()
+    public void queryTestNIOGetByteBuffeErrors() throws Exception {
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+      Query query = new Query(array, TILEDB_READ);
+
+      int bufferSize = 16;
+
+      try {
+        query.setBuffer("rows", ByteBuffer.allocate(bufferSize));
+        Assert.fail("An exception should be thrown in the ByteBuffer provided is not direct");
+      } catch (TileDBError error) {
+
+      }
+
+      // Set the opposite byte order from the native system
+      ByteOrder order =
+          ByteOrder.nativeOrder().equals(ByteOrder.BIG_ENDIAN)
+              ? ByteOrder.LITTLE_ENDIAN
+              : ByteOrder.BIG_ENDIAN;
+
+      // The Byte Order should be automatically changed to the native order
+      ByteBuffer b = query.setBuffer("rows", ByteBuffer.allocateDirect(bufferSize).order(order));
+      Assert.assertEquals(b.order(), ByteOrder.nativeOrder());
     }
   }
 

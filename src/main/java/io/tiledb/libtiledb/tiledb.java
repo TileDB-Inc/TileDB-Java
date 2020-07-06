@@ -8,6 +8,8 @@
 
 package io.tiledb.libtiledb;
 
+import java.nio.ByteBuffer;
+
 public class tiledb implements tiledbConstants {
   public static SWIGTYPE_p_p_char new_charpArray(int nelements) {
     long cPtr = tiledbJNI.new_charpArray(nelements);
@@ -2131,6 +2133,20 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_size));
   }
 
+  public static int tiledb_query_set_buffer_nio(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_query_t query,
+      String name,
+      ByteBuffer buffer,
+      SWIGTYPE_p_unsigned_long_long buffer_size) {
+    return tiledbJNI.tiledb_query_set_buffer_nio(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_query_t.getCPtr(query),
+        name,
+        buffer,
+        SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_size));
+  }
+
   public static int tiledb_query_set_buffer_var(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_query_t query,
@@ -3153,6 +3169,14 @@ public class tiledb implements tiledbConstants {
 
   public static int tiledb_stats_dump_str(SWIGTYPE_p_p_char out) {
     return tiledbJNI.tiledb_stats_dump_str(SWIGTYPE_p_p_char.getCPtr(out));
+  }
+
+  public static int tiledb_stats_raw_dump(SWIGTYPE_p_FILE out) {
+    return tiledbJNI.tiledb_stats_raw_dump(SWIGTYPE_p_FILE.getCPtr(out));
+  }
+
+  public static int tiledb_stats_raw_dump_str(SWIGTYPE_p_p_char out) {
+    return tiledbJNI.tiledb_stats_raw_dump_str(SWIGTYPE_p_p_char.getCPtr(out));
   }
 
   public static int tiledb_stats_free_str(SWIGTYPE_p_p_char out) {
