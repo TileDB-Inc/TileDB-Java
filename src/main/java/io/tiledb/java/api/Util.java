@@ -29,4 +29,11 @@ public class Util {
 
     return results;
   }
+
+  public static int castLongToInt(long num) throws TileDBError {
+    if (num > Integer.MAX_VALUE)
+      throw new TileDBError(num + " is larger that the integer max value");
+
+    return (int) num;
+  }
 }

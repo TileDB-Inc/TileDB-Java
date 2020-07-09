@@ -28,6 +28,8 @@ import static io.tiledb.java.api.Datatype.TILEDB_UINT64;
 
 import io.tiledb.libtiledb.*;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,6 +60,7 @@ public class Query implements AutoCloseable {
   private NativeArray subarray;
 
   private Map<String, NativeArray> buffers_;
+  private Map<String, ByteBuffer> byteBuffers_;
   private Map<String, Pair<NativeArray, NativeArray>> var_buffers_;
   private Map<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
 
@@ -78,6 +81,7 @@ public class Query implements AutoCloseable {
     this.querypp = _querypp;
     this.queryp = tiledb.tiledb_query_tpp_value(_querypp);
     this.buffers_ = Collections.synchronizedMap(new HashMap<>());
+    this.byteBuffers_ = Collections.synchronizedMap(new HashMap<>());
     this.var_buffers_ = Collections.synchronizedMap(new HashMap<>());
     this.buffer_sizes_ = Collections.synchronizedMap(new HashMap<>());
   }
@@ -465,6 +469,82 @@ public class Query implements AutoCloseable {
             ctx.getCtxp(), queryp, attr, buffer.toVoidPointer(), buffer_size.cast()));
 
     return this;
+  }
+
+  /**
+   * * Sets a NIO ByteBuffer
+   *
+   * @param attr The attribute
+   * @param bufferElements
+   * @return The NIO ByteBuffer
+   * @throws TileDBError
+   */
+  public synchronized ByteBuffer setBuffer(String attr, long bufferElements) throws TileDBError {
+    if (bufferElements <= 0) {
+      throw new TileDBError("Number of buffer elements must be >= 1");
+    }
+
+    Datatype dt;
+
+    try (ArraySchema schema = array.getSchema()) {
+      try (Domain domain = schema.getDomain()) {
+        if (domain.hasDimension(attr)) {
+          dt = domain.getDimension(attr).getType();
+        } else {
+          try (Attribute attribute = schema.getAttribute(attr)) {
+            dt = attribute.getType();
+          }
+        }
+      }
+    }
+
+    int size = Util.castLongToInt(bufferElements * dt.getNativeSize());
+
+    ByteBuffer buffer = ByteBuffer.allocateDirect(size);
+
+    // Set the byte order to the native system's native order
+    buffer.order(ByteOrder.nativeOrder());
+
+    this.byteBuffers_.put(attr, buffer);
+
+    this.setBuffer(attr, buffer);
+
+    return buffer;
+  }
+
+  /**
+   * * Sets a NIO ByteBuffer
+   *
+   * @param attr The attribute
+   * @param buffer The input NIO ByteBuffer
+   * @return The NIO ByteBuffer
+   * @throws TileDBError
+   */
+  public synchronized ByteBuffer setBuffer(String attr, ByteBuffer buffer) throws TileDBError {
+    if (buffer.capacity() <= 0) {
+      throw new TileDBError("Number of buffer elements must be >= 1");
+    }
+
+    if (!buffer.isDirect()) {
+      throw new TileDBError(
+          "The ByteBuffer provided is not direct. Please provide a direct buffer (ByteBuffer.allocateDirect(...))");
+    }
+
+    if (!buffer.order().equals(ByteOrder.nativeOrder())) {
+      // TODO: Add a logger component to Query class and a WARN here
+      buffer.order(ByteOrder.nativeOrder());
+    }
+
+    this.byteBuffers_.put(attr, buffer);
+
+    uint64_tArray values_array_size = new uint64_tArray(1);
+    values_array_size.setitem(0, BigInteger.valueOf(buffer.capacity()));
+
+    ctx.handleError(
+        tiledb.tiledb_query_set_buffer_nio(
+            ctx.getCtxp(), queryp, attr, buffer, values_array_size.cast()));
+
+    return buffer;
   }
 
   /**
@@ -883,6 +963,18 @@ public class Query implements AutoCloseable {
     } else {
       throw new TileDBError("Query attribute buffer does not exist: " + attr);
     }
+  }
+
+  /**
+   * Retrieves the ByteBuffer of attribute attr
+   *
+   * @param attr The attribute name
+   * @return The ByteBuffer
+   * @throws TileDBError A TileDB exception
+   */
+  public ByteBuffer getByteBuffer(String attr) throws TileDBError {
+    if (byteBuffers_.containsKey(attr)) return byteBuffers_.get(attr);
+    else throw new TileDBError("ByteBuffer does not exist for attribute: " + attr);
   }
 
   /**
