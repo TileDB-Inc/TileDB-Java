@@ -289,6 +289,44 @@ public class QueryTest {
     }
 
     @Test
+    public void queryTestNIOReadArrayArbitrarySize() throws Exception {
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+      Query query = new Query(array, TILEDB_READ);
+
+      int bufferSize = 4;
+
+      ByteBuffer d1 = query.setBuffer("rows", ByteBuffer.allocateDirect(10));
+      ByteBuffer d2 = query.setBuffer("cols", ByteBuffer.allocateDirect(10));
+
+      query.addRange(0, 1, 4);
+      query.addRange(1, 1, 4);
+
+      query.setLayout(TILEDB_ROW_MAJOR);
+
+      int[] d1_result = new int[16];
+      int[] d2_result = new int[16];
+      int idx = 0;
+
+      while (query.getQueryStatus() != QueryStatus.TILEDB_COMPLETED) {
+        query.submit();
+
+        while (d1.hasRemaining() && d2.hasRemaining()) {
+          d1_result[idx] = d1.getInt();
+          d2_result[idx] = d2.getInt();
+          idx++;
+        }
+        d1.clear();
+        d2.clear();
+      }
+
+      Assert.assertArrayEquals(
+          new int[] {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4}, d1_result);
+      Assert.assertArrayEquals(
+          new int[] {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4}, d2_result);
+    }
+
+    @Test
     public void arrayReadTest() throws Exception {
       // Create array and query
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
