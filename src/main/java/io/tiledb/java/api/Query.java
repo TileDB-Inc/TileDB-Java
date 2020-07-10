@@ -125,6 +125,13 @@ public class Query implements AutoCloseable {
    */
   public QueryStatus submit() throws TileDBError {
     ctx.handleError(tiledb.tiledb_query_submit(ctx.getCtxp(), queryp));
+
+    // Set the actual number of bytes received to each ByteBuffer
+    for (String attribute : byteBuffers_.keySet()) {
+      int nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
+      this.byteBuffers_.get(attribute).limit(nbytes);
+    }
+
     return getQueryStatus();
   }
 
@@ -502,11 +509,6 @@ public class Query implements AutoCloseable {
 
     ByteBuffer buffer = ByteBuffer.allocateDirect(size);
 
-    // Set the byte order to the native system's native order
-    buffer.order(ByteOrder.nativeOrder());
-
-    this.byteBuffers_.put(attr, buffer);
-
     this.setBuffer(attr, buffer);
 
     return buffer;
@@ -537,8 +539,13 @@ public class Query implements AutoCloseable {
 
     this.byteBuffers_.put(attr, buffer);
 
+    uint64_tArray offsets_array_size = new uint64_tArray(1);
     uint64_tArray values_array_size = new uint64_tArray(1);
+
+    offsets_array_size.setitem(0, BigInteger.valueOf(0));
     values_array_size.setitem(0, BigInteger.valueOf(buffer.capacity()));
+
+    buffer_sizes_.put(attr, new Pair<>(offsets_array_size, values_array_size));
 
     ctx.handleError(
         tiledb.tiledb_query_set_buffer_nio(
