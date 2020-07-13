@@ -2165,6 +2165,24 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_val_size));
   }
 
+  public static int tiledb_query_set_buffer_var_nio(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_query_t query,
+      String name,
+      ByteBuffer buffer_off,
+      SWIGTYPE_p_unsigned_long_long buffer_off_size,
+      ByteBuffer buffer_val,
+      SWIGTYPE_p_unsigned_long_long buffer_val_size) {
+    return tiledbJNI.tiledb_query_set_buffer_var_nio(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_query_t.getCPtr(query),
+        name,
+        buffer_off,
+        SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_off_size),
+        buffer_val,
+        SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_val_size));
+  }
+
   public static int tiledb_query_get_buffer(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_query_t query,

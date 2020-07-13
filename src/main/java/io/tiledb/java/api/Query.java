@@ -61,6 +61,7 @@ public class Query implements AutoCloseable {
 
   private Map<String, NativeArray> buffers_;
   private Map<String, ByteBuffer> byteBuffers_;
+  private Map<String, Pair<ByteBuffer, ByteBuffer>> varByteBuffers_;
   private Map<String, Pair<NativeArray, NativeArray>> var_buffers_;
   private Map<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
 
@@ -82,6 +83,7 @@ public class Query implements AutoCloseable {
     this.queryp = tiledb.tiledb_query_tpp_value(_querypp);
     this.buffers_ = Collections.synchronizedMap(new HashMap<>());
     this.byteBuffers_ = Collections.synchronizedMap(new HashMap<>());
+    this.varByteBuffers_ = Collections.synchronizedMap(new HashMap<>());
     this.var_buffers_ = Collections.synchronizedMap(new HashMap<>());
     this.buffer_sizes_ = Collections.synchronizedMap(new HashMap<>());
   }
@@ -130,6 +132,14 @@ public class Query implements AutoCloseable {
     for (String attribute : byteBuffers_.keySet()) {
       int nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
       this.byteBuffers_.get(attribute).limit(nbytes);
+    }
+
+    // Set the actual number of bytes received to each ByteBuffer
+    for (String attribute : varByteBuffers_.keySet()) {
+      int offset_nbytes = this.buffer_sizes_.get(attribute).getFirst().getitem(0).intValue();
+      int data_nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
+      this.varByteBuffers_.get(attribute).getFirst().limit(offset_nbytes);
+      this.varByteBuffers_.get(attribute).getSecond().limit(data_nbytes);
     }
 
     return getQueryStatus();
@@ -532,6 +542,11 @@ public class Query implements AutoCloseable {
           "The ByteBuffer provided is not direct. Please provide a direct buffer (ByteBuffer.allocateDirect(...))");
     }
 
+    if (!buffer.order().equals(ByteOrder.nativeOrder()) && buffer.position() > 0) {
+      throw new TileDBError(
+          "The order of the data ByteBuffer should be the same as the native order (ByteOrder.nativeOrder()) before values are inserted.");
+    }
+
     if (!buffer.order().equals(ByteOrder.nativeOrder())) {
       // TODO: Add a logger component to Query class and a WARN here
       buffer.order(ByteOrder.nativeOrder());
@@ -618,6 +633,66 @@ public class Query implements AutoCloseable {
             offsets_array.cast(),
             offsets_array_size.cast(),
             buffer.toVoidPointer(),
+            values_array_size.cast()));
+
+    return this;
+  }
+
+  /**
+   * Sets a ByteBuffer buffer for a variable-sized getAttribute.
+   *
+   * @param attr Attribute name
+   * @param offsets Offsets where a new element begins in the data buffer.
+   * @param buffer Buffer vector with elements of the attribute type.
+   * @exception TileDBError A TileDB exception
+   */
+  public synchronized Query setBuffer(String attr, ByteBuffer offsets, ByteBuffer buffer)
+      throws TileDBError {
+
+    if (attr.equals(tiledb.tiledb_coords())) {
+      throw new TileDBError("Cannot set coordinate buffer as variable sized.");
+    }
+
+    if (!offsets.order().equals(ByteOrder.nativeOrder()) && offsets.position() > 0) {
+      throw new TileDBError(
+          "The order of the offsets ByteBuffer should be the same as the native order (ByteOrder.nativeOrder()) before values are inserted.");
+    }
+
+    if (!buffer.order().equals(ByteOrder.nativeOrder()) && buffer.position() > 0) {
+      throw new TileDBError(
+          "The order of the data ByteBuffer should be the same as the native order (ByteOrder.nativeOrder()) before values are inserted.");
+    }
+
+    offsets.order(ByteOrder.nativeOrder());
+    buffer.order(ByteOrder.nativeOrder());
+
+    uint64_tArray offsets_array_size = new uint64_tArray(1);
+    uint64_tArray values_array_size = new uint64_tArray(1);
+
+    offsets_array_size.setitem(0, BigInteger.valueOf(offsets.capacity()));
+    values_array_size.setitem(0, BigInteger.valueOf(buffer.capacity()));
+
+    Pair<uint64_tArray, uint64_tArray> buffer_sizes =
+        new Pair<>(offsets_array_size, values_array_size);
+
+    // Close previous buffers if they exist for this attribute
+    if (var_buffers_.containsKey(attr)) {
+      Pair<NativeArray, NativeArray> prev_buffers = var_buffers_.get(attr);
+      prev_buffers.getFirst().close();
+      prev_buffers.getSecond().close();
+    }
+
+    buffer_sizes_.put(attr, buffer_sizes);
+    this.varByteBuffers_.put(attr, new Pair(offsets, buffer));
+
+    ctx.handleError(
+        tiledb.tiledb_query_set_buffer_var_nio(
+            ctx.getCtxp(),
+            queryp,
+            attr,
+            offsets,
+            offsets_array_size.cast(),
+            buffer,
             values_array_size.cast()));
 
     return this;
