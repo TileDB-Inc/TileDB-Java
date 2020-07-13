@@ -59,9 +59,8 @@ public class Query implements AutoCloseable {
 
   private NativeArray subarray;
 
-  private Map<String, NativeArray> buffers_;
   private Map<String, Pair<ByteBuffer, ByteBuffer>> byteBuffers_;
-  private Map<String, Pair<NativeArray, NativeArray>> var_buffers_;
+  private Map<String, Pair<NativeArray, NativeArray>> buffers_;
   private Map<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
 
   public Query(Array array, QueryType type) throws TileDBError {
@@ -82,7 +81,6 @@ public class Query implements AutoCloseable {
     this.queryp = tiledb.tiledb_query_tpp_value(_querypp);
     this.buffers_ = Collections.synchronizedMap(new HashMap<>());
     this.byteBuffers_ = Collections.synchronizedMap(new HashMap<>());
-    this.var_buffers_ = Collections.synchronizedMap(new HashMap<>());
     this.buffer_sizes_ = Collections.synchronizedMap(new HashMap<>());
   }
 
@@ -130,9 +128,17 @@ public class Query implements AutoCloseable {
     for (String attribute : byteBuffers_.keySet()) {
       boolean isVar;
 
-      if (array.getSchema().hasAttribute(attribute))
-        isVar = array.getSchema().getAttribute(attribute).isVar();
-      else isVar = array.getSchema().getDomain().getDimension(attribute).isVar();
+      try (ArraySchema arraySchema = array.getSchema()) {
+        if (arraySchema.hasAttribute(attribute)) {
+          try (Attribute attr = arraySchema.getAttribute(attribute)) {
+            isVar = attr.isVar();
+          }
+        } else {
+          try (Dimension dim = arraySchema.getDomain().getDimension(attribute)) {
+            isVar = dim.isVar();
+          }
+        }
+      }
 
       if (isVar) {
         int offset_nbytes = this.buffer_sizes_.get(attribute).getFirst().getitem(0).intValue();
@@ -414,10 +420,10 @@ public class Query implements AutoCloseable {
 
     // Close previous buffers if they exist for this attribute
     if (buffers_.containsKey(attr)) {
-      buffers_.get(attr).close();
+      buffers_.get(attr).getSecond().close();
     }
 
-    buffers_.put(attr, buffer);
+    buffers_.put(attr, new Pair(null, buffer));
     buffer_sizes_.put(attr, buffer_sizes);
 
     // Set the actual TileDB buffer
@@ -475,10 +481,10 @@ public class Query implements AutoCloseable {
 
     // Close previous buffers if they exist for this attribute
     if (buffers_.containsKey(attr)) {
-      buffers_.get(attr).close();
+      buffers_.get(attr).getSecond().close();
     }
 
-    buffers_.put(attr, buffer);
+    buffers_.put(attr, new Pair(null, buffer));
     buffer_sizes_.put(attr, buffer_sizes);
 
     // Set the actual TileDB buffer
@@ -619,13 +625,13 @@ public class Query implements AutoCloseable {
         new Pair<>(offsets_array_size, values_array_size);
 
     // Close previous buffers if they exist for this attribute
-    if (var_buffers_.containsKey(attr)) {
-      Pair<NativeArray, NativeArray> prev_buffers = var_buffers_.get(attr);
+    if (buffers_.containsKey(attr)) {
+      Pair<NativeArray, NativeArray> prev_buffers = buffers_.get(attr);
       prev_buffers.getFirst().close();
       prev_buffers.getSecond().close();
     }
 
-    var_buffers_.put(attr, new Pair<>(offsets, buffer));
+    buffers_.put(attr, new Pair<>(offsets, buffer));
     buffer_sizes_.put(attr, buffer_sizes);
 
     ctx.handleError(
@@ -679,8 +685,8 @@ public class Query implements AutoCloseable {
         new Pair<>(offsets_array_size, values_array_size);
 
     // Close previous buffers if they exist for this attribute
-    if (var_buffers_.containsKey(attr)) {
-      Pair<NativeArray, NativeArray> prev_buffers = var_buffers_.get(attr);
+    if (buffers_.containsKey(attr)) {
+      Pair<NativeArray, NativeArray> prev_buffers = buffers_.get(attr);
       prev_buffers.getFirst().close();
       prev_buffers.getSecond().close();
     }
@@ -765,13 +771,13 @@ public class Query implements AutoCloseable {
         new Pair<>(offsets_array_size, values_array_size);
 
     // Close previous buffers if they exist for this attribute
-    if (var_buffers_.containsKey(attr)) {
-      Pair<NativeArray, NativeArray> prev_buffers = var_buffers_.get(attr);
+    if (buffers_.containsKey(attr)) {
+      Pair<NativeArray, NativeArray> prev_buffers = buffers_.get(attr);
       prev_buffers.getFirst().close();
       prev_buffers.getSecond().close();
     }
 
-    var_buffers_.put(attr, new Pair<>(offsets, buffer));
+    buffers_.put(attr, new Pair<>(offsets, buffer));
     buffer_sizes_.put(attr, buffer_sizes);
 
     ctx.handleError(
@@ -795,13 +801,13 @@ public class Query implements AutoCloseable {
 
   public synchronized Query setBufferByteSize(String attribute, Long offsetSize, Long bufferSize)
       throws TileDBError {
-    if (!var_buffers_.containsKey(attribute)) {
+    if (!buffers_.containsKey(attribute)) {
       throw new TileDBError("Query var attribute buffer does not exist: " + attribute);
     }
     if (offsetSize <= 0 || bufferSize <= 0) {
       throw new TileDBError("Number of buffer bytes must be >= 1");
     }
-    Pair<NativeArray, NativeArray> varBuffers = var_buffers_.get(attribute);
+    Pair<NativeArray, NativeArray> varBuffers = buffers_.get(attribute);
     NativeArray offsetBuffer = varBuffers.getFirst();
     Long offsetNBytes = offsetBuffer.getNBytes();
     NativeArray buffer = varBuffers.getSecond();
@@ -831,7 +837,7 @@ public class Query implements AutoCloseable {
     if (bufferSize <= 0) {
       throw new TileDBError("Number of buffer bytes must be >= 1");
     }
-    NativeArray buffer = buffers_.get(attribute);
+    NativeArray buffer = buffers_.get(attribute).getSecond();
     Long bufferNBytes = buffer.getNBytes();
     if (bufferSize > bufferNBytes) {
       throw new TileDBError(
@@ -851,7 +857,7 @@ public class Query implements AutoCloseable {
     if (bufferElements <= 0) {
       throw new TileDBError("Number of buffer elements must be >= 1");
     }
-    NativeArray buffer = buffers_.get(attribute);
+    NativeArray buffer = buffers_.get(attribute).getSecond();
     Integer bufferSize = buffer.getSize();
     if (bufferElements > bufferSize) {
       throw new TileDBError(
@@ -865,13 +871,13 @@ public class Query implements AutoCloseable {
 
   public synchronized Query setBufferElements(
       String attribute, Integer offsetElements, Integer bufferElements) throws TileDBError {
-    if (!var_buffers_.containsKey(attribute)) {
+    if (!buffers_.containsKey(attribute)) {
       throw new TileDBError("Query var attribute buffer does not exist: " + attribute);
     }
     if (offsetElements <= 0 || bufferElements <= 0) {
       throw new TileDBError("Number of buffer elements must be >= 1");
     }
-    Pair<NativeArray, NativeArray> varBuffers = var_buffers_.get(attribute);
+    Pair<NativeArray, NativeArray> varBuffers = buffers_.get(attribute);
     NativeArray offsetBuffer = varBuffers.getFirst();
     Integer offsetSize = offsetBuffer.getSize();
     NativeArray buffer = varBuffers.getSecond();
@@ -928,28 +934,32 @@ public class Query implements AutoCloseable {
    */
   public HashMap<String, Pair<Long, Long>> resultBufferElements() throws TileDBError {
     HashMap<String, Pair<Long, Long>> result = new HashMap<String, Pair<Long, Long>>();
-    for (Map.Entry<String, NativeArray> entry : buffers_.entrySet()) {
+    for (Map.Entry<String, Pair<NativeArray, NativeArray>> entry : buffers_.entrySet()) {
       String name = entry.getKey();
-      NativeArray val_buffer = entry.getValue();
-      BigInteger val_nbytes = buffer_sizes_.get(name).getSecond().getitem(0);
-      Long nelements =
-          val_nbytes.divide(BigInteger.valueOf(val_buffer.getNativeTypeSize())).longValue();
-      result.put(name, new Pair<>(0l, nelements));
-    }
-    for (Map.Entry<String, Pair<NativeArray, NativeArray>> entry : var_buffers_.entrySet()) {
-      String name = entry.getKey();
-      Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
 
-      NativeArray off_buffer = entry.getValue().getFirst();
-      BigInteger off_nbytes = buffer_size.getFirst().getitem(0);
-      Long off_nelements =
-          off_nbytes.divide(BigInteger.valueOf(off_buffer.getNativeTypeSize())).longValue();
+      // Fixed-sized
+      if (entry.getValue().getFirst() == null) {
+        NativeArray val_buffer = entry.getValue().getSecond();
+        BigInteger val_nbytes = buffer_sizes_.get(name).getSecond().getitem(0);
+        Long nelements =
+            val_nbytes.divide(BigInteger.valueOf(val_buffer.getNativeTypeSize())).longValue();
+        result.put(name, new Pair<>(0l, nelements));
+      }
+      // Var-sized
+      else {
+        Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
 
-      NativeArray val_buffer = entry.getValue().getSecond();
-      BigInteger val_nbytes = buffer_size.getSecond().getitem(0);
-      Long val_nelements =
-          val_nbytes.divide(BigInteger.valueOf(val_buffer.getNativeTypeSize())).longValue();
-      result.put(name, new Pair<Long, Long>(off_nelements, val_nelements));
+        NativeArray off_buffer = entry.getValue().getFirst();
+        BigInteger off_nbytes = buffer_size.getFirst().getitem(0);
+        Long off_nelements =
+            off_nbytes.divide(BigInteger.valueOf(off_buffer.getNativeTypeSize())).longValue();
+
+        NativeArray val_buffer = entry.getValue().getSecond();
+        BigInteger val_nbytes = buffer_size.getSecond().getitem(0);
+        Long val_nelements =
+            val_nbytes.divide(BigInteger.valueOf(val_buffer.getNativeTypeSize())).longValue();
+        result.put(name, new Pair<Long, Long>(off_nelements, val_nelements));
+      }
     }
     return result;
   }
@@ -968,12 +978,11 @@ public class Query implements AutoCloseable {
    */
   public HashMap<String, Pair<Long, Long>> resultBufferSizes() throws TileDBError {
     HashMap<String, Pair<Long, Long>> result = new HashMap<String, Pair<Long, Long>>();
-    for (Map.Entry<String, NativeArray> entry : buffers_.entrySet()) {
-      String name = entry.getKey();
+    for (String name : buffers_.keySet()) {
       BigInteger val_nbytes = buffer_sizes_.get(name).getSecond().getitem(0);
       result.put(name, new Pair<>(0l, val_nbytes.longValue()));
     }
-    for (Map.Entry<String, Pair<NativeArray, NativeArray>> entry : var_buffers_.entrySet()) {
+    for (Map.Entry<String, Pair<NativeArray, NativeArray>> entry : buffers_.entrySet()) {
       String name = entry.getKey();
       Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
 
@@ -987,15 +996,15 @@ public class Query implements AutoCloseable {
 
   /** Clears all attribute buffers. */
   public synchronized void resetBuffers() {
-    for (NativeArray buffer : buffers_.values()) {
-      buffer.close();
+    for (Pair<NativeArray, NativeArray> buffer : buffers_.values()) {
+      buffer.getSecond().close();
     }
     buffers_.clear();
-    for (Pair<NativeArray, NativeArray> var_buffer : var_buffers_.values()) {
+    for (Pair<NativeArray, NativeArray> var_buffer : buffers_.values()) {
       var_buffer.getFirst().close();
       var_buffer.getSecond().close();
     }
-    var_buffers_.clear();
+    buffers_.clear();
     for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
       size_pair.getFirst().delete();
       size_pair.getSecond().delete();
@@ -1026,7 +1035,7 @@ public class Query implements AutoCloseable {
    */
   public Object getBuffer(String attr) throws TileDBError {
     if (buffers_.containsKey(attr)) {
-      NativeArray buffer = buffers_.get(attr);
+      NativeArray buffer = buffers_.get(attr).getSecond();
       Integer nelements =
           (buffer_sizes_
                   .get(attr)
@@ -1035,8 +1044,8 @@ public class Query implements AutoCloseable {
                   .divide(BigInteger.valueOf(buffer.getNativeTypeSize())))
               .intValue();
       return buffer.toJavaArray(nelements);
-    } else if (var_buffers_.containsKey(attr)) {
-      NativeArray buffer = var_buffers_.get(attr).getSecond();
+    } else if (buffers_.containsKey(attr)) {
+      NativeArray buffer = buffers_.get(attr).getSecond();
       Integer nelements =
           (buffer_sizes_
                   .get(attr)
@@ -1070,10 +1079,10 @@ public class Query implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public long[] getVarBuffer(String attr) throws TileDBError {
-    if (!var_buffers_.containsKey(attr)) {
+    if (!buffers_.containsKey(attr)) {
       throw new TileDBError("Query variable attribute buffer does not exist: " + attr);
     }
-    NativeArray buffer = var_buffers_.get(attr).getFirst();
+    NativeArray buffer = buffers_.get(attr).getFirst();
     Integer nelements =
         (buffer_sizes_
                 .get(attr)
@@ -1122,12 +1131,9 @@ public class Query implements AutoCloseable {
         size_pair.getFirst().delete();
         size_pair.getSecond().delete();
       }
-      for (NativeArray buffer : buffers_.values()) {
-        buffer.close();
-      }
-      for (Pair<NativeArray, NativeArray> var_buffer : var_buffers_.values()) {
-        var_buffer.getFirst().close();
-        var_buffer.getSecond().close();
+      for (Pair<NativeArray, NativeArray> buffer : buffers_.values()) {
+        if (buffer.getFirst() != null) buffer.getFirst().close();
+        if (buffer.getSecond() != null) buffer.getSecond().close();
       }
       if (subarray != null) {
         subarray.close();
