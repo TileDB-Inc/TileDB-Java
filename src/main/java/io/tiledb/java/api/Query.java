@@ -60,8 +60,7 @@ public class Query implements AutoCloseable {
   private NativeArray subarray;
 
   private Map<String, NativeArray> buffers_;
-  private Map<String, ByteBuffer> byteBuffers_;
-  private Map<String, Pair<ByteBuffer, ByteBuffer>> varByteBuffers_;
+  private Map<String, Pair<ByteBuffer, ByteBuffer>> byteBuffers_;
   private Map<String, Pair<NativeArray, NativeArray>> var_buffers_;
   private Map<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
 
@@ -83,7 +82,6 @@ public class Query implements AutoCloseable {
     this.queryp = tiledb.tiledb_query_tpp_value(_querypp);
     this.buffers_ = Collections.synchronizedMap(new HashMap<>());
     this.byteBuffers_ = Collections.synchronizedMap(new HashMap<>());
-    this.varByteBuffers_ = Collections.synchronizedMap(new HashMap<>());
     this.var_buffers_ = Collections.synchronizedMap(new HashMap<>());
     this.buffer_sizes_ = Collections.synchronizedMap(new HashMap<>());
   }
@@ -130,16 +128,21 @@ public class Query implements AutoCloseable {
 
     // Set the actual number of bytes received to each ByteBuffer
     for (String attribute : byteBuffers_.keySet()) {
-      int nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
-      this.byteBuffers_.get(attribute).limit(nbytes);
-    }
+      boolean isVar;
 
-    // Set the actual number of bytes received to each ByteBuffer
-    for (String attribute : varByteBuffers_.keySet()) {
-      int offset_nbytes = this.buffer_sizes_.get(attribute).getFirst().getitem(0).intValue();
-      int data_nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
-      this.varByteBuffers_.get(attribute).getFirst().limit(offset_nbytes);
-      this.varByteBuffers_.get(attribute).getSecond().limit(data_nbytes);
+      if (array.getSchema().hasAttribute(attribute))
+        isVar = array.getSchema().getAttribute(attribute).isVar();
+      else isVar = array.getSchema().getDomain().getDimension(attribute).isVar();
+
+      if (isVar) {
+        int offset_nbytes = this.buffer_sizes_.get(attribute).getFirst().getitem(0).intValue();
+        int data_nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
+        this.byteBuffers_.get(attribute).getFirst().limit(offset_nbytes);
+        this.byteBuffers_.get(attribute).getSecond().limit(data_nbytes);
+      } else {
+        int nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
+        this.byteBuffers_.get(attribute).getSecond().limit(nbytes);
+      }
     }
 
     return getQueryStatus();
@@ -552,7 +555,7 @@ public class Query implements AutoCloseable {
       buffer.order(ByteOrder.nativeOrder());
     }
 
-    this.byteBuffers_.put(attr, buffer);
+    this.byteBuffers_.put(attr, new Pair<>(null, buffer));
 
     uint64_tArray offsets_array_size = new uint64_tArray(1);
     uint64_tArray values_array_size = new uint64_tArray(1);
@@ -683,7 +686,7 @@ public class Query implements AutoCloseable {
     }
 
     buffer_sizes_.put(attr, buffer_sizes);
-    this.varByteBuffers_.put(attr, new Pair(offsets, buffer));
+    this.byteBuffers_.put(attr, new Pair(offsets, buffer));
 
     ctx.handleError(
         tiledb.tiledb_query_set_buffer_var_nio(
@@ -1055,9 +1058,7 @@ public class Query implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public Pair<ByteBuffer, ByteBuffer> getByteBuffer(String attr) throws TileDBError {
-    if (byteBuffers_.containsKey(attr)) return new Pair(null, byteBuffers_.get(attr));
-    else if (varByteBuffers_.containsKey(attr))
-      return new Pair(varByteBuffers_.get(attr).getFirst(), varByteBuffers_.get(attr).getSecond());
+    if (byteBuffers_.containsKey(attr)) return this.byteBuffers_.get(attr);
     else throw new TileDBError("ByteBuffer does not exist for attribute: " + attr);
   }
 
