@@ -314,8 +314,10 @@ public class QueryTest {
 
       int bufferSize = 4;
 
-      ByteBuffer d1 = query.setBuffer("rows", bufferSize);
-      ByteBuffer d2 = query.setBuffer("cols", bufferSize);
+      query.setBuffer("rows", bufferSize);
+      query.setBuffer("cols", bufferSize);
+      ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
+      ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
       query.addRange(0, 1, 4);
       query.addRange(1, 1, 4);
@@ -354,9 +356,10 @@ public class QueryTest {
       Query query = new Query(array, TILEDB_READ);
 
       int bufferSize = 4;
-
-      ByteBuffer d1 = query.setBuffer("rows", ByteBuffer.allocateDirect(10));
-      ByteBuffer d2 = query.setBuffer("cols", ByteBuffer.allocateDirect(10));
+      query.setBuffer("rows", ByteBuffer.allocateDirect(10));
+      query.setBuffer("cols", ByteBuffer.allocateDirect(10));
+      ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
+      ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
       query.addRange(0, 1, 4);
       query.addRange(1, 1, 4);
@@ -399,10 +402,12 @@ public class QueryTest {
         query.addRange(1, 2, 4);
         query.setLayout(TILEDB_ROW_MAJOR);
 
-        ByteBuffer dim1Buffer = query.setBuffer("rows", 3);
-        ByteBuffer dim2Buffer = query.setBuffer("cols", 3);
-        ByteBuffer a1Buffer = query.setBuffer("a1", 3);
-        ByteBuffer a2Buffer = query.setBuffer("a2", 6);
+        query.setBuffer("rows", 3).setBuffer("cols", 3).setBuffer("a1", 3).setBuffer("a2", 6);
+
+        ByteBuffer dim1Buffer = query.getByteBuffer("rows").getSecond();
+        ByteBuffer dim2Buffer = query.getByteBuffer("cols").getSecond();
+        ByteBuffer a1Buffer = query.getByteBuffer("a1").getSecond();
+        ByteBuffer a2Buffer = query.getByteBuffer("a2").getSecond();
 
         // Submit query
         query.submit();
@@ -459,12 +464,16 @@ public class QueryTest {
                 ? ByteOrder.LITTLE_ENDIAN
                 : ByteOrder.BIG_ENDIAN;
 
-        ByteBuffer dim1Buffer =
-            query.setBuffer("rows", ByteBuffer.allocateDirect(3 * 4).order(order));
-        ByteBuffer dim2Buffer =
-            query.setBuffer("cols", ByteBuffer.allocateDirect(3 * 4).order(order));
-        ByteBuffer a1Buffer = query.setBuffer("a1", ByteBuffer.allocateDirect(3).order(order));
-        ByteBuffer a2Buffer = query.setBuffer("a2", ByteBuffer.allocateDirect(6 * 4).order(order));
+        query
+            .setBuffer("rows", ByteBuffer.allocateDirect(3 * 4).order(order))
+            .setBuffer("cols", ByteBuffer.allocateDirect(3 * 4).order(order))
+            .setBuffer("a1", ByteBuffer.allocateDirect(3).order(order))
+            .setBuffer("a2", ByteBuffer.allocateDirect(6 * 4).order(order));
+
+        ByteBuffer dim1Buffer = query.getByteBuffer("rows").getSecond();
+        ByteBuffer dim2Buffer = query.getByteBuffer("cols").getSecond();
+        ByteBuffer a1Buffer = query.getByteBuffer("a1").getSecond();
+        ByteBuffer a2Buffer = query.getByteBuffer("a2").getSecond();
 
         // Submit query
         query.submit();
@@ -514,9 +523,9 @@ public class QueryTest {
 
       query.setBuffer("rows", bufferSize);
 
-      Assert.assertEquals(query.getByteBuffer("rows").capacity(), bufferSize * 4);
-      Assert.assertTrue(query.getByteBuffer("rows").isDirect());
-      Assert.assertEquals(query.getByteBuffer("rows").order(), ByteOrder.nativeOrder());
+      Assert.assertEquals(query.getByteBuffer("rows").getSecond().capacity(), bufferSize * 4);
+      Assert.assertTrue(query.getByteBuffer("rows").getSecond().isDirect());
+      Assert.assertEquals(query.getByteBuffer("rows").getSecond().order(), ByteOrder.nativeOrder());
     }
 
     @Test()
@@ -544,7 +553,8 @@ public class QueryTest {
               : ByteOrder.BIG_ENDIAN;
 
       // The Byte Order should be automatically changed to the native order
-      ByteBuffer b = query.setBuffer("rows", ByteBuffer.allocateDirect(bufferSize).order(order));
+      query.setBuffer("rows", ByteBuffer.allocateDirect(bufferSize).order(order));
+      ByteBuffer b = query.getByteBuffer("rows").getSecond();
       Assert.assertEquals(b.order(), ByteOrder.nativeOrder());
     }
 
@@ -566,10 +576,12 @@ public class QueryTest {
 
       int idx = 0;
 
-      while (offsetsBuffer.hasRemaining()) offsets[idx++] = offsetsBuffer.getLong();
+      while (q.getByteBuffer("a1").getFirst().hasRemaining())
+        offsets[idx++] = offsetsBuffer.getLong();
 
       idx = 0;
-      while (dataBuffer.hasRemaining()) data[idx++] = (char) dataBuffer.get();
+      while (q.getByteBuffer("a1").getSecond().hasRemaining())
+        data[idx++] = (char) dataBuffer.get();
 
       Assert.assertArrayEquals(new long[] {0, 2, 4, 6, 8, 10, 12, 14}, offsets);
       Assert.assertEquals("aabbccddeeffgghh", new String(data));

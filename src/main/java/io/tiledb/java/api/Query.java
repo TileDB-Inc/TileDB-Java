@@ -496,7 +496,7 @@ public class Query implements AutoCloseable {
    * @return The NIO ByteBuffer
    * @throws TileDBError
    */
-  public synchronized ByteBuffer setBuffer(String attr, long bufferElements) throws TileDBError {
+  public synchronized Query setBuffer(String attr, long bufferElements) throws TileDBError {
     if (bufferElements <= 0) {
       throw new TileDBError("Number of buffer elements must be >= 1");
     }
@@ -521,7 +521,7 @@ public class Query implements AutoCloseable {
 
     this.setBuffer(attr, buffer);
 
-    return buffer;
+    return this;
   }
 
   /**
@@ -532,7 +532,7 @@ public class Query implements AutoCloseable {
    * @return The NIO ByteBuffer
    * @throws TileDBError
    */
-  public synchronized ByteBuffer setBuffer(String attr, ByteBuffer buffer) throws TileDBError {
+  public synchronized Query setBuffer(String attr, ByteBuffer buffer) throws TileDBError {
     if (buffer.capacity() <= 0) {
       throw new TileDBError("Number of buffer elements must be >= 1");
     }
@@ -566,7 +566,7 @@ public class Query implements AutoCloseable {
         tiledb.tiledb_query_set_buffer_nio(
             ctx.getCtxp(), queryp, attr, buffer, values_array_size.cast()));
 
-    return buffer;
+    return this;
   }
 
   /**
@@ -1054,8 +1054,10 @@ public class Query implements AutoCloseable {
    * @return The ByteBuffer
    * @throws TileDBError A TileDB exception
    */
-  public ByteBuffer getByteBuffer(String attr) throws TileDBError {
-    if (byteBuffers_.containsKey(attr)) return byteBuffers_.get(attr);
+  public Pair<ByteBuffer, ByteBuffer> getByteBuffer(String attr) throws TileDBError {
+    if (byteBuffers_.containsKey(attr)) return new Pair(null, byteBuffers_.get(attr));
+    else if (varByteBuffers_.containsKey(attr))
+      return new Pair(varByteBuffers_.get(attr).getFirst(), varByteBuffers_.get(attr).getSecond());
     else throw new TileDBError("ByteBuffer does not exist for attribute: " + attr);
   }
 
