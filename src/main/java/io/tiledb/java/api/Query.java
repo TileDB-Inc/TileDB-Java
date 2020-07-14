@@ -526,7 +526,8 @@ public class Query implements AutoCloseable {
 
     int size = Util.castLongToInt(bufferElements * dt.getNativeSize());
 
-    ByteBuffer buffer = ByteBuffer.allocateDirect(size);
+    ByteBuffer buffer = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
+    ;
 
     this.setBuffer(attr, buffer);
 
@@ -551,14 +552,9 @@ public class Query implements AutoCloseable {
           "The ByteBuffer provided is not direct. Please provide a direct buffer (ByteBuffer.allocateDirect(...))");
     }
 
-    if (!buffer.order().equals(ByteOrder.nativeOrder()) && buffer.position() > 0) {
-      throw new TileDBError(
-          "The order of the data ByteBuffer should be the same as the native order (ByteOrder.nativeOrder()) before values are inserted.");
-    }
-
     if (!buffer.order().equals(ByteOrder.nativeOrder())) {
-      // TODO: Add a logger component to Query class and a WARN here
-      buffer.order(ByteOrder.nativeOrder());
+      throw new TileDBError(
+          "The order of the data ByteBuffer should be the same as the native order (ByteOrder.nativeOrder()).");
     }
 
     this.byteBuffers_.put(attr, new Pair<>(null, buffer));

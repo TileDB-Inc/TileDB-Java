@@ -356,8 +356,8 @@ public class QueryTest {
       Query query = new Query(array, TILEDB_READ);
 
       int bufferSize = 4;
-      query.setBuffer("rows", ByteBuffer.allocateDirect(10));
-      query.setBuffer("cols", ByteBuffer.allocateDirect(10));
+      query.setBuffer("rows", ByteBuffer.allocateDirect(10).order(ByteOrder.nativeOrder()));
+      query.setBuffer("cols", ByteBuffer.allocateDirect(10).order(ByteOrder.nativeOrder()));
       ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
       ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
@@ -444,7 +444,7 @@ public class QueryTest {
       }
     }
 
-    @Test
+    @Test(expected = TileDBError.class)
     public void arrayReadTestCustomBufferWithDifferentOrder() throws Exception {
       arrayCreate();
       arrayWrite();
@@ -464,49 +464,7 @@ public class QueryTest {
                 ? ByteOrder.LITTLE_ENDIAN
                 : ByteOrder.BIG_ENDIAN;
 
-        query
-            .setBuffer("rows", ByteBuffer.allocateDirect(3 * 4).order(order))
-            .setBuffer("cols", ByteBuffer.allocateDirect(3 * 4).order(order))
-            .setBuffer("a1", ByteBuffer.allocateDirect(3).order(order))
-            .setBuffer("a2", ByteBuffer.allocateDirect(6 * 4).order(order));
-
-        ByteBuffer dim1Buffer = query.getByteBuffer("rows").getSecond();
-        ByteBuffer dim2Buffer = query.getByteBuffer("cols").getSecond();
-        ByteBuffer a1Buffer = query.getByteBuffer("a1").getSecond();
-        ByteBuffer a2Buffer = query.getByteBuffer("a2").getSecond();
-
-        // Submit query
-        query.submit();
-
-        int[] dim1 = new int[3];
-        int[] dim2 = new int[3];
-        byte[] a1 = new byte[3];
-        float[] a2 = new float[6];
-
-        int idx = 0;
-        while (dim1Buffer.hasRemaining()) {
-          dim1[idx++] = dim1Buffer.getInt();
-        }
-
-        idx = 0;
-        while (dim2Buffer.hasRemaining()) {
-          dim2[idx++] = dim2Buffer.getInt();
-        }
-
-        idx = 0;
-        while (a1Buffer.hasRemaining()) {
-          a1[idx++] = a1Buffer.get();
-        }
-
-        idx = 0;
-        while (a2Buffer.hasRemaining()) {
-          a2[idx++] = a2Buffer.getFloat();
-        }
-
-        Assert.assertArrayEquals(new int[] {1, 1, 1}, dim1);
-        Assert.assertArrayEquals(new int[] {2, 3, 4}, dim2);
-        Assert.assertArrayEquals(new byte[] {'b', 'c', 'd'}, a1);
-        Assert.assertArrayEquals(new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f}, a2, 0.01f);
+        query.setBuffer("rows", ByteBuffer.allocateDirect(3 * 4).order(order));
       }
     }
 
@@ -528,7 +486,7 @@ public class QueryTest {
       Assert.assertEquals(query.getByteBuffer("rows").getSecond().order(), ByteOrder.nativeOrder());
     }
 
-    @Test()
+    @Test(expected = TileDBError.class)
     public void queryTestNIOGetByteBuffeErrors() throws Exception {
       arrayCreate();
       arrayWrite();
@@ -554,8 +512,6 @@ public class QueryTest {
 
       // The Byte Order should be automatically changed to the native order
       query.setBuffer("rows", ByteBuffer.allocateDirect(bufferSize).order(order));
-      ByteBuffer b = query.getByteBuffer("rows").getSecond();
-      Assert.assertEquals(b.order(), ByteOrder.nativeOrder());
     }
 
     @Test()
