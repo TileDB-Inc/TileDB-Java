@@ -700,6 +700,7 @@ public class Array implements AutoCloseable {
    *     buffer.
    * @throws TileDBError A TileDB exception
    */
+  @Deprecated
   public HashMap<String, Pair<Long, Long>> maxBufferElements(NativeArray subarray)
       throws TileDBError {
     checkIsOpen();
@@ -751,12 +752,15 @@ public class Array implements AutoCloseable {
               tiledb.tiledb_coords(),
               subarray.toVoidPointer(),
               val_nbytes.cast()));
-      ret.put(
-          tiledb.tiledb_coords(),
-          new Pair(
-              0l,
-              val_nbytes.getitem(0).longValue()
-                  / tiledb.tiledb_datatype_size(domain.getType().toSwigEnum()).longValue()));
+
+      for (Dimension dim : domain.getDimensions()) {
+        ret.put(
+            dim.getName(),
+            new Pair(
+                0l,
+                val_nbytes.getitem(0).longValue()
+                    / tiledb.tiledb_datatype_size(dim.getType().toSwigEnum()).longValue()));
+      }
     } finally {
       off_nbytes.delete();
       val_nbytes.delete();

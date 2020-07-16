@@ -30,9 +30,7 @@ import io.tiledb.libtiledb.*;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Construct and execute read/write queries on a TileDB Array.
@@ -327,6 +325,28 @@ public class Query implements AutoCloseable {
       Object end = new String((byte[]) endArr.toJavaArray());
       return new Pair(start, end);
     }
+  }
+
+  public synchronized int getEstResultSize(Context ctx, String attribute) throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
+
+    ctx.handleError(
+        tiledb.tiledb_query_get_est_result_size(ctx.getCtxp(), queryp, attribute, size));
+
+    return tiledb.ullp_value(size).intValue();
+  }
+
+  public synchronized Pair<Integer, Integer> getEstResultSizeVar(Context ctx, String attribute)
+      throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long offsetsSize = tiledb.new_ullp();
+    SWIGTYPE_p_unsigned_long_long dataSize = tiledb.new_ullp();
+
+    ctx.handleError(
+        tiledb.tiledb_query_get_est_result_size_var(
+            ctx.getCtxp(), queryp, attribute, offsetsSize, dataSize));
+
+    return new Pair(
+        tiledb.ullp_value(offsetsSize).intValue(), tiledb.ullp_value(dataSize).intValue());
   }
 
   /**
@@ -904,6 +924,7 @@ public class Query implements AutoCloseable {
    * @param buffer A NativeArray to be used for the coordinates.
    * @exception TileDBError A TileDB exception
    */
+  @Deprecated
   public Query setCoordinates(NativeArray buffer) throws TileDBError {
     setBuffer(tiledb.tiledb_coords(), buffer);
     return this;
@@ -1087,6 +1108,41 @@ public class Query implements AutoCloseable {
                 .divide(BigInteger.valueOf(buffer.getNativeTypeSize())))
             .intValue();
     return (long[]) buffer.toJavaArray(nelements);
+  }
+
+  /**
+   * Returns the result size estimate for each attribute/dimension
+   *
+   * @return A HashMap with Pairs, where the first value of the pair is the estimated size of the
+   *     offsets (in case of variable-sized attributes) and the second value represents the data
+   *     size estimate.
+   * @throws TileDBError
+   */
+  public HashMap<String, Pair<Integer, Integer>> getResultEstimations() throws TileDBError {
+    HashMap<String, Pair<Integer, Integer>> estimations = new HashMap<>();
+    String name;
+    try (ArraySchema schema = this.array.getSchema();
+        Domain domain = schema.getDomain(); ) {
+      for (Dimension dimension : domain.getDimensions()) {
+        name = dimension.getName();
+        if (dimension.isVar()) {
+          estimations.put(name, this.getEstResultSizeVar(ctx, name));
+        } else {
+          estimations.put(name, new Pair<>(null, this.getEstResultSize(ctx, name)));
+        }
+      }
+
+      for (Attribute attribute : schema.getAttributes().values()) {
+        name = attribute.getName();
+        if (attribute.isVar()) {
+          estimations.put(name, this.getEstResultSizeVar(ctx, name));
+        } else {
+          estimations.put(name, new Pair<>(null, this.getEstResultSize(ctx, name)));
+        }
+      }
+    }
+
+    return estimations;
   }
 
   /**

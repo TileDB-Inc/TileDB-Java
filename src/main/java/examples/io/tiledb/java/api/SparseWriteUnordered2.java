@@ -37,10 +37,7 @@ package examples.io.tiledb.java.api;
 import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
-import io.tiledb.java.api.Array;
-import io.tiledb.java.api.Context;
-import io.tiledb.java.api.NativeArray;
-import io.tiledb.java.api.Query;
+import io.tiledb.java.api.*;
 
 public class SparseWriteUnordered2 {
   public static void main(String[] args) throws Exception {
@@ -49,31 +46,36 @@ public class SparseWriteUnordered2 {
     Context ctx = new Context();
 
     // Prepare cell buffers - #1
-    NativeArray a1_data = new NativeArray(ctx, new int[] {7, 5, 0}, Integer.class);
-    NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 4, 6}, Long.class);
-    NativeArray buffer_var_a2 = new NativeArray(ctx, "hhhh" + "ff" + "a", String.class);
+    NativeArray a1_data = new NativeArray(ctx, new int[] {7, 5, 0}, Datatype.TILEDB_INT32);
+    NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 4, 6}, Datatype.TILEDB_UINT64);
+    NativeArray buffer_var_a2 = new NativeArray(ctx, "hhhh" + "ff" + "a", Datatype.TILEDB_CHAR);
 
     NativeArray buffer_a3 =
-        new NativeArray(ctx, new float[] {7.1f, 7.2f, 5.1f, 5.2f, 0.1f, 0.2f}, Float.class);
+        new NativeArray(
+            ctx, new float[] {7.1f, 7.2f, 5.1f, 5.2f, 0.1f, 0.2f}, Datatype.TILEDB_FLOAT32);
 
-    NativeArray coords_buff = new NativeArray(ctx, new long[] {3, 4, 4, 2, 1, 1}, Long.class);
+    NativeArray coords_buff =
+        new NativeArray(ctx, new long[] {3, 4, 4, 2, 1, 1}, Datatype.TILEDB_INT64);
+    NativeArray d1_buff = new NativeArray(ctx, new long[] {3, 4, 1}, Datatype.TILEDB_INT64);
+    NativeArray d2_buff = new NativeArray(ctx, new long[] {4, 2, 1}, Datatype.TILEDB_INT64);
 
     // Create query
     Array my_sparse_array = new Array(ctx, "my_sparse_array", TILEDB_WRITE);
     Query query = new Query(my_sparse_array);
     query.setLayout(TILEDB_UNORDERED);
+    query.setBuffer("d1", d1_buff);
+    query.setBuffer("d2", d2_buff);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);
-    query.setCoordinates(coords_buff);
 
     // Submit query
     query.submit();
 
     // Prepare cell buffers - #2
 
-    a1_data = new NativeArray(ctx, new int[] {6, 4, 3, 1, 2}, Integer.class);
-    a2_offsets = new NativeArray(ctx, new long[] {0, 3, 4, 8, 10}, Long.class);
+    a1_data = new NativeArray(ctx, new int[] {6, 4, 3, 1, 2}, Datatype.TILEDB_INT32);
+    a2_offsets = new NativeArray(ctx, new long[] {0, 3, 4, 8, 10}, Datatype.TILEDB_UINT64);
     buffer_var_a2 = new NativeArray(ctx, "ggg" + "e" + "dddd" + "bb" + "ccc", String.class);
 
     buffer_a3 =
@@ -81,14 +83,17 @@ public class SparseWriteUnordered2 {
             ctx,
             new float[] {6.1f, 6.2f, 4.1f, 4.2f, 3.1f, 3.2f, 1.1f, 1.2f, 2.1f, 2.2f},
             Float.class);
-    coords_buff = new NativeArray(ctx, new long[] {3, 3, 3, 1, 2, 3, 1, 2, 1, 4}, Long.class);
+
+    d1_buff = new NativeArray(ctx, new long[] {3, 3, 2, 1, 1}, Datatype.TILEDB_INT64);
+    d2_buff = new NativeArray(ctx, new long[] {3, 1, 3, 2, 4}, Datatype.TILEDB_INT64);
 
     // Reset buffers
     query.resetBuffers();
+    query.setBuffer("d1", d1_buff);
+    query.setBuffer("d2", d2_buff);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);
-    query.setCoordinates(coords_buff);
 
     // Submit query - #2
     query.submit();

@@ -37,24 +37,26 @@ public class DenseWriteUnordered {
 
     // Prepare cell buffers
     NativeArray a1_data = new NativeArray(ctx, new int[] {211, 213, 212, 208}, Integer.class);
-    NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 4, 6, 7}, Long.class);
+    NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 4, 6, 7}, Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 = new NativeArray(ctx, "wwwwyyxu", String.class);
     NativeArray buffer_a3 =
         new NativeArray(
             ctx,
             new float[] {211.1f, 211.2f, 213.1f, 213.2f, 212.1f, 212.2f, 208.1f, 208.2f},
             Float.class);
-    NativeArray coords = new NativeArray(ctx, new long[] {4, 2, 3, 4, 3, 3, 3, 1}, Long.class);
+
+    NativeArray d1 = new NativeArray(ctx, new long[] {4, 3, 3, 3}, Long.class);
+    NativeArray d2 = new NativeArray(ctx, new long[] {2, 4, 3, 1}, Long.class);
 
     // Create query
     Array my_dense_array = new Array(ctx, "my_dense_array", TILEDB_WRITE);
     Query query = new Query(my_dense_array);
     query.setLayout(TILEDB_UNORDERED);
-    query.setSubarray(new NativeArray(ctx, new long[] {3, 4, 3, 4}, Long.class));
+    query.setBuffer("d1", d1);
+    query.setBuffer("d2", d2);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);
-    query.setCoordinates(coords);
 
     // Submit query
     query.submit();

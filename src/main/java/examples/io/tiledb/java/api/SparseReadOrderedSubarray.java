@@ -51,23 +51,22 @@ public class SparseReadOrderedSubarray {
 
     // Calculate maximum buffer elements for the query results per attribute
     Array my_sparse_array = new Array(ctx, "my_sparse_array");
-    NativeArray subarray = new NativeArray(ctx, new long[] {3l, 4l, 2l, 4l}, Long.class);
-    HashMap<String, Pair<Long, Long>> max_sizes = my_sparse_array.maxBufferElements(subarray);
+    NativeArray subarray = new NativeArray(ctx, new long[] {3l, 4l, 2l, 4l}, Datatype.TILEDB_INT64);
+
+    long bufferSize = 1024;
 
     // Create query
     Query query = new Query(my_sparse_array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setSubarray(subarray);
-    query.setBuffer(
-        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
+    query.setBuffer("d1", new NativeArray(ctx, bufferSize, Datatype.TILEDB_INT64));
+    query.setBuffer("d2", new NativeArray(ctx, bufferSize, Datatype.TILEDB_INT64));
+    query.setBuffer("a1", new NativeArray(ctx, bufferSize, Datatype.TILEDB_INT32));
     query.setBuffer(
         "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
-    query.setBuffer(
-        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
-    query.setCoordinates(
-        new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
+        new NativeArray(ctx, bufferSize, Datatype.TILEDB_INT64),
+        new NativeArray(ctx, bufferSize, Datatype.TILEDB_CHAR));
+    query.setBuffer("a3", new NativeArray(ctx, bufferSize, Datatype.TILEDB_FLOAT32));
 
     // Submit query
     System.out.println("Query submitted: " + query.submit());

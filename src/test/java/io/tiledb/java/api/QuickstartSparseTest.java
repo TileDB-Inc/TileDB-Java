@@ -25,7 +25,6 @@
 package io.tiledb.java.api;
 
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
-import static io.tiledb.java.api.Constants.TILEDB_COORDS;
 import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
@@ -168,12 +167,10 @@ public class QuickstartSparseTest {
       query.setSubarray(subarray);
 
       query.setBuffer(
-          "d1",
-          new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
+          "d1", new NativeArray(ctx, max_sizes.get("d1").getSecond().intValue(), Long.class));
 
       query.setBuffer(
-          "d2",
-          new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Long.class));
+          "d2", new NativeArray(ctx, max_sizes.get("d1").getSecond().intValue(), Long.class));
       query.setBuffer(
           "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
       query.setBuffer(
