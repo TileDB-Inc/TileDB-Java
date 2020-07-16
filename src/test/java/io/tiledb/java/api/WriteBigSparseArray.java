@@ -89,23 +89,26 @@ public class WriteBigSparseArray {
     int size = 1000;
     // Prepare cell buffers
     int[] d = new int[size];
-    long[] coords = new long[size * 2];
+    long[] d1 = new long[size];
+    long[] d2 = new long[size];
     Random random = new Random();
     for (int i = 0; i < size; i++) {
       d[i] = i;
       Pair<Long, Long> p = nextUnique(random, set, 10000l);
-      coords[2 * i] = p.getFirst();
-      coords[2 * i + 1] = p.getSecond();
+      d1[2 * i] = p.getFirst();
+      d2[2 * i] = p.getSecond();
     }
     NativeArray a1_data = new NativeArray(ctx, d, Integer.class);
 
-    NativeArray coords_buff = new NativeArray(ctx, coords, Long.class);
+    NativeArray d1_buff = new NativeArray(ctx, d1, Long.class);
+    NativeArray d2_buff = new NativeArray(ctx, d2, Long.class);
 
     // Create query
     Query query = new Query(array, TILEDB_WRITE);
     query.setLayout(TILEDB_UNORDERED);
+    query.setBuffer("d1", d1_buff);
+    query.setBuffer("d2", d2_buff);
     query.setBuffer("a1", a1_data);
-    query.setCoordinates(coords_buff);
 
     // Submit query
     query.submit();

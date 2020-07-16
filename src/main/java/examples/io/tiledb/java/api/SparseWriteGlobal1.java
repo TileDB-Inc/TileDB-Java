@@ -38,10 +38,7 @@ package examples.io.tiledb.java.api;
 import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
-import io.tiledb.java.api.Array;
-import io.tiledb.java.api.Context;
-import io.tiledb.java.api.NativeArray;
-import io.tiledb.java.api.Query;
+import io.tiledb.java.api.*;
 
 public class SparseWriteGlobal1 {
   public static void main(String[] args) throws Exception {
@@ -49,10 +46,12 @@ public class SparseWriteGlobal1 {
     Context ctx = ctx = new Context();
 
     // Prepare cell buffers
-    NativeArray a1_data = new NativeArray(ctx, new int[] {0, 1, 2, 3, 4, 5, 6, 7}, Integer.class);
+    NativeArray a1_data =
+        new NativeArray(ctx, new int[] {0, 1, 2, 3, 4, 5, 6, 7}, Datatype.TILEDB_INT32);
     NativeArray a2_offsets =
-        new NativeArray(ctx, new long[] {0, 1, 3, 6, 10, 11, 13, 16}, Long.class);
-    NativeArray buffer_var_a2 = new NativeArray(ctx, "abbcccdddd" + "effggghhhh", String.class);
+        new NativeArray(ctx, new long[] {0, 1, 3, 6, 10, 11, 13, 16}, Datatype.TILEDB_UINT64);
+    NativeArray buffer_var_a2 =
+        new NativeArray(ctx, "abbcccdddd" + "effggghhhh", Datatype.TILEDB_CHAR);
 
     NativeArray buffer_a3 =
         new NativeArray(
@@ -63,18 +62,21 @@ public class SparseWriteGlobal1 {
             },
             Float.class);
 
-    NativeArray coords_buff =
-        new NativeArray(
-            ctx, new long[] {1, 1, 1, 2, 1, 4, 2, 3, 3, 1, 4, 2, 3, 3, 3, 4}, Long.class);
+    NativeArray d1_buff =
+        new NativeArray(ctx, new long[] {1, 1, 1, 2, 3, 4, 3, 3}, Datatype.TILEDB_INT64);
+
+    NativeArray d2_buff =
+        new NativeArray(ctx, new long[] {1, 2, 4, 3, 1, 2, 3, 4}, Datatype.TILEDB_INT64);
 
     // Create query
     Array my_sparse_array = new Array(ctx, "my_sparse_array", TILEDB_WRITE);
     Query query = new Query(my_sparse_array);
     query.setLayout(TILEDB_GLOBAL_ORDER);
+    query.setBuffer("d1", d1_buff);
+    query.setBuffer("d2", d2_buff);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);
-    query.setCoordinates(coords_buff);
 
     // Submit query
     query.submit();

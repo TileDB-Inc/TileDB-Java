@@ -39,20 +39,18 @@ public class DenseReadOrderedSubarray {
     // Compute maximum buffer elements for the query results per attribute
     Array my_dense_array = new Array(ctx, "my_dense_array");
     NativeArray subarray = new NativeArray(ctx, new long[] {3l, 4l, 2l, 4l}, Long.class);
-    HashMap<String, Pair<Long, Long>> max_sizes = my_dense_array.maxBufferElements(subarray);
 
     // Create query
     Query query = new Query(my_dense_array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setSubarray(subarray);
-    query.setBuffer(
-        "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
+    int bufferSize = 1024;
+    query.setBuffer("a1", new NativeArray(ctx, bufferSize, Integer.class));
     query.setBuffer(
         "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
-        new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
-    query.setBuffer(
-        "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));
+        new NativeArray(ctx, bufferSize, Datatype.TILEDB_UINT64),
+        new NativeArray(ctx, bufferSize, String.class));
+    query.setBuffer("a3", new NativeArray(ctx, bufferSize, Float.class));
 
     // Submit query
     System.out.println("Query submitted: " + query.submit());

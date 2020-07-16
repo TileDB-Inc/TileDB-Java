@@ -1,7 +1,6 @@
 package io.tiledb.java.api;
 
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
-import static io.tiledb.java.api.Constants.TILEDB_COORDS;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
 
@@ -102,11 +101,9 @@ public class AsyncTest {
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer(
-        "rows",
-        new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Integer.class));
+        "rows", new NativeArray(ctx, max_sizes.get("rows").getSecond().intValue(), Integer.class));
     query.setBuffer(
-        "cols",
-        new NativeArray(ctx, max_sizes.get(TILEDB_COORDS).getSecond().intValue(), Integer.class));
+        "cols", new NativeArray(ctx, max_sizes.get("cols").getSecond().intValue(), Integer.class));
     query.setBuffer(
         "a", new NativeArray(ctx, max_sizes.get("a").getSecond().intValue(), Integer.class));
 

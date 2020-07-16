@@ -41,19 +41,19 @@ public class SparseCreate {
     Context ctx = new Context();
     // Create getDimensions
     Dimension<Long> d1 =
-        new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
+        new Dimension<Long>(ctx, "d1", Datatype.TILEDB_INT64, new Pair(1l, 4l), 2l);
     Dimension<Long> d2 =
-        new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
+        new Dimension<Long>(ctx, "d2", Datatype.TILEDB_INT64, new Pair(1l, 4l), 2l);
     // Create getDomain
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
     domain.addDimension(d2);
 
     // Create and add getAttributes
-    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
-    Attribute a2 = new Attribute(ctx, "a2", String.class);
+    Attribute a1 = new Attribute(ctx, "a1", Datatype.TILEDB_INT32);
+    Attribute a2 = new Attribute(ctx, "a2", Datatype.TILEDB_CHAR);
     a2.setCellValNum(TILEDB_VAR_NUM);
-    Attribute a3 = new Attribute(ctx, "a3", Float.class);
+    Attribute a3 = new Attribute(ctx, "a3", Datatype.TILEDB_FLOAT32);
     a3.setCellValNum(2);
     a1.setFilterList(new FilterList(ctx).addFilter(new LZ4Filter(ctx)));
     a2.setFilterList(new FilterList(ctx).addFilter(new GzipFilter(ctx)));
