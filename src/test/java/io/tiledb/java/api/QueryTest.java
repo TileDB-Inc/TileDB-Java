@@ -304,7 +304,7 @@ public class QueryTest {
     }
 
     @Test
-    public void queryTestNIOReadArray() throws Exception {
+    public void queryTestNIOReadArrayRange() throws Exception {
       arrayCreate();
       arrayWrite();
 
@@ -347,6 +347,52 @@ public class QueryTest {
     }
 
     @Test
+    public void queryTestNIOReadArraySubArray() throws Exception {
+      arrayCreate();
+      arrayWrite();
+
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+
+      Query query = new Query(array, TILEDB_READ);
+
+      int bufferSize = 4;
+
+      query.setBuffer("rows", bufferSize);
+      query.setBuffer("cols", bufferSize);
+      ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
+      ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
+
+      ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
+
+      subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(4).putInt(1).putInt(4);
+
+      query.setSubarray(subarray);
+
+      query.setLayout(TILEDB_ROW_MAJOR);
+
+      int[] d1_result = new int[16];
+      int[] d2_result = new int[16];
+      int idx = 0;
+
+      while (query.getQueryStatus() != QueryStatus.TILEDB_COMPLETED) {
+        query.submit();
+
+        while (d1.hasRemaining() && d2.hasRemaining()) {
+          d1_result[idx] = d1.getInt();
+          d2_result[idx] = d2.getInt();
+          idx++;
+        }
+        d1.clear();
+        d2.clear();
+      }
+
+      Assert.assertArrayEquals(
+          new int[] {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4}, d1_result);
+      Assert.assertArrayEquals(
+          new int[] {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4}, d2_result);
+    }
+
+    @Test
     public void queryTestNIOReadArrayArbitrarySize() throws Exception {
       arrayCreate();
       arrayWrite();
@@ -361,8 +407,9 @@ public class QueryTest {
       ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
       ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
-      query.addRange(0, 1, 4);
-      query.addRange(1, 1, 4);
+      ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
+      subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(4).putInt(1).putInt(4);
+      query.setSubarray(subarray);
 
       query.setLayout(TILEDB_ROW_MAJOR);
 
@@ -397,9 +444,9 @@ public class QueryTest {
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
           Query query = new Query(array, TILEDB_READ)) {
 
-        // Slice only rows 1, 2 and cols 2, 3, 4
-        query.addRange(0, 1, 2);
-        query.addRange(1, 2, 4);
+        ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
+        subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(2).putInt(2).putInt(4);
+        query.setSubarray(subarray);
         query.setLayout(TILEDB_ROW_MAJOR);
 
         query.setBuffer("rows", 3).setBuffer("cols", 3).setBuffer("a1", 3).setBuffer("a2", 6);
@@ -453,9 +500,9 @@ public class QueryTest {
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
           Query query = new Query(array, TILEDB_READ)) {
 
-        // Slice only rows 1, 2 and cols 2, 3, 4
-        query.addRange(0, 1, 2);
-        query.addRange(1, 2, 4);
+        ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
+        subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(2).putInt(2).putInt(4);
+        query.setSubarray(subarray);
         query.setLayout(TILEDB_ROW_MAJOR);
 
         // Set the opposite byte order from the native system
@@ -523,7 +570,9 @@ public class QueryTest {
       ByteBuffer dataBuffer = ByteBuffer.allocateDirect(1000);
 
       Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ);
-      q.addRange(0, 1, 8);
+      ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
+      subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(8);
+      q.setSubarray(subarray);
       q.setBuffer("a1", offsetsBuffer, dataBuffer);
       q.submit();
 

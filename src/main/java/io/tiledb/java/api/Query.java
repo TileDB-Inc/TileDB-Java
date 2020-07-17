@@ -189,6 +189,17 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Sets a subarray, defined in the order dimensions were added. Coordinates are inclusive.
+   *
+   * @param subarray The targeted subarray.
+   * @exception TileDBError A TileDB exception
+   */
+  public synchronized Query setSubarray(ByteBuffer subarray) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_query_set_subarray_nio(ctx.getCtxp(), queryp, subarray));
+    return this;
+  }
+
+  /**
    * Adds a 1D range along a subarray dimension, which is in the form (start, end). The datatype of
    * the range components must be the same as the type of the domain of the array in the query.
    *

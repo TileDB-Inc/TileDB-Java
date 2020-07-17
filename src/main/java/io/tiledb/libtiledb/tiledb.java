@@ -2119,6 +2119,12 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_void.getCPtr(subarray));
   }
 
+  public static int tiledb_query_set_subarray_nio(
+      SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_query_t query, ByteBuffer subarray) {
+    return tiledbJNI.tiledb_query_set_subarray_nio(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_query_t.getCPtr(query), subarray);
+  }
+
   public static int tiledb_query_set_buffer(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_query_t query,
