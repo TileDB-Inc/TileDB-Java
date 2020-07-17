@@ -919,6 +919,9 @@ public class tiledbJNI {
 
   public static final native int tiledb_query_set_subarray(long jarg1, long jarg2, long jarg3);
 
+  public static final native int tiledb_query_set_subarray_nio(
+      long jarg1, long jarg2, ByteBuffer jarg3);
+
   public static final native int tiledb_query_set_buffer(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
