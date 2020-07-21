@@ -124,7 +124,7 @@ public enum Datatype {
       case TILEDB_FLOAT64:
         return Double.class;
       case TILEDB_CHAR:
-        return Short.class;
+        return Byte.class;
       case TILEDB_INT8:
         return Byte.class;
       case TILEDB_UINT8:
