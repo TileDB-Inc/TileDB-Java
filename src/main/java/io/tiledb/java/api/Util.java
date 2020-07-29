@@ -36,4 +36,29 @@ public class Util {
 
     return (int) num;
   }
+
+  /**
+   * Returns the Datatype of the input field
+   *
+   * @param array The TileDB array
+   * @param fieldName The field name
+   * @return The Datatype
+   * @throws TileDBError A TileDBError
+   */
+  public static Datatype getFieldDatatype(Array array, String fieldName) throws TileDBError {
+    Datatype dt;
+    try (ArraySchema schema = array.getSchema()) {
+      try (Domain domain = schema.getDomain()) {
+        if (domain.hasDimension(fieldName)) {
+          dt = domain.getDimension(fieldName).getType();
+        } else {
+          try (Attribute attribute = schema.getAttribute(fieldName)) {
+            dt = attribute.getType();
+          }
+        }
+      }
+    }
+
+    return dt;
+  }
 }

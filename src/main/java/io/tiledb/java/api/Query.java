@@ -28,8 +28,9 @@ import static io.tiledb.java.api.Datatype.TILEDB_UINT64;
 
 import io.tiledb.libtiledb.*;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -541,19 +542,7 @@ public class Query implements AutoCloseable {
       throw new TileDBError("Number of buffer elements must be >= 1");
     }
 
-    Datatype dt;
-
-    try (ArraySchema schema = array.getSchema()) {
-      try (Domain domain = schema.getDomain()) {
-        if (domain.hasDimension(attr)) {
-          dt = domain.getDimension(attr).getType();
-        } else {
-          try (Attribute attribute = schema.getAttribute(attr)) {
-            dt = attribute.getType();
-          }
-        }
-      }
-    }
+    Datatype dt = Util.getFieldDatatype(array, attr);
 
     int size = Util.castLongToInt(bufferElements * dt.getNativeSize());
 
@@ -1057,33 +1046,33 @@ public class Query implements AutoCloseable {
   /**
    * Return a Java primitive array object as a copy of the attribute buffer
    *
-   * @param attr attribute name
+   * @param bufferName attribute name
    * @return A Java array
    * @exception TileDBError A TileDB exception
    */
-  public Object getBuffer(String attr) throws TileDBError {
-    if (buffers_.containsKey(attr)) {
-      NativeArray buffer = buffers_.get(attr).getSecond();
+  public Object getBuffer(String bufferName) throws TileDBError {
+    if (buffers_.containsKey(bufferName)) {
+      NativeArray buffer = buffers_.get(bufferName).getSecond();
       Integer nelements =
           (buffer_sizes_
-                  .get(attr)
+                  .get(bufferName)
                   .getSecond()
                   .getitem(0)
                   .divide(BigInteger.valueOf(buffer.getNativeTypeSize())))
               .intValue();
       return buffer.toJavaArray(nelements);
-    } else if (buffers_.containsKey(attr)) {
-      NativeArray buffer = buffers_.get(attr).getSecond();
+    } else if (buffers_.containsKey(bufferName)) {
+      NativeArray buffer = buffers_.get(bufferName).getSecond();
       Integer nelements =
           (buffer_sizes_
-                  .get(attr)
+                  .get(bufferName)
                   .getSecond()
                   .getitem(0)
                   .divide(BigInteger.valueOf(buffer.getNativeTypeSize())))
               .intValue();
       return buffer.toJavaArray(nelements);
     } else {
-      throw new TileDBError("Query attribute buffer does not exist: " + attr);
+      throw new TileDBError("Query attribute buffer does not exist: " + bufferName);
     }
   }
 
@@ -1102,23 +1091,207 @@ public class Query implements AutoCloseable {
   /**
    * Return an array containing offsets for a variable attribute buffer
    *
-   * @param attr attribute name
+   * @param bufferName attribute name
    * @return A Java long[] array
    * @throws TileDBError A TileDB exception
    */
-  public long[] getVarBuffer(String attr) throws TileDBError {
-    if (!buffers_.containsKey(attr)) {
-      throw new TileDBError("Query variable attribute buffer does not exist: " + attr);
+  public long[] getVarBuffer(String bufferName) throws TileDBError {
+    if (!buffers_.containsKey(bufferName)) {
+      throw new TileDBError("Query variable attribute buffer does not exist: " + bufferName);
     }
-    NativeArray buffer = buffers_.get(attr).getFirst();
+    NativeArray buffer = buffers_.get(bufferName).getFirst();
     Integer nelements =
         (buffer_sizes_
-                .get(attr)
+                .get(bufferName)
                 .getFirst()
                 .getitem(0)
                 .divide(BigInteger.valueOf(buffer.getNativeTypeSize())))
             .intValue();
     return (long[]) buffer.toJavaArray(nelements);
+  }
+
+  /**
+   * Retrieves an IntBuffer of an attribute attr of type Integer
+   *
+   * @param bufferName The attribute name
+   * @return The IntBuffer
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<LongBuffer, IntBuffer> getIntBuffer(String bufferName) throws TileDBError {
+    Datatype dt = Util.getFieldDatatype(array, bufferName);
+
+    if (dt.javaClass() != Integer.class)
+      throw new TileDBError(
+          "IntBuffer requested, but attribute " + bufferName + " has type " + dt.name());
+
+    Pair<ByteBuffer, ByteBuffer> buffer = this.byteBuffers_.get(bufferName);
+    if (byteBuffers_.containsKey(bufferName)) {
+      LongBuffer offsets = null;
+      if (buffer.getFirst() != null) offsets = buffer.getFirst().asLongBuffer();
+      return new Pair(offsets, buffer.getSecond().asIntBuffer());
+    } else throw new TileDBError("ByteBuffer does not exist for attribute: " + bufferName);
+  }
+
+  /**
+   * Retrieves a LongBuffer of an attribute bufferName of type Long
+   *
+   * @param bufferName The attribute name
+   * @return The IntBuffer
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<LongBuffer, LongBuffer> getLongBuffer(String bufferName) throws TileDBError {
+    Datatype dt = Util.getFieldDatatype(array, bufferName);
+
+    if (dt.javaClass() != Long.class)
+      throw new TileDBError(
+          "LongBuffer requested, but attribute " + bufferName + " has type " + dt.name());
+
+    Pair<ByteBuffer, ByteBuffer> buffer = this.byteBuffers_.get(bufferName);
+    if (byteBuffers_.containsKey(bufferName))
+      return new Pair(buffer.getFirst().asLongBuffer(), buffer.getSecond().asLongBuffer());
+    else throw new TileDBError("ByteBuffer does not exist for attribute: " + bufferName);
+  }
+
+  /**
+   * Retrieves the CharBuffer of an attribute bufferName of type Char
+   *
+   * @param bufferName The attribute name
+   * @return The CharBuffer
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<LongBuffer, ShortBuffer> getShortBuffer(String bufferName) throws TileDBError {
+    Datatype dt = Util.getFieldDatatype(array, bufferName);
+
+    if (dt.javaClass() != Short.class)
+      throw new TileDBError(
+          "ShortBuffer requested, but attribute " + bufferName + " has type " + dt.name());
+
+    Pair<ByteBuffer, ByteBuffer> buffer = this.byteBuffers_.get(bufferName);
+    if (byteBuffers_.containsKey(bufferName)) {
+      LongBuffer offsets = null;
+      if (buffer.getFirst() != null) offsets = buffer.getFirst().asLongBuffer();
+      return new Pair(offsets, buffer.getSecond().asShortBuffer());
+    } else throw new TileDBError("ByteBuffer does not exist for attribute: " + bufferName);
+  }
+
+  /**
+   * Retrieves the CharBuffer of an attribute bufferName of type Char
+   *
+   * @param bufferName The attribute name
+   * @return The CharBuffer
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<LongBuffer, CharBuffer> getCharBuffer(String bufferName) throws TileDBError {
+    Datatype dt = Util.getFieldDatatype(array, bufferName);
+
+    if (dt.javaClass() != Byte.class)
+      throw new TileDBError(
+          "CharBuffer requested, but attribute " + bufferName + " has type " + dt.name());
+
+    Pair<ByteBuffer, ByteBuffer> buffer = this.byteBuffers_.get(bufferName);
+    if (byteBuffers_.containsKey(bufferName)) {
+      LongBuffer offsets = null;
+      if (buffer.getFirst() != null) offsets = buffer.getFirst().asLongBuffer();
+
+      // Set the US_ASCII charset and decode, so each character is treated as a single byte instead
+      // of two.
+      Charset charset = StandardCharsets.US_ASCII;
+      CharBuffer charBuffer = charset.decode(buffer.getSecond());
+      return new Pair(offsets, charBuffer);
+    } else throw new TileDBError("ByteBuffer does not exist for attribute: " + bufferName);
+  }
+
+  /**
+   * Retrieves the an FloatBuffer of an attribute bufferName of type Float
+   *
+   * @param bufferName The attribute name
+   * @return The FloatBuffer
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<LongBuffer, FloatBuffer> getFloatBuffer(String bufferName) throws TileDBError {
+    Datatype dt = Util.getFieldDatatype(array, bufferName);
+
+    if (dt.javaClass() != Float.class)
+      throw new TileDBError(
+          "FloatBuffer requested, but attribute " + bufferName + " has type " + dt.name());
+
+    Pair<ByteBuffer, ByteBuffer> buffer = this.byteBuffers_.get(bufferName);
+    if (byteBuffers_.containsKey(bufferName)) {
+      LongBuffer offsets = null;
+      if (buffer.getFirst() != null) offsets = buffer.getFirst().asLongBuffer();
+      return new Pair(offsets, buffer.getSecond().asFloatBuffer());
+    } else throw new TileDBError("ByteBuffer does not exist for attribute: " + bufferName);
+  }
+
+  /**
+   * Retrieves the an DoubleBuffer of an attribute bufferName of type Double
+   *
+   * @param bufferName The attribute name
+   * @return The DoubleBuffer
+   * @throws TileDBError A TileDB exception
+   */
+  public Pair<LongBuffer, DoubleBuffer> getDoubleBuffer(String bufferName) throws TileDBError {
+    Datatype dt = Util.getFieldDatatype(array, bufferName);
+
+    if (dt.javaClass() != Double.class)
+      throw new TileDBError(
+          "DoubleBuffer requested, but attribute " + bufferName + " has type " + dt.name());
+
+    Pair<ByteBuffer, ByteBuffer> buffer = this.byteBuffers_.get(bufferName);
+    if (byteBuffers_.containsKey(bufferName)) {
+      LongBuffer offsets = null;
+      if (buffer.getFirst() != null) offsets = buffer.getFirst().asLongBuffer();
+      return new Pair(offsets, buffer.getSecond().asDoubleBuffer());
+    } else throw new TileDBError("ByteBuffer does not exist for attribute: " + bufferName);
+  }
+
+  /**
+   * Drains a ByteBuffer and returns its contents as a byte[] array
+   *
+   * @param bufferName The attribute name
+   * @return The byte[] array
+   * @throws TileDBError A TileDB exception
+   */
+  public byte[] getByteArray(String bufferName) throws TileDBError {
+    ByteBuffer buffer = this.byteBuffers_.get(bufferName).getSecond();
+    if (byteBuffers_.containsKey(bufferName)) {
+
+      byte[] bytes = new byte[buffer.limit()];
+      int idx = 0;
+      while (buffer.hasRemaining()) bytes[idx++] = buffer.get();
+
+      // Reset buffer position after draining, so it can be reused.
+      buffer.flip();
+
+      return bytes;
+    }
+
+    throw new TileDBError("ByteBuffer does not exist for attribute: " + bufferName);
+  }
+
+  /**
+   * Drains a variable-sized buffer and returns its offsets as a byte[] Array
+   *
+   * @param bufferName The attribute name
+   * @return The byte[] array
+   * @throws TileDBError A TileDB exception
+   */
+  public long[] getOffsetArray(String bufferName) throws TileDBError {
+    Pair<ByteBuffer, ByteBuffer> buffer = this.byteBuffers_.get(bufferName);
+    if (byteBuffers_.containsKey(bufferName)) {
+      LongBuffer offsets = null;
+      if (buffer.getFirst() != null) {
+        offsets = buffer.getFirst().asLongBuffer();
+
+        long[] offsetArr = new long[offsets.limit()];
+        int idx = 0;
+        while (offsets.hasRemaining()) offsetArr[idx++] = offsets.get();
+
+        return offsetArr;
+      }
+    }
+
+    throw new TileDBError("ByteBuffer does not exist for attribute: " + bufferName);
   }
 
   /**
