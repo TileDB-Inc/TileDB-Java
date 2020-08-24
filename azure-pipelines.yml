@@ -39,8 +39,10 @@ stages:
           matrix:
             ubuntu_18:
               imageName: 'ubuntu-18.04'
+              ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
             macOS:
               imageName: 'macOS-10.14'
+              ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
         pool:
           vmImage: $(imageName)
         steps:
@@ -54,8 +56,12 @@ stages:
           matrix:
             ubuntu_18:
               imageName: 'ubuntu-18.04'
+              ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
+              ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
             macOS:
               imageName: 'macOS-10.14'
+              ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
+              ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
         pool:
           vmImage: $(imageName)
         steps:
@@ -65,6 +71,7 @@ stages:
           matrix:
             windows_19:
               imageName: 'windows-2019'
+              ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
         pool:
           vmImage: $(imageName)
         steps:
@@ -78,6 +85,8 @@ stages:
           matrix:
             ubuntu_18:
               imageName: 'ubuntu-18.04'
+              ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
+              ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
         pool:
           vmImage: $(imageName)
 
