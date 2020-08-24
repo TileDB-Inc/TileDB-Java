@@ -543,7 +543,6 @@ public class Array implements AutoCloseable {
             tiledb.tiledb_array_get_non_empty_domain_from_index(
                 ctx.getCtxp(), arrayp, index, domainArray.toVoidPointer(), emptyp));
         if (tiledb.intp_value(emptyp) == 1) {
-          System.out.println("Returning empty pair");
           return Pair.empty();
         }
       } finally {
