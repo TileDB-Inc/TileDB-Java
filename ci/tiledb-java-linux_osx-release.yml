@@ -19,7 +19,7 @@ steps:
       fi
 
       if [[ ( "$AGENT_OS" == "Darwin" ) ]]; then
-        ./gradlew assemble
+        ./gradlew -PTILEDB_AZURE=ON assemble
         cp ./build/tiledb_jni/*.dylib ./build/install/lib/*.dylib $BUILD_BINARIESDIRECTORY
       fi
 
