@@ -67,6 +67,7 @@ task cmakeTask(type: Exec) {
         "TILEDB_GIT_TAG",
         "TILEDB_VERBOSE",
         "TILEDB_S3",
+        "TILEDB_AZURE",
         "TILEDB_HDFS",
         "TILEDB_SERIALIZATION"
     ].each { v ->
