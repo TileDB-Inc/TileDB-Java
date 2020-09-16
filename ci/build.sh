@@ -3,4 +3,4 @@
 set -ex
 
 cd /TileDB-Java
-./gradlew build
+./gradlew -PTILEDB_AZURE=ON build
