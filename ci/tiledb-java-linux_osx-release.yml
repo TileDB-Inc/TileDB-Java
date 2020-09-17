@@ -15,7 +15,7 @@ steps:
       if [[ ( "$AGENT_OS" == "Linux" ) ]]; then
         docker build -f ci/Dockerfile2010 . -t lib_builder_2010
         docker run -v $(pwd):/TileDB-Java -t lib_builder_2010 /TileDB-Java/ci/build.sh
-        cp ./build/tiledb_jni/*.so ./build/install/lib/*.so $BUILD_BINARIESDIRECTORY
+        cp ./build/tiledb_jni/*.so ./build/install/lib/*.so ./build/install/lib64/*.so $BUILD_BINARIESDIRECTORY
       fi
 
       if [[ ( "$AGENT_OS" == "Darwin" ) ]]; then
