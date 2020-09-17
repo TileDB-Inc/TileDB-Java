@@ -1,8 +1,6 @@
 steps:
 
   - bash: |
-      ls
-      cp *.dll $BUILD_BINARIESDIRECTORY
       ./gradlew.bat assemble
       cp ./build/tiledb_jni/Release/*.dll ./build/install/bin/*.dll $BUILD_BINARIESDIRECTORY
 
