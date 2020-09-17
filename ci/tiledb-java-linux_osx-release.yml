@@ -12,14 +12,15 @@ steps:
 
       BUILD_BINARIESDIRECTORY=${BUILD_BINARIESDIRECTORY:-$BUILD_REPOSITORY_LOCALPATH/}
 
-      ./gradlew assemble
-
       if [[ ( "$AGENT_OS" == "Linux" ) ]]; then
-            cp ./build/tiledb_jni/*.so ./build/install/lib/*.so $BUILD_BINARIESDIRECTORY
+        docker build -f ci/Dockerfile2010 . -t lib_builder_2010
+        docker run -v $(pwd):/TileDB-Java -t lib_builder_2010 /TileDB-Java/ci/build.sh
+        cp ./build/tiledb_jni/*.so ./build/install/lib/*.so $BUILD_BINARIESDIRECTORY
       fi
 
       if [[ ( "$AGENT_OS" == "Darwin" ) ]]; then
-              cp ./build/tiledb_jni/*.dylib ./build/install/lib/*.dylib $BUILD_BINARIESDIRECTORY
+        ./gradlew -PTILEDB_AZURE=ON assemble
+        cp ./build/tiledb_jni/*.dylib ./build/install/lib/*.dylib $BUILD_BINARIESDIRECTORY
       fi
 
       echo "Native Libs"
