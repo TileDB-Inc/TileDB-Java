@@ -872,6 +872,11 @@ public class NativeArray implements AutoCloseable {
           int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
         }
+      case TILEDB_CHAR:
+        {
+          int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
+          break;
+        }
       default:
         {
           throw new TileDBError("Unsupported TileDB NativeArray Datatype enum: " + this.nativeType);
