@@ -424,26 +424,34 @@ public class ArrayTest {
             },
             Double.class);
 
+    NativeArray metadataString = new NativeArray(ctx, "русский", String.class);
+
     String byteKey = "md-byte";
     String shortKey = "md-short";
     String intKey = "md-int";
     String floatKey = "md-float";
     String doubleKey = "md-double";
+    String stringKey = "md-string";
 
     // metadata keys sorted in a lexicographic ordering
-    String[] keys = new String[] {byteKey, doubleKey, floatKey, intKey, shortKey};
+    String[] keys = new String[] {byteKey, doubleKey, floatKey, intKey, shortKey, stringKey};
     Datatype[] types =
-        new Datatype[] {TILEDB_INT8, TILEDB_FLOAT64, TILEDB_FLOAT32, TILEDB_INT32, TILEDB_INT16};
+        new Datatype[] {
+          TILEDB_INT8, TILEDB_FLOAT64, TILEDB_FLOAT32, TILEDB_INT32, TILEDB_INT16, TILEDB_CHAR
+        };
     int keysNum = keys.length;
     NativeArray[] nativeArrays =
-        new NativeArray[] {metadataByte, metadataDouble, metadataFloat, metadataInt, metadataShort};
+        new NativeArray[] {
+          metadataByte, metadataDouble, metadataFloat, metadataInt, metadataShort, metadataString
+        };
     Object[] expectedArrays =
         new Object[] {
           metadataByte.toJavaArray(),
           metadataDouble.toJavaArray(),
           metadataFloat.toJavaArray(),
           metadataInt.toJavaArray(),
-          metadataShort.toJavaArray()
+          metadataShort.toJavaArray(),
+          metadataString.toJavaArray()
         };
 
     for (int i = 0; i < keysNum; i++) {
@@ -474,12 +482,14 @@ public class ArrayTest {
     NativeArray metadataIntActual = arrayn.getMetadata(intKey, TILEDB_INT32);
     NativeArray metadataFloatActual = arrayn.getMetadata(floatKey, TILEDB_FLOAT32);
     NativeArray metadataDoubleActual = arrayn.getMetadata(doubleKey, TILEDB_FLOAT64);
+    NativeArray metadataStringActual = arrayn.getMetadata(stringKey, TILEDB_CHAR);
 
     Assert.assertNotNull(metadataByteActual);
     Assert.assertNotNull(metadataShortActual);
     Assert.assertNotNull(metadataIntActual);
     Assert.assertNotNull(metadataFloatActual);
     Assert.assertNotNull(metadataDoubleActual);
+    Assert.assertNotNull(metadataStringActual);
 
     Assert.assertArrayEquals(
         (byte[]) metadataByte.toJavaArray(), (byte[]) metadataByteActual.toJavaArray());
@@ -493,6 +503,10 @@ public class ArrayTest {
         (double[]) metadataDouble.toJavaArray(),
         (double[]) metadataDoubleActual.toJavaArray(),
         1e-10d);
+    Assert.assertArrayEquals(
+        (byte[]) metadataString.toJavaArray(), (byte[]) metadataStringActual.toJavaArray());
+    Assert.assertEquals(
+        "русский", new String((byte[]) metadataString.toJavaArray(), StandardCharsets.UTF_8));
 
     // exctracion of metadata without specifying the Datatype
     for (int i = 0; i < keysNum; i++) {
