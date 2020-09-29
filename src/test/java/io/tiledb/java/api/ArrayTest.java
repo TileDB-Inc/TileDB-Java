@@ -425,6 +425,8 @@ public class ArrayTest {
             Double.class);
 
     NativeArray metadataString = new NativeArray(ctx, "русский", String.class);
+    NativeArray metadataStringAscii = new NativeArray(ctx, "Russia", TILEDB_STRING_ASCII);
+    NativeArray metadataStringUtf8 = new NativeArray(ctx, "русский", TILEDB_STRING_UTF8);
 
     String byteKey = "md-byte";
     String shortKey = "md-short";
@@ -432,17 +434,36 @@ public class ArrayTest {
     String floatKey = "md-float";
     String doubleKey = "md-double";
     String stringKey = "md-string";
+    String stringAsciiKey = "md-string-ascii";
+    String stringUtf8Key = "md-string-utf8";
 
     // metadata keys sorted in a lexicographic ordering
-    String[] keys = new String[] {byteKey, doubleKey, floatKey, intKey, shortKey, stringKey};
+    String[] keys =
+        new String[] {
+          byteKey, doubleKey, floatKey, intKey, shortKey, stringKey, stringAsciiKey, stringUtf8Key
+        };
     Datatype[] types =
         new Datatype[] {
-          TILEDB_INT8, TILEDB_FLOAT64, TILEDB_FLOAT32, TILEDB_INT32, TILEDB_INT16, TILEDB_CHAR
+          TILEDB_INT8,
+          TILEDB_FLOAT64,
+          TILEDB_FLOAT32,
+          TILEDB_INT32,
+          TILEDB_INT16,
+          TILEDB_CHAR,
+          TILEDB_STRING_ASCII,
+          TILEDB_STRING_UTF8
         };
     int keysNum = keys.length;
     NativeArray[] nativeArrays =
         new NativeArray[] {
-          metadataByte, metadataDouble, metadataFloat, metadataInt, metadataShort, metadataString
+          metadataByte,
+          metadataDouble,
+          metadataFloat,
+          metadataInt,
+          metadataShort,
+          metadataString,
+          metadataStringAscii,
+          metadataStringUtf8
         };
     Object[] expectedArrays =
         new Object[] {
@@ -451,7 +472,9 @@ public class ArrayTest {
           metadataFloat.toJavaArray(),
           metadataInt.toJavaArray(),
           metadataShort.toJavaArray(),
-          metadataString.toJavaArray()
+          metadataString.toJavaArray(),
+          metadataStringAscii.toJavaArray(),
+          metadataStringUtf8.toJavaArray()
         };
 
     for (int i = 0; i < keysNum; i++) {
@@ -483,6 +506,8 @@ public class ArrayTest {
     NativeArray metadataFloatActual = arrayn.getMetadata(floatKey, TILEDB_FLOAT32);
     NativeArray metadataDoubleActual = arrayn.getMetadata(doubleKey, TILEDB_FLOAT64);
     NativeArray metadataStringActual = arrayn.getMetadata(stringKey, TILEDB_CHAR);
+    NativeArray metadataStringAsciiActual = arrayn.getMetadata(stringAsciiKey, TILEDB_STRING_ASCII);
+    NativeArray metadataStringUtf8Actual = arrayn.getMetadata(stringUtf8Key, TILEDB_STRING_UTF8);
 
     Assert.assertNotNull(metadataByteActual);
     Assert.assertNotNull(metadataShortActual);
@@ -490,6 +515,8 @@ public class ArrayTest {
     Assert.assertNotNull(metadataFloatActual);
     Assert.assertNotNull(metadataDoubleActual);
     Assert.assertNotNull(metadataStringActual);
+    Assert.assertNotNull(metadataStringAsciiActual);
+    Assert.assertNotNull(metadataStringUtf8Actual);
 
     Assert.assertArrayEquals(
         (byte[]) metadataByte.toJavaArray(), (byte[]) metadataByteActual.toJavaArray());
@@ -507,6 +534,16 @@ public class ArrayTest {
         (byte[]) metadataString.toJavaArray(), (byte[]) metadataStringActual.toJavaArray());
     Assert.assertEquals(
         "русский", new String((byte[]) metadataString.toJavaArray(), StandardCharsets.UTF_8));
+    Assert.assertArrayEquals(
+        (byte[]) metadataStringAscii.toJavaArray(),
+        (byte[]) metadataStringAsciiActual.toJavaArray());
+    Assert.assertEquals(
+        "Russia",
+        new String((byte[]) metadataStringAscii.toJavaArray(), StandardCharsets.ISO_8859_1));
+    Assert.assertArrayEquals(
+        (byte[]) metadataStringUtf8.toJavaArray(), (byte[]) metadataStringUtf8Actual.toJavaArray());
+    Assert.assertEquals(
+        "русский", new String((byte[]) metadataStringUtf8.toJavaArray(), StandardCharsets.UTF_8));
 
     // exctracion of metadata without specifying the Datatype
     for (int i = 0; i < keysNum; i++) {
