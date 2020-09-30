@@ -533,7 +533,7 @@ public class ArrayTest {
     Assert.assertArrayEquals(
         (byte[]) metadataString.toJavaArray(), (byte[]) metadataStringActual.toJavaArray());
     Assert.assertEquals(
-        "русский", new String((byte[]) metadataString.toJavaArray(), StandardCharsets.UTF_8));
+        "???????", new String((byte[]) metadataString.toJavaArray(), StandardCharsets.ISO_8859_1));
     Assert.assertArrayEquals(
         (byte[]) metadataStringAscii.toJavaArray(),
         (byte[]) metadataStringAsciiActual.toJavaArray());

@@ -197,13 +197,13 @@ public class NativeArray implements AutoCloseable {
         {
           return ((long[]) buffer).length;
         }
+      case TILEDB_CHAR:
       case TILEDB_STRING_ASCII:
         {
           Charset charset = StandardCharsets.ISO_8859_1;
           return stringToBytes((String) buffer, charset).length;
         }
       case TILEDB_STRING_UTF8:
-      case TILEDB_CHAR:
         {
           Charset charset = StandardCharsets.UTF_8;
           return stringToBytes((String) buffer, charset).length;
@@ -283,6 +283,7 @@ public class NativeArray implements AutoCloseable {
           uint64_tArray = Utils.newInt64_tArray((long[]) buffer);
           break;
         }
+      case TILEDB_CHAR:
       case TILEDB_STRING_ASCII:
         {
           Charset charset = StandardCharsets.ISO_8859_1;
@@ -290,7 +291,6 @@ public class NativeArray implements AutoCloseable {
           break;
         }
       case TILEDB_STRING_UTF8:
-      case TILEDB_CHAR:
         {
           Charset charset = StandardCharsets.UTF_8;
           int8_tArray = Utils.newInt8_tArray(stringToBytes((String) buffer, charset));
@@ -544,6 +544,7 @@ public class NativeArray implements AutoCloseable {
           uint64_tArray.setitem(index, (long) value);
           break;
         }
+      case TILEDB_CHAR:
       case TILEDB_STRING_ASCII:
         {
           Charset charset = StandardCharsets.ISO_8859_1;
@@ -554,7 +555,6 @@ public class NativeArray implements AutoCloseable {
           break;
         }
       case TILEDB_STRING_UTF8:
-      case TILEDB_CHAR:
         {
           Charset charset = StandardCharsets.UTF_8;
           for (byte b : stringToBytes((String) value, charset)) {
