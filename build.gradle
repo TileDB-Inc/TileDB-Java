@@ -100,6 +100,9 @@ task generateJNI(type: Exec) {
     executable = "../generate_tiledb_jni"
 }
 
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
 import org.apache.tools.ant.taskdefs.condition.Os
 test {
     useJUnit()
