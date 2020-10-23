@@ -16,12 +16,18 @@ steps:
   - bash: |
       unset SYSTEM
       ./gradlew assemble
+      ./gradlew publishToMavenLocal
     displayName: 'Assemble'
 
   - bash: |
       unset SYSTEM
       ./gradlew test
     displayName: 'Test'
+
+  - bash: |
+      git clone https://github.com/TileDB-Inc/TileDB-Spark.git -b victorgiannakouris/update_tiledb_java_034
+      cd TileDB-Spark && ./gradlew clean assemble && ./gradlew test
+    displayName: 'Test TileDB-Spark'
 
   - bash: |
       set -e pipefail
