@@ -47,8 +47,6 @@ stages:
               imageName: 'macOS-10.14'
               ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "OFF"
               ORG_GRADLE_PROJECT_TILEDB_S3: "OFF"
-              CFLAGS: "-march=haswell"
-              CPPFLAGS: "-march=haswell"
         pool:
           vmImage: $(imageName)
         steps:
