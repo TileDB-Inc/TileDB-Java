@@ -26,6 +26,7 @@ package io.tiledb.java.api;
 
 import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 
+import java.math.BigInteger;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -57,6 +58,54 @@ public class AttributeTest {
     try (Context ctx = new Context();
         Attribute a = new Attribute(ctx, "a2", Datatype.TILEDB_FLOAT32)) {
       Assert.assertEquals(Datatype.TILEDB_FLOAT32, a.getType());
+    }
+  }
+
+  @Test
+  public void testAttributeSetFillValue() throws Exception {
+    try (Context ctx = new Context();
+        Attribute a = new Attribute(ctx, "a2", Datatype.TILEDB_INT32)) {
+
+      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_INT32);
+
+      arr.setItem(0, 5);
+
+      a.setFillValue(arr, BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()));
+
+      Assert.assertEquals(5, a.getFillValue().getFirst());
+      Assert.assertEquals(
+          BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()),
+          a.getFillValue().getSecond());
+    }
+
+    try (Context ctx = new Context();
+        Attribute a = new Attribute(ctx, "a2", Datatype.TILEDB_INT64)) {
+
+      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_INT64);
+
+      arr.setItem(0, 5L);
+
+      a.setFillValue(arr, BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()));
+
+      Assert.assertEquals(5L, a.getFillValue().getFirst());
+      Assert.assertEquals(
+          BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()),
+          a.getFillValue().getSecond());
+    }
+
+    try (Context ctx = new Context();
+        Attribute a = new Attribute(ctx, "a2", Datatype.TILEDB_CHAR)) {
+
+      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_CHAR);
+
+      arr.setItem(0, "c");
+
+      a.setFillValue(arr, BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()));
+
+      Assert.assertEquals((byte) 'c', a.getFillValue().getFirst());
+      Assert.assertEquals(
+          BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()),
+          a.getFillValue().getSecond());
     }
   }
 }
