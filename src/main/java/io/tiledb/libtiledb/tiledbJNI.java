@@ -795,6 +795,12 @@ public class tiledbJNI {
 
   public static final native int tiledb_attribute_dump(long jarg1, long jarg2, long jarg3);
 
+  public static final native int tiledb_attribute_set_fill_value(
+      long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4);
+
+  public static final native int tiledb_attribute_get_fill_value(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
   public static final native int tiledb_domain_alloc(long jarg1, long jarg2);
 
   public static final native void tiledb_domain_free(long jarg1);
@@ -964,6 +970,8 @@ public class tiledbJNI {
   public static final native int tiledb_query_get_type(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_query_get_layout(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_query_get_array(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_query_add_range(
       long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
@@ -1168,6 +1176,9 @@ public class tiledbJNI {
       long jarg1, long jarg2, String jarg3, String jarg4);
 
   public static final native int tiledb_vfs_move_dir(
+      long jarg1, long jarg2, String jarg3, String jarg4);
+
+  public static final native int tiledb_vfs_copy_file(
       long jarg1, long jarg2, String jarg3, String jarg4);
 
   public static final native int tiledb_vfs_open(

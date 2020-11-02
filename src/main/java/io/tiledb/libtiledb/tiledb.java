@@ -1652,6 +1652,30 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_FILE.getCPtr(out));
   }
 
+  public static int tiledb_attribute_set_fill_value(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_attribute_t attr,
+      SWIGTYPE_p_void value,
+      java.math.BigInteger size) {
+    return tiledbJNI.tiledb_attribute_set_fill_value(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_attribute_t.getCPtr(attr),
+        SWIGTYPE_p_void.getCPtr(value),
+        size);
+  }
+
+  public static int tiledb_attribute_get_fill_value(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_attribute_t attr,
+      SWIGTYPE_p_p_void value,
+      SWIGTYPE_p_unsigned_long_long size) {
+    return tiledbJNI.tiledb_attribute_get_fill_value(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_attribute_t.getCPtr(attr),
+        SWIGTYPE_p_p_void.getCPtr(value),
+        SWIGTYPE_p_unsigned_long_long.getCPtr(size));
+  }
+
   public static int tiledb_domain_alloc(
       SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_p_tiledb_domain_t domain) {
     return tiledbJNI.tiledb_domain_alloc(
@@ -2293,6 +2317,16 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         SWIGTYPE_p_tiledb_query_t.getCPtr(query),
         SWIGTYPE_p_tiledb_layout_t.getCPtr(query_layout));
+  }
+
+  public static int tiledb_query_get_array(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_query_t query,
+      SWIGTYPE_p_p_tiledb_array_t array) {
+    return tiledbJNI.tiledb_query_get_array(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_query_t.getCPtr(query),
+        SWIGTYPE_p_p_tiledb_array_t.getCPtr(array));
   }
 
   public static int tiledb_query_add_range(
@@ -3075,6 +3109,15 @@ public class tiledb implements tiledbConstants {
   public static int tiledb_vfs_move_dir(
       SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_vfs_t vfs, String old_uri, String new_uri) {
     return tiledbJNI.tiledb_vfs_move_dir(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_vfs_t.getCPtr(vfs),
+        old_uri,
+        new_uri);
+  }
+
+  public static int tiledb_vfs_copy_file(
+      SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_vfs_t vfs, String old_uri, String new_uri) {
+    return tiledbJNI.tiledb_vfs_copy_file(
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         SWIGTYPE_p_tiledb_vfs_t.getCPtr(vfs),
         old_uri,

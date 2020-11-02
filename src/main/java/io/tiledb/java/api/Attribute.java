@@ -27,6 +27,7 @@ package io.tiledb.java.api;
 import static io.tiledb.java.api.Constants.TILEDB_VAR_NUM;
 
 import io.tiledb.libtiledb.*;
+import java.math.BigInteger;
 
 /**
  * Describes an Attribute of an Array cell.
@@ -258,6 +259,35 @@ public class Attribute implements AutoCloseable {
       throw err;
     }
     return filterlist;
+  }
+
+  public void setFillValue(NativeArray value, BigInteger size) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_attribute_set_fill_value(
+              ctx.getCtxp(), attributep, value.toVoidPointer(), size));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  public Pair<Object, Long> getFillValue() throws TileDBError {
+
+    try (NativeArray value = new NativeArray(ctx, this.type.getNativeSize(), this.type)) {
+      SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
+      SWIGTYPE_p_p_void v = tiledb.new_voidpArray(1);
+
+      ctx.handleError(tiledb.tiledb_attribute_get_fill_value(ctx.getCtxp(), attributep, v, size));
+
+      Object fillValue;
+      try (NativeArray fillValueArray = new NativeArray(ctx, getType(), v, 1)) {
+        fillValue = fillValueArray.getItem(0);
+      }
+
+      return new Pair(fillValue, tiledb.ullp_value(size));
+    } catch (TileDBError err) {
+      throw err;
+    }
   }
 
   /** @return A String representation for the Attribute. */
