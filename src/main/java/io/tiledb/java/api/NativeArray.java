@@ -1043,4 +1043,44 @@ public class NativeArray implements AutoCloseable {
       uint64_tArray.delete();
     }
   }
+
+  public io.tiledb.libtiledb.floatArray getFloatArray() {
+    return floatArray;
+  }
+
+  public io.tiledb.libtiledb.doubleArray getDoubleArray() {
+    return doubleArray;
+  }
+
+  public io.tiledb.libtiledb.int8_tArray getInt8_tArray() {
+    return int8_tArray;
+  }
+
+  public io.tiledb.libtiledb.int16_tArray getInt16_tArray() {
+    return int16_tArray;
+  }
+
+  public io.tiledb.libtiledb.int32_tArray getInt32_tArray() {
+    return int32_tArray;
+  }
+
+  public io.tiledb.libtiledb.int64_tArray getInt64_tArray() {
+    return int64_tArray;
+  }
+
+  public io.tiledb.libtiledb.uint8_tArray getUint8_tArray() {
+    return uint8_tArray;
+  }
+
+  public io.tiledb.libtiledb.uint16_tArray getUint16_tArray() {
+    return uint16_tArray;
+  }
+
+  public io.tiledb.libtiledb.uint32_tArray getUint32_tArray() {
+    return uint32_tArray;
+  }
+
+  public io.tiledb.libtiledb.int64_tArray getUint64_tArray() {
+    return uint64_tArray;
+  }
 }

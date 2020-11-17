@@ -290,6 +290,18 @@ public class Attribute implements AutoCloseable {
     }
   }
 
+  public int setNullable(short nullable) throws TileDBError {
+
+    try {
+      int res;
+      ctx.handleError(
+          res = tiledb.tiledb_attribute_set_nullable(ctx.getCtxp(), this.attributep, nullable));
+      return res;
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
   /** @return A String representation for the Attribute. */
   @Override
   public String toString() {

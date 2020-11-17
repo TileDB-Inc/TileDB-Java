@@ -61,6 +61,8 @@ public class Query implements AutoCloseable {
   private Map<String, Pair<ByteBuffer, ByteBuffer>> byteBuffers_;
   private Map<String, Pair<NativeArray, NativeArray>> buffers_;
   private Map<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
+  private Map<String, NativeArray> validityByteMaps_;
+  private Map<String, ByteBuffer> validityByteMapsByteBuffers_;
 
   public Query(Array array, QueryType type) throws TileDBError {
     Context _ctx = array.getCtx();
@@ -81,6 +83,8 @@ public class Query implements AutoCloseable {
     this.buffers_ = Collections.synchronizedMap(new HashMap<>());
     this.byteBuffers_ = Collections.synchronizedMap(new HashMap<>());
     this.buffer_sizes_ = Collections.synchronizedMap(new HashMap<>());
+    this.validityByteMaps_ = Collections.synchronizedMap(new HashMap<>());
+    this.validityByteMapsByteBuffers_ = Collections.synchronizedMap(new HashMap<>());
   }
 
   public Query(Array array) throws TileDBError {
@@ -196,7 +200,7 @@ public class Query implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public synchronized Query setSubarray(ByteBuffer subarray) throws TileDBError {
-    ctx.handleError(tiledb.tiledb_query_set_subarray_nio(ctx.getCtxp(), queryp, subarray));
+    ctx.handleError(Utils.tiledb_query_set_subarray_nio(ctx.getCtxp(), queryp, subarray));
     return this;
   }
 
@@ -530,6 +534,281 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Sets a nullable buffer for a fixed-sized attribute.
+   *
+   * @param attr The attribute name.
+   * @param buffer NativeBuffer to be used for the attribute values.
+   * @param bufferElements The actual number of buffer elements
+   * @param bytemap The byte-map
+   * @exception TileDBError A TileDB exception
+   */
+  public synchronized Query setBufferNullable(
+      String attr, NativeArray buffer, long bufferElements, NativeArray bytemap)
+      throws TileDBError {
+    if (bufferElements <= 0) {
+      throw new TileDBError("Number of buffer elements must be >= 1");
+    }
+    if (bufferElements > buffer.getSize()) {
+      throw new TileDBError(
+          "Number of elements requested exceeds the number of elements in allocated buffer: "
+              + bufferElements
+              + " > "
+              + buffer.getSize());
+    }
+
+    try (ArraySchema schema = array.getSchema()) {
+      try (Domain domain = schema.getDomain()) {
+        if (attr.equals(tiledb.tiledb_coords())) {
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
+        } else if (domain.hasDimension(attr)) {
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
+        } else {
+          try (Attribute attribute = schema.getAttribute(attr)) {
+            Types.typeCheck(attribute.getType(), buffer.getNativeType());
+          }
+        }
+      }
+    }
+
+    uint64_tArray offsets_array_size = new uint64_tArray(1);
+    uint64_tArray values_array_size = new uint64_tArray(1);
+    uint64_tArray buffer_validity_bytemap_size = new uint64_tArray(1);
+    offsets_array_size.setitem(0, BigInteger.valueOf(0l));
+    values_array_size.setitem(0, BigInteger.valueOf(bufferElements * buffer.getNativeTypeSize()));
+    buffer_validity_bytemap_size.setitem(
+        0, BigInteger.valueOf(bytemap.getSize() * bytemap.getNativeTypeSize()));
+
+    Pair<uint64_tArray, uint64_tArray> buffer_sizes =
+        new Pair<>(offsets_array_size, values_array_size);
+
+    // Close previous buffers if they exist for this attribute
+    if (buffers_.containsKey(attr)) {
+      buffers_.get(attr).getSecond().close();
+    }
+
+    buffers_.put(attr, new Pair(null, buffer));
+    buffer_sizes_.put(attr, buffer_sizes);
+    validityByteMaps_.put(attr, bytemap);
+
+    // Set the actual TileDB buffer
+    uint64_tArray buffer_size = buffer_sizes.getSecond();
+
+    ctx.handleError(
+        tiledb.tiledb_query_set_buffer_nullable(
+            ctx.getCtxp(),
+            queryp,
+            attr,
+            buffer.toVoidPointer(),
+            buffer_size.cast(),
+            bytemap.getUint8_tArray().cast(),
+            buffer_validity_bytemap_size.cast()));
+
+    return this;
+  }
+
+  /**
+   * Sets a nullable buffer for a fixed-sized, nullable attribute.
+   *
+   * @param attr The attribute name.
+   * @param buffer NativeBuffer to be used for the attribute values.
+   * @param bytemap The byte-map
+   * @exception TileDBError A TileDB exception
+   */
+  public synchronized Query setBufferNullableNIO(String attr, ByteBuffer buffer, ByteBuffer bytemap)
+      throws TileDBError {
+
+    if (buffer.capacity() <= 0) {
+      throw new TileDBError("Number of buffer elements must be >= 1");
+    }
+
+    if (!buffer.isDirect()) {
+      throw new TileDBError(
+          "The ByteBuffer provided is not direct. Please provide a direct buffer (ByteBuffer.allocateDirect(...))");
+    }
+
+    if (!buffer.order().equals(ByteOrder.nativeOrder())) {
+      throw new TileDBError(
+          "The order of the data ByteBuffer should be the same as the native order (ByteOrder.nativeOrder()).");
+    }
+
+    this.byteBuffers_.put(attr, new Pair<>(null, buffer));
+
+    uint64_tArray offsets_array_size = new uint64_tArray(1);
+    uint64_tArray values_array_size = new uint64_tArray(1);
+    uint64_tArray buffer_validity_bytemap_size = new uint64_tArray(1);
+
+    offsets_array_size.setitem(0, BigInteger.valueOf(0));
+    values_array_size.setitem(0, BigInteger.valueOf(buffer.capacity()));
+    buffer_validity_bytemap_size.setitem(0, BigInteger.valueOf(bytemap.capacity()));
+
+    buffer_sizes_.put(attr, new Pair<>(offsets_array_size, values_array_size));
+
+    Pair<uint64_tArray, uint64_tArray> buffer_sizes =
+        new Pair<>(offsets_array_size, values_array_size);
+
+    this.byteBuffers_.put(attr, new Pair<>(null, buffer));
+
+    buffer_sizes_.put(attr, buffer_sizes);
+    validityByteMapsByteBuffers_.put(attr, bytemap);
+
+    // Set the actual TileDB buffer
+    uint64_tArray buffer_size = buffer_sizes.getSecond();
+
+    ctx.handleError(
+        Utils.tiledb_query_set_buffer_nullable_nio(
+            ctx.getCtxp(),
+            queryp,
+            attr,
+            buffer,
+            buffer_size.cast(),
+            bytemap,
+            buffer_validity_bytemap_size.cast()));
+
+    return this;
+  }
+
+  /**
+   * Sets a nullable buffer for a variable-sized getAttribute.
+   *
+   * @param attr Attribute name
+   * @param offsets Offsets where a new element begins in the data buffer.
+   * @param buffer Buffer vector with elements of the attribute type.
+   * @param bytemap The byte-map
+   * @exception TileDBError A TileDB exception
+   */
+  public synchronized Query setBufferNullable(
+      String attr, NativeArray offsets, NativeArray buffer, NativeArray bytemap)
+      throws TileDBError {
+
+    if (attr.equals(tiledb.tiledb_coords())) {
+      throw new TileDBError("Cannot set coordinate buffer as variable sized.");
+    }
+
+    if (!offsets.getNativeType().equals(TILEDB_UINT64)) {
+      throw new TileDBError(
+          "Buffer offsets should be of getType TILEDB_UINT64 or Long. Found getType: "
+              + offsets.getNativeType());
+    }
+
+    // Type check the buffer native type matches the schema attribute type
+    try (ArraySchema schema = array.getSchema()) {
+      try (Domain domain = schema.getDomain()) {
+        if (attr.equals(tiledb.tiledb_coords())) {
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
+        } else if (domain.hasDimension(attr)) {
+          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
+        } else {
+          try (Attribute attribute = schema.getAttribute(attr)) {
+            Types.typeCheck(attribute.getType(), buffer.getNativeType());
+          }
+        }
+      }
+    }
+
+    uint64_tArray offsets_array = PointerUtils.uint64_tArrayFromVoid(offsets.toVoidPointer());
+    uint64_tArray offsets_array_size = new uint64_tArray(1);
+    uint64_tArray values_array_size = new uint64_tArray(1);
+    uint64_tArray buffer_validity_bytemap_size = new uint64_tArray(1);
+
+    offsets_array_size.setitem(0, BigInteger.valueOf(offsets.getNBytes()));
+    values_array_size.setitem(0, BigInteger.valueOf(buffer.getNBytes()));
+    buffer_validity_bytemap_size.setitem(
+        0, BigInteger.valueOf(bytemap.getSize() * bytemap.getNativeTypeSize()));
+
+    Pair<uint64_tArray, uint64_tArray> buffer_sizes =
+        new Pair<>(offsets_array_size, values_array_size);
+
+    // Close previous buffers if they exist for this attribute
+    if (buffers_.containsKey(attr)) {
+      Pair<NativeArray, NativeArray> prev_buffers = buffers_.get(attr);
+      prev_buffers.getFirst().close();
+      prev_buffers.getSecond().close();
+    }
+
+    buffers_.put(attr, new Pair<>(offsets, buffer));
+    buffer_sizes_.put(attr, buffer_sizes);
+    validityByteMaps_.put(attr, bytemap);
+
+    ctx.handleError(
+        tiledb.tiledb_query_set_buffer_var_nullable(
+            ctx.getCtxp(),
+            queryp,
+            attr,
+            offsets_array.cast(),
+            offsets_array_size.cast(),
+            buffer.toVoidPointer(),
+            values_array_size.cast(),
+            bytemap.getUint8_tArray().cast(),
+            buffer_validity_bytemap_size.cast()));
+
+    return this;
+  }
+
+  /**
+   * Sets a ByteBuffer buffer for a variable-sized, nullable attribute.
+   *
+   * @param attr Attribute name
+   * @param offsets Offsets where a new element begins in the data buffer.
+   * @param buffer Buffer vector with elements of the attribute type.
+   * @exception TileDBError A TileDB exception
+   */
+  public synchronized Query setBufferNullableNIO(
+      String attr, ByteBuffer offsets, ByteBuffer buffer, ByteBuffer bytemap) throws TileDBError {
+
+    if (attr.equals(tiledb.tiledb_coords())) {
+      throw new TileDBError("Cannot set coordinate buffer as variable sized.");
+    }
+
+    if (!offsets.order().equals(ByteOrder.nativeOrder()) && offsets.position() > 0) {
+      throw new TileDBError(
+          "The order of the offsets ByteBuffer should be the same as the native order (ByteOrder.nativeOrder()) before values are inserted.");
+    }
+
+    if (!buffer.order().equals(ByteOrder.nativeOrder()) && buffer.position() > 0) {
+      throw new TileDBError(
+          "The order of the data ByteBuffer should be the same as the native order (ByteOrder.nativeOrder()) before values are inserted.");
+    }
+
+    offsets.order(ByteOrder.nativeOrder());
+    buffer.order(ByteOrder.nativeOrder());
+
+    uint64_tArray offsets_array_size = new uint64_tArray(0);
+    uint64_tArray values_array_size = new uint64_tArray(0);
+    uint64_tArray buffer_validity_bytemap_size = new uint64_tArray(0);
+
+    offsets_array_size.setitem(0, BigInteger.valueOf(offsets.capacity()));
+    values_array_size.setitem(0, BigInteger.valueOf(buffer.capacity()));
+    buffer_validity_bytemap_size.setitem(0, BigInteger.valueOf(bytemap.capacity()));
+
+    Pair<uint64_tArray, uint64_tArray> buffer_sizes =
+        new Pair<>(offsets_array_size, values_array_size);
+
+    // Close previous buffers if they exist for this attribute
+    if (buffers_.containsKey(attr)) {
+      Pair<NativeArray, NativeArray> prev_buffers = buffers_.get(attr);
+      prev_buffers.getFirst().close();
+      prev_buffers.getSecond().close();
+    }
+
+    buffer_sizes_.put(attr, buffer_sizes);
+    this.byteBuffers_.put(attr, new Pair(offsets, buffer));
+
+    ctx.handleError(
+        Utils.tiledb_query_set_buffer_var_nullable_nio(
+            ctx.getCtxp(),
+            queryp,
+            attr,
+            offsets,
+            offsets_array_size.cast(),
+            buffer,
+            values_array_size.cast(),
+            bytemap,
+            buffer_validity_bytemap_size.cast()));
+
+    return this;
+  }
+
+  /**
    * * Sets a NIO ByteBuffer
    *
    * @param attr The attribute
@@ -547,7 +826,6 @@ public class Query implements AutoCloseable {
     int size = Util.castLongToInt(bufferElements * dt.getNativeSize());
 
     ByteBuffer buffer = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
-    ;
 
     this.setBuffer(attr, buffer);
 
@@ -588,7 +866,7 @@ public class Query implements AutoCloseable {
     buffer_sizes_.put(attr, new Pair<>(offsets_array_size, values_array_size));
 
     ctx.handleError(
-        tiledb.tiledb_query_set_buffer_nio(
+        Utils.tiledb_query_set_buffer_nio(
             ctx.getCtxp(), queryp, attr, buffer, values_array_size.cast()));
 
     return this;
@@ -711,7 +989,7 @@ public class Query implements AutoCloseable {
     this.byteBuffers_.put(attr, new Pair(offsets, buffer));
 
     ctx.handleError(
-        tiledb.tiledb_query_set_buffer_var_nio(
+        Utils.tiledb_query_set_buffer_var_nio(
             ctx.getCtxp(),
             queryp,
             attr,
@@ -1292,6 +1570,15 @@ public class Query implements AutoCloseable {
     }
 
     throw new TileDBError("ByteBuffer does not exist for attribute: " + bufferName);
+  }
+
+  /** @param attribute */
+  Object getValidityByteMap(String attribute) throws TileDBError {
+    if (this.validityByteMaps_.containsKey(attribute)) {
+      return this.validityByteMaps_.get(attribute).toJavaArray();
+    }
+
+    throw new TileDBError("Attribute " + attribute + " is not nullable");
   }
 
   /**

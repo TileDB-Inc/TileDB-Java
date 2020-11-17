@@ -108,4 +108,12 @@ public class AttributeTest {
           a.getFillValue().getSecond());
     }
   }
+
+  @Test
+  public void testAttributeSetNullable() throws Exception {
+    try (Context ctx = new Context();
+        Attribute a = new Attribute(ctx, "a2", Datatype.TILEDB_FLOAT32)) {
+      a.setNullable((short) 0);
+    }
+  }
 }

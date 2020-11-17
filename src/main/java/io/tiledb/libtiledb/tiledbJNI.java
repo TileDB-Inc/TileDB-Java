@@ -24,6 +24,41 @@ public class tiledbJNI {
     }
   }
 
+  public static final native int tiledb_query_set_subarray_nio(
+      long jarg1, long jarg2, ByteBuffer jarg3);
+
+  public static final native int tiledb_query_set_buffer_nio(
+      long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
+
+  public static final native int tiledb_query_set_buffer_var_nio(
+      long jarg1,
+      long jarg2,
+      String jarg3,
+      ByteBuffer jarg4,
+      long jarg5,
+      ByteBuffer jarg6,
+      long jarg7);
+
+  public static final native int tiledb_query_set_buffer_nullable_nio(
+      long jarg1,
+      long jarg2,
+      String jarg3,
+      ByteBuffer jarg4,
+      long jarg5,
+      ByteBuffer jarg6,
+      long jarg7);
+
+  public static final native int tiledb_query_set_buffer_var_nullable_nio(
+      long jarg1,
+      long jarg2,
+      String jarg3,
+      ByteBuffer jarg4,
+      long jarg5,
+      ByteBuffer jarg6,
+      long jarg7,
+      ByteBuffer jarg8,
+      long jarg9);
+
   public static final native int tiledb_query_submit_async_java(
       long jarg1,
       SWIGTYPE_p_tiledb_ctx_t jarg1_,
@@ -709,6 +744,8 @@ public class tiledbJNI {
 
   public static final native int tiledb_config_save_to_file(long jarg1, String jarg2, long jarg3);
 
+  public static final native int tiledb_config_compare(long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_config_iter_alloc(
       long jarg1, String jarg2, long jarg3, long jarg4);
 
@@ -775,6 +812,8 @@ public class tiledbJNI {
 
   public static final native void tiledb_attribute_free(long jarg1);
 
+  public static final native int tiledb_attribute_set_nullable(long jarg1, long jarg2, short jarg3);
+
   public static final native int tiledb_attribute_set_filter_list(
       long jarg1, long jarg2, long jarg3);
 
@@ -784,6 +823,8 @@ public class tiledbJNI {
   public static final native int tiledb_attribute_get_name(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_attribute_get_type(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_attribute_get_nullable(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_attribute_get_filter_list(
       long jarg1, long jarg2, long jarg3);
@@ -925,32 +966,45 @@ public class tiledbJNI {
 
   public static final native int tiledb_query_set_subarray(long jarg1, long jarg2, long jarg3);
 
-  public static final native int tiledb_query_set_subarray_nio(
-      long jarg1, long jarg2, ByteBuffer jarg3);
-
   public static final native int tiledb_query_set_buffer(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
-
-  public static final native int tiledb_query_set_buffer_nio(
-      long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
 
   public static final native int tiledb_query_set_buffer_var(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6, long jarg7);
 
-  public static final native int tiledb_query_set_buffer_var_nio(
+  public static final native int tiledb_query_set_buffer_nullable(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6, long jarg7);
+
+  public static final native int tiledb_query_set_buffer_var_nullable(
       long jarg1,
       long jarg2,
       String jarg3,
-      ByteBuffer jarg4,
+      long jarg4,
       long jarg5,
-      ByteBuffer jarg6,
-      long jarg7);
+      long jarg6,
+      long jarg7,
+      long jarg8,
+      long jarg9);
 
   public static final native int tiledb_query_get_buffer(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
   public static final native int tiledb_query_get_buffer_var(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6, long jarg7);
+
+  public static final native int tiledb_query_get_buffer_nullable(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6, long jarg7);
+
+  public static final native int tiledb_query_get_buffer_var_nullable(
+      long jarg1,
+      long jarg2,
+      String jarg3,
+      long jarg4,
+      long jarg5,
+      long jarg6,
+      long jarg7,
+      long jarg8,
+      long jarg9);
 
   public static final native int tiledb_query_set_layout(long jarg1, long jarg2, int jarg3);
 
@@ -1179,6 +1233,9 @@ public class tiledbJNI {
       long jarg1, long jarg2, String jarg3, String jarg4);
 
   public static final native int tiledb_vfs_copy_file(
+      long jarg1, long jarg2, String jarg3, String jarg4);
+
+  public static final native int tiledb_vfs_copy_dir(
       long jarg1, long jarg2, String jarg3, String jarg4);
 
   public static final native int tiledb_vfs_open(
