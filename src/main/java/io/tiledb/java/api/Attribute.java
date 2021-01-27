@@ -261,6 +261,18 @@ public class Attribute implements AutoCloseable {
     return filterlist;
   }
 
+  /**
+   * Sets the default fill value for the input attribute. This value will be used for the input
+   * attribute whenever querying (1) an empty cell in a dense array, or (2) a non-empty cell (in
+   * either dense or sparse array) when values on the input attribute are missing (e.g., if the user
+   * writes a subset of the attributes in a write operation).
+   *
+   * <p>Applicable to var-sized attributes.
+   *
+   * @param value The fill value
+   * @param size The fill value size
+   * @throws TileDBError
+   */
   public void setFillValue(NativeArray value, BigInteger size) throws TileDBError {
     try {
       ctx.handleError(
@@ -271,6 +283,44 @@ public class Attribute implements AutoCloseable {
     }
   }
 
+  /**
+   * Sets the default fill value for the input attribute. This value will be used for the input
+   * attribute whenever querying (1) an empty cell in a dense array, or (2) a non-empty cell (in
+   * either dense or sparse array) when values on the input attribute are missing (e.g., if the user
+   * writes a subset of the attributes in a write operation).
+   *
+   * <p>Applicable to var-sized attributes.
+   *
+   * @param value The fill value
+   * @throws TileDBError
+   */
+  public void setFillValue(Object value) throws TileDBError {
+    NativeArray array = new NativeArray(ctx, this.type.getNativeSize(), this.type.javaClass());
+    array.setItem(0, value);
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_attribute_set_fill_value(
+              ctx.getCtxp(),
+              attributep,
+              array.toVoidPointer(),
+              BigInteger.valueOf(this.type.getNativeSize())));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Gets the default fill value for the input attribute. This value will be used for the input
+   * attribute whenever querying (1) an empty cell in a dense array, or (2) a non-empty cell (in
+   * either dense or sparse array) when values on the input attribute are missing (e.g., if the user
+   * writes a subset of the attributes in a write operation).
+   *
+   * <p>Applicable to both fixed-sized and var-sized attributes.
+   *
+   * @return A pair with the fill value and its size
+   * @throws TileDBError
+   */
   public Pair<Object, Long> getFillValue() throws TileDBError {
 
     try (NativeArray value = new NativeArray(ctx, this.type.getNativeSize(), this.type)) {
@@ -311,6 +361,34 @@ public class Attribute implements AutoCloseable {
               attributep,
               value.toVoidPointer(),
               size,
+              valid ? (short) 1 : (short) 0));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Sets the default fill value for the input, nullable attribute. This value will be used for the
+   * input attribute whenever querying (1) an empty cell in a dense array, or (2) a non-empty cell
+   * (in either dense or sparse array) when values on the input attribute are missing (e.g., if the
+   * user writes a subset of the attributes in a write operation).
+   *
+   * @param value The fill value to set.
+   * @param valid The validity fill value, zero for a null value and non-zero for a valid attribute.
+   * @throws TileDBError
+   */
+  public void setFillValueNullable(Object value, boolean valid) throws TileDBError {
+
+    NativeArray valueArray = new NativeArray(ctx, this.type.getNativeSize(), this.type.javaClass());
+    valueArray.setItem(0, value);
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_attribute_set_fill_value_nullable(
+              ctx.getCtxp(),
+              attributep,
+              valueArray.toVoidPointer(),
+              BigInteger.valueOf(this.type.getNativeSize()),
               valid ? (short) 1 : (short) 0));
     } catch (TileDBError err) {
       throw err;
