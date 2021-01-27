@@ -8,11 +8,18 @@
 
 package io.tiledb.libtiledb;
 
-public interface tiledbConstants {
-  public static final int TILEDB_ERR = (-1);
-  public static final int TILEDB_OK = 0;
-  public static final int TILEDB_OOM = (-2);
-  public static final int TILEDB_VERSION_MAJOR = 2;
-  public static final int TILEDB_VERSION_MINOR = 2;
-  public static final int TILEDB_VERSION_PATCH = 2;
+public class SWIGTYPE_p_p_unsigned_char {
+  private transient long swigCPtr;
+
+  protected SWIGTYPE_p_p_unsigned_char(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+    swigCPtr = cPtr;
+  }
+
+  protected SWIGTYPE_p_p_unsigned_char() {
+    swigCPtr = 0;
+  }
+
+  protected static long getCPtr(SWIGTYPE_p_p_unsigned_char obj) {
+    return (obj == null) ? 0 : obj.swigCPtr;
+  }
 }

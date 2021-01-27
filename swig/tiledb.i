@@ -2,6 +2,7 @@
 
 %pragma(java) jniclassimports=%{
 import io.tiledb.libtiledb.NativeLibLoader;
+import java.nio.ByteBuffer;
 %}
 
 %pragma(java) jniclasscode=%{
@@ -17,6 +18,11 @@ import io.tiledb.libtiledb.NativeLibLoader;
     }
   }
 
+  public final static native int tiledb_query_set_subarray_nio(long jarg1, long jarg2, ByteBuffer jarg3);
+  public final static native int tiledb_query_set_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
+  public final static native int tiledb_query_set_buffer_var_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5, ByteBuffer jarg6, long jarg7);
+  public final static native int tiledb_query_set_buffer_nullable_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5, ByteBuffer jarg6, long jarg7);
+  public final static native int tiledb_query_set_buffer_var_nullable_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5, ByteBuffer jarg6, long jarg7, ByteBuffer jarg8, long jarg9);
   public final static native int tiledb_query_submit_async_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, long jarg2, SWIGTYPE_p_tiledb_query_t jarg2_, Object jarg3);
   public final static native int tiledb_object_walk_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, int jarg3, Object jarg4);
   public final static native int tiledb_object_ls_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, Object jarg3);
