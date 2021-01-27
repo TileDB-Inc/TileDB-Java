@@ -11,6 +11,7 @@ import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 import java.math.BigInteger;
 import java.nio.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -1054,7 +1055,7 @@ public class QueryTest {
       NativeArray a1ByteMap =
           new NativeArray(ctx, new short[] {0, 0, 0, 1, 1}, Datatype.TILEDB_UINT8);
       NativeArray a2ByteMap =
-          new NativeArray(ctx, new short[] {1, 0, 1, 0, 1, 1, 0, 1, 0, 1}, Datatype.TILEDB_UINT8);
+          new NativeArray(ctx, new short[] {1, 1, 1, 0, 0}, Datatype.TILEDB_UINT8);
 
       query.setBuffer("d1", d_off, d_data);
       query.setBufferNullable("a1", a1, 5, a1ByteMap);
@@ -1239,7 +1240,7 @@ public class QueryTest {
         Assert.assertArrayEquals(
             new String[] {"aa", "bb", "cc", "dd", "ee"}, Util.bytesToStrings(a2Off, a2));
         Assert.assertArrayEquals(new short[] {0, 0, 0, 1, 1}, a1ValidityByteMap);
-        Assert.assertArrayEquals(new short[] {1, 0, 1, 0, 1, 1, 0, 1, 0, 1}, a2ValidityByteMap);
+        Assert.assertArrayEquals(new short[] {1, 1, 1, 0, 0}, Arrays.copyOf(a2ValidityByteMap, 5));
       }
     }
 
@@ -1271,7 +1272,7 @@ public class QueryTest {
 
         byte[] a2Bytes = new byte[10];
         long[] a2Off = new long[5];
-        byte[] a2ByteMap = new byte[10];
+        byte[] a2ByteMap = new byte[5];
 
         int idx = 0;
         int bytesIdx = 0;
@@ -1279,13 +1280,10 @@ public class QueryTest {
           a1Values[idx] = a1Buffer.getInt();
           a1ByteMapValues[idx] = a1byteMap.get();
 
-          a2Bytes[bytesIdx] = a2Array.get();
-          a2ByteMap[bytesIdx] = a2byteMapBuffer.get();
-          ++bytesIdx;
-          a2Bytes[bytesIdx] = a2Array.get();
-          a2ByteMap[bytesIdx] = a2byteMapBuffer.get();
-          ++bytesIdx;
+          a2Bytes[bytesIdx++] = a2Array.get();
+          a2Bytes[bytesIdx++] = a2Array.get();
 
+          a2ByteMap[idx] = a2byteMapBuffer.get();
           a2Off[idx] = a2Offsets.getLong();
           idx++;
         }
@@ -1294,7 +1292,7 @@ public class QueryTest {
         Assert.assertArrayEquals(new byte[] {0, 0, 0, 1, 1}, a1ByteMapValues);
         Assert.assertArrayEquals(
             new String[] {"aa", "bb", "cc", "dd", "ee"}, Util.bytesToStrings(a2Off, a2Bytes));
-        Assert.assertArrayEquals(new byte[] {1, 0, 1, 0, 1, 1, 0, 1, 0, 1}, a2ByteMap);
+        Assert.assertArrayEquals(new byte[] {1, 1, 1, 0, 0}, a2ByteMap);
       }
     }
   }
