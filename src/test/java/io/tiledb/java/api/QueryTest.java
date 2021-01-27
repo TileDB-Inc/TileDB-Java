@@ -90,6 +90,15 @@ public class QueryTest {
         query.setBuffer("a2", a2);
         // Submit query
         query.submit();
+
+        // Get the number of written fragments
+        long num = query.getFragmentNum();
+
+        // Get the fragment URI by index (0 <= idx < num)
+        String uri = query.getFragmentURI(BigInteger.ZERO);
+
+        // Get the timestamp range by index (0 <= idx < num)
+        Pair<Long, Long> range = query.getFragmentTimestampRange(BigInteger.ZERO);
       }
     }
 
@@ -970,8 +979,8 @@ public class QueryTest {
       a2.setCellValNum(1);
 
       if (nullable) {
-        a1.setNullable((short) 1);
-        a2.setNullable((short) 1);
+        a1.setNullable(true);
+        a2.setNullable(true);
       }
 
       ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
@@ -1022,8 +1031,8 @@ public class QueryTest {
       a2.setCellVar();
 
       if (nullable) {
-        a1.setNullable((short) 1);
-        a2.setNullable((short) 1);
+        a1.setNullable(true);
+        a2.setNullable(true);
       }
 
       ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);

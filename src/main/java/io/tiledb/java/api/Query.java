@@ -1628,6 +1628,42 @@ public class Query implements AutoCloseable {
     return this;
   }
 
+  /**
+   * Retrieves the number of written fragments. Applicable only to WRITE queries.
+   *
+   * @return The number of written fragments
+   * @throws TileDBError
+   */
+  public long getFragmentNum() throws TileDBError {
+    SWIGTYPE_p_unsigned_int fragmentNum = tiledb.new_uintp();
+    ctx.handleError(tiledb.tiledb_query_get_fragment_num(ctx.getCtxp(), queryp, fragmentNum));
+
+    return tiledb.uintp_value(fragmentNum);
+  }
+
+  /**
+   * Retrieves the URI of the written fragment with the input index. Applicable only to WRITE
+   * queries.
+   *
+   * @return The URI
+   * @throws TileDBError
+   */
+  public String getFragmentURI(BigInteger idx) throws TileDBError {
+    SWIGTYPE_p_p_char uri = tiledb.new_charpp();
+    ctx.handleError(tiledb.tiledb_query_get_fragment_uri(ctx.getCtxp(), queryp, idx, uri));
+
+    return tiledb.charpp_value(uri);
+  }
+
+  public Pair<Long, Long> getFragmentTimestampRange(BigInteger idx) throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long t1 = tiledb.new_ullp();
+    SWIGTYPE_p_unsigned_long_long t2 = tiledb.new_ullp();
+    ctx.handleError(
+        tiledb.tiledb_query_get_fragment_timestamp_range(ctx.getCtxp(), queryp, idx, t1, t2));
+
+    return new Pair(tiledb.ullp_value(t1), tiledb.ullp_value(t2));
+  }
+
   // Default noop async completion callback
   private static class DefaultCallback implements Callback {
     public DefaultCallback() {}

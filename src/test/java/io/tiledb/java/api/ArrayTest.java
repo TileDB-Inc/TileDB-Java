@@ -752,4 +752,13 @@ public class ArrayTest {
 
     array.close();
   }
+
+  @Test
+  public void testArrayReopen() throws Exception {
+    Array.create(arrayURI, schemaCreate());
+
+    try (Array array = new Array(ctx, arrayURI)) {
+      array.reopen();
+    }
+  }
 }
