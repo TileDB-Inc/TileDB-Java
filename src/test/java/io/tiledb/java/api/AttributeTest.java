@@ -66,46 +66,31 @@ public class AttributeTest {
     try (Context ctx = new Context();
         Attribute a = new Attribute(ctx, "a2", Datatype.TILEDB_INT32)) {
 
-      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_INT32);
-
-      arr.setItem(0, 5);
-
-      a.setFillValue(arr, BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()));
+      a.setFillValue(5);
 
       Assert.assertEquals(5, a.getFillValue().getFirst());
       Assert.assertEquals(
-          BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()),
-          a.getFillValue().getSecond());
+          BigInteger.valueOf(a.getType().getNativeSize()), a.getFillValue().getSecond());
     }
 
     try (Context ctx = new Context();
         Attribute a = new Attribute(ctx, "a2", Datatype.TILEDB_INT64)) {
 
-      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_INT64);
-
-      arr.setItem(0, 5L);
-
-      a.setFillValue(arr, BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()));
+      a.setFillValue(5L);
 
       Assert.assertEquals(5L, a.getFillValue().getFirst());
       Assert.assertEquals(
-          BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()),
-          a.getFillValue().getSecond());
+          BigInteger.valueOf(a.getType().getNativeSize()), a.getFillValue().getSecond());
     }
 
     try (Context ctx = new Context();
         Attribute a = new Attribute(ctx, "a2", Datatype.TILEDB_CHAR)) {
 
-      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_CHAR);
-
-      arr.setItem(0, "c");
-
-      a.setFillValue(arr, BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()));
+      a.setFillValue((byte) 'c');
 
       Assert.assertEquals((byte) 'c', a.getFillValue().getFirst());
       Assert.assertEquals(
-          BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()),
-          a.getFillValue().getSecond());
+          BigInteger.valueOf(a.getType().getNativeSize()), a.getFillValue().getSecond());
     }
   }
 
@@ -116,16 +101,11 @@ public class AttributeTest {
 
       a.setNullable(true);
 
-      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_INT32);
-
-      arr.setItem(0, 5);
-
-      a.setFillValueNullable(
-          arr, BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()), true);
+      a.setFillValueNullable(5, true);
 
       Assert.assertEquals(5, a.getFillValueNullable().getFirst());
       Assert.assertEquals(
-          BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()),
+          BigInteger.valueOf(a.getType().getNativeSize()),
           a.getFillValueNullable().getSecond().getFirst());
 
       Assert.assertEquals(true, a.getFillValueNullable().getSecond().getSecond());
@@ -136,16 +116,11 @@ public class AttributeTest {
 
       a.setNullable(true);
 
-      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_INT64);
-
-      arr.setItem(0, 5L);
-
-      a.setFillValueNullable(
-          arr, BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()), false);
+      a.setFillValueNullable(5L, false);
 
       Assert.assertEquals(5L, a.getFillValueNullable().getFirst());
       Assert.assertEquals(
-          BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()),
+          BigInteger.valueOf(a.getType().getNativeSize()),
           a.getFillValueNullable().getSecond().getFirst());
 
       Assert.assertEquals(false, a.getFillValueNullable().getSecond().getSecond());
@@ -156,16 +131,11 @@ public class AttributeTest {
 
       a.setNullable(true);
 
-      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_CHAR);
-
-      arr.setItem(0, "c");
-
-      a.setFillValueNullable(
-          arr, BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()), false);
+      a.setFillValueNullable((byte) 'c', false);
 
       Assert.assertEquals((byte) 'c', a.getFillValueNullable().getFirst());
       Assert.assertEquals(
-          BigInteger.valueOf(arr.getNativeTypeSize() * arr.getSize()),
+          BigInteger.valueOf(a.getType().getNativeSize()),
           a.getFillValueNullable().getSecond().getFirst());
 
       Assert.assertEquals(false, a.getFillValueNullable().getSecond().getSecond());
