@@ -842,6 +842,12 @@ public class tiledbJNI {
   public static final native int tiledb_attribute_get_fill_value(
       long jarg1, long jarg2, long jarg3, long jarg4);
 
+  public static final native int tiledb_attribute_set_fill_value_nullable(
+      long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4, short jarg5);
+
+  public static final native int tiledb_attribute_get_fill_value_nullable(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5);
+
   public static final native int tiledb_domain_alloc(long jarg1, long jarg2);
 
   public static final native void tiledb_domain_free(long jarg1);
@@ -964,6 +970,8 @@ public class tiledbJNI {
 
   public static final native int tiledb_query_alloc(long jarg1, long jarg2, int jarg3, long jarg4);
 
+  public static final native int tiledb_query_set_config(long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_query_set_subarray(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_query_set_buffer(
@@ -1030,6 +1038,9 @@ public class tiledbJNI {
   public static final native int tiledb_query_add_range(
       long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
 
+  public static final native int tiledb_query_add_range_by_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
+
   public static final native int tiledb_query_add_range_var(
       long jarg1,
       long jarg2,
@@ -1039,8 +1050,20 @@ public class tiledbJNI {
       long jarg6,
       java.math.BigInteger jarg7);
 
+  public static final native int tiledb_query_add_range_var_by_name(
+      long jarg1,
+      long jarg2,
+      String jarg3,
+      long jarg4,
+      java.math.BigInteger jarg5,
+      long jarg6,
+      java.math.BigInteger jarg7);
+
   public static final native int tiledb_query_get_range_num(
       long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_query_get_range_num_from_name(
+      long jarg1, long jarg2, String jarg3, long jarg4);
 
   public static final native int tiledb_query_get_range(
       long jarg1,
@@ -1051,17 +1074,38 @@ public class tiledbJNI {
       long jarg6,
       long jarg7);
 
+  public static final native int tiledb_query_get_range_from_name(
+      long jarg1,
+      long jarg2,
+      String jarg3,
+      java.math.BigInteger jarg4,
+      long jarg5,
+      long jarg6,
+      long jarg7);
+
   public static final native int tiledb_query_get_range_var_size(
       long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
 
+  public static final native int tiledb_query_get_range_var_size_from_name(
+      long jarg1, long jarg2, String jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
+
   public static final native int tiledb_query_get_range_var(
       long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_query_get_range_var_from_name(
+      long jarg1, long jarg2, String jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
 
   public static final native int tiledb_query_get_est_result_size(
       long jarg1, long jarg2, String jarg3, long jarg4);
 
   public static final native int tiledb_query_get_est_result_size_var(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_query_get_est_result_size_nullable(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_query_get_est_result_size_var_nullable(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
 
   public static final native int tiledb_query_get_fragment_num(long jarg1, long jarg2, long jarg3);
 
@@ -1278,6 +1322,71 @@ public class tiledbJNI {
   public static final native int tiledb_stats_raw_dump_str(long jarg1);
 
   public static final native int tiledb_stats_free_str(long jarg1);
+
+  public static final native int tiledb_fragment_info_alloc(long jarg1, String jarg2, long jarg3);
+
+  public static final native void tiledb_fragment_info_free(long jarg1);
+
+  public static final native int tiledb_fragment_info_load(long jarg1, long jarg2);
+
+  public static final native int tiledb_fragment_info_load_with_key(
+      long jarg1, long jarg2, int jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_fragment_info_get_fragment_num(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_fragment_info_get_fragment_uri(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_fragment_info_get_fragment_size(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_fragment_info_get_dense(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_fragment_info_get_sparse(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_fragment_info_get_timestamp_range(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_fragment_info_get_non_empty_domain_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_fragment_info_get_non_empty_domain_from_name(
+      long jarg1, long jarg2, long jarg3, String jarg4, long jarg5);
+
+  public static final native int tiledb_fragment_info_get_non_empty_domain_var_size_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_fragment_info_get_non_empty_domain_var_size_from_name(
+      long jarg1, long jarg2, long jarg3, String jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_fragment_info_get_non_empty_domain_var_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_fragment_info_get_non_empty_domain_var_from_name(
+      long jarg1, long jarg2, long jarg3, String jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_fragment_info_get_cell_num(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_fragment_info_get_version(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_fragment_info_has_consolidated_metadata(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_fragment_info_get_unconsolidated_metadata_num(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_fragment_info_get_to_vacuum_num(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_fragment_info_get_to_vacuum_uri(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_fragment_info_dump(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);
 

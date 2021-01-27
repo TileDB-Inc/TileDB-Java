@@ -290,7 +290,73 @@ public class Attribute implements AutoCloseable {
     }
   }
 
-  public int setNullable(short nullable) throws TileDBError {
+  /**
+   * Sets the default fill value for the input, nullable attribute. This value will be used for the
+   * input attribute whenever querying (1) an empty cell in a dense array, or (2) a non-empty cell
+   * (in either dense or sparse array) when values on the input attribute are missing (e.g., if the
+   * user writes a subset of the attributes in a write operation).
+   *
+   * @param value The fill value to set.
+   * @param size The fill value size in bytes.
+   * @param valid The validity fill value, zero for a null value and non-zero for a valid attribute.
+   * @throws TileDBError
+   */
+  public void setFillValueNullable(NativeArray value, BigInteger size, boolean valid)
+      throws TileDBError {
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_attribute_set_fill_value_nullable(
+              ctx.getCtxp(),
+              attributep,
+              value.toVoidPointer(),
+              size,
+              valid ? (short) 1 : (short) 0));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Gets the default fill value for the input, nullable attribute. This value will be used for the
+   * input attribute whenever querying (1) an empty cell in a dense array, or (2) a non-empty cell
+   * (in either dense or sparse array) when values on the input attribute are missing (e.g., if the
+   * user writes a subset of the attributes in a write operation).
+   *
+   * <p>Applicable to both fixed-sized and var-sized attributes.
+   *
+   * @return A pair which contains the fill value and a pair with its size and validity field i.e.
+   *     Pair(5, Pair(4, true))
+   * @throws TileDBError
+   */
+  public Pair<Object, Pair<Long, Boolean>> getFillValueNullable() throws TileDBError {
+
+    try (NativeArray value = new NativeArray(ctx, this.type.getNativeSize(), this.type)) {
+      NativeArray validArr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT8);
+      SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
+      SWIGTYPE_p_p_void v = tiledb.new_voidpArray(1);
+      SWIGTYPE_p_unsigned_char valid = validArr.getUint8_tArray().cast();
+
+      ctx.handleError(
+          tiledb.tiledb_attribute_get_fill_value_nullable(
+              ctx.getCtxp(), attributep, v, size, valid));
+
+      Object fillValue;
+      try (NativeArray fillValueArray = new NativeArray(ctx, getType(), v, 1)) {
+        fillValue = fillValueArray.getItem(0);
+      }
+
+      boolean validBoolean = validArr.getUint8_tArray().getitem(0) == 0 ? false : true;
+
+      return new Pair(fillValue, new Pair(tiledb.ullp_value(size), validBoolean));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  public int setNullable(boolean isNullable) throws TileDBError {
+
+    short nullable = isNullable ? (short) 1 : (short) 0;
 
     try {
       int res;

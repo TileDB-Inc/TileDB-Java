@@ -996,6 +996,20 @@ public class Array implements AutoCloseable {
     return _schema;
   }
 
+  /**
+   * Reopens a TileDB array (the array must be already open). This is useful when the array got
+   * updated after it got opened. To sync-up with the updates, the user must either close the array
+   * and open with `tiledb_array_open`, or just use `reopen` without closing. This function will be
+   * generally faster than the former alternative.
+   *
+   * <p>Note: reopening encrypted arrays does not require the encryption key.
+   *
+   * @throws TileDBError
+   */
+  public void reopen() throws TileDBError {
+    ctx.handleError(tiledb.tiledb_array_reopen(ctx.getCtxp(), getArrayp()));
+  }
+
   /** @return The TileDB QueryType enum value that the Array instance. */
   public QueryType getQueryType() {
     return query_type;
