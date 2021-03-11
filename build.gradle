@@ -69,7 +69,8 @@ task cmakeTask(type: Exec) {
         "TILEDB_S3",
         "TILEDB_AZURE",
         "TILEDB_HDFS",
-        "TILEDB_SERIALIZATION"
+        "TILEDB_SERIALIZATION",
+        "FORCE_BUILD_TILEDB"
     ].each { v ->
         if (project.hasProperty(v)) {
             buildArgs << "-D${v}=${project.property(v)}"
