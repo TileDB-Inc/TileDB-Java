@@ -46,9 +46,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # Don't use GNU extensions
 
 option(TILEDB_VERBOSE "Prints TileDB errors with verbosity" OFF)
-option(TILEDB_S3 "Enables S3 support using aws-cpp-sdk" OFF)
+option(TILEDB_S3 "Enables S3 support using aws-cpp-sdk" ON)
 option(TILEDB_HDFS "Enables HDFS support using the official Hadoop JNI bindings" OFF)
-option(TILEDB_SERIALIZATION "Enables TileDB Cloud support" OFF)
+option(TILEDB_SERIALIZATION "Enables TileDB Cloud support" ON)
+option(TILEDB_AZURE "Enables Azure support in TileDB" OFF)
+option(TILEDB_GIT_REPOSITORY "Git repository to use for building" "")
+option(TILEDB_GIT_TAG "Git tag to use for building" "")
+option(FORCE_BUILD_TILEDB "Force building TileDB and don't check for system installation" OFF)
 
 ############################################################
 # Superbuild setup
