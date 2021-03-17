@@ -494,6 +494,48 @@ public class FragmentInfoTest {
   }
 
   @Test
+  public void testNonEmptyDomainVarSize() throws Exception {
+    int testFragmentCount = 10;
+    createSparseVarDimArray();
+
+    // Write three fragments
+    for (int i = 0; i < testFragmentCount; ++i) {
+      writeSparseVarDimArray();
+    }
+
+    FragmentInfo info = new FragmentInfo(ctx, arrayURI);
+
+    long numFragments = info.getFragmentNum();
+
+    for (int i = 0; i < numFragments; ++i) {
+      Array arr = new Array(ctx, arrayURI);
+      Domain domain = arr.getSchema().getDomain();
+      for (int dim = 0; dim < domain.getNDim(); ++dim) {
+        Dimension dimension = domain.getDimension(dim);
+
+        // Test getNonEmptyDomainVarSizeFromIndex
+        Pair p = info.getNonEmptyDomainVarSizeFromIndex(i, dim);
+
+        Assert.assertEquals(
+            p.getFirst(), arr.getNonEmptyDomainVarSizeFromIndex(dim).getFirst().longValue());
+        Assert.assertEquals(
+            p.getSecond(), arr.getNonEmptyDomainVarSizeFromIndex(dim).getSecond().longValue());
+
+        // Test getNonEmptyDomainVarSizeFromName
+        p = info.getNonEmptyDomainVarSizeFromName(i, dimension.getName());
+
+        // Test getNonEmptyDomainVarSizeFromName
+        Assert.assertEquals(
+            p.getFirst(),
+            arr.getNonEmptyDomainVarSizeFromName(dimension.getName()).getFirst().longValue());
+        Assert.assertEquals(
+            p.getSecond(),
+            arr.getNonEmptyDomainVarSizeFromName(dimension.getName()).getSecond().longValue());
+      }
+    }
+  }
+
+  @Test
   public void testGetCellNumVar() throws Exception {
     int testFragmentCount = 10;
     createSparseVarDimArray();
