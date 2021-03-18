@@ -889,6 +889,36 @@ public class tiledb implements tiledbConstants {
     return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_vfs_fh_t(cPtr, false);
   }
 
+  public static SWIGTYPE_p_p_tiledb_fragment_info_t new_tiledb_fragment_info_tpp() {
+    long cPtr = tiledbJNI.new_tiledb_fragment_info_tpp();
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_fragment_info_t(cPtr, false);
+  }
+
+  public static SWIGTYPE_p_p_tiledb_fragment_info_t copy_tiledb_fragment_info_tpp(
+      SWIGTYPE_p_tiledb_fragment_info_t value) {
+    long cPtr =
+        tiledbJNI.copy_tiledb_fragment_info_tpp(SWIGTYPE_p_tiledb_fragment_info_t.getCPtr(value));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_fragment_info_t(cPtr, false);
+  }
+
+  public static void delete_tiledb_fragment_info_tpp(SWIGTYPE_p_p_tiledb_fragment_info_t obj) {
+    tiledbJNI.delete_tiledb_fragment_info_tpp(SWIGTYPE_p_p_tiledb_fragment_info_t.getCPtr(obj));
+  }
+
+  public static void tiledb_fragment_info_tpp_assign(
+      SWIGTYPE_p_p_tiledb_fragment_info_t obj, SWIGTYPE_p_tiledb_fragment_info_t value) {
+    tiledbJNI.tiledb_fragment_info_tpp_assign(
+        SWIGTYPE_p_p_tiledb_fragment_info_t.getCPtr(obj),
+        SWIGTYPE_p_tiledb_fragment_info_t.getCPtr(value));
+  }
+
+  public static SWIGTYPE_p_tiledb_fragment_info_t tiledb_fragment_info_tpp_value(
+      SWIGTYPE_p_p_tiledb_fragment_info_t obj) {
+    long cPtr =
+        tiledbJNI.tiledb_fragment_info_tpp_value(SWIGTYPE_p_p_tiledb_fragment_info_t.getCPtr(obj));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_fragment_info_t(cPtr, false);
+  }
+
   public static int sizeOfInt32() {
     return tiledbJNI.sizeOfInt32();
   }
@@ -3795,6 +3825,13 @@ public class tiledb implements tiledbConstants {
 
   public static int tiledb_stats_dump_stdout() {
     return tiledbJNI.tiledb_stats_dump_stdout();
+  }
+
+  public static int tiledb_fragment_info_dump_stdout(
+      SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_fragment_info_t fragment_info) {
+    return tiledbJNI.tiledb_fragment_info_dump_stdout(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_fragment_info_t.getCPtr(fragment_info));
   }
 
   public static int tiledb_dimension_dump_file(

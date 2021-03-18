@@ -1199,6 +1199,27 @@ static tiledb_vfs_fh_t* tiledb_vfs_fh_tpp_value(tiledb_vfs_fh_t* *obj) {
 }
 
 
+static tiledb_fragment_info_t* *new_tiledb_fragment_info_tpp() { 
+  return new tiledb_fragment_info_t*(); 
+}
+
+static tiledb_fragment_info_t* *copy_tiledb_fragment_info_tpp(tiledb_fragment_info_t* value) { 
+  return new tiledb_fragment_info_t*(value); 
+}
+
+static void delete_tiledb_fragment_info_tpp(tiledb_fragment_info_t* *obj) { 
+  if (obj) delete obj; 
+}
+
+static void tiledb_fragment_info_tpp_assign(tiledb_fragment_info_t* *obj, tiledb_fragment_info_t* value) {
+  *obj = value;
+}
+
+static tiledb_fragment_info_t* tiledb_fragment_info_tpp_value(tiledb_fragment_info_t* *obj) {
+  return *obj;
+}
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -4417,6 +4438,68 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1vfs_1fh_1tpp
   arg1 = *(tiledb_vfs_fh_t ***)&jarg1; 
   result = (tiledb_vfs_fh_t *)tiledb_vfs_fh_tpp_value(arg1);
   *(tiledb_vfs_fh_t **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1tiledb_1fragment_1info_1tpp(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  tiledb_fragment_info_t **result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (tiledb_fragment_info_t **)new_tiledb_fragment_info_tpp();
+  *(tiledb_fragment_info_t ***)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_copy_1tiledb_1fragment_1info_1tpp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_fragment_info_t *arg1 = (tiledb_fragment_info_t *) 0 ;
+  tiledb_fragment_info_t **result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_fragment_info_t **)&jarg1; 
+  result = (tiledb_fragment_info_t **)copy_tiledb_fragment_info_tpp(arg1);
+  *(tiledb_fragment_info_t ***)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_delete_1tiledb_1fragment_1info_1tpp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  tiledb_fragment_info_t **arg1 = (tiledb_fragment_info_t **) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_fragment_info_t ***)&jarg1; 
+  delete_tiledb_fragment_info_tpp(arg1);
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1tpp_1assign(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  tiledb_fragment_info_t **arg1 = (tiledb_fragment_info_t **) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_fragment_info_t ***)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  tiledb_fragment_info_tpp_assign(arg1,arg2);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1tpp_1value(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_fragment_info_t **arg1 = (tiledb_fragment_info_t **) 0 ;
+  tiledb_fragment_info_t *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_fragment_info_t ***)&jarg1; 
+  result = (tiledb_fragment_info_t *)tiledb_fragment_info_tpp_value(arg1);
+  *(tiledb_fragment_info_t **)&jresult = result; 
   return jresult;
 }
 
@@ -10867,6 +10950,22 @@ SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1stats_1dump_1
   (void)jenv;
   (void)jcls;
   result = (int)tiledb_stats_dump_stdout();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1dump_1stdout(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  result = (int)tiledb_fragment_info_dump_stdout(arg1,(tiledb_fragment_info_t const *)arg2);
   jresult = (jint)result; 
   return jresult;
 }

@@ -81,6 +81,13 @@ extern "C" {
       return ret;
     };
 
+    TILEDB_EXPORT int tiledb_fragment_info_dump_stdout(
+        	tiledb_ctx_t* ctx, const tiledb_fragment_info_t* fragment_info){
+          int ret = tiledb_fragment_info_dump(ctx, fragment_info, stdout);
+          fflush(stdout);
+          return ret;
+        };
+
     TILEDB_EXPORT int tiledb_dimension_dump_file(
     	tiledb_ctx_t* ctx, const tiledb_dimension_t* dim, const char* filename){
       FILE *out = (fopen(filename, "w"));
