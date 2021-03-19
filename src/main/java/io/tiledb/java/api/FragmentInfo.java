@@ -7,7 +7,6 @@ public class FragmentInfo {
   private SWIGTYPE_p_tiledb_fragment_info_t fragmentInfop;
   private SWIGTYPE_p_p_tiledb_fragment_info_t fragmentInfopp;
   private Context ctx;
-  private Array array;
   private String uri;
 
   /**
@@ -18,9 +17,8 @@ public class FragmentInfo {
   public FragmentInfo(Context ctx, String uri) throws TileDBError {
     this.ctx = ctx;
     this.uri = uri;
-    this.array = new Array(ctx, uri);
-    this.fragmentInfopp = tiledb.new_tiledb_fragment_info_tpp();
 
+    this.fragmentInfopp = tiledb.new_tiledb_fragment_info_tpp();
     ctx.handleError(tiledb.tiledb_fragment_info_alloc(ctx.getCtxp(), uri, fragmentInfopp));
     fragmentInfop = tiledb.tiledb_fragment_info_tpp_value(this.fragmentInfopp);
     ctx.handleError(tiledb.tiledb_fragment_info_load(ctx.getCtxp(), fragmentInfop));
@@ -36,7 +34,6 @@ public class FragmentInfo {
       throws TileDBError {
     this.ctx = ctx;
     this.uri = uri;
-    this.array = new Array(ctx, uri);
     this.fragmentInfopp = tiledb.new_tiledb_fragment_info_tpp();
 
     try (NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
@@ -189,14 +186,16 @@ public class FragmentInfo {
    * @throws TileDBError
    */
   public Pair getNonEmptyDomainFromIndex(long fragmentID, long dimensionID) throws TileDBError {
-    Datatype type = array.getSchema().getDomain().getDimension(dimensionID).getType();
+    try (Array arr = new Array(ctx, uri)) {
+      Datatype type = arr.getSchema().getDomain().getDimension(dimensionID).getType();
 
-    try (NativeArray array = new NativeArray(ctx, 2, type)) {
-      ctx.handleError(
-          tiledb.tiledb_fragment_info_get_non_empty_domain_from_index(
-              ctx.getCtxp(), fragmentInfop, fragmentID, dimensionID, array.toVoidPointer()));
+      try (NativeArray array = new NativeArray(ctx, 2, type)) {
+        ctx.handleError(
+            tiledb.tiledb_fragment_info_get_non_empty_domain_from_index(
+                ctx.getCtxp(), fragmentInfop, fragmentID, dimensionID, array.toVoidPointer()));
 
-      return new Pair(array.getItem(0), array.getItem(1));
+        return new Pair(array.getItem(0), array.getItem(1));
+      }
     }
   }
 
@@ -209,14 +208,16 @@ public class FragmentInfo {
    * @throws TileDBError
    */
   public Pair getNonEmptyDomainFromName(long fragmentID, String dimensionName) throws TileDBError {
-    Datatype type = array.getSchema().getDomain().getDimension(dimensionName).getType();
+    try (Array arr = new Array(ctx, uri)) {
+      Datatype type = arr.getSchema().getDomain().getDimension(dimensionName).getType();
 
-    try (NativeArray array = new NativeArray(ctx, 2, type)) {
-      ctx.handleError(
-          tiledb.tiledb_fragment_info_get_non_empty_domain_from_name(
-              ctx.getCtxp(), fragmentInfop, fragmentID, dimensionName, array.toVoidPointer()));
+      try (NativeArray array = new NativeArray(ctx, 2, type)) {
+        ctx.handleError(
+            tiledb.tiledb_fragment_info_get_non_empty_domain_from_name(
+                ctx.getCtxp(), fragmentInfop, fragmentID, dimensionName, array.toVoidPointer()));
 
-      return new Pair(array.getItem(0), array.getItem(1));
+        return new Pair(array.getItem(0), array.getItem(1));
+      }
     }
   }
 
@@ -230,31 +231,33 @@ public class FragmentInfo {
    * @throws TileDBError
    */
   public Pair getNonEmptyDomainVarFromIndex(long fragmentID, long dimensionID) throws TileDBError {
-    try (Dimension dimension = array.getSchema().getDomain().getDimension(dimensionID)) {
-      Datatype type = dimension.getType();
+    try (Array arr = new Array(ctx, uri)) {
+      try (Dimension dimension = arr.getSchema().getDomain().getDimension(dimensionID)) {
+        Datatype type = dimension.getType();
 
-      SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
-      SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
-
-      ctx.handleError(
-          tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_index(
-              ctx.getCtxp(), fragmentInfop, fragmentID, dimensionID, startSize, endSize));
-
-      try (NativeArray startRange =
-              new NativeArray(ctx, tiledb.ullp_value(startSize).intValue(), type);
-          NativeArray endRange =
-              new NativeArray(ctx, tiledb.ullp_value(endSize).intValue(), type)) {
+        SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
+        SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
 
         ctx.handleError(
-            tiledb.tiledb_fragment_info_get_non_empty_domain_var_from_index(
-                ctx.getCtxp(),
-                fragmentInfop,
-                fragmentID,
-                dimensionID,
-                startRange.toVoidPointer(),
-                endRange.toVoidPointer()));
+            tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_index(
+                ctx.getCtxp(), fragmentInfop, fragmentID, dimensionID, startSize, endSize));
 
-        return new Pair(startRange.toJavaArray(), endRange.toJavaArray());
+        try (NativeArray startRange =
+                new NativeArray(ctx, tiledb.ullp_value(startSize).intValue(), type);
+            NativeArray endRange =
+                new NativeArray(ctx, tiledb.ullp_value(endSize).intValue(), type)) {
+
+          ctx.handleError(
+              tiledb.tiledb_fragment_info_get_non_empty_domain_var_from_index(
+                  ctx.getCtxp(),
+                  fragmentInfop,
+                  fragmentID,
+                  dimensionID,
+                  startRange.toVoidPointer(),
+                  endRange.toVoidPointer()));
+
+          return new Pair(startRange.toJavaArray(), endRange.toJavaArray());
+        }
       }
     }
   }
@@ -273,28 +276,30 @@ public class FragmentInfo {
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
 
-    try (Dimension dimension = array.getSchema().getDomain().getDimension(dimensionName)) {
-      Datatype type = dimension.getType();
-
-      ctx.handleError(
-          tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_name(
-              ctx.getCtxp(), fragmentInfop, fragmentID, dimensionName, startSize, endSize));
-
-      try (NativeArray startRange =
-              new NativeArray(ctx, tiledb.ullp_value(startSize).intValue(), type);
-          NativeArray endRange =
-              new NativeArray(ctx, tiledb.ullp_value(endSize).intValue(), type)) {
+    try (Array arr = new Array(ctx, uri)) {
+      try (Dimension dimension = arr.getSchema().getDomain().getDimension(dimensionName)) {
+        Datatype type = dimension.getType();
 
         ctx.handleError(
-            tiledb.tiledb_fragment_info_get_non_empty_domain_var_from_name(
-                ctx.getCtxp(),
-                fragmentInfop,
-                fragmentID,
-                dimensionName,
-                startRange.toVoidPointer(),
-                endRange.toVoidPointer()));
+            tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_name(
+                ctx.getCtxp(), fragmentInfop, fragmentID, dimensionName, startSize, endSize));
 
-        return new Pair(startRange.toJavaArray(), endRange.toJavaArray());
+        try (NativeArray startRange =
+                new NativeArray(ctx, tiledb.ullp_value(startSize).intValue(), type);
+            NativeArray endRange =
+                new NativeArray(ctx, tiledb.ullp_value(endSize).intValue(), type)) {
+
+          ctx.handleError(
+              tiledb.tiledb_fragment_info_get_non_empty_domain_var_from_name(
+                  ctx.getCtxp(),
+                  fragmentInfop,
+                  fragmentID,
+                  dimensionName,
+                  startRange.toVoidPointer(),
+                  endRange.toVoidPointer()));
+
+          return new Pair(startRange.toJavaArray(), endRange.toJavaArray());
+        }
       }
     }
   }

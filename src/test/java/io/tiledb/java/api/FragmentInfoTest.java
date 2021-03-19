@@ -42,18 +42,20 @@ public class FragmentInfoTest {
     int testFragmentCount = 1;
     createDenseArray();
 
-    // Write three fragments
+    // Write fragments
     for (int i = 0; i < testFragmentCount; ++i) {
       writeDenseArray();
     }
 
     FragmentInfo info = new FragmentInfo(ctx, arrayURI);
+
     long numFragments = info.getFragmentNum();
+
     Assert.assertEquals(testFragmentCount, numFragments);
   }
 
   @Test
-  public void testGetFragmentCount() throws Exception {
+  public void testGetFragmentSize() throws Exception {
     int testFragmentCount = 10;
     createDenseArray();
 
@@ -96,34 +98,6 @@ public class FragmentInfoTest {
 
     for (int i = 0; i < numFragments; ++i) {
       info.getFragmentURI(i);
-    }
-  }
-
-  @Test
-  public void testGetFragmentSize() throws Exception {
-    int testFragmentCount = 10;
-
-    createDenseArray();
-
-    // Write fragments
-    for (int i = 0; i < testFragmentCount; ++i) {
-      writeDenseArray();
-    }
-
-    FragmentInfo info = new FragmentInfo(ctx, arrayURI);
-
-    long numFragments = info.getFragmentNum();
-
-    for (int i = 0; i < numFragments; ++i) {
-      URI uri = new URI(info.getFragmentURI(i));
-      String path = uri.getPath();
-
-      File fragment = new File(path);
-
-      long size = FileUtils.sizeOfDirectory(fragment);
-
-      // Test getFragmentSize
-      Assert.assertEquals(size, info.getFragmentSize(i));
     }
   }
 
@@ -199,24 +173,27 @@ public class FragmentInfoTest {
     long numFragments = info.getFragmentNum();
 
     for (int i = 0; i < numFragments; ++i) {
-      Array arr = new Array(ctx, arrayURI);
-      Domain domain = arr.getSchema().getDomain();
-      for (int dim = 0; dim < domain.getNDim(); ++dim) {
-        Dimension dimension = domain.getDimension(dim);
+      try (Array arr = new Array(ctx, arrayURI)) {
+        Domain domain = arr.getSchema().getDomain();
+        for (int dim = 0; dim < domain.getNDim(); ++dim) {
+          Dimension dimension = domain.getDimension(dim);
 
-        // Test getNonEmptyDomainFromIndex
-        Pair p = info.getNonEmptyDomainFromIndex(i, dim);
+          // Test getNonEmptyDomainFromIndex
+          Pair p = info.getNonEmptyDomainFromIndex(i, dim);
 
-        Assert.assertEquals(p.getFirst(), arr.nonEmptyDomain().get(dimension.getName()).getFirst());
-        Assert.assertEquals(
-            p.getSecond(), arr.nonEmptyDomain().get(dimension.getName()).getSecond());
+          Assert.assertEquals(
+              p.getFirst(), arr.nonEmptyDomain().get(dimension.getName()).getFirst());
+          Assert.assertEquals(
+              p.getSecond(), arr.nonEmptyDomain().get(dimension.getName()).getSecond());
 
-        // Test getNonEmptyDomainFromName
-        p = info.getNonEmptyDomainFromName(i, dimension.getName());
+          // Test getNonEmptyDomainFromName
+          p = info.getNonEmptyDomainFromName(i, dimension.getName());
 
-        Assert.assertEquals(p.getFirst(), arr.nonEmptyDomain().get(dimension.getName()).getFirst());
-        Assert.assertEquals(
-            p.getSecond(), arr.nonEmptyDomain().get(dimension.getName()).getSecond());
+          Assert.assertEquals(
+              p.getFirst(), arr.nonEmptyDomain().get(dimension.getName()).getFirst());
+          Assert.assertEquals(
+              p.getSecond(), arr.nonEmptyDomain().get(dimension.getName()).getSecond());
+        }
       }
     }
   }
@@ -465,30 +442,31 @@ public class FragmentInfoTest {
     long numFragments = info.getFragmentNum();
 
     for (int i = 0; i < numFragments; ++i) {
-      Array arr = new Array(ctx, arrayURI);
-      Domain domain = arr.getSchema().getDomain();
-      for (int dim = 0; dim < domain.getNDim(); ++dim) {
-        Dimension dimension = domain.getDimension(dim);
+      try (Array arr = new Array(ctx, arrayURI)) {
+        Domain domain = arr.getSchema().getDomain();
+        for (int dim = 0; dim < domain.getNDim(); ++dim) {
+          Dimension dimension = domain.getDimension(dim);
 
-        // Test getNonEmptyDomainVarFromIndex
-        Pair p = info.getNonEmptyDomainVarFromIndex(i, dim);
+          // Test getNonEmptyDomainVarFromIndex
+          Pair p = info.getNonEmptyDomainVarFromIndex(i, dim);
 
-        Assert.assertEquals(
-            new String((byte[]) p.getFirst()),
-            arr.nonEmptyDomain().get(dimension.getName()).getFirst());
-        Assert.assertEquals(
-            new String((byte[]) p.getSecond()),
-            arr.nonEmptyDomain().get(dimension.getName()).getSecond());
+          Assert.assertEquals(
+              new String((byte[]) p.getFirst()),
+              arr.nonEmptyDomain().get(dimension.getName()).getFirst());
+          Assert.assertEquals(
+              new String((byte[]) p.getSecond()),
+              arr.nonEmptyDomain().get(dimension.getName()).getSecond());
 
-        // Test getNonEmptyDomainVarFromName
-        p = info.getNonEmptyDomainVarFromName(i, dimension.getName());
+          // Test getNonEmptyDomainVarFromName
+          p = info.getNonEmptyDomainVarFromName(i, dimension.getName());
 
-        Assert.assertEquals(
-            new String((byte[]) p.getFirst()),
-            arr.nonEmptyDomain().get(dimension.getName()).getFirst());
-        Assert.assertEquals(
-            new String((byte[]) p.getSecond()),
-            arr.nonEmptyDomain().get(dimension.getName()).getSecond());
+          Assert.assertEquals(
+              new String((byte[]) p.getFirst()),
+              arr.nonEmptyDomain().get(dimension.getName()).getFirst());
+          Assert.assertEquals(
+              new String((byte[]) p.getSecond()),
+              arr.nonEmptyDomain().get(dimension.getName()).getSecond());
+        }
       }
     }
   }
@@ -508,29 +486,30 @@ public class FragmentInfoTest {
     long numFragments = info.getFragmentNum();
 
     for (int i = 0; i < numFragments; ++i) {
-      Array arr = new Array(ctx, arrayURI);
-      Domain domain = arr.getSchema().getDomain();
-      for (int dim = 0; dim < domain.getNDim(); ++dim) {
-        Dimension dimension = domain.getDimension(dim);
+      try (Array arr = new Array(ctx, arrayURI)) {
+        Domain domain = arr.getSchema().getDomain();
+        for (int dim = 0; dim < domain.getNDim(); ++dim) {
+          Dimension dimension = domain.getDimension(dim);
 
-        // Test getNonEmptyDomainVarSizeFromIndex
-        Pair p = info.getNonEmptyDomainVarSizeFromIndex(i, dim);
+          // Test getNonEmptyDomainVarSizeFromIndex
+          Pair p = info.getNonEmptyDomainVarSizeFromIndex(i, dim);
 
-        Assert.assertEquals(
-            p.getFirst(), arr.getNonEmptyDomainVarSizeFromIndex(dim).getFirst().longValue());
-        Assert.assertEquals(
-            p.getSecond(), arr.getNonEmptyDomainVarSizeFromIndex(dim).getSecond().longValue());
+          Assert.assertEquals(
+              p.getFirst(), arr.getNonEmptyDomainVarSizeFromIndex(dim).getFirst().longValue());
+          Assert.assertEquals(
+              p.getSecond(), arr.getNonEmptyDomainVarSizeFromIndex(dim).getSecond().longValue());
 
-        // Test getNonEmptyDomainVarSizeFromName
-        p = info.getNonEmptyDomainVarSizeFromName(i, dimension.getName());
+          // Test getNonEmptyDomainVarSizeFromName
+          p = info.getNonEmptyDomainVarSizeFromName(i, dimension.getName());
 
-        // Test getNonEmptyDomainVarSizeFromName
-        Assert.assertEquals(
-            p.getFirst(),
-            arr.getNonEmptyDomainVarSizeFromName(dimension.getName()).getFirst().longValue());
-        Assert.assertEquals(
-            p.getSecond(),
-            arr.getNonEmptyDomainVarSizeFromName(dimension.getName()).getSecond().longValue());
+          // Test getNonEmptyDomainVarSizeFromName
+          Assert.assertEquals(
+              p.getFirst(),
+              arr.getNonEmptyDomainVarSizeFromName(dimension.getName()).getFirst().longValue());
+          Assert.assertEquals(
+              p.getSecond(),
+              arr.getNonEmptyDomainVarSizeFromName(dimension.getName()).getSecond().longValue());
+        }
       }
     }
   }
