@@ -70,7 +70,8 @@ task cmakeTask(type: Exec) {
         "TILEDB_AZURE",
         "TILEDB_HDFS",
         "TILEDB_SERIALIZATION",
-        "FORCE_BUILD_TILEDB"
+        "FORCE_BUILD_TILEDB",
+        "DOWNLOAD_TILEDB_PREBUILT"
     ].each { v ->
         if (project.hasProperty(v)) {
             buildArgs << "-D${v}=${project.property(v)}"

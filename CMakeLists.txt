@@ -53,6 +53,7 @@ option(TILEDB_AZURE "Enables Azure support in TileDB" OFF)
 option(TILEDB_GIT_REPOSITORY "Git repository to use for building" "")
 option(TILEDB_GIT_TAG "Git tag to use for building" "")
 option(FORCE_BUILD_TILEDB "Force building TileDB and don't check for system installation" OFF)
+option(DOWNLOAD_TILEDB_PREBUILT "If tiledb is being super built, this controls downloading prebuilt artifacts or building from source" ON)
 
 ############################################################
 # Superbuild setup

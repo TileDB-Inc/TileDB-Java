@@ -44,26 +44,59 @@ if (NOT TILEDB_FOUND)
     message(STATUS "Adding TileDB as an external project")
     message(STATUS "TileDB downloading git repo ${TILEDB_GIT_REPOSITORY}")
     message(STATUS "TileDB checkout git tag ${TILEDB_GIT_TAG}")
-    ExternalProject_Add(ep_tiledb
-      GIT_REPOSITORY "${TILEDB_GIT_REPOSITORY}"
-      GIT_TAG ${TILEDB_GIT_TAG}
-      CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX=${TILEDB_JNI_EP_INSTALL_PREFIX}
-        -DCMAKE_PREFIX_PATH=${TILEDB_JNI_EP_INSTALL_PREFIX}
-        -DTILEDB_VERBOSE=${TILEDB_VERBOSE}
-        -DTILEDB_S3=${TILEDB_S3}
-        -DTILEDB_AZURE=${TILEDB_AZURE}
-        -DTILEDB_HDFS=${TILEDB_HDFS}
-        -DTILEDB_SERIALIZATION=${TILEDB_SERIALIZATION}
-        -DTILEDB_FORCE_ALL_DEPS=ON
-      UPDATE_COMMAND ""
-      INSTALL_COMMAND
-        ${CMAKE_COMMAND} --build . --target install-tiledb
-      LOG_DOWNLOAD TRUE
-      LOG_CONFIGURE FALSE
-      LOG_BUILD FALSE
-      LOG_INSTALL FALSE
-    )
+
+    # Try to download prebuilt artifacts unless the user specifies to build from source
+    if(DOWNLOAD_TILEDB_PREBUILT)
+        if (WIN32) # Windows
+          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.2.6/tiledb-windows-2.2.6-b6926bc-full.zip")
+          SET(DOWNLOAD_SHA1 "700e5cdbaa77b00d31f498dbab353b06d4890ae7")
+        elseif(APPLE) # OSX
+          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.2.6/tiledb-macos-2.2.6-b6926bc-full.tar.gz")
+          SET(DOWNLOAD_SHA1 "348d56dede19a22e351571f1b5bdc5c1cba70684")
+        else() # Linux
+          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.2.6/tiledb-linux-2.2.6-b6926bc-full.tar.gz")
+          SET(DOWNLOAD_SHA1 "198c84e74638d46949aad63881902eff095282f9")
+        endif()
+
+        ExternalProject_Add(ep_tiledb
+                PREFIX "externals"
+                URL ${DOWNLOAD_URL}
+                URL_HASH SHA1=${DOWNLOAD_SHA1}
+                CONFIGURE_COMMAND ""
+                BUILD_COMMAND ""
+                UPDATE_COMMAND ""
+                PATCH_COMMAND ""
+                TEST_COMMAND ""
+                INSTALL_COMMAND
+                    ${CMAKE_COMMAND} -E copy_directory ${TILEDB_JNI_EP_BASE}/src/ep_tiledb ${TILEDB_JNI_EP_INSTALL_PREFIX}
+                LOG_DOWNLOAD TRUE
+                LOG_CONFIGURE FALSE
+                LOG_BUILD FALSE
+                LOG_INSTALL FALSE
+                )
+    else() # build from source
+        ExternalProject_Add(ep_tiledb
+          GIT_REPOSITORY "${TILEDB_GIT_REPOSITORY}"
+          GIT_TAG ${TILEDB_GIT_TAG}
+          CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${TILEDB_JNI_EP_INSTALL_PREFIX}
+            -DCMAKE_PREFIX_PATH=${TILEDB_JNI_EP_INSTALL_PREFIX}
+            -DTILEDB_VERBOSE=${TILEDB_VERBOSE}
+            -DTILEDB_S3=${TILEDB_S3}
+            -DTILEDB_AZURE=${TILEDB_AZURE}
+            -DTILEDB_HDFS=${TILEDB_HDFS}
+            -DTILEDB_SERIALIZATION=${TILEDB_SERIALIZATION}
+            -DTILEDB_FORCE_ALL_DEPS=ON
+          UPDATE_COMMAND ""
+          INSTALL_COMMAND
+            ${CMAKE_COMMAND} --build . --target install-tiledb
+          LOG_DOWNLOAD TRUE
+          LOG_CONFIGURE FALSE
+          LOG_BUILD FALSE
+          LOG_INSTALL FALSE
+        )
+    endif()
+
     list(APPEND TILEDB_JNI_EXTERNAL_PROJECTS ep_tiledb)
   else()
     message(FATAL_ERROR "Could not find TileDB (required).")
