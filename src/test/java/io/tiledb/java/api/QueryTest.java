@@ -106,6 +106,7 @@ public class QueryTest {
     public void arrayReadTest() throws Exception {
       // Create array and query
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+          ArraySchema schema = array.getSchema();
           Query query = new Query(array, TILEDB_READ)) {
 
         // Slice only rows 1, 2 and cols 2, 3, 4
@@ -130,6 +131,12 @@ public class QueryTest {
 
         // Submit query
         query.submit();
+
+        try (Attribute attr1 = schema.getAttribute(0);
+            Attribute attr2 = schema.getAttribute(1)) {
+          Assert.assertFalse(attr1.getNullable());
+          Assert.assertFalse(attr2.getNullable());
+        }
 
         HashMap<String, Pair<Long, Long>> resultElements = query.resultBufferElements();
 
@@ -1097,6 +1104,7 @@ public class QueryTest {
 
       // Create array and query
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+          ArraySchema schema = array.getSchema();
           Query query = new Query(array, TILEDB_READ)) {
 
         // Fetch all cells
@@ -1120,6 +1128,12 @@ public class QueryTest {
         query.submit();
 
         HashMap<String, Pair<Long, Long>> resultElements = query.resultBufferElements();
+
+        try (Attribute a1 = schema.getAttribute(0);
+            Attribute a2 = schema.getAttribute(1)) {
+          Assert.assertTrue(a1.getNullable());
+          Assert.assertTrue(a2.getNullable());
+        }
 
         Assert.assertEquals(Long.valueOf(4), resultElements.get("a1").getSecond());
         Assert.assertEquals(Long.valueOf(4), resultElements.get("a2").getSecond());
@@ -1148,6 +1162,7 @@ public class QueryTest {
 
       // Create array and query
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+          ArraySchema schema = array.getSchema();
           Query query = new Query(array, TILEDB_READ)) {
 
         // Fetch all cells
@@ -1189,6 +1204,12 @@ public class QueryTest {
           dimIdx++;
         }
 
+        try (Attribute attr1 = schema.getAttribute(0);
+            Attribute attr2 = schema.getAttribute(1)) {
+          Assert.assertTrue(attr1.getNullable());
+          Assert.assertTrue(attr2.getNullable());
+        }
+
         Assert.assertArrayEquals(new int[] {1, 1, 2, 2}, dim1);
         Assert.assertArrayEquals(new int[] {1, 2, 1, 2}, dim2);
         Assert.assertArrayEquals(new byte[] {'a', 'b', 'c', 'd'}, a1);
@@ -1217,6 +1238,7 @@ public class QueryTest {
 
       // Create array and query
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+          ArraySchema schema = array.getSchema();
           Query query = new Query(array, TILEDB_READ)) {
 
         query.setLayout(TILEDB_ROW_MAJOR);
@@ -1239,6 +1261,12 @@ public class QueryTest {
         byte[] a2 = (byte[]) query.getBuffer("a2");
         long[] a2Off = query.getVarBuffer("a2");
 
+        try (Attribute attr1 = schema.getAttribute(0);
+            Attribute attr2 = schema.getAttribute(1)) {
+          Assert.assertTrue(attr1.getNullable());
+          Assert.assertTrue(attr2.getNullable());
+        }
+
         Assert.assertEquals(Long.valueOf(5), resultElements.get("a1").getSecond());
         Assert.assertEquals(Long.valueOf(10), resultElements.get("a2").getSecond());
 
@@ -1260,6 +1288,7 @@ public class QueryTest {
 
       // Create array and query
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+          ArraySchema schema = array.getSchema();
           Query query = new Query(array, TILEDB_READ)) {
 
         query.setLayout(TILEDB_ROW_MAJOR);
@@ -1275,6 +1304,12 @@ public class QueryTest {
 
         // Submit query
         query.submit();
+
+        try (Attribute attr1 = schema.getAttribute(0);
+            Attribute attr2 = schema.getAttribute(1)) {
+          Assert.assertTrue(attr1.getNullable());
+          Assert.assertTrue(attr2.getNullable());
+        }
 
         int[] a1Values = new int[5];
         byte[] a1ByteMapValues = new byte[5];

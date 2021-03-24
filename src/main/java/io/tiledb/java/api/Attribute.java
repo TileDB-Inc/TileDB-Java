@@ -459,15 +459,40 @@ public class Attribute implements AutoCloseable {
     }
   }
 
-  public int setNullable(boolean isNullable) throws TileDBError {
+  /**
+   * * Sets the nullability of an attribute.
+   *
+   * @param isNullable true if the attribute is nullable, false otherwise
+   * @throws TileDBError
+   */
+  public void setNullable(boolean isNullable) throws TileDBError {
 
     short nullable = isNullable ? (short) 1 : (short) 0;
 
     try {
-      int res;
       ctx.handleError(
-          res = tiledb.tiledb_attribute_set_nullable(ctx.getCtxp(), this.attributep, nullable));
-      return res;
+          tiledb.tiledb_attribute_set_nullable(ctx.getCtxp(), this.attributep, nullable));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * * Gets the nullability of an attribute.
+   *
+   * @return true if the attribute is nullable, false otherwise
+   * @throws TileDBError
+   */
+  public boolean getNullable() throws TileDBError {
+    try {
+
+      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT8);
+      SWIGTYPE_p_unsigned_char nullable = arr.getUint8_tArray().cast();
+
+      ctx.handleError(
+          tiledb.tiledb_attribute_get_nullable(ctx.getCtxp(), this.attributep, nullable));
+
+      return ((short) arr.getItem(0) == 1);
     } catch (TileDBError err) {
       throw err;
     }
