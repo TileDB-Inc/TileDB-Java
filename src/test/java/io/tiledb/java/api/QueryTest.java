@@ -1143,8 +1143,8 @@ public class QueryTest {
         byte[] a1 = (byte[]) query.getBuffer("a1");
         float[] a2 = (float[]) query.getBuffer("a2");
 
-        short[] a1ValidityByteMap = (short[]) query.getValidityByteMap("a1");
-        short[] a2ValidityByteMap = (short[]) query.getValidityByteMap("a2");
+        short[] a1ValidityByteMap = query.getValidityByteMap("a1");
+        short[] a2ValidityByteMap = query.getValidityByteMap("a2");
 
         Assert.assertArrayEquals(new int[] {1, 1, 2, 2}, dim1);
         Assert.assertArrayEquals(new int[] {1, 2, 1, 2}, dim2);

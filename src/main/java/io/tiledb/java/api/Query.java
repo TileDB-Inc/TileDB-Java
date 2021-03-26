@@ -1573,9 +1573,9 @@ public class Query implements AutoCloseable {
   }
 
   /** @param attribute */
-  Object getValidityByteMap(String attribute) throws TileDBError {
+  public short[] getValidityByteMap(String attribute) throws TileDBError {
     if (this.validityByteMaps_.containsKey(attribute)) {
-      return this.validityByteMaps_.get(attribute).toJavaArray();
+      return (short[])this.validityByteMaps_.get(attribute).toJavaArray();
     }
 
     throw new TileDBError("Attribute " + attribute + " is not nullable");
