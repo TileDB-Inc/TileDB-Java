@@ -63,6 +63,7 @@ public class Query implements AutoCloseable {
   private Map<String, Pair<uint64_tArray, uint64_tArray>> buffer_sizes_;
   private Map<String, NativeArray> validityByteMaps_;
   private Map<String, ByteBuffer> validityByteMapsByteBuffers_;
+  private Map<String, uint64_tArray> validityByteMapSizes_;
 
   public Query(Array array, QueryType type) throws TileDBError {
     Context _ctx = array.getCtx();
@@ -85,6 +86,7 @@ public class Query implements AutoCloseable {
     this.buffer_sizes_ = Collections.synchronizedMap(new HashMap<>());
     this.validityByteMaps_ = Collections.synchronizedMap(new HashMap<>());
     this.validityByteMapsByteBuffers_ = Collections.synchronizedMap(new HashMap<>());
+    this.validityByteMapSizes_ = Collections.synchronizedMap(new HashMap<>());
   }
 
   public Query(Array array) throws TileDBError {
@@ -538,23 +540,11 @@ public class Query implements AutoCloseable {
    *
    * @param attr The attribute name.
    * @param buffer NativeBuffer to be used for the attribute values.
-   * @param bufferElements The actual number of buffer elements
    * @param bytemap The byte-map
    * @exception TileDBError A TileDB exception
    */
-  public synchronized Query setBufferNullable(
-      String attr, NativeArray buffer, long bufferElements, NativeArray bytemap)
+  public synchronized Query setBufferNullable(String attr, NativeArray buffer, NativeArray bytemap)
       throws TileDBError {
-    if (bufferElements <= 0) {
-      throw new TileDBError("Number of buffer elements must be >= 1");
-    }
-    if (bufferElements > buffer.getSize()) {
-      throw new TileDBError(
-          "Number of elements requested exceeds the number of elements in allocated buffer: "
-              + bufferElements
-              + " > "
-              + buffer.getSize());
-    }
 
     try (ArraySchema schema = array.getSchema()) {
       try (Domain domain = schema.getDomain()) {
@@ -573,10 +563,10 @@ public class Query implements AutoCloseable {
     uint64_tArray offsets_array_size = new uint64_tArray(1);
     uint64_tArray values_array_size = new uint64_tArray(1);
     uint64_tArray buffer_validity_bytemap_size = new uint64_tArray(1);
+
     offsets_array_size.setitem(0, BigInteger.valueOf(0l));
-    values_array_size.setitem(0, BigInteger.valueOf(bufferElements * buffer.getNativeTypeSize()));
-    buffer_validity_bytemap_size.setitem(
-        0, BigInteger.valueOf(bytemap.getSize() * bytemap.getNativeTypeSize()));
+    values_array_size.setitem(0, BigInteger.valueOf(buffer.getNBytes()));
+    buffer_validity_bytemap_size.setitem(0, BigInteger.valueOf(bytemap.getNBytes()));
 
     Pair<uint64_tArray, uint64_tArray> buffer_sizes =
         new Pair<>(offsets_array_size, values_array_size);
@@ -589,6 +579,7 @@ public class Query implements AutoCloseable {
     buffers_.put(attr, new Pair(null, buffer));
     buffer_sizes_.put(attr, buffer_sizes);
     validityByteMaps_.put(attr, bytemap);
+    validityByteMapSizes_.put(attr, buffer_validity_bytemap_size);
 
     // Set the actual TileDB buffer
     uint64_tArray buffer_size = buffer_sizes.getSecond();
@@ -728,6 +719,7 @@ public class Query implements AutoCloseable {
     buffers_.put(attr, new Pair<>(offsets, buffer));
     buffer_sizes_.put(attr, buffer_sizes);
     validityByteMaps_.put(attr, bytemap);
+    validityByteMapSizes_.put(attr, buffer_validity_bytemap_size);
 
     ctx.handleError(
         tiledb.tiledb_query_set_buffer_var_nullable(
@@ -1573,9 +1565,15 @@ public class Query implements AutoCloseable {
   }
 
   /** @param attribute */
-  Object getValidityByteMap(String attribute) throws TileDBError {
+  public short[] getValidityByteMap(String attribute) throws TileDBError {
     if (this.validityByteMaps_.containsKey(attribute)) {
-      return this.validityByteMaps_.get(attribute).toJavaArray();
+      int nelements =
+          this.validityByteMapSizes_
+              .get(attribute)
+              .getitem(0)
+              .divide(BigInteger.valueOf(Datatype.TILEDB_UINT8.getNativeSize()))
+              .intValue();
+      return (short[]) this.validityByteMaps_.get(attribute).toJavaArray(nelements);
     }
 
     throw new TileDBError("Attribute " + attribute + " is not nullable");

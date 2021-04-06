@@ -1014,8 +1014,8 @@ public class QueryTest {
         NativeArray a2Bytemap =
             new NativeArray(ctx, new short[] {1, 1, 1, 0}, Datatype.TILEDB_UINT8);
 
-        query.setBufferNullable("a1", a1, 4, a1Bytemap);
-        query.setBufferNullable("a2", a2, 4, a2Bytemap);
+        query.setBufferNullable("a1", a1, a1Bytemap);
+        query.setBufferNullable("a2", a2, a2Bytemap);
 
         // Submit query
         query.submit();
@@ -1074,7 +1074,7 @@ public class QueryTest {
           new NativeArray(ctx, new short[] {1, 1, 1, 0, 0}, Datatype.TILEDB_UINT8);
 
       query.setBuffer("d1", d_off, d_data);
-      query.setBufferNullable("a1", a1, 5, a1ByteMap);
+      query.setBufferNullable("a1", a1, a1ByteMap);
       query.setBufferNullable("a2", a2_off, a2_data, a2ByteMap);
 
       // Submit query
@@ -1112,17 +1112,17 @@ public class QueryTest {
         query.addRange(1, 1, 2);
         query.setLayout(TILEDB_ROW_MAJOR);
 
-        NativeArray dim1Array = new NativeArray(ctx, 4, Integer.class);
-        NativeArray dim2Array = new NativeArray(ctx, 4, Integer.class);
-        NativeArray a1Array = new NativeArray(ctx, 4, Character.class);
-        NativeArray a1byteMap = new NativeArray(ctx, 4, Datatype.TILEDB_UINT8);
-        NativeArray a2Array = new NativeArray(ctx, 4, Float.class);
-        NativeArray a2byteMap = new NativeArray(ctx, 4, Datatype.TILEDB_UINT8);
+        NativeArray dim1Array = new NativeArray(ctx, 100, Integer.class);
+        NativeArray dim2Array = new NativeArray(ctx, 100, Integer.class);
+        NativeArray a1Array = new NativeArray(ctx, 100, Character.class);
+        NativeArray a1byteMap = new NativeArray(ctx, 100, Datatype.TILEDB_UINT8);
+        NativeArray a2Array = new NativeArray(ctx, 100, Float.class);
+        NativeArray a2byteMap = new NativeArray(ctx, 100, Datatype.TILEDB_UINT8);
 
         query.setBuffer("rows", dim1Array);
         query.setBuffer("cols", dim2Array);
-        query.setBufferNullable("a1", a1Array, 4, a1byteMap);
-        query.setBufferNullable("a2", a2Array, 4, a2byteMap);
+        query.setBufferNullable("a1", a1Array, a1byteMap);
+        query.setBufferNullable("a2", a2Array, a2byteMap);
 
         // Submit query
         query.submit();
@@ -1143,8 +1143,8 @@ public class QueryTest {
         byte[] a1 = (byte[]) query.getBuffer("a1");
         float[] a2 = (float[]) query.getBuffer("a2");
 
-        short[] a1ValidityByteMap = (short[]) query.getValidityByteMap("a1");
-        short[] a2ValidityByteMap = (short[]) query.getValidityByteMap("a2");
+        short[] a1ValidityByteMap = query.getValidityByteMap("a1");
+        short[] a2ValidityByteMap = query.getValidityByteMap("a2");
 
         Assert.assertArrayEquals(new int[] {1, 1, 2, 2}, dim1);
         Assert.assertArrayEquals(new int[] {1, 2, 1, 2}, dim2);
@@ -1249,7 +1249,7 @@ public class QueryTest {
         NativeArray a2Offsets = new NativeArray(ctx, 5, Datatype.TILEDB_UINT64);
         NativeArray a2byteMap = new NativeArray(ctx, 10, Datatype.TILEDB_UINT8);
 
-        query.setBufferNullable("a1", a1Array, 5, a1byteMap);
+        query.setBufferNullable("a1", a1Array, a1byteMap);
         query.setBufferNullable("a2", a2Offsets, a2Array, a2byteMap);
 
         // Submit query
