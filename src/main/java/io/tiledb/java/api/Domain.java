@@ -196,17 +196,12 @@ public class Domain implements AutoCloseable {
    * @throws TileDBError
    */
   public boolean hasDimension(String name) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_dimension_t dimpp = tiledb.new_tiledb_dimension_tpp();
-    int rc;
-    try {
-      rc = tiledb.tiledb_domain_get_dimension_from_name(ctx.getCtxp(), getDomainp(), name, dimpp);
-      if (rc == tiledb.TILEDB_OOM) {
-        ctx.handleError(rc);
-      }
-    } finally {
-      tiledb.delete_tiledb_dimension_tpp(dimpp);
-    }
-    return rc == tiledb.TILEDB_OK;
+    SWIGTYPE_p_int hasDimension = tiledb.new_intp();
+    ctx.handleError(
+        tiledb.tiledb_domain_has_dimension(ctx.getCtxp(), getDomainp(), name, hasDimension));
+    boolean result = tiledb.intp_value(hasDimension) > 0;
+    tiledb.delete_intp(hasDimension);
+    return result;
   }
 
   /**
