@@ -464,19 +464,12 @@ public class ArraySchema implements AutoCloseable {
    * @throws TileDBError
    */
   public boolean hasAttribute(String name) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
-    int rc;
-    try {
-      rc =
-          tiledb.tiledb_array_schema_get_attribute_from_name(
-              ctx.getCtxp(), getSchemap(), name, attrpp);
-      if (rc == tiledb.TILEDB_OOM) {
-        ctx.handleError(rc);
-      }
-    } finally {
-      tiledb.delete_tiledb_attribute_tpp(attrpp);
-    }
-    return rc == tiledb.TILEDB_OK;
+    SWIGTYPE_p_int hasAttribute = tiledb.new_intp();
+    ctx.handleError(
+        tiledb.tiledb_array_schema_has_attribute(ctx.getCtxp(), getSchemap(), name, hasAttribute));
+    boolean result = tiledb.intp_value(hasAttribute) > 0;
+    tiledb.delete_intp(hasAttribute);
+    return result;
   }
 
   /**
