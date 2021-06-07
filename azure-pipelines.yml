@@ -43,6 +43,10 @@ stages:
       - job: Linux_OSX
         strategy:
           matrix:
+            ubuntu_latest:
+              imageName: 'ubuntu-latest'
+              ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "OFF"
+              ORG_GRADLE_PROJECT_TILEDB_S3: "OFF"
             ubuntu_16:
               imageName: 'ubuntu-16.04'
               ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "OFF"
@@ -62,10 +66,14 @@ stages:
       - job: Linux_OSX
         strategy:
           matrix:
-            ubuntu_16:
-              imageName: 'ubuntu-16.04'
+            ubuntu_latest:
+              imageName: 'ubuntu-latest'
               ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
               ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
+            ubuntu_16:
+              imageName: 'ubuntu-16.04'
+              ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
+              ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
             macOS:
               imageName: 'macOS-10.14'
               ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
@@ -92,10 +100,14 @@ stages:
       - job: All_OS
         strategy:
           matrix:
-            ubuntu_16:
-              imageName: 'ubuntu-16.04'
+            ubuntu_latest:
+              imageName: 'ubuntu-latest'
               ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
               ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
+            ubuntu_16:
+              imageName: 'ubuntu-16.04'
+              ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
+              ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
         pool:
           vmImage: $(imageName)
 
@@ -154,6 +166,8 @@ stages:
       - job: All_OS
         strategy:
           matrix:
+            ubuntu_latest:
+              imageName: 'ubuntu-latest'
             ubuntu_16:
               imageName: 'ubuntu-16.04'
         pool:
