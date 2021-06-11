@@ -8,19 +8,19 @@
 
 package io.tiledb.libtiledb;
 
-public class SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int {
+public class SWIGTYPE_p_tiledb_query_condition_t {
   private transient long swigCPtr;
 
-  protected SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int(
+  protected SWIGTYPE_p_tiledb_query_condition_t(
       long cPtr, @SuppressWarnings("unused") boolean futureUse) {
     swigCPtr = cPtr;
   }
 
-  protected SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int() {
+  protected SWIGTYPE_p_tiledb_query_condition_t() {
     swigCPtr = 0;
   }
 
-  protected static long getCPtr(SWIGTYPE_p_f_p_q_const__char_enum_tiledb_object_t_p_void__int obj) {
+  protected static long getCPtr(SWIGTYPE_p_tiledb_query_condition_t obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
