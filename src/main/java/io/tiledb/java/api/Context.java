@@ -225,6 +225,23 @@ public class Context implements AutoCloseable {
   }
 
   /**
+   * @return Retrieves the stats from a TileDB context.
+   * @exception TileDBError A TileDB exception
+   */
+  public String getStats() throws TileDBError {
+    String stats;
+    SWIGTYPE_p_p_char statspp = tiledb.new_charpp();
+    try {
+      handleError(tiledb.tiledb_ctx_get_stats(getCtxp(), statspp));
+      stats = tiledb.charpp_value(statspp);
+    } finally {
+      tiledb.delete_charpp(statspp);
+    }
+
+    return stats;
+  } // context file
+
+  /**
    * Close the context and delete all native objects. Should be called always to cleanup the context
    */
   public void close() {
