@@ -1740,6 +1740,48 @@ public class Query implements AutoCloseable {
     return ""; // silence error
   }
 
+  protected SWIGTYPE_p_tiledb_query_t getQueryp() {
+    return queryp;
+  }
+
+  /**
+   * @return Retrieves the stats from a Query.
+   * @exception TileDBError A TileDB exception
+   */
+  public String getStats() throws TileDBError {
+    String stats;
+    SWIGTYPE_p_p_char statspp = tiledb.new_charpp();
+    try {
+      ctx.handleError(tiledb.tiledb_query_get_stats(ctx.getCtxp(), getQueryp(), statspp));
+      stats = tiledb.charpp_value(statspp);
+    } finally {
+      tiledb.delete_charpp(statspp);
+    }
+
+    return stats;
+  }
+
+  public void setCondition(Condition condition) {
+    //    SWIGTYPE_p_p_tiledb_query_condition_t condition_t = tiledb.new_tiledb_quer
+  }
+
+  /**
+   * @return Retrieves the config from a Query.
+   * @exception TileDBError A TileDB exception
+   */
+  public Config getConfig() throws TileDBError {
+    SWIGTYPE_p_p_tiledb_config_t configpp = tiledb.new_tiledb_config_tpp();
+    Config config;
+    try {
+      ctx.handleError(tiledb.tiledb_query_get_config(ctx.getCtxp(), this.queryp, configpp));
+      config = new Config(configpp);
+    } finally {
+      tiledb.delete_tiledb_config_tpp(configpp);
+    }
+
+    return config;
+  }
+
   /** Free's native TileDB resources associated with the Query object */
   @Override
   public synchronized void close() {

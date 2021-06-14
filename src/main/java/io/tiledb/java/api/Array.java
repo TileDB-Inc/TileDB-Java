@@ -997,6 +997,88 @@ public class Array implements AutoCloseable {
   }
 
   /**
+   * Sets the starting timestamp to use when opening (and reopening) the array. This is an inclusive
+   * bound. The default value is `0`.
+   */
+  public void setOpenTimestampStart(BigInteger timestamp) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_set_open_timestamp_start(ctx.getCtxp(), getArrayp(), timestamp));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Sets the ending timestamp to use when opening (and reopening) the array. This is an inclusive
+   * bound. The UINT64_MAX timestamp is a reserved timestamp that will be interpretted as the
+   * current timestamp when an array is opened. The default value is `UINT64_MAX`.
+   */
+  public void setOpenTimestampEnd(BigInteger timestamp) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), getArrayp(), timestamp));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Gets the starting timestamp used when opening (and reopening) the array. This is an inclusive
+   * bound.
+   *
+   * @throws TileDBError
+   */
+  public long getOpenTimestampStart() throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long start_t = tiledb.new_ullp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_get_open_timestamp_start(ctx.getCtxp(), getArrayp(), start_t));
+    } catch (TileDBError err) {
+      tiledb.delete_ullp(start_t);
+      throw err;
+    }
+    return tiledb.ullp_value(start_t).longValue();
+  }
+
+  /**
+   * Gets the ending timestamp used when opening (and reopening) the array. This is an inclusive
+   * bound. If UINT64_MAX was set, this will return the timestamp at the time the array was opened.
+   * If the array has not yet been opened, it will return UINT64_MAX.`
+   */
+  public long getOpenTimestampEnd() throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long end_t = tiledb.new_ullp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_get_open_timestamp_end(ctx.getCtxp(), getArrayp(), end_t));
+    } catch (TileDBError err) {
+      tiledb.delete_ullp(end_t);
+      throw err;
+    }
+    return tiledb.ullp_value(end_t).longValue();
+  }
+
+  /** Sets the array config. */
+  public void setConfig(Config config) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_set_config(ctx.getCtxp(), getArrayp(), config.getConfigp()));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  public Config getConfig() throws TileDBError {
+    SWIGTYPE_p_p_tiledb_config_t configpp = tiledb.new_tiledb_config_tpp();
+    try {
+      ctx.handleError(tiledb.tiledb_array_get_config(ctx.getCtxp(), getArrayp(), configpp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_config_tpp(configpp);
+    }
+    return new Config(configpp);
+  }
+
+  /**
    * Reopens a TileDB array (the array must be already open). This is useful when the array got
    * updated after it got opened. To sync-up with the updates, the user must either close the array
    * and open with `tiledb_array_open`, or just use `reopen` without closing. This function will be
