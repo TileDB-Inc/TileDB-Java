@@ -104,10 +104,6 @@ stages:
               imageName: 'ubuntu-latest'
               ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
               ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
-            ubuntu_16:
-              imageName: 'ubuntu-16.04'
-              ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: "ON"
-              ORG_GRADLE_PROJECT_TILEDB_S3: "ON"
         pool:
           vmImage: $(imageName)
 
@@ -168,8 +164,6 @@ stages:
           matrix:
             ubuntu_latest:
               imageName: 'ubuntu-latest'
-            ubuntu_16:
-              imageName: 'ubuntu-16.04'
         pool:
           vmImage: $(imageName)
         steps:
