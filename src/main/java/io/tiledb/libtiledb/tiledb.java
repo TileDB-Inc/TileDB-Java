@@ -919,6 +919,38 @@ public class tiledb implements tiledbConstants {
     return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_fragment_info_t(cPtr, false);
   }
 
+  public static SWIGTYPE_p_p_tiledb_query_condition_t new_tiledb_query_condition_tpp() {
+    long cPtr = tiledbJNI.new_tiledb_query_condition_tpp();
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_query_condition_t(cPtr, false);
+  }
+
+  public static SWIGTYPE_p_p_tiledb_query_condition_t copy_tiledb_query_condition_tpp(
+      SWIGTYPE_p_tiledb_query_condition_t value) {
+    long cPtr =
+        tiledbJNI.copy_tiledb_query_condition_tpp(
+            SWIGTYPE_p_tiledb_query_condition_t.getCPtr(value));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_query_condition_t(cPtr, false);
+  }
+
+  public static void delete_tiledb_query_condition_tpp(SWIGTYPE_p_p_tiledb_query_condition_t obj) {
+    tiledbJNI.delete_tiledb_query_condition_tpp(SWIGTYPE_p_p_tiledb_query_condition_t.getCPtr(obj));
+  }
+
+  public static void tiledb_query_condition_tpp_assign(
+      SWIGTYPE_p_p_tiledb_query_condition_t obj, SWIGTYPE_p_tiledb_query_condition_t value) {
+    tiledbJNI.tiledb_query_condition_tpp_assign(
+        SWIGTYPE_p_p_tiledb_query_condition_t.getCPtr(obj),
+        SWIGTYPE_p_tiledb_query_condition_t.getCPtr(value));
+  }
+
+  public static SWIGTYPE_p_tiledb_query_condition_t tiledb_query_condition_tpp_value(
+      SWIGTYPE_p_p_tiledb_query_condition_t obj) {
+    long cPtr =
+        tiledbJNI.tiledb_query_condition_tpp_value(
+            SWIGTYPE_p_p_tiledb_query_condition_t.getCPtr(obj));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_query_condition_t(cPtr, false);
+  }
+
   public static int sizeOfInt32() {
     return tiledbJNI.sizeOfInt32();
   }
