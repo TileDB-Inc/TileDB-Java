@@ -1761,8 +1761,19 @@ public class Query implements AutoCloseable {
     return stats;
   }
 
-  public void setCondition(Condition condition) {
-    //    SWIGTYPE_p_p_tiledb_query_condition_t condition_t = tiledb.new_tiledb_quer
+  /**
+   * TODO
+   *
+   * @param queryCondition
+   * @throws TileDBError
+   */
+  public void setCondition(QueryCondition queryCondition) throws TileDBError {
+    SWIGTYPE_p_tiledb_query_condition_t condition_t = queryCondition.getConditionp();
+    try {
+      ctx.handleError(tiledb.tiledb_query_set_condition(ctx.getCtxp(), getQueryp(), condition_t));
+    } catch (TileDBError err) {
+      throw err;
+    }
   }
 
   /**

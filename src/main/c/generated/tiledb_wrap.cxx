@@ -1220,6 +1220,27 @@ static tiledb_fragment_info_t* tiledb_fragment_info_tpp_value(tiledb_fragment_in
 }
 
 
+static tiledb_query_condition_t* *new_tiledb_query_condition_tpp() { 
+  return new tiledb_query_condition_t*(); 
+}
+
+static tiledb_query_condition_t* *copy_tiledb_query_condition_tpp(tiledb_query_condition_t* value) { 
+  return new tiledb_query_condition_t*(value); 
+}
+
+static void delete_tiledb_query_condition_tpp(tiledb_query_condition_t* *obj) { 
+  if (obj) delete obj; 
+}
+
+static void tiledb_query_condition_tpp_assign(tiledb_query_condition_t* *obj, tiledb_query_condition_t* value) {
+  *obj = value;
+}
+
+static tiledb_query_condition_t* tiledb_query_condition_tpp_value(tiledb_query_condition_t* *obj) {
+  return *obj;
+}
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -4500,6 +4521,68 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1in
   arg1 = *(tiledb_fragment_info_t ***)&jarg1; 
   result = (tiledb_fragment_info_t *)tiledb_fragment_info_tpp_value(arg1);
   *(tiledb_fragment_info_t **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1tiledb_1query_1condition_1tpp(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  tiledb_query_condition_t **result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (tiledb_query_condition_t **)new_tiledb_query_condition_tpp();
+  *(tiledb_query_condition_t ***)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_copy_1tiledb_1query_1condition_1tpp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_query_condition_t *arg1 = (tiledb_query_condition_t *) 0 ;
+  tiledb_query_condition_t **result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_query_condition_t **)&jarg1; 
+  result = (tiledb_query_condition_t **)copy_tiledb_query_condition_tpp(arg1);
+  *(tiledb_query_condition_t ***)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_delete_1tiledb_1query_1condition_1tpp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  tiledb_query_condition_t **arg1 = (tiledb_query_condition_t **) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_query_condition_t ***)&jarg1; 
+  delete_tiledb_query_condition_tpp(arg1);
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1condition_1tpp_1assign(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  tiledb_query_condition_t **arg1 = (tiledb_query_condition_t **) 0 ;
+  tiledb_query_condition_t *arg2 = (tiledb_query_condition_t *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_query_condition_t ***)&jarg1; 
+  arg2 = *(tiledb_query_condition_t **)&jarg2; 
+  tiledb_query_condition_tpp_assign(arg1,arg2);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1condition_1tpp_1value(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_query_condition_t **arg1 = (tiledb_query_condition_t **) 0 ;
+  tiledb_query_condition_t *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_query_condition_t ***)&jarg1; 
+  result = (tiledb_query_condition_t *)tiledb_query_condition_tpp_value(arg1);
+  *(tiledb_query_condition_t **)&jresult = result; 
   return jresult;
 }
 
