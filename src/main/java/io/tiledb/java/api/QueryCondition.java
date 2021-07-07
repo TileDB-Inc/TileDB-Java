@@ -9,13 +9,13 @@ public class QueryCondition implements AutoCloseable {
   private SWIGTYPE_p_p_tiledb_query_condition_t conditionpp;
   private Datatype type;
 
-  protected QueryCondition(Context ctx, SWIGTYPE_p_p_tiledb_query_condition_t conditionpp) {
+  public QueryCondition(Context ctx, SWIGTYPE_p_p_tiledb_query_condition_t conditionpp) {
     this.ctx = ctx;
     this.conditionp = tiledb.tiledb_query_condition_tpp_value(conditionpp);
     this.conditionpp = conditionpp;
   }
 
-  protected QueryCondition(
+  public QueryCondition(
       Context ctx,
       String attributeName,
       Object value,
@@ -60,7 +60,7 @@ public class QueryCondition implements AutoCloseable {
     this.ctx = ctx;
   }
 
-  protected SWIGTYPE_p_tiledb_query_condition_t getConditionp() {
+  public SWIGTYPE_p_tiledb_query_condition_t getConditionp() {
     return this.conditionp;
   }
 
