@@ -1,0 +1,295 @@
+name: TileDB-Java
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - 'master'
+  pull_request:
+
+jobs:
+  Test_Windows:
+    runs-on: windows-2019
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: checkFormat
+        uses: gradle/gradle-build-action@v1
+        with:
+          arguments: checkFormat
+
+      - name: assemble
+        uses: gradle/gradle-build-action@v1
+        with:
+          arguments: assemble
+
+      - name: test
+        uses: gradle/gradle-build-action@v1
+        with:
+          arguments: test
+    env:
+      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
+      ORG_GRADLE_PROJECT_TILEDB_S3: OFF
+
+
+  Test_Ubuntu_macOS:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-18.04, macos-10.15 ]
+
+    steps:
+       - name: checkout
+         uses: actions/checkout@v2
+
+       - run: |
+          unset SYSTEM
+          ./gradlew checkFormat
+         shell: bash
+         name: checkFormat
+
+       - run: |
+          unset SYSTEM
+          ./gradlew assemble
+         shell: bash
+         name: assemble
+
+       - run: |
+          unset SYSTEM
+          ./gradlew test
+         shell: bash
+         name: test
+
+       - run: |
+          set -e pipefail
+          # Display log files if the build failed
+          echo "Dumping log files for failed build"
+          echo "----------------------------------"
+          for f in $(find $BUILD_REPOSITORY_LOCALPATH -name *.dumpstream);
+            do echo "------"
+               echo $f
+               echo "======"
+               cat $f
+            done;
+         shell: bash
+         name: error_print
+         if: ${{ failure() }}
+
+    env:
+      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
+      ORG_GRADLE_PROJECT_TILEDB_S3: OFF
+
+  Create_Artifacts_Windows:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [Test_Windows]
+    name: Create_Artifacts_Windows
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - run: |
+          mkdir binaries_Windows
+          ./gradlew.bat assemble
+          Copy-Item ./build/tiledb_jni/Release/*.dll -Destination ./binaries_Windows/
+          Copy-Item ./build/install/bin/*.dll -Destination ./binaries_Windows/
+        name: Assemble
+
+      - run: |
+          set -e pipefail
+          # Display log files if the build failed
+          echo "Dumping log files for failed build"
+          echo "----------------------------------"
+          for f in $(find $BUILD_REPOSITORY_LOCALPATH -name *.log);
+            do echo "------"
+               echo $f
+               echo "======"
+               cat $f
+            done;
+        if: ${{ failure() }}
+        name: "Print log files (failed build only)"
+
+      - name: Archive files
+        uses: master-atul/tar-action@v1.0.2
+        id: compress
+        with:
+          command: c
+          cwd: ./
+          files: |
+            ./binaries_Windows
+          outPath: tiledb-Win.gz.tar
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Upload-Artifact-Windows
+          path: tiledb-Win.gz.tar
+    env:
+      ORG_GRADLE_PROJECT_TILEDB_S3: ON
+
+  Create_Artifacts_Ubuntu_MacOS:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [Test_Ubuntu_macOS]
+    name: Create_Artifacts_Ubuntu_MacOS
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-10.15, ubuntu-latest ]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - run: |
+          set +e
+
+          mkdir binaries_$RUNNER_OS
+
+          if [[ ( "$RUNNER_OS" == "Linux" ) ]]; then
+            docker build -f ci/Dockerfile2010 . -t lib_builder_2010
+            docker run -e "CFLAGS=$CFLAGS" -e "CPPFLAGS=$CPPFLAGS" -v $(pwd):/TileDB-Java -t lib_builder_2010 /TileDB-Java/ci/build.sh
+            cp ./build/tiledb_jni/*.so ./build/install/lib/*.so ./build/install/lib64/*.so binaries_$RUNNER_OS/
+          fi
+
+          if [[ ( "$RUNNER_OS" == "macOS" ) ]]; then
+            ./gradlew -PTILEDB_AZURE=ON assemble
+            cp ./build/tiledb_jni/*.dylib ./build/install/lib/*.dylib binaries_$RUNNER_OS/
+          fi
+
+        name: 'Build and Upload (Ubuntu and OSX)'
+
+      - run: |
+          set -e pipefail
+          # Display log files if the build failed
+          echo "Dumping log files for failed build"
+          echo "----------------------------------"
+          for f in $(find $BUILD_REPOSITORY_LOCALPATH -name *.log);
+            do echo "------"
+               echo $f
+               echo "======"
+               cat $f
+            done;
+        if: ${{ failure() }}
+        name: "Print log files (failed build only)"
+
+      - run: |
+          tar cvf tiledb-$RUNNER_OS.gz.tar binaries_$RUNNER_OS/
+        name: Archive_files
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Upload-Artifact-Linux
+          path: '*.gz.tar'
+        if: runner.os == 'Linux'
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Upload-Artifact-Mac
+          path: '*.gz.tar'
+        if: runner.os == 'macOS'
+    env:
+      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
+      ORG_GRADLE_PROJECT_TILEDB_S3: ON
+
+  Release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [Create_Artifacts_Ubuntu_MacOS, Create_Artifacts_Windows]
+    name: Create-Release
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set-up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          check-latest: true
+
+      - uses: actions/download-artifact@v2
+
+      - name: Create-Jars
+        run: |
+          set +e
+
+          mv Upload-*/* .
+
+          mkdir -p ./build/install/lib
+          mkdir ./build/install/lib64
+          mkdir ./build/tiledb_jni/
+          mkdir ./build/tiledb_jni/Release
+          mkdir ./build/install/bin
+
+
+          for arch in $(ls | grep .gz.tar)
+          do
+          tar -xvf $arch
+          done
+
+          mv binaries_*/* .
+
+          # OSX
+          mv libtiledb.dylib ./build/install/lib
+          mv libtiledbjni.dylib ./build/tiledb_jni
+
+          # Linux
+          cp libtiledb.so ./build/install/lib
+          mv libtiledb.so ./build/install/lib64
+          mv libtiledbjni.so ./build/tiledb_jni
+
+          # Windows
+          mv tbb.dll ./build/install/bin
+          mv tiledb.dll ./build/install/bin
+          mv tiledbjni.dll ./build/tiledb_jni/Release
+
+          ./gradlew assemble
+
+          mkdir jars
+          cp ./build/libs/*.jar jars
+
+      - uses: notlmn/release-with-changelog@v2
+        name: Build_Changelog
+        with:
+          header: 'Changes:'
+          include-hash: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: jars/*.jar
+          tag_name: ${{ github.event.release.tag_name }}
+          name: ${{ github.event.release.tag_name }}
+          body: ${{steps.github_release.outputs.changelog}}
+          draft: false
+          prerelease: false
+    env:
+      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
+      ORG_GRADLE_PROJECT_TILEDB_S3: ON
+
+  Maven:
+    needs: [ Release ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          check-latest: true
+      - name: Upload to maven
+        run: |
+          chmod +x ./ci/upload_to_maven.sh
+          ./ci/upload_to_maven.sh
+        shell: bash
+        env:
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_SECRET_KEYS_ENC: ${{ secrets.GPG_SECRET_KEYS_ENC }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}

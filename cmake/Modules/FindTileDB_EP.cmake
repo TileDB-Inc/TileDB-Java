@@ -68,7 +68,7 @@ if (NOT TILEDB_FOUND)
                 PATCH_COMMAND ""
                 TEST_COMMAND ""
                 INSTALL_COMMAND
-                    ${CMAKE_COMMAND} -E copy_directory ${TILEDB_JNI_EP_BASE}/src/ep_tiledb ${TILEDB_JNI_EP_INSTALL_PREFIX}
+                    ${CMAKE_COMMAND} --build . --target install-tiledb
                 LOG_DOWNLOAD TRUE
                 LOG_CONFIGURE FALSE
                 LOG_BUILD FALSE
