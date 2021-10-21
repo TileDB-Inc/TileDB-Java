@@ -83,7 +83,7 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_S3: OFF
 
   Create_Artifacts_Windows:
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'build-')
     needs: [Test_Windows]
     name: Create_Artifacts_Windows
     runs-on: windows-latest
@@ -130,7 +130,7 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_S3: ON
 
   Create_Artifacts_Ubuntu_MacOS:
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'build-')
     needs: [Test_Ubuntu_macOS]
     name: Create_Artifacts_Ubuntu_MacOS
     runs-on: ${{ matrix.os }}
