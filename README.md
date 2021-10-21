@@ -8,8 +8,7 @@
 ## Quick Links
 
 - Installation: [https://docs.tiledb.com/developer/installation/building-from-source/java](https://docs.tiledb.com/developer/installation/building-from-source/java)
-- Quickstart: [https://docs.tiledb.com/developer/quickstart](https://docs.tiledb.com/developer/quickstart)
-- Full developer documentation for all APIs and integrations: [https://docs.tiledb.com/developer](https://docs.tiledb.com/developer)
+- Full developer documentation for all APIs and integrations: [https://docs.tiledb.com/main/](https://docs.tiledb.com/main/)
 
 ## Development Notes
 
