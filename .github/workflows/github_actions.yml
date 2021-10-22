@@ -9,29 +9,29 @@ on:
   pull_request:
 
 jobs:
-  Test_Windows:
-    runs-on: windows-2019
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: checkFormat
-        uses: gradle/gradle-build-action@v1
-        with:
-          arguments: checkFormat
-
-      - name: assemble
-        uses: gradle/gradle-build-action@v1
-        with:
-          arguments: assemble
-
-      - name: test
-        uses: gradle/gradle-build-action@v1
-        with:
-          arguments: test
-    env:
-      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
-      ORG_GRADLE_PROJECT_TILEDB_S3: OFF
+#  Test_Windows:
+#    runs-on: windows-2019
+#    steps:
+#      - name: checkout
+#        uses: actions/checkout@v2
+#
+#      - name: checkFormat
+#        uses: gradle/gradle-build-action@v1
+#        with:
+#          arguments: checkFormat
+#
+#      - name: assemble
+#        uses: gradle/gradle-build-action@v1
+#        with:
+#          arguments: assemble
+#
+#      - name: test
+#        uses: gradle/gradle-build-action@v1
+#        with:
+#          arguments: test
+#    env:
+#      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
+#      ORG_GRADLE_PROJECT_TILEDB_S3: OFF
 
 
   Test_Ubuntu_macOS:
@@ -45,19 +45,23 @@ jobs:
          uses: actions/checkout@v2
 
        - run: |
-          unset SYSTEM
           ./gradlew checkFormat
          shell: bash
          name: checkFormat
 
        - run: |
-          unset SYSTEM
           ./gradlew assemble
          shell: bash
          name: assemble
 
        - run: |
-          unset SYSTEM
+           ls -R
+           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./build/libs
+         shell: bash
+         name: set_path
+
+
+       - run: |
           ./gradlew test
          shell: bash
          name: test
@@ -81,52 +85,52 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
       ORG_GRADLE_PROJECT_TILEDB_S3: OFF
 
-  Create_Artifacts_Windows:
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [Test_Windows]
-    name: Create_Artifacts_Windows
-    runs-on: windows-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - run: |
-          mkdir binaries_Windows
-          ./gradlew.bat assemble
-          Copy-Item ./build/tiledb_jni/Release/*.dll -Destination ./binaries_Windows/
-          Copy-Item ./build/install/bin/*.dll -Destination ./binaries_Windows/
-        name: Assemble
-
-      - run: |
-          set -e pipefail
-          # Display log files if the build failed
-          echo "Dumping log files for failed build"
-          echo "----------------------------------"
-          for f in $(find $BUILD_REPOSITORY_LOCALPATH -name *.log);
-            do echo "------"
-               echo $f
-               echo "======"
-               cat $f
-            done;
-        if: ${{ failure() }}
-        name: "Print log files (failed build only)"
-
-      - name: Archive files
-        uses: master-atul/tar-action@v1.0.2
-        id: compress
-        with:
-          command: c
-          cwd: ./
-          files: |
-            ./binaries_Windows
-          outPath: tiledb-Win.gz.tar
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Upload-Artifact-Windows
-          path: tiledb-Win.gz.tar
-    env:
-      ORG_GRADLE_PROJECT_TILEDB_S3: ON
+#  Create_Artifacts_Windows:
+#    if: startsWith(github.ref, 'refs/tags/')
+#    needs: [Test_Windows]
+#    name: Create_Artifacts_Windows
+#    runs-on: windows-latest
+#    steps:
+#      - name: checkout
+#        uses: actions/checkout@v2
+#
+#      - run: |
+#          mkdir binaries_Windows
+#          ./gradlew.bat assemble
+#          Copy-Item ./build/tiledb_jni/Release/*.dll -Destination ./binaries_Windows/
+#          Copy-Item ./build/install/bin/*.dll -Destination ./binaries_Windows/
+#        name: Assemble
+#
+#      - run: |
+#          set -e pipefail
+#          # Display log files if the build failed
+#          echo "Dumping log files for failed build"
+#          echo "----------------------------------"
+#          for f in $(find $BUILD_REPOSITORY_LOCALPATH -name *.log);
+#            do echo "------"
+#               echo $f
+#               echo "======"
+#               cat $f
+#            done;
+#        if: ${{ failure() }}
+#        name: "Print log files (failed build only)"
+#
+#      - name: Archive files
+#        uses: master-atul/tar-action@v1.0.2
+#        id: compress
+#        with:
+#          command: c
+#          cwd: ./
+#          files: |
+#            ./binaries_Windows
+#          outPath: tiledb-Win.gz.tar
+#
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: Upload-Artifact-Windows
+#          path: tiledb-Win.gz.tar
+#    env:
+#      ORG_GRADLE_PROJECT_TILEDB_S3: ON
 
   Create_Artifacts_Ubuntu_MacOS:
     if: startsWith(github.ref, 'refs/tags/')
@@ -193,7 +197,7 @@ jobs:
 
   Release:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [Create_Artifacts_Ubuntu_MacOS, Create_Artifacts_Windows]
+    needs: [Create_Artifacts_Ubuntu_MacOS]
     name: Create-Release
     runs-on: ubuntu-latest
     steps:
@@ -240,9 +244,9 @@ jobs:
           mv libtiledbjni.so ./build/tiledb_jni
 
           # Windows
-          mv tbb.dll ./build/install/bin
-          mv tiledb.dll ./build/install/bin
-          mv tiledbjni.dll ./build/tiledb_jni/Release
+          #mv tbb.dll ./build/install/bin
+          #mv tiledb.dll ./build/install/bin
+          #mv tiledbjni.dll ./build/tiledb_jni/Release
 
           ./gradlew assemble
 
