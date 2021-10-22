@@ -43,6 +43,7 @@ sourceSets {
 dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'commons-io:commons-io:2.8.0'
+    implementation files('build/libs/tiledb-java-0.5.2-SNAPSHOT.jar')
 }
 
 task cmakeTask(type: Exec) {

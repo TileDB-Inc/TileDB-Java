@@ -56,12 +56,13 @@ jobs:
 
        - run: |
            ls -R
-           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./build/libs
+           CLASSPATH=./build/libs
          shell: bash
          name: set_path
 
 
        - run: |
+          LD_LIBRARY_PATH=build/libs
           ./gradlew test
          shell: bash
          name: test
