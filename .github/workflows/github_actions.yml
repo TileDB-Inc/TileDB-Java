@@ -44,43 +44,43 @@ jobs:
        - name: checkout
          uses: actions/checkout@v2
 
-       - run: |
-          ./gradlew checkFormat
-         shell: bash
-         name: checkFormat
-
-       - run: |
-          ./gradlew assemble
-         shell: bash
-         name: assemble
-
-       - run: |
-           ls -R
-           CLASSPATH=./build/libs
-         shell: bash
-         name: set_path
-
-
-       - run: |
-          LD_LIBRARY_PATH=build/libs
-          ./gradlew test
-         shell: bash
-         name: test
-
-       - run: |
-          set -e pipefail
-          # Display log files if the build failed
-          echo "Dumping log files for failed build"
-          echo "----------------------------------"
-          for f in $(find $BUILD_REPOSITORY_LOCALPATH -name *.dumpstream);
-            do echo "------"
-               echo $f
-               echo "======"
-               cat $f
-            done;
-         shell: bash
-         name: error_print
-         if: ${{ failure() }}
+#       - run: |
+#          ./gradlew checkFormat
+#         shell: bash
+#         name: checkFormat
+#
+#       - run: |
+#          ./gradlew assemble
+#         shell: bash
+#         name: assemble
+#
+#       - run: |
+#           ls -R
+#           CLASSPATH=./build/libs
+#         shell: bash
+#         name: set_path
+#
+#
+#       - run: |
+#          LD_LIBRARY_PATH=build/libs
+#          ./gradlew test
+#         shell: bash
+#         name: test
+#
+#       - run: |
+#          set -e pipefail
+#          # Display log files if the build failed
+#          echo "Dumping log files for failed build"
+#          echo "----------------------------------"
+#          for f in $(find $BUILD_REPOSITORY_LOCALPATH -name *.dumpstream);
+#            do echo "------"
+#               echo $f
+#               echo "======"
+#               cat $f
+#            done;
+#         shell: bash
+#         name: error_print
+#         if: ${{ failure() }}
 
     env:
       ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
@@ -134,7 +134,7 @@ jobs:
 #      ORG_GRADLE_PROJECT_TILEDB_S3: ON
 
   Create_Artifacts_Ubuntu_MacOS:
-    if: startsWith(github.ref, 'refs/tags/')
+#    if: startsWith(github.ref, 'refs/tags/')
     needs: [Test_Ubuntu_macOS]
     name: Create_Artifacts_Ubuntu_MacOS
     runs-on: ${{ matrix.os }}
@@ -197,7 +197,7 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_S3: ON
 
   Release:
-    if: startsWith(github.ref, 'refs/tags/')
+#    if: startsWith(github.ref, 'refs/tags/')
     needs: [Create_Artifacts_Ubuntu_MacOS]
     name: Create-Release
     runs-on: ubuntu-latest
