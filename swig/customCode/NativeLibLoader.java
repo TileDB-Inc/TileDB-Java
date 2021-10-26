@@ -21,6 +21,7 @@ package io.tiledb.libtiledb;
  *
  * */
 
+import io.airlift.log.Logger;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +40,8 @@ import java.util.stream.Stream;
 
 /** Helper class that finds native libraries embedded as resources and loads them dynamically. */
 public class NativeLibLoader {
+
+  private static final Logger LOG = Logger.get(NativeLibLoader.class);
 
   private static final String UNKNOWN = "unknown";
 
@@ -71,6 +74,7 @@ public class NativeLibLoader {
     try {
       loadNativeLib("tiledb", true);
     } catch (java.lang.UnsatisfiedLinkError e) {
+      LOG.warn("Failed to load native TileDB");
       // If a native library fails to link, we fall back to depending on the system
       // dynamic linker to satisfy the requirement. Therefore, we do nothing here
       // (if the library is not available via the system linker, a runtime error
@@ -78,17 +82,17 @@ public class NativeLibLoader {
     }
   }
 
-  /** Finds and loads native Intel Thread Building Blocks. */
-  static void loadNativeTBB() {
-    try {
-      loadNativeLib("tbb", true);
-    } catch (java.lang.UnsatisfiedLinkError e) {
-      // If a native library fails to link, we fall back to depending on the system
-      // dynamic linker to satisfy the requirement. Therefore, we do nothing here
-      // (if the library is not available via the system linker, a runtime error
-      // will occur later).
-    }
-  }
+  //  /** Finds and loads native Intel Thread Building Blocks. */
+  //  static void loadNativeTBB() {
+  //    try {
+  //      loadNativeLib("tbb", true);
+  //    } catch (java.lang.UnsatisfiedLinkError e) {
+  //      // If a native library fails to link, we fall back to depending on the system
+  //      // dynamic linker to satisfy the requirement. Therefore, we do nothing here
+  //      // (if the library is not available via the system linker, a runtime error
+  //      // will occur later).
+  //    }
+  //  }
 
   /** Finds and loads native TileDB JNI. */
   static void loadNativeTileDBJNI() {

@@ -1,8 +1,7 @@
 <a href="https://tiledb.com"><img src="https://github.com/TileDB-Inc/TileDB/raw/dev/doc/source/_static/tiledb-logo_color_no_margin_@4x.png" alt="TileDB logo" width="400"></a>
 
 # TileDB-Java
-[![Build Status](https://dev.azure.com/TileDB-Inc/CI/_apis/build/status/TileDB-Inc.TileDB-Java?branchName=master)](https://dev.azure.com/TileDB-Inc/CI/_build/latest?definitionId=21&branchName=master)
-
+![TileDB-Trino CI](https://github.com/TileDB-Inc/TileDB-Java/actions/workflows/github_actions.yml/badge.svg)
 `TileDB-Java` is a Java interface to the [TileDB Storage Engine](https://github.com/TileDB-Inc/TileDB).
 
 ## Quick Links
@@ -47,5 +46,5 @@ The below table references which versions of TileDB-Java are compatible with whi
 | 0.4.2 | 2.2.5    |
 | 0.4.3 | 2.2.5    |
 | 0.4.4 | 2.2.5    |
-| 0.4.5 | 2.2.5    |
+| 0.5.X | 2.3.X    |
 
