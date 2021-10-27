@@ -67,7 +67,9 @@ public class FragmentsConsolidationTest {
     File f = new File(arrayURI);
     int nFiles = 0;
     for (File file : f.listFiles())
-      if (file.isDirectory() && !file.getName().equals("__meta")) {
+      if (file.isDirectory()
+          && !file.getName().equals("__meta")
+          && !file.getName().equals("__schema")) {
         System.out.println(file.getAbsolutePath());
         nFiles++;
       }
