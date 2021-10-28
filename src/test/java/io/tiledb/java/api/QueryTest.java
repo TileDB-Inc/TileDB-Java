@@ -103,6 +103,39 @@ public class QueryTest {
     }
 
     @Test
+    public void statsTest() throws Exception {
+      // Create array and query
+      try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+          ArraySchema schema = array.getSchema();
+          Query query = new Query(array, TILEDB_READ)) {
+        query.addRange(0, 1, 2);
+        query.addRange(1, 2, 4);
+
+        query.setLayout(TILEDB_ROW_MAJOR);
+
+        NativeArray dim1Array = new NativeArray(ctx, 6, Integer.class);
+        NativeArray dim2Array = new NativeArray(ctx, 6, Integer.class);
+        NativeArray a1Array = new NativeArray(ctx, 12, Character.class);
+        NativeArray a2Array = new NativeArray(ctx, 6, Float.class);
+
+        query.setBuffer("rows", dim1Array);
+        query.setBuffer("cols", dim2Array);
+        query.setBuffer("a1", a1Array);
+        query.setBuffer("a2", a2Array);
+
+        // Submit query
+        query.submit();
+        String stats = query.getStats();
+        System.out.println(query.getStats());
+        Assert.assertTrue(
+            stats.contains("unfilter_attr_tiles.sum")
+                && stats.contains("read_unfiltered_byte_num")
+                && stats.contains("timers")
+                && stats.contains("counters")); // if not empty
+      }
+    }
+
+    @Test
     public void arrayReadTest() throws Exception {
       // Create array and query
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
