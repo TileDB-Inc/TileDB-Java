@@ -2,6 +2,7 @@
 
 # TileDB-Java
 ![TileDB-Trino CI](https://github.com/TileDB-Inc/TileDB-Java/actions/workflows/github_actions.yml/badge.svg)
+
 `TileDB-Java` is a Java interface to the [TileDB Storage Engine](https://github.com/TileDB-Inc/TileDB).
 
 ## Quick Links
