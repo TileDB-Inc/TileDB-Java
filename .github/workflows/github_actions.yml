@@ -268,20 +268,7 @@ jobs:
           body: ${{steps.github_release.outputs.changelog}}
           draft: false
           prerelease: false
-    env:
-      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
-      ORG_GRADLE_PROJECT_TILEDB_S3: ON
-
-  Maven:
-    needs: [ Release ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-          check-latest: true
+          
       - name: Upload to maven
         run: |
           chmod +x ./ci/upload_to_maven.sh
@@ -293,3 +280,6 @@ jobs:
           GPG_SECRET_KEYS_ENC: ${{ secrets.GPG_SECRET_KEYS_ENC }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+    env:
+      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
+      ORG_GRADLE_PROJECT_TILEDB_S3: ON
