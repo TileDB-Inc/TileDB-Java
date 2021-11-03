@@ -72,6 +72,7 @@ task cmakeTask(type: Exec) {
         "TILEDB_HDFS",
         "TILEDB_SERIALIZATION",
         "FORCE_BUILD_TILEDB",
+        "TILEDB_SKIP_S3AWSSDK_DIR_LENGTH_CHECK",
         "DOWNLOAD_TILEDB_PREBUILT"
     ].each { v ->
         if (project.hasProperty(v)) {
