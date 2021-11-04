@@ -60,6 +60,7 @@ fi
 
 # Test if we can find the installed tiledb header
 tiledb_header="${prefix_dir}/include/tiledb/tiledb.h"
+tiledb_experimental_header="${prefix_dir}/include/tiledb/tiledb_experimental.h"
 if [ ! -f ${tiledb_header} ]; then
   die "${tiledb_header} not found"
 fi
@@ -94,11 +95,11 @@ fi
 
 # define the necessary macro contants
 # (removed during preprocessor macro expansion)
-g++ -dM -E ${tiledb_header} | grep "#define TILEDB" > swig/tiledb_generated.h ||
+g++ -dM -E ${tiledb_header} ${tiledb_experimental_header} | grep "#define TILEDB" > swig/tiledb_generated.h ||
   die "could not write ./swig/tiledb_generated.h tmp file"
 
 # remove system headers
-awk '!/#\s*include/ || /tiledb_/ {print}' ${tiledb_header} |
+awk '!/#\s*include/ || /tiledb_/ {print}' ${tiledb_header} ${tiledb_experimental_header} |
 g++ -E -P -nostdinc++ -I "${tiledb_include}" -x c++ - >> swig/tiledb_generated.h ||
   die "error generating temp combined swig/tiledb_generated.h header for swig generation"
 

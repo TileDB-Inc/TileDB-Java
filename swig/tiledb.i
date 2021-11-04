@@ -38,6 +38,7 @@ import java.nio.ByteBuffer;
 #include <stdio.h>
 
 #include "tiledb/tiledb.h"
+#include "tiledb/tiledb_experimental.h"
 #include "tiledb_java_extensions.h"
 %}
 
@@ -137,6 +138,9 @@ import java.nio.ByteBuffer;
 %native (uint16ArrayGet) jintArray uint16ArrayGet(jlong array, jint pos, jint sz);
 %native (uint32ArrayGet) jlongArray uint32ArrayGet(jlong array, jint pos, jint sz);
 %native (uint64ArrayGet) jlongArray uint64ArrayGet(jlong array, jint pos, jint sz);
+
+// tiledb_experimental.h
+%pointer_functions(tiledb_array_schema_evolution_t*, tiledb_array_schema_evolution_tpp);
 
 %include "tiledb_generated.h"
 %include "tiledb_java_extensions.h"
