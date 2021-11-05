@@ -1,0 +1,128 @@
+package io.tiledb.java.api;
+
+import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_array_schema_evolution_t;
+import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_array_schema_evolution_t;
+import io.tiledb.libtiledb.tiledb;
+
+public class ArraySchemaEvolution implements AutoCloseable {
+  private Context ctx;
+  private SWIGTYPE_p_tiledb_array_schema_evolution_t evolutionp;
+  private SWIGTYPE_p_p_tiledb_array_schema_evolution_t evolutionpp;
+
+  public ArraySchemaEvolution(
+      Context ctx, SWIGTYPE_p_p_tiledb_array_schema_evolution_t evolutionpp) {
+    this.ctx = ctx;
+    this.evolutionp = tiledb.tiledb_array_schema_evolution_tpp_value(evolutionpp);
+    this.evolutionpp = evolutionpp;
+  }
+
+  public ArraySchemaEvolution(Context ctx) throws TileDBError {
+    evolutionpp = tiledb.new_tiledb_array_schema_evolution_tpp();
+    try {
+      ctx.handleError(tiledb.tiledb_array_schema_evolution_alloc(ctx.getCtxp(), evolutionpp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_array_schema_evolution_tpp(evolutionpp);
+      throw err;
+    }
+
+    evolutionp = tiledb.tiledb_array_schema_evolution_tpp_value(evolutionpp);
+    this.ctx = ctx;
+  }
+
+  public SWIGTYPE_p_tiledb_array_schema_evolution_t getEvolutionp() {
+    return this.evolutionp;
+  }
+
+  protected Context getCtx() {
+    return this.ctx;
+  }
+
+  public void close() {
+    if (evolutionp != null && evolutionpp != null) {
+      tiledb.tiledb_array_schema_evolution_free(evolutionpp);
+      evolutionpp = null;
+      evolutionp = null;
+    }
+  }
+
+  /**
+   * Adds an Attribute to the array schema evolution.
+   *
+   * <p>**Example:** ArraySchemaEvolution schemaEvolution = new ArraySchemaEvolution(ctx);
+   * schemaEvolution.addAttribute(new Attribute(ctx, "newAtt", Float.class));
+   *
+   * @param att The Attribute to add
+   * @throws TileDBError
+   */
+  public void addAttribute(Attribute att) throws TileDBError {
+    try {
+      ctx.handleError(tiledb.tiledb_array_schema_evolution_alloc(ctx.getCtxp(), evolutionpp));
+      ctx.handleError(
+          tiledb.tiledb_array_schema_evolution_add_attribute(
+              ctx.getCtxp(), evolutionp, att.getAttributep()));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_array_schema_evolution_tpp(evolutionpp);
+      throw err;
+    }
+  }
+
+  /**
+   * Drops an Attribute from the array schema evolution.
+   *
+   * <p>**Example:** ArraySchemaEvolution schemaEvolution = new ArraySchemaEvolution(ctx);
+   * schemaEvolution.dropAttribute("attName");
+   *
+   * @param attName The name of the Attribute to drop
+   * @throws TileDBError
+   */
+  public void dropAttribute(String attName) throws TileDBError {
+    try {
+      ctx.handleError(tiledb.tiledb_array_schema_evolution_alloc(ctx.getCtxp(), evolutionpp));
+      ctx.handleError(
+          tiledb.tiledb_array_schema_evolution_drop_attribute(ctx.getCtxp(), evolutionp, attName));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_array_schema_evolution_tpp(evolutionpp);
+      throw err;
+    }
+  }
+
+  /**
+   * Drops an Attribute from the array schema evolution.
+   *
+   * <p>**Example:** ArraySchemaEvolution schemaEvolution = new ArraySchemaEvolution(ctx);
+   * schemaEvolution.dropAttribute("attName");
+   *
+   * @param att The Attribute to drop
+   * @throws TileDBError
+   */
+  public void dropAttribute(Attribute att) throws TileDBError {
+    try {
+      ctx.handleError(tiledb.tiledb_array_schema_evolution_alloc(ctx.getCtxp(), evolutionpp));
+      ctx.handleError(
+          tiledb.tiledb_array_schema_evolution_drop_attribute(
+              ctx.getCtxp(), evolutionp, att.getName()));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_array_schema_evolution_tpp(evolutionpp);
+      throw err;
+    }
+  }
+
+  /**
+   * Evolves the schema of an array.
+   *
+   * <p>**Example:** ArraySchemaEvolution schemaEvolution = new ArraySchemaEvolution(ctx);
+   * schemaEvolution.dropAttribute("attName"); schemaEvolution.evolveArray("testUri")
+   *
+   * @param uri
+   * @throws TileDBError
+   */
+  public void evolveArray(String uri) throws TileDBError {
+    try {
+      ctx.handleError(tiledb.tiledb_array_schema_evolution_alloc(ctx.getCtxp(), evolutionpp));
+      ctx.handleError(tiledb.tiledb_array_evolve(ctx.getCtxp(), uri, evolutionp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_array_schema_evolution_tpp(evolutionpp);
+      throw err;
+    }
+  }
+}

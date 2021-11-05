@@ -35,10 +35,13 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /** Helper class that finds native libraries embedded as resources and loads them dynamically. */
 public class NativeLibLoader {
+
+  private static final Logger LOGGER = Logger.getLogger(NativeLibLoader.class.getName());
 
   private static final String UNKNOWN = "unknown";
 
@@ -71,6 +74,7 @@ public class NativeLibLoader {
     try {
       loadNativeLib("tiledb", true);
     } catch (java.lang.UnsatisfiedLinkError e) {
+      LOGGER.warning("Could not load Native TIleDB");
       // If a native library fails to link, we fall back to depending on the system
       // dynamic linker to satisfy the requirement. Therefore, we do nothing here
       // (if the library is not available via the system linker, a runtime error
@@ -78,17 +82,17 @@ public class NativeLibLoader {
     }
   }
 
-  /** Finds and loads native Intel Thread Building Blocks. */
-  static void loadNativeTBB() {
-    try {
-      loadNativeLib("tbb", true);
-    } catch (java.lang.UnsatisfiedLinkError e) {
-      // If a native library fails to link, we fall back to depending on the system
-      // dynamic linker to satisfy the requirement. Therefore, we do nothing here
-      // (if the library is not available via the system linker, a runtime error
-      // will occur later).
-    }
-  }
+  //  /** Finds and loads native Intel Thread Building Blocks. */
+  //  static void loadNativeTBB() {
+  //    try {
+  //      loadNativeLib("tbb", true);
+  //    } catch (java.lang.UnsatisfiedLinkError e) {
+  //      // If a native library fails to link, we fall back to depending on the system
+  //      // dynamic linker to satisfy the requirement. Therefore, we do nothing here
+  //      // (if the library is not available via the system linker, a runtime error
+  //      // will occur later).
+  //    }
+  //  }
 
   /** Finds and loads native TileDB JNI. */
   static void loadNativeTileDBJNI() {
@@ -317,7 +321,7 @@ public class NativeLibLoader {
    */
   private static Path findNativeLibrary(String libraryName, boolean mapLibraryName) {
     String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
-    String libDir = LIB_RESOURCE_DIR;
+    String libDir = LIB_RESOURCE_DIR + "/" + getOSClassifier();
     String libPath = libDir + "/" + mappedLibraryName;
 
     boolean hasNativeLib = hasResource(libPath);
