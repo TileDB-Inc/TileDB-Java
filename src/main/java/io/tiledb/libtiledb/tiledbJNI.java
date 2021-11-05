@@ -14,7 +14,7 @@ public class tiledbJNI {
 
   static {
     try {
-      // NativeLibLoader.loadNativeTBB();
+      //      NativeLibLoader.loadNativeTBB();
       NativeLibLoader.loadNativeTileDB();
       NativeLibLoader.loadNativeTileDBJNI();
     } catch (Exception e) {
@@ -653,6 +653,16 @@ public class tiledbJNI {
 
   public static final native long[] uint64ArrayGet(long jarg1, int jarg2, int jarg3);
 
+  public static final native long new_tiledb_array_schema_evolution_tpp();
+
+  public static final native long copy_tiledb_array_schema_evolution_tpp(long jarg1);
+
+  public static final native void delete_tiledb_array_schema_evolution_tpp(long jarg1);
+
+  public static final native void tiledb_array_schema_evolution_tpp_assign(long jarg1, long jarg2);
+
+  public static final native long tiledb_array_schema_evolution_tpp_value(long jarg1);
+
   public static final native int tiledb_query_type_to_str(int jarg1, long jarg2);
 
   public static final native int tiledb_query_type_from_str(String jarg1, long jarg2);
@@ -1020,6 +1030,15 @@ public class tiledbJNI {
       long jarg8,
       long jarg9);
 
+  public static final native int tiledb_query_set_data_buffer(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_query_set_offsets_buffer(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_query_set_validity_buffer(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
   public static final native int tiledb_query_get_buffer(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
@@ -1039,6 +1058,15 @@ public class tiledbJNI {
       long jarg7,
       long jarg8,
       long jarg9);
+
+  public static final native int tiledb_query_get_data_buffer(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_query_get_offsets_buffer(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_query_get_validity_buffer(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
   public static final native int tiledb_query_set_layout(long jarg1, long jarg2, int jarg3);
 
@@ -1446,7 +1474,22 @@ public class tiledbJNI {
   public static final native int tiledb_fragment_info_get_to_vacuum_uri(
       long jarg1, long jarg2, long jarg3, long jarg4);
 
+  public static final native int tiledb_fragment_info_get_array_schema(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
   public static final native int tiledb_fragment_info_dump(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_array_schema_evolution_alloc(long jarg1, long jarg2);
+
+  public static final native void tiledb_array_schema_evolution_free(long jarg1);
+
+  public static final native int tiledb_array_schema_evolution_add_attribute(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_array_schema_evolution_drop_attribute(
+      long jarg1, long jarg2, String jarg3);
+
+  public static final native int tiledb_array_evolve(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);
 

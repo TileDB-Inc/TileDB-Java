@@ -21,7 +21,6 @@ package io.tiledb.libtiledb;
  *
  * */
 
-import io.airlift.log.Logger;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,7 +40,7 @@ import java.util.stream.Stream;
 /** Helper class that finds native libraries embedded as resources and loads them dynamically. */
 public class NativeLibLoader {
 
-  private static final Logger LOG = Logger.get(NativeLibLoader.class);
+  private static final Logger LOGGER = Logger.getLogger(NativeLibLoader.class.getName());
 
   private static final String UNKNOWN = "unknown";
 
@@ -74,7 +73,7 @@ public class NativeLibLoader {
     try {
       loadNativeLib("tiledb", true);
     } catch (java.lang.UnsatisfiedLinkError e) {
-      LOG.warn("Failed to load native TileDB");
+      LOGGER.warning("Could not load Native TIleDB");
       // If a native library fails to link, we fall back to depending on the system
       // dynamic linker to satisfy the requirement. Therefore, we do nothing here
       // (if the library is not available via the system linker, a runtime error
@@ -321,7 +320,7 @@ public class NativeLibLoader {
    */
   private static Path findNativeLibrary(String libraryName, boolean mapLibraryName) {
     String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
-    String libDir = LIB_RESOURCE_DIR + "/" + getOSClassifier();
+    String libDir = LIB_RESOURCE_DIR;
     String libPath = libDir + "/" + mappedLibraryName;
 
     boolean hasNativeLib = hasResource(libPath);

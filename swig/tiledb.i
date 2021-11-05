@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 %pragma(java) jniclasscode=%{
   static {
     try {
-      NativeLibLoader.loadNativeTBB();
+//       NativeLibLoader.loadNativeTBB();
       NativeLibLoader.loadNativeTileDB();
       NativeLibLoader.loadNativeTileDBJNI();
     } catch (Exception e) {

@@ -393,6 +393,25 @@ public class Array implements AutoCloseable {
   }
 
   /**
+   * Evolves the schema of an array.
+   *
+   * <p>**Example:** ArraySchemaEvolution schemaEvolution = new ArraySchemaEvolution(ctx);
+   * schemaEvolution.dropAttribute("attName"); array.evolve(ctx, schemaEvolution);
+   *
+   * @param ctx A TileDb context
+   * @param schemaEvolution The schemaEvolution object
+   * @throws TileDBError
+   */
+  public void evolve(Context ctx, ArraySchemaEvolution schemaEvolution) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_evolve(ctx.getCtxp(), uri, schemaEvolution.getEvolutionp()));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
    * Cleans up the array, such as consolidated fragments and array metadata. Note that this will
    * coarsen the granularity of time traveling (see docs for more information).
    *
