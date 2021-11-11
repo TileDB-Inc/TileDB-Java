@@ -1,10 +1,32 @@
 package io.tiledb.java.api;
 
+import java.util.Arrays;
+import java.util.Collection;
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+@RunWith(Parameterized.class)
 public class ArraySchemaTest {
 
-  public ArraySchema schemaCreate(Context ctx, ArrayType arrayType) throws TileDBError {
+  @Parameterized.Parameter(0)
+  public ArrayType artype;
+
+  @Parameterized.Parameter(1)
+  public Layout layout;
+
+  @Parameterized.Parameters(name = "{index}: Test with ArrayType={0}, Layout={1}")
+  public static Collection<Object[]> data() {
+    Object[][] data =
+        new Object[][] {
+          {ArrayType.TILEDB_DENSE, Layout.TILEDB_ROW_MAJOR},
+          {ArrayType.TILEDB_SPARSE, Layout.TILEDB_HILBERT}
+        };
+    return Arrays.asList(data);
+  }
+
+  public ArraySchema schemaCreate(Context ctx, ArrayType arrayType, Layout cellOrder)
+      throws TileDBError {
     Dimension<Long> d1 =
         new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
     Domain domain = new Domain(ctx);
@@ -13,14 +35,14 @@ public class ArraySchemaTest {
     Attribute a1 = new Attribute(ctx, "a1", Integer.class);
     ArraySchema schema = new ArraySchema(ctx, arrayType);
     schema.setTileOrder(Layout.TILEDB_ROW_MAJOR);
-    schema.setCellOrder(Layout.TILEDB_ROW_MAJOR);
+    schema.setCellOrder(cellOrder);
     schema.setDomain(domain);
     schema.addAttribute(a1);
     return schema;
   }
 
   public ArraySchema schemaCreate(Context ctx) throws TileDBError {
-    return schemaCreate(ctx, ArrayType.TILEDB_DENSE);
+    return schemaCreate(ctx, artype, layout);
   }
 
   @Test
@@ -87,7 +109,7 @@ public class ArraySchemaTest {
   @Test
   public void testArraySchemaGetAllowDups() throws Exception {
     try (Context ctx = new Context();
-        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE); ) {
+        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE, layout); ) {
       Assert.assertNotEquals(1, schema.getAllowDups());
     }
   }
@@ -95,7 +117,7 @@ public class ArraySchemaTest {
   @Test
   public void testArraySchemaSetAllowDups() throws Exception {
     try (Context ctx = new Context();
-        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE); ) {
+        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE, layout); ) {
       schema.setAllowDups(1);
     }
   }
@@ -103,7 +125,7 @@ public class ArraySchemaTest {
   @Test
   public void testArraySchemaGetSetAllowDups() throws Exception {
     try (Context ctx = new Context();
-        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE); ) {
+        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE, layout); ) {
       Assert.assertNotEquals(1, schema.getAllowDups());
       schema.setAllowDups(1);
       Assert.assertEquals(1, schema.getAllowDups());
