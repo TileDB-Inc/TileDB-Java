@@ -321,7 +321,7 @@ public class NativeLibLoader {
    */
   private static Path findNativeLibrary(String libraryName, boolean mapLibraryName) {
     String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
-    String libDir = LIB_RESOURCE_DIR;
+    String libDir = LIB_RESOURCE_DIR + "/" + getOSClassifier();
     String libPath = libDir + "/" + mappedLibraryName;
 
     boolean hasNativeLib = hasResource(libPath);
