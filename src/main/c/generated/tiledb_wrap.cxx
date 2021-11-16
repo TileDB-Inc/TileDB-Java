@@ -9762,62 +9762,6 @@ SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1array_1get_1n
 }
 
 
-SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1array_1max_1buffer_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jlong jarg4, jlong jarg5) {
-  jint jresult = 0 ;
-  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
-  tiledb_array_t *arg2 = (tiledb_array_t *) 0 ;
-  char *arg3 = (char *) 0 ;
-  void *arg4 = (void *) 0 ;
-  uint64_t *arg5 = (uint64_t *) 0 ;
-  int32_t result;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(tiledb_ctx_t **)&jarg1; 
-  arg2 = *(tiledb_array_t **)&jarg2; 
-  arg3 = 0;
-  if (jarg3) {
-    arg3 = (char *)jenv->GetStringUTFChars(jarg3, 0);
-    if (!arg3) return 0;
-  }
-  arg4 = *(void **)&jarg4; 
-  arg5 = *(uint64_t **)&jarg5; 
-  result = (int32_t)tiledb_array_max_buffer_size(arg1,arg2,(char const *)arg3,(void const *)arg4,arg5);
-  jresult = (jint)result; 
-  if (arg3) jenv->ReleaseStringUTFChars(jarg3, (const char *)arg3);
-  return jresult;
-}
-
-
-SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1array_1max_1buffer_1size_1var(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jlong jarg4, jlong jarg5, jlong jarg6) {
-  jint jresult = 0 ;
-  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
-  tiledb_array_t *arg2 = (tiledb_array_t *) 0 ;
-  char *arg3 = (char *) 0 ;
-  void *arg4 = (void *) 0 ;
-  uint64_t *arg5 = (uint64_t *) 0 ;
-  uint64_t *arg6 = (uint64_t *) 0 ;
-  int32_t result;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(tiledb_ctx_t **)&jarg1; 
-  arg2 = *(tiledb_array_t **)&jarg2; 
-  arg3 = 0;
-  if (jarg3) {
-    arg3 = (char *)jenv->GetStringUTFChars(jarg3, 0);
-    if (!arg3) return 0;
-  }
-  arg4 = *(void **)&jarg4; 
-  arg5 = *(uint64_t **)&jarg5; 
-  arg6 = *(uint64_t **)&jarg6; 
-  result = (int32_t)tiledb_array_max_buffer_size_var(arg1,arg2,(char const *)arg3,(void const *)arg4,arg5,arg6);
-  jresult = (jint)result; 
-  if (arg3) jenv->ReleaseStringUTFChars(jarg3, (const char *)arg3);
-  return jresult;
-}
-
-
 SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1array_1get_1uri(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3) {
   jint jresult = 0 ;
   tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
@@ -11504,6 +11448,193 @@ SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1inf
 }
 
 
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1mbr_1num(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  uint32_t arg3 ;
+  uint64_t *arg4 = (uint64_t *) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  arg4 = *(uint64_t **)&jarg4; 
+  result = (int32_t)tiledb_fragment_info_get_mbr_num(arg1,arg2,arg3,arg4);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1mbr_1from_1index(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jlong jarg6) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  uint32_t arg3 ;
+  uint32_t arg4 ;
+  uint32_t arg5 ;
+  void *arg6 = (void *) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  arg4 = (uint32_t)jarg4; 
+  arg5 = (uint32_t)jarg5; 
+  arg6 = *(void **)&jarg6; 
+  result = (int32_t)tiledb_fragment_info_get_mbr_from_index(arg1,arg2,arg3,arg4,arg5,arg6);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1mbr_1from_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4, jstring jarg5, jlong jarg6) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  uint32_t arg3 ;
+  uint32_t arg4 ;
+  char *arg5 = (char *) 0 ;
+  void *arg6 = (void *) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  arg4 = (uint32_t)jarg4; 
+  arg5 = 0;
+  if (jarg5) {
+    arg5 = (char *)jenv->GetStringUTFChars(jarg5, 0);
+    if (!arg5) return 0;
+  }
+  arg6 = *(void **)&jarg6; 
+  result = (int32_t)tiledb_fragment_info_get_mbr_from_name(arg1,arg2,arg3,arg4,(char const *)arg5,arg6);
+  jresult = (jint)result; 
+  if (arg5) jenv->ReleaseStringUTFChars(jarg5, (const char *)arg5);
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1mbr_1var_1size_1from_1index(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jlong jarg6, jlong jarg7) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  uint32_t arg3 ;
+  uint32_t arg4 ;
+  uint32_t arg5 ;
+  uint64_t *arg6 = (uint64_t *) 0 ;
+  uint64_t *arg7 = (uint64_t *) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  arg4 = (uint32_t)jarg4; 
+  arg5 = (uint32_t)jarg5; 
+  arg6 = *(uint64_t **)&jarg6; 
+  arg7 = *(uint64_t **)&jarg7; 
+  result = (int32_t)tiledb_fragment_info_get_mbr_var_size_from_index(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1mbr_1var_1size_1from_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4, jstring jarg5, jlong jarg6, jlong jarg7) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  uint32_t arg3 ;
+  uint32_t arg4 ;
+  char *arg5 = (char *) 0 ;
+  uint64_t *arg6 = (uint64_t *) 0 ;
+  uint64_t *arg7 = (uint64_t *) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  arg4 = (uint32_t)jarg4; 
+  arg5 = 0;
+  if (jarg5) {
+    arg5 = (char *)jenv->GetStringUTFChars(jarg5, 0);
+    if (!arg5) return 0;
+  }
+  arg6 = *(uint64_t **)&jarg6; 
+  arg7 = *(uint64_t **)&jarg7; 
+  result = (int32_t)tiledb_fragment_info_get_mbr_var_size_from_name(arg1,arg2,arg3,arg4,(char const *)arg5,arg6,arg7);
+  jresult = (jint)result; 
+  if (arg5) jenv->ReleaseStringUTFChars(jarg5, (const char *)arg5);
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1mbr_1var_1from_1index(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jlong jarg6, jlong jarg7) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  uint32_t arg3 ;
+  uint32_t arg4 ;
+  uint32_t arg5 ;
+  void *arg6 = (void *) 0 ;
+  void *arg7 = (void *) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  arg4 = (uint32_t)jarg4; 
+  arg5 = (uint32_t)jarg5; 
+  arg6 = *(void **)&jarg6; 
+  arg7 = *(void **)&jarg7; 
+  result = (int32_t)tiledb_fragment_info_get_mbr_var_from_index(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1mbr_1var_1from_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4, jstring jarg5, jlong jarg6, jlong jarg7) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  uint32_t arg3 ;
+  uint32_t arg4 ;
+  char *arg5 = (char *) 0 ;
+  void *arg6 = (void *) 0 ;
+  void *arg7 = (void *) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  arg4 = (uint32_t)jarg4; 
+  arg5 = 0;
+  if (jarg5) {
+    arg5 = (char *)jenv->GetStringUTFChars(jarg5, 0);
+    if (!arg5) return 0;
+  }
+  arg6 = *(void **)&jarg6; 
+  arg7 = *(void **)&jarg7; 
+  result = (int32_t)tiledb_fragment_info_get_mbr_var_from_name(arg1,arg2,arg3,arg4,(char const *)arg5,arg6,arg7);
+  jresult = (jint)result; 
+  if (arg5) jenv->ReleaseStringUTFChars(jarg5, (const char *)arg5);
+  return jresult;
+}
+
+
 SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1cell_1num(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4) {
   jint jresult = 0 ;
   tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
@@ -11640,6 +11771,26 @@ SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1inf
 }
 
 
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1array_1schema_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  uint32_t arg3 ;
+  char **arg4 = (char **) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  arg4 = *(char ***)&jarg4; 
+  result = (int32_t)tiledb_fragment_info_get_array_schema_name(arg1,arg2,arg3,(char const **)arg4);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1dump(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3) {
   jint jresult = 0 ;
   tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
@@ -11742,6 +11893,29 @@ SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1array_1evolve
   }
   arg3 = *(tiledb_array_schema_evolution_t **)&jarg3; 
   result = (int32_t)tiledb_array_evolve(arg1,(char const *)arg2,arg3);
+  jresult = (jint)result; 
+  if (arg2) jenv->ReleaseStringUTFChars(jarg2, (const char *)arg2);
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1array_1upgrade_1version(JNIEnv *jenv, jclass jcls, jlong jarg1, jstring jarg2, jlong jarg3) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  char *arg2 = (char *) 0 ;
+  tiledb_config_t *arg3 = (tiledb_config_t *) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = 0;
+  if (jarg2) {
+    arg2 = (char *)jenv->GetStringUTFChars(jarg2, 0);
+    if (!arg2) return 0;
+  }
+  arg3 = *(tiledb_config_t **)&jarg3; 
+  result = (int32_t)tiledb_array_upgrade_version(arg1,(char const *)arg2,arg3);
   jresult = (jint)result; 
   if (arg2) jenv->ReleaseStringUTFChars(jarg2, (const char *)arg2);
   return jresult;

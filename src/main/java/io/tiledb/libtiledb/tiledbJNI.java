@@ -14,7 +14,7 @@ public class tiledbJNI {
 
   static {
     try {
-      //      NativeLibLoader.loadNativeTBB();
+      //       NativeLibLoader.loadNativeTBB();
       NativeLibLoader.loadNativeTileDB();
       NativeLibLoader.loadNativeTileDBJNI();
     } catch (Exception e) {
@@ -1266,12 +1266,6 @@ public class tiledbJNI {
   public static final native int tiledb_array_get_non_empty_domain_var_from_name(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
 
-  public static final native int tiledb_array_max_buffer_size(
-      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
-
-  public static final native int tiledb_array_max_buffer_size_var(
-      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
-
   public static final native int tiledb_array_get_uri(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_encryption_type(long jarg1, String jarg2, long jarg3);
@@ -1456,6 +1450,27 @@ public class tiledbJNI {
   public static final native int tiledb_fragment_info_get_non_empty_domain_var_from_name(
       long jarg1, long jarg2, long jarg3, String jarg4, long jarg5, long jarg6);
 
+  public static final native int tiledb_fragment_info_get_mbr_num(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_fragment_info_get_mbr_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_fragment_info_get_mbr_from_name(
+      long jarg1, long jarg2, long jarg3, long jarg4, String jarg5, long jarg6);
+
+  public static final native int tiledb_fragment_info_get_mbr_var_size_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6, long jarg7);
+
+  public static final native int tiledb_fragment_info_get_mbr_var_size_from_name(
+      long jarg1, long jarg2, long jarg3, long jarg4, String jarg5, long jarg6, long jarg7);
+
+  public static final native int tiledb_fragment_info_get_mbr_var_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6, long jarg7);
+
+  public static final native int tiledb_fragment_info_get_mbr_var_from_name(
+      long jarg1, long jarg2, long jarg3, long jarg4, String jarg5, long jarg6, long jarg7);
+
   public static final native int tiledb_fragment_info_get_cell_num(
       long jarg1, long jarg2, long jarg3, long jarg4);
 
@@ -1477,6 +1492,9 @@ public class tiledbJNI {
   public static final native int tiledb_fragment_info_get_array_schema(
       long jarg1, long jarg2, long jarg3, long jarg4);
 
+  public static final native int tiledb_fragment_info_get_array_schema_name(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
   public static final native int tiledb_fragment_info_dump(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_schema_evolution_alloc(long jarg1, long jarg2);
@@ -1490,6 +1508,8 @@ public class tiledbJNI {
       long jarg1, long jarg2, String jarg3);
 
   public static final native int tiledb_array_evolve(long jarg1, String jarg2, long jarg3);
+
+  public static final native int tiledb_array_upgrade_version(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);
 
