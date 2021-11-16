@@ -93,12 +93,10 @@ public class AsyncTest {
 
     Array array = new Array(ctx, arrayURI);
 
-    // Calcuate maximum buffer sizes for the query results per attribute
-    NativeArray subarray = new NativeArray(ctx, new int[] {1, 4, 1, 4}, Integer.class);
-    HashMap<String, Pair<Long, Long>> max_sizes = array.maxBufferElements(subarray);
-
     // Create query
     Query query = new Query(array, TILEDB_READ);
+    HashMap<String, Pair<Long, Long>> max_sizes = query.getResultEstimations();
+
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer(
         "rows", new NativeArray(ctx, max_sizes.get("rows").getSecond().intValue(), Integer.class));

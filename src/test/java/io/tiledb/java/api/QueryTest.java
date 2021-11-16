@@ -1157,9 +1157,9 @@ public class QueryTest {
         query.setBufferNullable("a1", a1Array, a1byteMap);
         query.setBufferNullable("a2", a2Array, a2byteMap);
 
-        Pair<Integer, Integer> estimated = query.getEstResultSizeNullable(ctx, "a1");
-        Assert.assertEquals((int) estimated.getFirst(), 4);
-        Assert.assertEquals((int) estimated.getSecond(), 4);
+        Pair<Long, Long> estimated = query.getEstResultSizeNullable(ctx, "a1");
+        Assert.assertEquals((long) estimated.getFirst(), 4);
+        Assert.assertEquals((long) estimated.getSecond(), 4);
 
         // Submit query
         query.submit();
@@ -1289,11 +1289,10 @@ public class QueryTest {
         query.setBufferNullable("a1", a1Array, a1byteMap);
         query.setBufferNullable("a2", a2Offsets, a2Array, a2byteMap);
 
-        Pair<Pair<Integer, Integer>, Integer> estimated =
-            query.getEstResultSizeVarNullable(ctx, "a2");
-        Assert.assertEquals(40, (int) estimated.getFirst().getFirst());
-        Assert.assertEquals(40, (int) estimated.getFirst().getFirst());
-        Assert.assertEquals(10, (int) estimated.getSecond());
+        Pair<Pair<Long, Long>, Long> estimated = query.getEstResultSizeVarNullable(ctx, "a2");
+        Assert.assertEquals(40, (long) estimated.getFirst().getFirst());
+        Assert.assertEquals(40, (long) estimated.getFirst().getFirst());
+        Assert.assertEquals(10, (long) estimated.getSecond());
 
         // Submit query
         query.submit();

@@ -41,13 +41,11 @@ public class DenseReadAsync {
 
     Array my_dense_array = new Array(ctx, "my_dense_array");
 
-    // Calcuate maximum buffer sizes for the query results per attribute
-    NativeArray subarray = new NativeArray(ctx, new long[] {1l, 4l, 1l, 4l}, Long.class);
-    HashMap<String, Pair<Long, Long>> max_sizes = my_dense_array.maxBufferElements(subarray);
-
     // Create query
     Query query = new Query(my_dense_array, TILEDB_READ);
     query.setLayout(TILEDB_GLOBAL_ORDER);
+    HashMap<String, Pair<Long, Long>> max_sizes = query.getResultEstimations();
+
     query.setBuffer(
         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
     query.setBuffer(

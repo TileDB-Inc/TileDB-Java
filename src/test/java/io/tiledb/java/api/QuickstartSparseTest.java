@@ -136,6 +136,7 @@ public class QuickstartSparseTest {
     // Print non-empty getDomain
     Array my_sparse_array = new Array(ctx, arrayURI);
     HashMap<String, Pair> dom = my_sparse_array.nonEmptyDomain();
+    HashMap<String, Pair<Long, Long>> max_sizes = new HashMap<>();
 
     Assert.assertEquals(dom.get("d1").getFirst(), 1l);
     Assert.assertEquals(dom.get("d1").getSecond(), 4l);
@@ -147,14 +148,7 @@ public class QuickstartSparseTest {
     // e.getValue().getSecond() + ")");
     // }
 
-    // Print maximum buffer elements for the query results per attribute
     NativeArray subarray = new NativeArray(ctx, new long[] {1l, 4l, 1l, 4l}, Long.class);
-    HashMap<String, Pair<Long, Long>> max_sizes = my_sparse_array.maxBufferElements(subarray);
-
-    Assert.assertEquals(max_sizes.get("a1").getFirst(), (Long) 0l);
-    Assert.assertEquals(max_sizes.get("a1").getSecond(), (Long) 8l);
-    Assert.assertEquals(max_sizes.get("a2").getFirst(), (Long) 8l);
-    Assert.assertEquals(max_sizes.get("a2").getSecond(), (Long) 20l);
 
     // for (Map.Entry<String, Pair<Long,Long>> e : max_sizes.entrySet()){
     //  System.out.println(e.getKey() + " ("+e.getValue().getFirst()+",
@@ -165,6 +159,11 @@ public class QuickstartSparseTest {
     try (Query query = new Query(my_sparse_array, TILEDB_READ)) {
       query.setLayout(TILEDB_GLOBAL_ORDER);
       query.setSubarray(subarray);
+      max_sizes.put("d1", new Pair<>(0L, query.getEstResultSize(ctx, "d1")));
+      max_sizes.put("d2", new Pair<>(0L, query.getEstResultSize(ctx, "d2")));
+      max_sizes.put("a1", new Pair<>(0L, query.getEstResultSize(ctx, "a1")));
+      max_sizes.put("a2", query.getEstResultSizeVar(ctx, "a2"));
+      max_sizes.put("a3", query.getEstResultSizeVar(ctx, "a2"));
 
       query.setBuffer(
           "d1", new NativeArray(ctx, max_sizes.get("d1").getSecond().intValue(), Long.class));
