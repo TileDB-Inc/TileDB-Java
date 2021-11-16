@@ -47,16 +47,16 @@ public class DenseReadGlobal {
 
     // Print maximum buffer elements for the query results per attribute
     NativeArray subarray = new NativeArray(ctx, new long[] {1l, 4l, 1l, 4l}, Long.class);
-    HashMap<String, Pair<Long, Long>> max_sizes = my_dense_array.maxBufferElements(subarray);
-    for (Map.Entry<String, Pair<Long, Long>> e : max_sizes.entrySet()) {
-      System.out.println(
-          e.getKey() + " (" + e.getValue().getFirst() + ", " + e.getValue().getSecond() + ")");
-    }
 
     // Create query
     Query query = new Query(my_dense_array, TILEDB_READ);
     query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setSubarray(subarray);
+    HashMap<String, Pair<Long, Long>> max_sizes = query.getResultEstimations();
+    for (Map.Entry<String, Pair<Long, Long>> e : max_sizes.entrySet()) {
+      System.out.println(
+          e.getKey() + " (" + e.getValue().getFirst() + ", " + e.getValue().getSecond() + ")");
+    }
     query.setBuffer(
         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
     query.setBuffer(

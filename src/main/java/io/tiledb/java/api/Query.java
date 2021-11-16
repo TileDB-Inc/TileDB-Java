@@ -349,82 +349,81 @@ public class Query implements AutoCloseable {
    * Retrieves the estimated result size for a fixed-sized attribute/dimension.
    *
    * @param ctx The TileDB Context
-   * @param attribute The attribute name
+   * @param column The attribute/dimension name
    * @return The estimated result size
    * @throws TileDBError
    */
-  public synchronized int getEstResultSize(Context ctx, String attribute) throws TileDBError {
+  public synchronized long getEstResultSize(Context ctx, String column) throws TileDBError {
     SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
 
-    ctx.handleError(
-        tiledb.tiledb_query_get_est_result_size(ctx.getCtxp(), queryp, attribute, size));
+    ctx.handleError(tiledb.tiledb_query_get_est_result_size(ctx.getCtxp(), queryp, column, size));
 
-    return tiledb.ullp_value(size).intValue();
+    return tiledb.ullp_value(size).longValue();
   }
 
   /**
    * Retrieves the estimated result size for a var-sized attribute/dimension.
    *
    * @param ctx The TileDB Context
-   * @param attribute The attribute name
+   * @param column The attribute/dimension name
    * @return A Pair containing the estimated result size of the offsets and the data buffers
    * @throws TileDBError
    */
-  public synchronized Pair<Integer, Integer> getEstResultSizeVar(Context ctx, String attribute)
+  public synchronized Pair<Long, Long> getEstResultSizeVar(Context ctx, String column)
       throws TileDBError {
     SWIGTYPE_p_unsigned_long_long offsetsSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long dataSize = tiledb.new_ullp();
 
     ctx.handleError(
         tiledb.tiledb_query_get_est_result_size_var(
-            ctx.getCtxp(), queryp, attribute, offsetsSize, dataSize));
+            ctx.getCtxp(), queryp, column, offsetsSize, dataSize));
 
     return new Pair(
-        tiledb.ullp_value(offsetsSize).intValue(), tiledb.ullp_value(dataSize).intValue());
+        tiledb.ullp_value(offsetsSize).longValue(), tiledb.ullp_value(dataSize).longValue());
   }
 
   /**
    * Retrieves the estimated result size for a var-sized nullable attribute.
    *
    * @param ctx The TileDB Context
-   * @param attribute The attribute name
+   * @param column The attribute/dimension name
    * @return A Pair containing another Pair with the estimated result size of the offsets and the
    *     data buffers, and the estimated result size of the validity buffer
    * @throws TileDBError
    */
-  public synchronized Pair<Pair<Integer, Integer>, Integer> getEstResultSizeVarNullable(
-      Context ctx, String attribute) throws TileDBError {
+  public synchronized Pair<Pair<Long, Long>, Long> getEstResultSizeVarNullable(
+      Context ctx, String column) throws TileDBError {
     SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long offsets = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long validity = tiledb.new_ullp();
 
     ctx.handleError(
         tiledb.tiledb_query_get_est_result_size_var_nullable(
-            ctx.getCtxp(), queryp, attribute, offsets, size, validity));
+            ctx.getCtxp(), queryp, column, offsets, size, validity));
 
     return new Pair(
-        new Pair(tiledb.ullp_value(offsets).intValue(), tiledb.ullp_value(size).intValue()),
-        tiledb.ullp_value(validity).intValue());
+        new Pair(tiledb.ullp_value(offsets).longValue(), tiledb.ullp_value(size).longValue()),
+        tiledb.ullp_value(validity).longValue());
   }
 
   /**
    * Retrieves the estimated result size for a fixed-sized nullable attribute.
    *
    * @param ctx The TileDB Context
-   * @param attribute The attribute name
+   * @param column The attribute/dimension name
    * @return The estimated result size
    * @throws TileDBError
    */
-  public synchronized Pair<Integer, Integer> getEstResultSizeNullable(Context ctx, String attribute)
+  public synchronized Pair<Long, Long> getEstResultSizeNullable(Context ctx, String column)
       throws TileDBError {
     SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long validity = tiledb.new_ullp();
 
     ctx.handleError(
         tiledb.tiledb_query_get_est_result_size_nullable(
-            ctx.getCtxp(), queryp, attribute, size, validity));
+            ctx.getCtxp(), queryp, column, size, validity));
 
-    return new Pair(tiledb.ullp_value(size).intValue(), tiledb.ullp_value(validity).intValue());
+    return new Pair(tiledb.ullp_value(size).longValue(), tiledb.ullp_value(validity).longValue());
   }
 
   /**
@@ -1647,8 +1646,8 @@ public class Query implements AutoCloseable {
    *     size estimate.
    * @throws TileDBError
    */
-  public HashMap<String, Pair<Integer, Integer>> getResultEstimations() throws TileDBError {
-    HashMap<String, Pair<Integer, Integer>> estimations = new HashMap<>();
+  public HashMap<String, Pair<Long, Long>> getResultEstimations() throws TileDBError {
+    HashMap<String, Pair<Long, Long>> estimations = new HashMap<>();
     String name;
     try (ArraySchema schema = this.array.getSchema();
         Domain domain = schema.getDomain(); ) {

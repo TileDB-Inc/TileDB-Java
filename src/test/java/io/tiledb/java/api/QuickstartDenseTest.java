@@ -160,16 +160,7 @@ public class QuickstartDenseTest {
     // "+e.getValue().getSecond()+")");
     // }
 
-    // Print maximum buffer elements for the query results per attribute
     NativeArray subarray = new NativeArray(ctx, new long[] {1l, 4l, 1l, 4l}, Long.class);
-    HashMap<String, Pair<Long, Long>> max_sizes = my_dense_array.maxBufferElements(subarray);
-
-    Assert.assertEquals(max_sizes.get("a1").getFirst(), (Long) 0l);
-    Assert.assertEquals(max_sizes.get("a1").getSecond(), (Long) 16l);
-    Assert.assertEquals(max_sizes.get("a2").getFirst(), (Long) 16l);
-    Assert.assertEquals(max_sizes.get("a2").getSecond(), (Long) 56l);
-    Assert.assertEquals(max_sizes.get("a3").getFirst(), (Long) 0l);
-    Assert.assertEquals(max_sizes.get("a3").getSecond(), (Long) 32l);
 
     // for (Map.Entry<String, Pair<Long,Long>> e : max_sizes.entrySet()){
     //  System.out.println(e.getKey() + " ("+e.getValue().getFirst()+",
@@ -180,6 +171,8 @@ public class QuickstartDenseTest {
     try (Query query = new Query(my_dense_array, TILEDB_READ)) {
       query.setLayout(TILEDB_GLOBAL_ORDER);
       query.setSubarray(subarray);
+      HashMap<String, Pair<Long, Long>> max_sizes = query.getResultEstimations();
+
       query.setBuffer(
           "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
       query.setBuffer(
@@ -251,13 +244,12 @@ public class QuickstartDenseTest {
   private void arrayReadAsync() throws Exception {
     Array my_dense_array = new Array(ctx, arrayURI);
 
-    // Calcuate maximum buffer sizes for the query results per attribute
     NativeArray subarray = new NativeArray(ctx, new long[] {1l, 4l, 1l, 4l}, Long.class);
-    HashMap<String, Pair<Long, Long>> max_sizes = my_dense_array.maxBufferElements(subarray);
 
     // Create query
     try (Query query = new Query(my_dense_array, TILEDB_READ)) {
       query.setLayout(TILEDB_GLOBAL_ORDER);
+      HashMap<String, Pair<Long, Long>> max_sizes = query.getResultEstimations();
       query.setSubarray(subarray);
       query.setBuffer(
           "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
