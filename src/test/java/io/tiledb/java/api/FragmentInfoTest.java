@@ -4,6 +4,7 @@ import static io.tiledb.java.api.ArrayType.TILEDB_DENSE;
 import static io.tiledb.java.api.ArrayType.TILEDB_SPARSE;
 import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 import java.io.File;
@@ -14,25 +15,34 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class FragmentInfoTest {
 
+  @Rule public TemporaryFolder temp = new TemporaryFolder();
+
   private Context ctx;
-  private String arrayURI = "array";
+  private String arrayURI;
 
   @Before
   public void setup() throws Exception {
     this.ctx = new Context();
+    arrayURI = temp.getRoot().toPath().resolve("array").toString();
     if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
+      String source = "array";
+      File dir = new File(source);
+      FileUtils.deleteDirectory(dir);
     }
   }
 
   @After
   public void teardown() throws Exception {
     if (Files.exists(Paths.get(arrayURI))) {
-      TileDBObject.remove(ctx, arrayURI);
+      String source = "array";
+      File dir = new File(source);
+      FileUtils.deleteDirectory(dir);
     }
     ctx.close();
   }
@@ -52,6 +62,90 @@ public class FragmentInfoTest {
     long numFragments = info.getFragmentNum();
 
     Assert.assertEquals(testFragmentCount, numFragments);
+  }
+
+  @Test
+  public void testArraySchemaName() throws Exception {
+    int testFragmentCount = 1;
+    // only sparse arrays have MBRs
+    createDenseArray();
+
+    // Write fragments
+    for (int i = 0; i < testFragmentCount; ++i) {
+      writeDenseArray();
+    }
+
+    FragmentInfo info = new FragmentInfo(ctx, arrayURI);
+
+    long numFragments = info.getFragmentNum();
+    for (int i = 0; i < numFragments; ++i) {
+      Assert.assertNotNull(info.getArraySchemaName(i));
+    }
+
+    Assert.assertEquals(testFragmentCount, numFragments);
+  }
+
+  @Test
+  public void testMBRAPI() throws Exception {
+    int testFragmentCount = 3;
+    // only sparse arrays have MBRs
+    createSparseArrayNoVarDim();
+
+    // Write fragments
+    writeSparseArrayNoVarDim3Frags();
+
+    FragmentInfo info = new FragmentInfo(ctx, arrayURI);
+
+    long numFragments = info.getFragmentNum();
+
+    // Get fragment num
+    Assert.assertEquals(testFragmentCount, numFragments);
+
+    // Get MBR num
+    Assert.assertEquals(info.getMBRNum(0), 1);
+    Assert.assertEquals(info.getMBRNum(1), 2);
+    Assert.assertEquals(info.getMBRNum(2), 2);
+
+    // Get MBR from index
+    Assert.assertArrayEquals(new long[] {1, 2}, info.getMBRFromIndex(0, 0, 0));
+
+    // Get MBR from name
+    Assert.assertArrayEquals(new long[] {7, 8}, info.getMBRFromName(1, "d1", 1));
+  }
+
+  @Test
+  public void testMBRAPIVarDim() throws Exception {
+    int testFragmentCount = 1;
+    // only sparse arrays have MBRs
+    createSparseVarDimArrayForMBRTesting();
+
+    // Write fragments
+    writeSparseVarDimArrayForMBRTesting();
+
+    FragmentInfo info = new FragmentInfo(ctx, arrayURI);
+
+    long numFragments = info.getFragmentNum();
+
+    // Get fragment num
+    Assert.assertEquals(testFragmentCount, numFragments);
+
+    // Get MBR num
+    Assert.assertEquals(2, info.getMBRNum(0));
+
+    // Get MBR size
+    Assert.assertEquals(1L, (long) info.getMBRVarSizeFromIndex(0, 0, 0).getFirst());
+    Assert.assertEquals(2L, (long) info.getMBRVarSizeFromIndex(0, 0, 0).getSecond());
+
+    Assert.assertEquals(1L, (long) info.getMBRVarSizeFromName(0, "d", 1).getFirst());
+    Assert.assertEquals(3L, (long) info.getMBRVarSizeFromName(0, "d", 1).getSecond());
+
+    // Get MBR from index
+    Assert.assertEquals("a", info.getMBRVarFromIndex(0, 0, 0).getFirst());
+    Assert.assertEquals("bb", info.getMBRVarFromIndex(0, 0, 0).getSecond());
+
+    // Get MBR from name
+    Assert.assertEquals("c", info.getMBRVarFromName(0, "d", 1).getFirst());
+    Assert.assertEquals("ddd", info.getMBRVarFromName(0, "d", 1).getSecond());
   }
 
   @Test
@@ -674,6 +768,138 @@ public class FragmentInfoTest {
 
     query.setBuffer("d1", d_off, d_data);
     query.setBuffer("a1", a1);
+
+    // Submit query
+    query.submit();
+
+    query.finalizeQuery();
+    query.close();
+    array.close();
+  }
+
+  public void createSparseArrayNoVarDim() throws Exception {
+    // Create getDimensions
+    Dimension<Long> d1 =
+        new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 10l), 2l);
+    Dimension<Long> d2 =
+        new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(1l, 10l), 2l);
+    // Create getDomain
+    Domain domain = new Domain(ctx);
+    domain.addDimension(d1);
+    domain.addDimension(d2);
+
+    // Create and add getAttributes
+    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
+
+    // Create array schema
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
+    schema.setCapacity(2);
+    schema.setDomain(domain);
+    schema.addAttribute(a1);
+
+    // Check array schema
+    schema.check();
+    Array.create(arrayURI, schema);
+  }
+
+  public void writeSparseArrayNoVarDim3Frags() throws Exception {
+    // write first fragment
+    NativeArray d1_buffer = new NativeArray(ctx, new long[] {1, 2}, Datatype.TILEDB_INT64);
+    NativeArray d2_buffer = new NativeArray(ctx, new long[] {1, 2}, Datatype.TILEDB_INT64);
+
+    // Prepare cell buffers
+    NativeArray a1_data = new NativeArray(ctx, new int[] {1, 2}, Integer.class);
+
+    // Create query
+    Array my_sparse_array = new Array(ctx, arrayURI, TILEDB_WRITE);
+    Query query = new Query(my_sparse_array);
+    query.setLayout(TILEDB_UNORDERED);
+    query.setBuffer("d1", d1_buffer);
+    query.setBuffer("d2", d2_buffer);
+    query.setBuffer("a1", a1_data);
+
+    // Submit query
+    query.submit();
+    query.finalizeQuery();
+    query.close();
+
+    // write second fragment
+    d1_buffer = new NativeArray(ctx, new long[] {1, 2, 7, 8}, Datatype.TILEDB_INT64);
+    d2_buffer = new NativeArray(ctx, new long[] {1, 2, 7, 8}, Datatype.TILEDB_INT64);
+
+    // Prepare cell buffers
+    a1_data = new NativeArray(ctx, new int[] {9, 10, 11, 12}, Integer.class);
+
+    // Create query
+    my_sparse_array = new Array(ctx, arrayURI, TILEDB_WRITE);
+    query = new Query(my_sparse_array);
+    query.setLayout(TILEDB_UNORDERED);
+    query.setBuffer("d1", d1_buffer);
+    query.setBuffer("d2", d2_buffer);
+    query.setBuffer("a1", a1_data);
+
+    // Submit query
+    query.submit();
+    query.finalizeQuery();
+    query.close();
+
+    // write third fragment
+    d1_buffer = new NativeArray(ctx, new long[] {1, 2, 7, 1}, Datatype.TILEDB_INT64);
+    d2_buffer = new NativeArray(ctx, new long[] {1, 2, 7, 8}, Datatype.TILEDB_INT64);
+
+    // Prepare cell buffers
+    a1_data = new NativeArray(ctx, new int[] {5, 6, 7, 8}, Integer.class);
+
+    // Create query
+    my_sparse_array = new Array(ctx, arrayURI, TILEDB_WRITE);
+    query = new Query(my_sparse_array);
+    query.setLayout(TILEDB_UNORDERED);
+    query.setBuffer("d1", d1_buffer);
+    query.setBuffer("d2", d2_buffer);
+    query.setBuffer("a1", a1_data);
+
+    // Submit query
+    query.submit();
+    query.finalizeQuery();
+    query.close();
+  }
+
+  public void createSparseVarDimArrayForMBRTesting() throws TileDBError {
+    Dimension<Integer> d =
+        new Dimension<Integer>(ctx, "d", Datatype.TILEDB_STRING_ASCII, null, null);
+
+    // Create and set getDomain
+    Domain domain = new Domain(ctx);
+    domain.addDimension(d);
+
+    Attribute a = new Attribute(ctx, "a", Integer.class);
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
+    schema.setDomain(domain);
+    schema.setCapacity(2);
+    schema.addAttribute(a);
+
+    Array.create(arrayURI, schema);
+  }
+
+  public void writeSparseVarDimArrayForMBRTesting() throws TileDBError {
+
+    NativeArray d_data = new NativeArray(ctx, "abbcddd", Datatype.TILEDB_STRING_ASCII);
+    NativeArray d_off = new NativeArray(ctx, new long[] {0, 1, 3, 4}, Datatype.TILEDB_UINT64);
+
+    // Prepare cell buffers
+    NativeArray a = new NativeArray(ctx, new int[] {11, 12, 13, 14}, Integer.class);
+
+    // Create query
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+    Query query = new Query(array);
+    query.setLayout(TILEDB_UNORDERED);
+
+    query.setBuffer("d", d_off, d_data);
+    query.setBuffer("a", a);
 
     // Submit query
     query.submit();

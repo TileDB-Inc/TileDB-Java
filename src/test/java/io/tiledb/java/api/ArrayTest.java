@@ -6,9 +6,14 @@ import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
+import org.apache.commons.io.FileUtils;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
@@ -35,6 +40,11 @@ public class ArrayTest {
   @After
   public void tearDown() throws Exception {
     ctx.close();
+  }
+
+  private String testArrayURIString(String arrayName) {
+    Path arraysPath = Paths.get("src", "test", "resources", "data", arrayName);
+    return "file://".concat(arraysPath.toAbsolutePath().toString());
   }
 
   private Object[] getArray(Object val) {
@@ -760,5 +770,74 @@ public class ArrayTest {
     try (Array array = new Array(ctx, arrayURI)) {
       array.reopen();
     }
+  }
+
+  @Test
+  public void testArrayUpgrade() throws TileDBError, IOException {
+
+    // move old array to new temp folder for the upgrade.
+    String source = "src/test/resources/data/1.6/quickstart_sparse_array";
+    File srcDir = new File(source);
+
+    String destination = "src/test/resources/data/quickstart_sparse_array_v2";
+    File destDir = new File(destination);
+
+    try {
+      FileUtils.copyDirectory(srcDir, destDir);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    // READ BEFORE UPGRADE
+    Array array = new Array(ctx, testArrayURIString("quickstart_sparse_array_v2"), TILEDB_READ);
+    NativeArray subarray = new NativeArray(ctx, new int[] {1, 4, 1, 4}, Integer.class);
+
+    // Create query
+    Query query = new Query(array, TILEDB_READ);
+    query.setLayout(TILEDB_ROW_MAJOR);
+    query.setSubarray(subarray);
+    query.setBuffer("a", new NativeArray(ctx, 16, Integer.class));
+    query.setBuffer("rows", new NativeArray(ctx, 16, Integer.class));
+    query.setBuffer("cols", new NativeArray(ctx, 16, Integer.class));
+
+    // Submit query
+    query.submit();
+
+    int[] rows = (int[]) query.getBuffer("rows");
+    int[] cols = (int[]) query.getBuffer("cols");
+    int[] data = (int[]) query.getBuffer("a");
+    query.close();
+
+    // upgrade array
+    array.upgradeVersion(ctx, array.getConfig());
+
+    // check schema
+    array.getSchema().check();
+
+    // READ AFTER UPGRADE
+    query = new Query(array, TILEDB_READ);
+    query.setLayout(TILEDB_ROW_MAJOR);
+    query.setSubarray(subarray);
+    query.setBuffer("a", new NativeArray(ctx, 16, Integer.class));
+    query.setBuffer("rows", new NativeArray(ctx, 16, Integer.class));
+    query.setBuffer("cols", new NativeArray(ctx, 16, Integer.class));
+
+    // Submit query
+    query.submit();
+
+    int[] rowsAfter = (int[]) query.getBuffer("rows");
+    int[] colsAfter = (int[]) query.getBuffer("cols");
+    int[] dataAfter = (int[]) query.getBuffer("a");
+
+    // clean up
+    query.close();
+    array.close();
+
+    // compare
+    Assert.assertArrayEquals(cols, colsAfter);
+    Assert.assertArrayEquals(rows, rowsAfter);
+    Assert.assertArrayEquals(data, dataAfter);
+
+    FileUtils.deleteDirectory(destDir);
   }
 }

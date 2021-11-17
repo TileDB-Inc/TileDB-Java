@@ -412,6 +412,23 @@ public class Array implements AutoCloseable {
   }
 
   /**
+   * Upgrades an array to the latest format version.
+   *
+   * <p>**Example:** String uri = "test_array" array.upgradeVersion(ctx)
+   *
+   * @param ctx The TileDB context.
+   * @param config Configuration parameters for the upgrade (`nullptr` means default, which will use
+   *     the config from `ctx`).
+   */
+  public void upgradeVersion(Context ctx, Config config) throws TileDBError {
+    try {
+      ctx.handleError(tiledb.tiledb_array_upgrade_version(ctx.getCtxp(), uri, config.getConfigp()));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
    * Cleans up the array, such as consolidated fragments and array metadata. Note that this will
    * coarsen the granularity of time traveling (see docs for more information).
    *

@@ -70,7 +70,6 @@ public class FragmentsConsolidationTest {
       if (file.isDirectory()
           && !file.getName().equals("__meta")
           && !file.getName().equals("__schema")) {
-        System.out.println(file.getAbsolutePath());
         nFiles++;
       }
 
@@ -141,18 +140,21 @@ public class FragmentsConsolidationTest {
 
   public void arrayWrite3() throws Exception {
     // Prepare cell buffers
-    NativeArray rows = new NativeArray(ctx, new int[] {1, 3}, Integer.class);
-    NativeArray cols = new NativeArray(ctx, new int[] {1, 4}, Integer.class);
-    NativeArray data = new NativeArray(ctx, new int[] {201, 202}, Integer.class);
+
+    NativeArray data =
+        new NativeArray(
+            ctx,
+            new int[] {
+              201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216
+            },
+            Integer.class);
 
     NativeArray coords = new NativeArray(ctx, new int[] {1, 1, 3, 4}, Integer.class);
 
     // Create query
     Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(array);
-    query.setLayout(TILEDB_UNORDERED);
-    query.setBuffer("rows", rows);
-    query.setBuffer("cols", cols);
+    query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
     // Submit query
     query.submit();
@@ -191,23 +193,6 @@ public class FragmentsConsolidationTest {
 
     Assert.assertArrayEquals(
         data,
-        new int[] {
-          201,
-          2,
-          3,
-          4,
-          5,
-          101,
-          102,
-          8,
-          -2147483648,
-          103,
-          104,
-          202,
-          -2147483648,
-          -2147483648,
-          -2147483648,
-          -2147483648
-        });
+        new int[] {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216});
   }
 }

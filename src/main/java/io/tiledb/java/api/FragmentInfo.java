@@ -419,4 +419,191 @@ public class FragmentInfo {
 
     return tiledb.charpp_value(uri);
   }
+
+  /**
+   * Retrieves the number of MBRs from the fragment.
+   *
+   * <p>In the case of sparse fragments, this is the number of physical tiles.
+   *
+   * <p>Dense fragments do not contain MBRs.
+   *
+   * @param fragmentID The index of the fragment of interest.
+   * @return The number of MBRs.
+   * @throws TileDBError
+   */
+  public long getMBRNum(long fragmentID) throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long numFrags = tiledb.new_ullp();
+    ctx.handleError(
+        tiledb.tiledb_fragment_info_get_mbr_num(
+            ctx.getCtxp(), this.fragmentInfop, fragmentID, numFrags));
+    return tiledb.ullp_value(numFrags).longValue();
+  }
+
+  /**
+   * Retrieves the MBR from a given fragment for a given dimension index.
+   *
+   * @param fragmentID The index of the fragment of interest.
+   * @param mid The mbr of the fragment of interest.
+   * @param dimensionID The dimension index, following the order as it was defined in the domain of
+   *     the array schema.
+   * @return The MBR.
+   */
+  public long[] getMBRFromIndex(long fragmentID, long dimensionID, long mid) throws TileDBError {
+    long[] mbr;
+    try (NativeArray mbrArray = new NativeArray(ctx, 2, Long.class)) {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_mbr_from_index(
+              ctx.getCtxp(),
+              this.fragmentInfop,
+              fragmentID,
+              mid,
+              dimensionID,
+              mbrArray.toVoidPointer()));
+      mbr = (long[]) mbrArray.toJavaArray();
+    }
+    return mbr;
+  }
+
+  /**
+   * Retrieves the MBR from a given fragment for a given dimension index.
+   *
+   * @param fragmentID The index of the fragment of interest.
+   * @param mid The mbr of the fragment of interest.
+   * @param dimName The dimension name.
+   * @return The MBR.
+   */
+  public long[] getMBRFromName(long fragmentID, String dimName, long mid) throws TileDBError {
+    long[] mbr;
+    try (NativeArray mbrArray = new NativeArray(ctx, 2, Long.class)) {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_mbr_from_name(
+              ctx.getCtxp(),
+              this.fragmentInfop,
+              fragmentID,
+              mid,
+              dimName,
+              mbrArray.toVoidPointer()));
+      mbr = (long[]) mbrArray.toJavaArray();
+    }
+    return mbr;
+  }
+
+  /**
+   * Returns the MBR of the fragment with the given index on the given dimension index. Applicable
+   * to string dimensions.
+   *
+   * @param fragmentID The index of the fragment of interest.
+   * @param mid The mbr of the fragment of interest.
+   * @param dimId The dimension index, following the order as it was defined in the domain of the
+   *     array schema.
+   * @return The MBR.
+   */
+  public Pair<Long, Long> getMBRVarSizeFromIndex(long fragmentID, long dimId, long mid)
+      throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
+    SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+    ctx.handleError(
+        tiledb.tiledb_fragment_info_get_mbr_var_size_from_index(
+            ctx.getCtxp(), this.fragmentInfop, fragmentID, mid, dimId, startSize, endSize));
+    return new Pair<>(
+        tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+  }
+
+  /**
+   * Returns the MBR of the fragment with the given index on the given dimension name. Applicable to
+   * string dimensions.
+   *
+   * @param fragmentID The index of the fragment of interest.
+   * @param mid The mbr of the fragment of interest.
+   * @param dimName The dimension name.
+   * @return The MBR.
+   */
+  public Pair<Long, Long> getMBRVarSizeFromName(long fragmentID, String dimName, long mid)
+      throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
+    SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+    ctx.handleError(
+        tiledb.tiledb_fragment_info_get_mbr_var_size_from_name(
+            ctx.getCtxp(), this.fragmentInfop, fragmentID, mid, dimName, startSize, endSize));
+    return new Pair<>(
+        tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+  }
+
+  /**
+   * Returns the MBR of the fragment with the given index on the given dimension index. Applicable
+   * to string dimensions.
+   *
+   * @param fragmentID The index of the fragment of interest.
+   * @param mid The mbr of the fragment of interest.
+   * @param dimId The dimension index, following the order as it was defined in the domain of the
+   *     array schema.
+   * @return The MBR.
+   */
+  public Pair<String, String> getMBRVarFromIndex(long fragmentID, long dimId, long mid)
+      throws TileDBError {
+    Pair<Long, Long> size = this.getMBRVarSizeFromIndex(fragmentID, dimId, mid);
+
+    try (NativeArray start = new NativeArray(ctx, size.getFirst().intValue(), String.class);
+        NativeArray end = new NativeArray(ctx, size.getSecond().intValue(), String.class); ) {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_mbr_var_from_index(
+              ctx.getCtxp(),
+              this.fragmentInfop,
+              fragmentID,
+              mid,
+              dimId,
+              start.toVoidPointer(),
+              end.toVoidPointer()));
+      Object st = new String((byte[]) start.toJavaArray());
+      Object e = new String((byte[]) end.toJavaArray());
+      return new Pair(st, e);
+    }
+  }
+
+  /**
+   * Returns the MBR of the fragment with the given index on the given dimension name. Applicable to
+   * string dimensions.
+   *
+   * @param fragmentID The index of the fragment of interest.
+   * @param mid The mbr of the fragment of interest.
+   * @param dimName The dimension name.
+   * @return The MBR.
+   */
+  public Pair<String, String> getMBRVarFromName(long fragmentID, String dimName, long mid)
+      throws TileDBError {
+    Pair<Long, Long> size = this.getMBRVarSizeFromName(fragmentID, dimName, mid);
+
+    try (NativeArray start = new NativeArray(ctx, size.getFirst().intValue(), String.class);
+        NativeArray end = new NativeArray(ctx, size.getSecond().intValue(), String.class); ) {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_mbr_var_from_name(
+              ctx.getCtxp(),
+              this.fragmentInfop,
+              fragmentID,
+              mid,
+              dimName,
+              start.toVoidPointer(),
+              end.toVoidPointer()));
+      Object st = new String((byte[]) start.toJavaArray());
+      Object e = new String((byte[]) end.toJavaArray());
+      return new Pair(st, e);
+    }
+  }
+
+  /**
+   * Get the fragment info schema name.
+   *
+   * @param fragmentID The fragment info object.
+   * @return The schema name.
+   * @throws TileDBError
+   */
+  public String getArraySchemaName(long fragmentID) throws TileDBError {
+    SWIGTYPE_p_p_char name = tiledb.new_charpp();
+
+    ctx.handleError(
+        tiledb.tiledb_fragment_info_get_array_schema_name(
+            ctx.getCtxp(), fragmentInfop, fragmentID, name));
+
+    return tiledb.charpp_value(name);
+  }
 }
