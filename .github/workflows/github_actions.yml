@@ -249,12 +249,11 @@ jobs:
           mkdir jars
           cp ./build/libs/*.jar jars
 
-      - uses: notlmn/release-with-changelog@v2
-        name: Build_Changelog
-        with:
-          header: 'Changes:'
-          include-hash: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: mikepenz/release-changelog-builder-action@v2
+        name: Build Changelog
+        id: github_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
         id: create_release
