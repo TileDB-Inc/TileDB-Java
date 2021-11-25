@@ -1,6 +1,7 @@
 name: TileDB-Java
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - '*'
