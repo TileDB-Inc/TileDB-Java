@@ -46,7 +46,7 @@ if (NOT TILEDB_FOUND)
     message(STATUS "TileDB checkout git tag ${TILEDB_GIT_TAG}")
 
     # Try to download prebuilt artifacts unless the user specifies to build from source
-    if(DOWNLOAD_TILEDB_PREBUILT)
+    if(DOWNLOAD_TILEDB_PREBUILT OR APPLE OR UNIX)
         if (WIN32) # Windows
           SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.5.2/tiledb-windows-x86_64-2.5.2-f9c058f.zip")
           SET(DOWNLOAD_SHA1 "6da1a3bc5be2855edd74cc521e6076a26f60ed19")
