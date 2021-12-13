@@ -114,8 +114,9 @@ public class ArrayTest {
     }
   }
 
-  public void insertArbitraryValues(NativeArray a_data, BigInteger timestamp) throws TileDBError {
-    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE, timestamp)) {
+  public void insertArbitraryValues(NativeArray a_data, BigInteger timestamp_end)
+      throws TileDBError {
+    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE, timestamp_end)) {
       insertArbitraryValuesMeth(array, a_data);
     }
   }
@@ -158,8 +159,26 @@ public class ArrayTest {
     return readArray(new Array(ctx, arrayURI));
   }
 
+  public long[] readArrayBetween(BigInteger timestamp_start, BigInteger timestamp_end)
+      throws TileDBError {
+    return readArray(new Array(ctx, arrayURI, TILEDB_READ, timestamp_start, timestamp_end));
+  }
+
+  public long[] readArrayBetweenEncrypted(BigInteger timestamp_start, BigInteger timestamp_end)
+      throws TileDBError {
+    return readArray(
+        new Array(
+            ctx,
+            arrayURI,
+            TILEDB_READ,
+            timestamp_start,
+            timestamp_end,
+            EncryptionType.TILEDB_AES_256_GCM,
+            key));
+  }
+
   public long[] readArrayAt(BigInteger timestamp) throws TileDBError {
-    return readArray(new Array(ctx, arrayURI, timestamp));
+    return readArray(new Array(ctx, arrayURI, TILEDB_READ, timestamp));
   }
 
   public long[] readArrayAtEncrypted(BigInteger timestamp) throws TileDBError {
@@ -230,6 +249,7 @@ public class ArrayTest {
   @Test
   public void testArrayOpenAt() throws Exception {
     Array.create(arrayURI, schemaCreate());
+    long[] result;
 
     long[] array_a = new long[] {1, 2, 3, 6};
     BigInteger ts_a = BigInteger.valueOf(10L);
@@ -244,7 +264,13 @@ public class ArrayTest {
     insertArbitraryValues(new NativeArray(ctx, array_c, Long.class), ts_c);
 
     Assert.assertArrayEquals(array_a, readArrayAt(ts_a));
+    Assert.assertArrayEquals(
+        array_a, readArrayBetween(ts_a, ts_b.subtract(BigInteger.valueOf(1L))));
+
     Assert.assertArrayEquals(array_b, readArrayAt(ts_b));
+    Assert.assertArrayEquals(
+        array_b, readArrayBetween(ts_b, ts_c.subtract(BigInteger.valueOf(1L))));
+
     Assert.assertArrayEquals(array_c, readArrayAt(ts_c));
   }
 
@@ -265,7 +291,13 @@ public class ArrayTest {
     insertArbitraryValuesEncrypted(new NativeArray(ctx, array_c, Long.class), ts_c);
 
     Assert.assertArrayEquals(array_a, readArrayAtEncrypted(ts_a));
+    Assert.assertArrayEquals(
+        array_a, readArrayBetweenEncrypted(ts_a, ts_b.subtract(BigInteger.valueOf(1L))));
+
     Assert.assertArrayEquals(array_b, readArrayAtEncrypted(ts_b));
+    Assert.assertArrayEquals(
+        array_b, readArrayBetweenEncrypted(ts_b, ts_c.subtract(BigInteger.valueOf(1L))));
+
     Assert.assertArrayEquals(array_c, readArrayAtEncrypted(ts_c));
   }
 
