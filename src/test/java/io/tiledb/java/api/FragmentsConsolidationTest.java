@@ -6,6 +6,7 @@ import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -50,6 +51,23 @@ public class FragmentsConsolidationTest {
   }
 
   @Test
+  public void testConsolidateStartEnd() throws Exception {
+    Config config = new Config();
+    config.set("sm.consolidation.timestamp_start", "20");
+    config.set("sm.consolidation.timestamp_end", "30");
+    ctx = new Context(config);
+    arrayCreate();
+    // updates
+    arrayWrite1();
+    arrayWrite2();
+    arrayWrite3();
+    // consolidate
+    Array.consolidate(ctx, arrayURI);
+    // verify consolidation
+    arrayRead();
+  }
+
+  @Test
   public void testVacuum() throws Exception {
     // create array
     arrayCreate();
@@ -74,6 +92,37 @@ public class FragmentsConsolidationTest {
       }
 
     Assert.assertEquals(1, nFiles);
+  }
+
+  @Test
+  public void testVacuumStartEnd() throws Exception {
+    Config config = new Config();
+    config.set("sm.vacuum.timestamp_start", "0");
+    config.set("sm.vacuum.timestamp_end", "20");
+    ctx = new Context(config);
+    // create array
+    arrayCreate();
+    // updates
+    arrayWrite1();
+    arrayWrite2();
+    arrayWrite3();
+    // consolidate
+    Array.consolidate(ctx, arrayURI);
+    Array.vacuum(ctx, arrayURI);
+    // verify consolidation
+    arrayRead();
+
+    // verify vacuum
+    File f = new File(arrayURI);
+    int nFiles = 0;
+    for (File file : f.listFiles())
+      if (file.isDirectory()
+          && !file.getName().equals("__meta")
+          && !file.getName().equals("__schema")) {
+        nFiles++;
+      }
+
+    Assert.assertEquals(2, nFiles);
   }
 
   public void arrayCreate() throws Exception {
@@ -108,7 +157,7 @@ public class FragmentsConsolidationTest {
     NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 1, 4}, Integer.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE, BigInteger.valueOf(10L));
     Query query = new Query(array);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
@@ -126,7 +175,7 @@ public class FragmentsConsolidationTest {
     NativeArray subarray = new NativeArray(ctx, new int[] {2, 3, 2, 3}, Integer.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE, BigInteger.valueOf(20L));
     Query query = new Query(array);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
@@ -152,7 +201,7 @@ public class FragmentsConsolidationTest {
     NativeArray coords = new NativeArray(ctx, new int[] {1, 1, 3, 4}, Integer.class);
 
     // Create query
-    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE, BigInteger.valueOf(30L));
     Query query = new Query(array);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
