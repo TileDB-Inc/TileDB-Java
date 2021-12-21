@@ -221,6 +221,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
       case TILEDB_DATETIME_AS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           return ((long[]) buffer).length;
         }
@@ -309,6 +318,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
       case TILEDB_DATETIME_AS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           int64_tArray = Utils.newInt64_tArray((long[]) buffer);
           break;
@@ -391,6 +409,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
       case TILEDB_DATETIME_AS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           int64_tArray = new int64_tArray(size);
           break;
@@ -472,6 +499,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
       case TILEDB_DATETIME_AS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           return int64_tArray.getitem(index);
         }
@@ -576,6 +612,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
       case TILEDB_DATETIME_AS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           int64_tArray.setitem(index, (long) value);
           break;
@@ -647,6 +692,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_NS:
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           return PointerUtils.toVoid(int64_tArray);
         }
@@ -715,6 +769,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_NS:
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           return PointerUtils.toCPtr(int64_tArray);
         }
@@ -819,6 +882,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_NS:
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           return Utils.int64ArrayGet(int64_tArray, position, elements);
         }
@@ -893,6 +965,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_NS:
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
@@ -975,6 +1056,15 @@ public class NativeArray implements AutoCloseable {
       case TILEDB_DATETIME_NS:
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         {
           int64_tArray = PointerUtils.int64_tArrayFromVoid(pointer);
           break;
