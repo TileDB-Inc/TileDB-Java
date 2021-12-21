@@ -34,7 +34,16 @@ public enum Datatype {
   TILEDB_DATETIME_NS,
   TILEDB_DATETIME_PS,
   TILEDB_DATETIME_FS,
-  TILEDB_DATETIME_AS;
+  TILEDB_DATETIME_AS,
+  TILEDB_TIME_HR,
+  TILEDB_TIME_MIN,
+  TILEDB_TIME_SEC,
+  TILEDB_TIME_MS,
+  TILEDB_TIME_US,
+  TILEDB_TIME_NS,
+  TILEDB_TIME_PS,
+  TILEDB_TIME_FS,
+  TILEDB_TIME_AS;
 
   /** @return Returns the TileDB Datatype size in Bytes * */
   public int getNativeSize() throws TileDBError {
@@ -96,6 +105,25 @@ public enum Datatype {
     }
   }
 
+  /** @return True if the TileDB Datatype is a timetype, false otherwise * */
+  public boolean isTimeType() {
+    switch (this) {
+      case TILEDB_DATETIME_AS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   /** @return True if the TileDB Datatype is a float or double, false otherwise * */
   public boolean isRealType() {
     switch (this) {
@@ -150,6 +178,15 @@ public enum Datatype {
       case TILEDB_DATETIME_PS:
       case TILEDB_DATETIME_FS:
       case TILEDB_DATETIME_AS:
+      case TILEDB_TIME_HR:
+      case TILEDB_TIME_MIN:
+      case TILEDB_TIME_SEC:
+      case TILEDB_TIME_MS:
+      case TILEDB_TIME_US:
+      case TILEDB_TIME_NS:
+      case TILEDB_TIME_PS:
+      case TILEDB_TIME_FS:
+      case TILEDB_TIME_AS:
         return Long.class;
       case TILEDB_STRING_UTF8:
         return String.class;
@@ -233,6 +270,24 @@ public enum Datatype {
         return tiledb_datatype_t.TILEDB_DATETIME_FS;
       case TILEDB_DATETIME_AS:
         return tiledb_datatype_t.TILEDB_DATETIME_AS;
+      case TILEDB_TIME_HR:
+        return tiledb_datatype_t.TILEDB_TIME_HR;
+      case TILEDB_TIME_MIN:
+        return tiledb_datatype_t.TILEDB_TIME_MIN;
+      case TILEDB_TIME_SEC:
+        return tiledb_datatype_t.TILEDB_TIME_SEC;
+      case TILEDB_TIME_MS:
+        return tiledb_datatype_t.TILEDB_TIME_MS;
+      case TILEDB_TIME_US:
+        return tiledb_datatype_t.TILEDB_TIME_US;
+      case TILEDB_TIME_NS:
+        return tiledb_datatype_t.TILEDB_TIME_NS;
+      case TILEDB_TIME_PS:
+        return tiledb_datatype_t.TILEDB_TIME_PS;
+      case TILEDB_TIME_FS:
+        return tiledb_datatype_t.TILEDB_TIME_FS;
+      case TILEDB_TIME_AS:
+        return tiledb_datatype_t.TILEDB_TIME_AS;
       default:
         throw new TileDBError("No such enum value" + this.name());
     }
@@ -302,6 +357,24 @@ public enum Datatype {
         return TILEDB_DATETIME_FS;
       case TILEDB_DATETIME_AS:
         return TILEDB_DATETIME_AS;
+      case TILEDB_TIME_HR:
+        return TILEDB_TIME_HR;
+      case TILEDB_TIME_MIN:
+        return TILEDB_TIME_MIN;
+      case TILEDB_TIME_SEC:
+        return TILEDB_TIME_SEC;
+      case TILEDB_TIME_MS:
+        return TILEDB_TIME_MS;
+      case TILEDB_TIME_US:
+        return TILEDB_TIME_US;
+      case TILEDB_TIME_NS:
+        return TILEDB_TIME_NS;
+      case TILEDB_TIME_PS:
+        return TILEDB_TIME_PS;
+      case TILEDB_TIME_FS:
+        return TILEDB_TIME_FS;
+      case TILEDB_TIME_AS:
+        return TILEDB_TIME_AS;
       default:
         throw new TileDBError("No such enum value" + e.name());
     }
