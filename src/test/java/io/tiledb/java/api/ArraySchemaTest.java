@@ -86,6 +86,28 @@ public class ArraySchemaTest {
   }
 
   @Test
+  public void testArraySchemaValidityFilterList() throws Exception {
+    try (Context ctx = new Context();
+        ArraySchema schema = schemaCreate(ctx);
+        PositiveDeltaFilter filter1 = new PositiveDeltaFilter(ctx);
+        GzipFilter filter2 = new GzipFilter(ctx, 5);
+        FilterList filterList = new FilterList(ctx).addFilter(filter1).addFilter(filter2)) {
+      schema.setValidityFilterList(filterList);
+      schema.check();
+      try (FilterList valFilters = schema.getValidityFilterList()) {
+        Assert.assertEquals(valFilters.getNumFilters(), 2L);
+        try (Filter valFilter1 = valFilters.getFilter(0L);
+            Filter valFilter2 = valFilters.getFilter(1L)) {
+          Assert.assertTrue(valFilter1 instanceof PositiveDeltaFilter);
+          Assert.assertTrue(((PositiveDeltaFilter) valFilter1).getWindow() > 0);
+          Assert.assertTrue(valFilter2 instanceof GzipFilter);
+          Assert.assertEquals(((GzipFilter) valFilter2).getLevel(), 5);
+        }
+      }
+    }
+  }
+
+  @Test
   public void testArraySchemaHasAttribute() throws Exception {
     try (Context ctx = new Context();
         ArraySchema schema = schemaCreate(ctx)) {

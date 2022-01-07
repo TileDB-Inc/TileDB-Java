@@ -5,6 +5,7 @@ import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,6 +31,11 @@ public class MultiRangeQueryTest {
   @Test
   public void test() throws Exception {
     arrayRead();
+  }
+
+  @Test
+  public void testPointRanges() throws Exception {
+    arrayReadPointRanges();
   }
 
   public void arrayCreate() throws Exception {
@@ -93,6 +99,50 @@ public class MultiRangeQueryTest {
       // Slice only rows 1, 2 and cols 2, 3, 4
       query.addRange(0, (int) 1, (int) 2);
       query.addRange(1, (int) 2, (int) 4);
+      query.setLayout(TILEDB_ROW_MAJOR);
+
+      Assert.assertEquals(1, query.getRangeNum(0));
+      Assert.assertEquals(1, query.getRangeNum(1));
+      Assert.assertEquals(1, query.getRange(0, 0).getFirst());
+      Assert.assertEquals(2, query.getRange(0, 0).getSecond());
+      Assert.assertEquals(2, query.getRange(1, 0).getFirst());
+      Assert.assertEquals(4, query.getRange(1, 0).getSecond());
+
+      // Prepare the vector that will hold the result
+      // (of size 6 elements for "a1" and 12 elements for "a2" since
+      // it stores two floats per cell)
+      query.setBuffer("a1", new NativeArray(ctx, 6, Character.class));
+      query.setBuffer("a2", new NativeArray(ctx, 12, Float.class));
+
+      // Submit query
+      query.submit();
+
+      HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
+      Assert.assertNotNull(result_el);
+
+      byte[] a1 = (byte[]) query.getBuffer("a1");
+      float[] a2 = (float[]) query.getBuffer("a2");
+
+      Assert.assertArrayEquals(a1, new byte[] {'b', 'c', 'd', 'f', 'g', 'h'});
+
+      float[] expected_a2 =
+          new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f};
+      for (int i = 0; i < a2.length; i++) {
+        Assert.assertEquals(a2[i], expected_a2[i], 0.01f);
+      }
+    }
+  }
+
+  private void arrayReadPointRanges() throws Exception {
+    // Create array and query
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+        Query query = new Query(array, TILEDB_READ)) {
+
+      // Slice only rows 1, 2 and cols 2, 3, 4
+      int[] rangesRows = {1, 2};
+      int[] rangeColumns = {2, 3, 4};
+      query.addPointRanges(0, rangesRows, BigInteger.valueOf(2));
+      query.addPointRanges(1, rangeColumns, BigInteger.valueOf(3));
       query.setLayout(TILEDB_ROW_MAJOR);
 
       Assert.assertEquals(1, query.getRangeNum(0));

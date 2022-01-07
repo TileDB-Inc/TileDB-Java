@@ -126,7 +126,7 @@ public class QueryTest {
         // Submit query
         query.submit();
         String stats = query.getStats();
-        System.out.println(query.getStats());
+        // System.out.println(query.getStats());
         Assert.assertTrue(
             stats.contains("unfilter_attr_tiles.sum")
                 && stats.contains("read_unfiltered_byte_num")
@@ -1335,12 +1335,15 @@ public class QueryTest {
 
         query.setLayout(TILEDB_ROW_MAJOR);
 
+        ByteBuffer dim1Array = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
+        ByteBuffer dim1Offsets = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
         ByteBuffer a1Buffer = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
         ByteBuffer a1byteMap = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
         ByteBuffer a2Array = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
         ByteBuffer a2Offsets = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
         ByteBuffer a2byteMapBuffer = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
 
+        query.setBuffer("d1", dim1Array, dim1Offsets);
         query.setBufferNullableNIO("a1", a1Buffer, a1byteMap);
         query.setBufferNullableNIO("a2", a2Offsets, a2Array, a2byteMapBuffer);
 

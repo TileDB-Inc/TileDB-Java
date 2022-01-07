@@ -207,6 +207,40 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Adds a set of point ranges along subarray dimension index. Each value in the target array is
+   * added as `add_range(x,x)` for count elements. The datatype of the range components must be the
+   * same as the type of the dimension of the array in the query.
+   *
+   * @param dimIdx The dimension index
+   * @param start The range start
+   * @param count Number of ranges to add
+   * @return This query
+   * @throws TileDBError A TileDB exception
+   */
+  public synchronized Query addPointRanges(int dimIdx, Object start, BigInteger count)
+      throws TileDBError {
+    Datatype dimType;
+    int values[];
+    try (ArraySchema schema = array.getSchema();
+        Domain domain = schema.getDomain()) {
+      dimType = domain.getDimension(dimIdx).getType();
+      values = (int[]) start;
+    }
+
+    try (NativeArray arr = new NativeArray(ctx, values.length, dimType)) {
+      int i = 0;
+      for (int value : values) {
+        arr.setItem(i, value);
+        i++;
+      }
+      ctx.handleError(
+          tiledb.tiledb_query_add_point_ranges(
+              ctx.getCtxp(), queryp, dimIdx, arr.toVoidPointer(), count));
+    }
+    return this;
+  }
+
+  /**
    * Adds a 1D range along a subarray dimension, which is in the form (start, end). The datatype of
    * the range components must be the same as the type of the domain of the array in the query.
    *
