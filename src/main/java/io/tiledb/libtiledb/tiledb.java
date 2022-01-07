@@ -2122,6 +2122,16 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_tiledb_filter_list_t.getCPtr(filter_list));
   }
 
+  public static int tiledb_array_schema_set_validity_filter_list(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_array_schema_t array_schema,
+      SWIGTYPE_p_tiledb_filter_list_t filter_list) {
+    return tiledbJNI.tiledb_array_schema_set_validity_filter_list(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_array_schema_t.getCPtr(array_schema),
+        SWIGTYPE_p_tiledb_filter_list_t.getCPtr(filter_list));
+  }
+
   public static int tiledb_array_schema_check(
       SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_array_schema_t array_schema) {
     return tiledbJNI.tiledb_array_schema_check(
@@ -2200,6 +2210,16 @@ public class tiledb implements tiledbConstants {
       SWIGTYPE_p_tiledb_array_schema_t array_schema,
       SWIGTYPE_p_p_tiledb_filter_list_t filter_list) {
     return tiledbJNI.tiledb_array_schema_get_offsets_filter_list(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_array_schema_t.getCPtr(array_schema),
+        SWIGTYPE_p_p_tiledb_filter_list_t.getCPtr(filter_list));
+  }
+
+  public static int tiledb_array_schema_get_validity_filter_list(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_array_schema_t array_schema,
+      SWIGTYPE_p_p_tiledb_filter_list_t filter_list) {
+    return tiledbJNI.tiledb_array_schema_get_validity_filter_list(
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         SWIGTYPE_p_tiledb_array_schema_t.getCPtr(array_schema),
         SWIGTYPE_p_p_tiledb_filter_list_t.getCPtr(filter_list));
@@ -4253,6 +4273,20 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         array_uri,
         SWIGTYPE_p_tiledb_config_t.getCPtr(config));
+  }
+
+  public static int tiledb_query_add_point_ranges(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_query_t query,
+      long dim_idx,
+      SWIGTYPE_p_void start,
+      java.math.BigInteger count) {
+    return tiledbJNI.tiledb_query_add_point_ranges(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_query_t.getCPtr(query),
+        dim_idx,
+        SWIGTYPE_p_void.getCPtr(start),
+        count);
   }
 
   public static int tiledb_dimension_dump_stdout(

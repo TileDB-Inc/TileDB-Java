@@ -517,6 +517,41 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
+   * Sets the filter list to use for the validity array of nullable attribute values.
+   *
+   * @param filterList FilterList to use
+   * @return This ArraySchema instance
+   * @throws TileDBError
+   */
+  public ArraySchema setValidityFilterList(FilterList filterList) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_array_schema_set_validity_filter_list(
+            ctx.getCtxp(), getSchemap(), filterList.getFilterListp()));
+    return this;
+  }
+
+  /**
+   * Retrieves the filter list used for validity maps.
+   *
+   * @return coordinates FilterList
+   * @throws TileDBError
+   */
+  public FilterList getValidityFilterList() throws TileDBError {
+    FilterList filterlist;
+    SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_validity_filter_list(
+              ctx.getCtxp(), getSchemap(), filterlistpp));
+      filterlist = new FilterList(ctx, filterlistpp);
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_filter_list_tpp(filterlistpp);
+      throw err;
+    }
+    return filterlist;
+  }
+
+  /**
    * Sets the FilterList for the coordinates, which is an ordered list of filters that will be used
    * to process and/or transform the coordinate data (such as compression).
    *

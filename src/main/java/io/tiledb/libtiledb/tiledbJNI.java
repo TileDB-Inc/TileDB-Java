@@ -959,6 +959,9 @@ public class tiledbJNI {
   public static final native int tiledb_array_schema_set_offsets_filter_list(
       long jarg1, long jarg2, long jarg3);
 
+  public static final native int tiledb_array_schema_set_validity_filter_list(
+      long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_array_schema_check(long jarg1, long jarg2);
 
   public static final native int tiledb_array_schema_load(long jarg1, String jarg2, long jarg3);
@@ -979,6 +982,9 @@ public class tiledbJNI {
       long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_schema_get_offsets_filter_list(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_array_schema_get_validity_filter_list(
       long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_schema_get_domain(long jarg1, long jarg2, long jarg3);
@@ -1510,6 +1516,9 @@ public class tiledbJNI {
   public static final native int tiledb_array_evolve(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_array_upgrade_version(long jarg1, String jarg2, long jarg3);
+
+  public static final native int tiledb_query_add_point_ranges(
+      long jarg1, long jarg2, long jarg3, long jarg4, java.math.BigInteger jarg5);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);
 
