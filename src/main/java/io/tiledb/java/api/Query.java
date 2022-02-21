@@ -1305,6 +1305,47 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * @return The number of elements in the result NIO buffers. This is a map from the attribute name
+   *     to a pair of values.
+   *     <p>The first is number of elements for var size attributes, and the second is number of
+   *     elements in the data buffer. For fixed sized attributes (and coordinates), the first is
+   *     always 0.
+   * @param typeSize the typeSize of the attribute/dimension
+   * @exception TileDBError A TileDB exception
+   */
+  public HashMap<String, Pair<Long, Long>> resultBufferElementsNIO(int typeSize)
+      throws TileDBError {
+    HashMap<String, Pair<Long, Long>> result = new HashMap<String, Pair<Long, Long>>();
+    for (Map.Entry<String, Pair<ByteBuffer, ByteBuffer>> entry : byteBuffers_.entrySet()) {
+      String name = entry.getKey();
+
+      // Fixed-sized
+      if (entry.getValue().getFirst() == null) {
+        BigInteger val_nbytes = buffer_sizes_.get(name).getSecond().getitem(0);
+        Long nelements = val_nbytes.divide(BigInteger.valueOf(typeSize)).longValue();
+        result.put(name, new Pair<>(0l, nelements));
+      }
+      // Var-sized
+      else {
+        Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
+
+        BigInteger off_nbytes = buffer_size.getFirst().getitem(0);
+        Long off_nelements =
+            off_nbytes
+                .divide(BigInteger.valueOf(4))
+                .longValue(); // long in 32 bits is 4 bytes//todo make this operate according to the
+        // sm. config parameter
+
+        ByteBuffer val_buffer = entry.getValue().getSecond();
+        BigInteger val_nbytes = buffer_size.getSecond().getitem(0);
+        Long val_nelements = val_nbytes.divide(BigInteger.valueOf(typeSize)).longValue();
+        result.put(name, new Pair<Long, Long>(off_nelements, val_nelements));
+      }
+    }
+    return result;
+  }
+
+  /**
    * @return The number of elements in the result buffers. This is a map from the attribute name to
    *     a pair of values.
    *     <p>The first is number of elements for var size attributes, and the second is number of
@@ -1379,12 +1420,23 @@ public class Query implements AutoCloseable {
     for (Pair<NativeArray, NativeArray> buffer : buffers_.values()) {
       buffer.getSecond().close();
     }
+    for (Pair<ByteBuffer, ByteBuffer> buffer : byteBuffers_.values()) {
+      buffer.getSecond().clear();
+    }
+    byteBuffers_.clear();
     buffers_.clear();
+
     for (Pair<NativeArray, NativeArray> var_buffer : buffers_.values()) {
       var_buffer.getFirst().close();
       var_buffer.getSecond().close();
     }
+    for (Pair<ByteBuffer, ByteBuffer> var_buffer : byteBuffers_.values()) {
+      var_buffer.getFirst().clear();
+      var_buffer.getSecond().clear();
+    }
+    byteBuffers_.clear();
     buffers_.clear();
+
     for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
       size_pair.getFirst().delete();
       size_pair.getSecond().delete();
