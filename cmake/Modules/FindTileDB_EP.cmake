@@ -48,14 +48,14 @@ if (NOT TILEDB_FOUND)
     # Try to download prebuilt artifacts unless the user specifies to build from source
     if(DOWNLOAD_TILEDB_PREBUILT)
         if (WIN32) # Windows
-          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.6.0/tiledb-windows-x86_64-2.6.0-66f4b41.zip")
-          SET(DOWNLOAD_SHA1 "7ff516f55e19f460ce68eb1dcb52e17f72f845a3")
+          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.6.3/tiledb-windows-x86_64-2.6.3-534ca7c.zip")
+          SET(DOWNLOAD_SHA1 "bdfb3841b3c85d4fb1ee64f74d2d54eb39e1a3d5")
         elseif(APPLE) # macOS
-          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.6.0/tiledb-macos-x86_64-2.6.0-66f4b41.tar.gz")
-          SET(DOWNLOAD_SHA1 "3c3a80aa2217b0c38e0fccca5c8fc4e63433e9fa")
+          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.6.3/tiledb-macos-x86_64-2.6.3-534ca7c.tar.gz")
+          SET(DOWNLOAD_SHA1 "8df5477b443be6f4442be4f203052ad9740dfabc")
         else() # Linux
-          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.6.0/tiledb-linux-x86_64-2.6.0-66f4b41.tar.gz")
-          SET(DOWNLOAD_SHA1 "57fda45fd19f9e0dd7734de2f1a8eca427de0b10")
+          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.6.3/tiledb-linux-x86_64-2.6.3-534ca7c.tar.gz")
+          SET(DOWNLOAD_SHA1 "0ce53f609879b1d906bde96785689029212cd2f4")
         endif()
 
         ExternalProject_Add(ep_tiledb
