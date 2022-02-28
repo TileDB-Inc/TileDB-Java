@@ -1305,44 +1305,40 @@ public class Query implements AutoCloseable {
   }
 
   /**
-   * @return The number of elements in the result NIO buffers. This is a map from the attribute name
-   *     to a pair of values.
+   * @return The number of elements in the result NIO buffers for a specific attribute.
    *     <p>The first is number of elements for var size attributes, and the second is number of
    *     elements in the data buffer. For fixed sized attributes (and coordinates), the first is
    *     always 0.
    * @param typeSize the typeSize of the attribute/dimension
+   * @param name attribute/dimension name
    * @exception TileDBError A TileDB exception
    */
-  public HashMap<String, Pair<Long, Long>> resultBufferElementsNIO(int typeSize)
-      throws TileDBError {
-    HashMap<String, Pair<Long, Long>> result = new HashMap<String, Pair<Long, Long>>();
-    for (Map.Entry<String, Pair<ByteBuffer, ByteBuffer>> entry : byteBuffers_.entrySet()) {
-      String name = entry.getKey();
+  public Pair<Long, Long> resultBufferElementsNIO(String name, int typeSize) throws TileDBError {
 
-      // Fixed-sized
-      if (entry.getValue().getFirst() == null) {
-        BigInteger val_nbytes = buffer_sizes_.get(name).getSecond().getitem(0);
-        Long nelements = val_nbytes.divide(BigInteger.valueOf(typeSize)).longValue();
-        result.put(name, new Pair<>(0l, nelements));
-      }
-      // Var-sized
-      else {
-        Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
+    Pair<ByteBuffer, ByteBuffer> entry = byteBuffers_.get(name);
 
-        BigInteger off_nbytes = buffer_size.getFirst().getitem(0);
-        Long off_nelements =
-            off_nbytes
-                .divide(BigInteger.valueOf(4))
-                .longValue(); // long in 32 bits is 4 bytes//todo make this operate according to the
-        // sm. config parameter
-
-        ByteBuffer val_buffer = entry.getValue().getSecond();
-        BigInteger val_nbytes = buffer_size.getSecond().getitem(0);
-        Long val_nelements = val_nbytes.divide(BigInteger.valueOf(typeSize)).longValue();
-        result.put(name, new Pair<Long, Long>(off_nelements, val_nelements));
-      }
+    // Fixed-sized
+    if (entry.getFirst() == null) {
+      BigInteger val_nbytes = buffer_sizes_.get(name).getSecond().getitem(0);
+      Long nelements = val_nbytes.divide(BigInteger.valueOf(typeSize)).longValue();
+      return new Pair<>(0l, nelements);
     }
-    return result;
+    // Var-sized
+    else {
+      Pair<uint64_tArray, uint64_tArray> buffer_size = buffer_sizes_.get(name);
+
+      BigInteger off_nbytes = buffer_size.getFirst().getitem(0);
+
+      // long in 32 bits is 4 bytes, not 8
+      int divisor = 8;
+      if (Integer.parseInt(getConfig().get("sm.var_offsets.bitsize")) == 32) divisor = 4;
+
+      Long off_nelements = off_nbytes.divide(BigInteger.valueOf(divisor)).longValue();
+
+      BigInteger val_nbytes = buffer_size.getSecond().getitem(0);
+      Long val_nelements = val_nbytes.divide(BigInteger.valueOf(typeSize)).longValue();
+      return new Pair<Long, Long>(off_nelements, val_nelements);
+    }
   }
 
   /**
