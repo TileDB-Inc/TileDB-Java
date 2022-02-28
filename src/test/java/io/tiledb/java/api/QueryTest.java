@@ -1247,6 +1247,31 @@ public class QueryTest {
           Assert.assertTrue(attr2.getNullable());
         }
 
+        Assert.assertEquals(
+            4L,
+            (long)
+                query
+                    .resultBufferElementsNIO("cols", Datatype.TILEDB_INT32.getNativeSize())
+                    .getSecond());
+        Assert.assertEquals(
+            4L,
+            (long)
+                query
+                    .resultBufferElementsNIO("rows", Datatype.TILEDB_INT32.getNativeSize())
+                    .getSecond());
+        Assert.assertEquals(
+            4L,
+            (long)
+                query
+                    .resultBufferElementsNIO("a1", Datatype.TILEDB_CHAR.getNativeSize())
+                    .getSecond());
+        Assert.assertEquals(
+            4L,
+            (long)
+                query
+                    .resultBufferElementsNIO("a2", Datatype.TILEDB_FLOAT32.getNativeSize())
+                    .getSecond());
+
         Assert.assertArrayEquals(new int[] {1, 1, 2, 2}, dim1);
         Assert.assertArrayEquals(new int[] {1, 2, 1, 2}, dim2);
         Assert.assertArrayEquals(new byte[] {'a', 'b', 'c', 'd'}, a1);
@@ -1349,6 +1374,26 @@ public class QueryTest {
 
         // Submit query
         query.submit();
+
+        Assert.assertEquals(
+            5L,
+            (long)
+                query
+                    .resultBufferElementsNIO("d1", Datatype.TILEDB_STRING_ASCII.getNativeSize())
+                    .getFirst());
+
+        Assert.assertEquals(
+            5L,
+            (long)
+                query
+                    .resultBufferElementsNIO("a1", Datatype.TILEDB_INT32.getNativeSize())
+                    .getSecond());
+        Assert.assertEquals(
+            5L,
+            (long)
+                query
+                    .resultBufferElementsNIO("a2", Datatype.TILEDB_STRING_ASCII.getNativeSize())
+                    .getFirst());
 
         try (Attribute attr1 = schema.getAttribute(0);
             Attribute attr2 = schema.getAttribute(1)) {
