@@ -42,7 +42,7 @@ public class QueryCondition implements AutoCloseable {
       if (this.type == null) {
         ctx.handleError(
             tiledb.tiledb_query_condition_init(
-                ctx.getCtxp(), conditionp, attributeName, null, BigInteger.valueOf(4), OP));
+                ctx.getCtxp(), conditionp, attributeName, null, BigInteger.valueOf(0), OP));
       } else {
         ctx.handleError(
             tiledb.tiledb_query_condition_init(

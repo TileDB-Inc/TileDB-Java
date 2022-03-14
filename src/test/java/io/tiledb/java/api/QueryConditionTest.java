@@ -115,7 +115,7 @@ public class QueryConditionTest {
     Array my_dense_array = new Array(ctx, arrayURI);
     HashMap<String, Pair> dom = my_dense_array.nonEmptyDomain();
 
-    NativeArray subarray = new NativeArray(ctx, new long[] {1l, 4l, 1l, 4l}, Long.class);
+    NativeArray subarray = new NativeArray(ctx, new long[] {1, 4, 1, 4}, Long.class);
 
     // Create query
     try (Query query = new Query(my_dense_array, TILEDB_READ)) {
@@ -138,7 +138,6 @@ public class QueryConditionTest {
 
       // Submit query
       query.submit();
-      // System.out.println("Query submitted: " + query.submit() );
 
       // Print cell values (assumes all getAttributes are read)
       HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
@@ -149,21 +148,32 @@ public class QueryConditionTest {
       //        System.out.println(a1_buff[i] + " " + a2_buff[i]);
       //      }
 
+      // In the legacy 'sm.query.dense.reader' we expect all cells that satisfy the QC to be
+      // filtered out. For the refactored reader, which is the default after 2.7, filtered out means
+      // the value is replaced with the fill value.
       // check a1
       Assert.assertArrayEquals(
           a1_buff,
           new int[] {
-            13, 16
-          }); // the values here even if null are displayed normally because we do not check the
-      // validity bytemap. This does not effect the result of the experiment since we know
-      // which values are expected to be null and returned by TileDB.
+            -2147483648,
+            -2147483648,
+            -2147483648,
+            -2147483648,
+            -2147483648,
+            13,
+            -2147483648,
+            -2147483648,
+            16
+          });
 
       // check a2
-      float[] a2_expected = new float[] {15.3f, 19.1f};
-      Assert.assertEquals(a2_buff.length, a2_expected.length);
-      for (int i = 0; i < a2_buff.length; i++) {
-        Assert.assertEquals(a2_buff[i], a2_expected[i], 0.01f);
-      }
+      Assert.assertArrayEquals(
+          a2_buff,
+          new float[] {
+            Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 15.3f, Float.NaN, Float.NaN,
+            19.1f
+          },
+          0.1f);
     }
   }
 

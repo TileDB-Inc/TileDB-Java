@@ -537,6 +537,33 @@ public class tiledb implements tiledbConstants {
     return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_array_t(cPtr, false);
   }
 
+  public static SWIGTYPE_p_p_tiledb_subarray_t new_tiledb_subarray_tpp() {
+    long cPtr = tiledbJNI.new_tiledb_subarray_tpp();
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_subarray_t(cPtr, false);
+  }
+
+  public static SWIGTYPE_p_p_tiledb_subarray_t copy_tiledb_subarray_tpp(
+      SWIGTYPE_p_tiledb_subarray_t value) {
+    long cPtr = tiledbJNI.copy_tiledb_subarray_tpp(SWIGTYPE_p_tiledb_subarray_t.getCPtr(value));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_subarray_t(cPtr, false);
+  }
+
+  public static void delete_tiledb_subarray_tpp(SWIGTYPE_p_p_tiledb_subarray_t obj) {
+    tiledbJNI.delete_tiledb_subarray_tpp(SWIGTYPE_p_p_tiledb_subarray_t.getCPtr(obj));
+  }
+
+  public static void tiledb_subarray_tpp_assign(
+      SWIGTYPE_p_p_tiledb_subarray_t obj, SWIGTYPE_p_tiledb_subarray_t value) {
+    tiledbJNI.tiledb_subarray_tpp_assign(
+        SWIGTYPE_p_p_tiledb_subarray_t.getCPtr(obj), SWIGTYPE_p_tiledb_subarray_t.getCPtr(value));
+  }
+
+  public static SWIGTYPE_p_tiledb_subarray_t tiledb_subarray_tpp_value(
+      SWIGTYPE_p_p_tiledb_subarray_t obj) {
+    long cPtr = tiledbJNI.tiledb_subarray_tpp_value(SWIGTYPE_p_p_tiledb_subarray_t.getCPtr(obj));
+    return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_subarray_t(cPtr, false);
+  }
+
   public static SWIGTYPE_p_p_tiledb_config_t new_tiledb_config_tpp() {
     long cPtr = tiledbJNI.new_tiledb_config_tpp();
     return (cPtr == 0) ? null : new SWIGTYPE_p_p_tiledb_config_t(cPtr, false);
@@ -2062,6 +2089,16 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_int.getCPtr(allows_dups));
   }
 
+  public static int tiledb_array_schema_get_version(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_array_schema_t array_schema,
+      SWIGTYPE_p_unsigned_int version) {
+    return tiledbJNI.tiledb_array_schema_get_version(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_array_schema_t.getCPtr(array_schema),
+        SWIGTYPE_p_unsigned_int.getCPtr(version));
+  }
+
   public static int tiledb_array_schema_set_domain(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_array_schema_t array_schema,
@@ -2347,6 +2384,16 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         SWIGTYPE_p_tiledb_query_t.getCPtr(query),
         SWIGTYPE_p_void.getCPtr(subarray));
+  }
+
+  public static int tiledb_query_set_subarray_t(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_query_t query,
+      SWIGTYPE_p_tiledb_subarray_t subarray) {
+    return tiledbJNI.tiledb_query_set_subarray_t(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_query_t.getCPtr(query),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray));
   }
 
   public static int tiledb_query_set_buffer(
@@ -2953,6 +3000,16 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_unsigned_long_long.getCPtr(t2));
   }
 
+  public static int tiledb_query_get_subarray_t(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_query_t query,
+      SWIGTYPE_p_p_tiledb_subarray_t subarray) {
+    return tiledbJNI.tiledb_query_get_subarray_t(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_query_t.getCPtr(query),
+        SWIGTYPE_p_p_tiledb_subarray_t.getCPtr(subarray));
+  }
+
   public static int tiledb_query_condition_alloc(
       SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_p_tiledb_query_condition_t cond) {
     return tiledbJNI.tiledb_query_condition_alloc(
@@ -2991,6 +3048,240 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_tiledb_query_condition_t.getCPtr(right_cond),
         combination_op.swigValue(),
         SWIGTYPE_p_p_tiledb_query_condition_t.getCPtr(combined_cond));
+  }
+
+  public static int tiledb_subarray_alloc(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_array_t array,
+      SWIGTYPE_p_p_tiledb_subarray_t subarray) {
+    return tiledbJNI.tiledb_subarray_alloc(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_array_t.getCPtr(array),
+        SWIGTYPE_p_p_tiledb_subarray_t.getCPtr(subarray));
+  }
+
+  public static int tiledb_subarray_set_config(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      SWIGTYPE_p_tiledb_config_t config) {
+    return tiledbJNI.tiledb_subarray_set_config(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        SWIGTYPE_p_tiledb_config_t.getCPtr(config));
+  }
+
+  public static void tiledb_subarray_free(SWIGTYPE_p_p_tiledb_subarray_t subarray) {
+    tiledbJNI.tiledb_subarray_free(SWIGTYPE_p_p_tiledb_subarray_t.getCPtr(subarray));
+  }
+
+  public static int tiledb_subarray_set_coalesce_ranges(
+      SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_subarray_t subarray, int coalesce_ranges) {
+    return tiledbJNI.tiledb_subarray_set_coalesce_ranges(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        coalesce_ranges);
+  }
+
+  public static int tiledb_subarray_set_subarray(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray_s,
+      SWIGTYPE_p_void subarray_v) {
+    return tiledbJNI.tiledb_subarray_set_subarray(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray_s),
+        SWIGTYPE_p_void.getCPtr(subarray_v));
+  }
+
+  public static int tiledb_subarray_add_range(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      long dim_idx,
+      SWIGTYPE_p_void start,
+      SWIGTYPE_p_void end,
+      SWIGTYPE_p_void stride) {
+    return tiledbJNI.tiledb_subarray_add_range(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_idx,
+        SWIGTYPE_p_void.getCPtr(start),
+        SWIGTYPE_p_void.getCPtr(end),
+        SWIGTYPE_p_void.getCPtr(stride));
+  }
+
+  public static int tiledb_subarray_add_range_by_name(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      String dim_name,
+      SWIGTYPE_p_void start,
+      SWIGTYPE_p_void end,
+      SWIGTYPE_p_void stride) {
+    return tiledbJNI.tiledb_subarray_add_range_by_name(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_name,
+        SWIGTYPE_p_void.getCPtr(start),
+        SWIGTYPE_p_void.getCPtr(end),
+        SWIGTYPE_p_void.getCPtr(stride));
+  }
+
+  public static int tiledb_subarray_add_range_var(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      long dim_idx,
+      SWIGTYPE_p_void start,
+      java.math.BigInteger start_size,
+      SWIGTYPE_p_void end,
+      java.math.BigInteger end_size) {
+    return tiledbJNI.tiledb_subarray_add_range_var(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_idx,
+        SWIGTYPE_p_void.getCPtr(start),
+        start_size,
+        SWIGTYPE_p_void.getCPtr(end),
+        end_size);
+  }
+
+  public static int tiledb_subarray_add_range_var_by_name(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      String dim_name,
+      SWIGTYPE_p_void start,
+      java.math.BigInteger start_size,
+      SWIGTYPE_p_void end,
+      java.math.BigInteger end_size) {
+    return tiledbJNI.tiledb_subarray_add_range_var_by_name(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_name,
+        SWIGTYPE_p_void.getCPtr(start),
+        start_size,
+        SWIGTYPE_p_void.getCPtr(end),
+        end_size);
+  }
+
+  public static int tiledb_subarray_get_range_num(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      long dim_idx,
+      SWIGTYPE_p_unsigned_long_long range_num) {
+    return tiledbJNI.tiledb_subarray_get_range_num(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_idx,
+        SWIGTYPE_p_unsigned_long_long.getCPtr(range_num));
+  }
+
+  public static int tiledb_subarray_get_range_num_from_name(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      String dim_name,
+      SWIGTYPE_p_unsigned_long_long range_num) {
+    return tiledbJNI.tiledb_subarray_get_range_num_from_name(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_name,
+        SWIGTYPE_p_unsigned_long_long.getCPtr(range_num));
+  }
+
+  public static int tiledb_subarray_get_range(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      long dim_idx,
+      java.math.BigInteger range_idx,
+      SWIGTYPE_p_p_void start,
+      SWIGTYPE_p_p_void end,
+      SWIGTYPE_p_p_void stride) {
+    return tiledbJNI.tiledb_subarray_get_range(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_idx,
+        range_idx,
+        SWIGTYPE_p_p_void.getCPtr(start),
+        SWIGTYPE_p_p_void.getCPtr(end),
+        SWIGTYPE_p_p_void.getCPtr(stride));
+  }
+
+  public static int tiledb_subarray_get_range_from_name(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      String dim_name,
+      java.math.BigInteger range_idx,
+      SWIGTYPE_p_p_void start,
+      SWIGTYPE_p_p_void end,
+      SWIGTYPE_p_p_void stride) {
+    return tiledbJNI.tiledb_subarray_get_range_from_name(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_name,
+        range_idx,
+        SWIGTYPE_p_p_void.getCPtr(start),
+        SWIGTYPE_p_p_void.getCPtr(end),
+        SWIGTYPE_p_p_void.getCPtr(stride));
+  }
+
+  public static int tiledb_subarray_get_range_var_size(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      long dim_idx,
+      java.math.BigInteger range_idx,
+      SWIGTYPE_p_unsigned_long_long start_size,
+      SWIGTYPE_p_unsigned_long_long end_size) {
+    return tiledbJNI.tiledb_subarray_get_range_var_size(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_idx,
+        range_idx,
+        SWIGTYPE_p_unsigned_long_long.getCPtr(start_size),
+        SWIGTYPE_p_unsigned_long_long.getCPtr(end_size));
+  }
+
+  public static int tiledb_subarray_get_range_var_size_from_name(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      String dim_name,
+      java.math.BigInteger range_idx,
+      SWIGTYPE_p_unsigned_long_long start_size,
+      SWIGTYPE_p_unsigned_long_long end_size) {
+    return tiledbJNI.tiledb_subarray_get_range_var_size_from_name(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_name,
+        range_idx,
+        SWIGTYPE_p_unsigned_long_long.getCPtr(start_size),
+        SWIGTYPE_p_unsigned_long_long.getCPtr(end_size));
+  }
+
+  public static int tiledb_subarray_get_range_var(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      long dim_idx,
+      java.math.BigInteger range_idx,
+      SWIGTYPE_p_void start,
+      SWIGTYPE_p_void end) {
+    return tiledbJNI.tiledb_subarray_get_range_var(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_idx,
+        range_idx,
+        SWIGTYPE_p_void.getCPtr(start),
+        SWIGTYPE_p_void.getCPtr(end));
+  }
+
+  public static int tiledb_subarray_get_range_var_from_name(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      String dim_name,
+      java.math.BigInteger range_idx,
+      SWIGTYPE_p_void start,
+      SWIGTYPE_p_void end) {
+    return tiledbJNI.tiledb_subarray_get_range_var_from_name(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_name,
+        range_idx,
+        SWIGTYPE_p_void.getCPtr(start),
+        SWIGTYPE_p_void.getCPtr(end));
   }
 
   public static int tiledb_array_alloc(
@@ -3820,6 +4111,16 @@ public class tiledb implements tiledbConstants {
     tiledbJNI.tiledb_fragment_info_free(SWIGTYPE_p_p_tiledb_fragment_info_t.getCPtr(fragment_info));
   }
 
+  public static int tiledb_fragment_info_set_config(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_fragment_info_t fragment_info,
+      SWIGTYPE_p_tiledb_config_t config) {
+    return tiledbJNI.tiledb_fragment_info_set_config(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_fragment_info_t.getCPtr(fragment_info),
+        SWIGTYPE_p_tiledb_config_t.getCPtr(config));
+  }
+
   public static int tiledb_fragment_info_load(
       SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_fragment_info_t fragment_info) {
     return tiledbJNI.tiledb_fragment_info_load(
@@ -4257,6 +4558,30 @@ public class tiledb implements tiledbConstants {
         attribute_name);
   }
 
+  public static int tiledb_array_schema_evolution_set_timestamp_range(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_array_schema_evolution_t array_schema_evolution,
+      java.math.BigInteger lo,
+      java.math.BigInteger hi) {
+    return tiledbJNI.tiledb_array_schema_evolution_set_timestamp_range(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_array_schema_evolution_t.getCPtr(array_schema_evolution),
+        lo,
+        hi);
+  }
+
+  public static int tiledb_array_schema_timestamp_range(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_array_schema_t array_schema,
+      SWIGTYPE_p_unsigned_long_long lo,
+      SWIGTYPE_p_unsigned_long_long hi) {
+    return tiledbJNI.tiledb_array_schema_timestamp_range(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_array_schema_t.getCPtr(array_schema),
+        SWIGTYPE_p_unsigned_long_long.getCPtr(lo),
+        SWIGTYPE_p_unsigned_long_long.getCPtr(hi));
+  }
+
   public static int tiledb_array_evolve(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       String array_uri,
@@ -4275,6 +4600,20 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_tiledb_config_t.getCPtr(config));
   }
 
+  public static int tiledb_subarray_add_point_ranges(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_subarray_t subarray,
+      long dim_idx,
+      SWIGTYPE_p_void start,
+      java.math.BigInteger count) {
+    return tiledbJNI.tiledb_subarray_add_point_ranges(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_subarray_t.getCPtr(subarray),
+        dim_idx,
+        SWIGTYPE_p_void.getCPtr(start),
+        count);
+  }
+
   public static int tiledb_query_add_point_ranges(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_query_t query,
@@ -4287,6 +4626,27 @@ public class tiledb implements tiledbConstants {
         dim_idx,
         SWIGTYPE_p_void.getCPtr(start),
         count);
+  }
+
+  public static int tiledb_query_get_status_details(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_query_t query,
+      tiledb_query_status_details_t status) {
+    return tiledbJNI.tiledb_query_get_status_details(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_query_t.getCPtr(query),
+        tiledb_query_status_details_t.getCPtr(status),
+        status);
+  }
+
+  public static int tiledb_ctx_alloc_with_error(
+      SWIGTYPE_p_tiledb_config_t config,
+      SWIGTYPE_p_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_p_tiledb_error_t error) {
+    return tiledbJNI.tiledb_ctx_alloc_with_error(
+        SWIGTYPE_p_tiledb_config_t.getCPtr(config),
+        SWIGTYPE_p_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_p_tiledb_error_t.getCPtr(error));
   }
 
   public static int tiledb_dimension_dump_stdout(

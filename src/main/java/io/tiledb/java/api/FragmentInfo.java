@@ -48,6 +48,23 @@ public class FragmentInfo {
   }
 
   /**
+   * Set the fragment info config. Useful for passing timestamp ranges and encryption key via the
+   * config before loading the fragment info.
+   *
+   * @param config the TileDB config
+   * @throws TileDBError
+   */
+  public void setConfig(Config config) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_set_config(
+              ctx.getCtxp(), this.fragmentInfop, config.getConfigp()));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
    * Retrieves the non-empty domain range sizes from a fragment for a given dimension index.
    * Applicable to var-sized dimensions.
    *

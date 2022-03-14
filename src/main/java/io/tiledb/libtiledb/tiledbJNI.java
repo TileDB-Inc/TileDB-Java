@@ -437,6 +437,16 @@ public class tiledbJNI {
 
   public static final native long tiledb_array_tpp_value(long jarg1);
 
+  public static final native long new_tiledb_subarray_tpp();
+
+  public static final native long copy_tiledb_subarray_tpp(long jarg1);
+
+  public static final native void delete_tiledb_subarray_tpp(long jarg1);
+
+  public static final native void tiledb_subarray_tpp_assign(long jarg1, long jarg2);
+
+  public static final native long tiledb_subarray_tpp_value(long jarg1);
+
   public static final native long new_tiledb_config_tpp();
 
   public static final native long copy_tiledb_config_tpp(long jarg1);
@@ -942,6 +952,9 @@ public class tiledbJNI {
   public static final native int tiledb_array_schema_get_allows_dups(
       long jarg1, long jarg2, long jarg3);
 
+  public static final native int tiledb_array_schema_get_version(
+      long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_array_schema_set_domain(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_schema_set_capacity(
@@ -1015,6 +1028,8 @@ public class tiledbJNI {
   public static final native int tiledb_query_get_config(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_query_set_subarray(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_query_set_subarray_t(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_query_set_buffer(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
@@ -1177,6 +1192,8 @@ public class tiledbJNI {
   public static final native int tiledb_query_get_fragment_timestamp_range(
       long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5);
 
+  public static final native int tiledb_query_get_subarray_t(long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_query_condition_alloc(long jarg1, long jarg2);
 
   public static final native void tiledb_query_condition_free(long jarg1);
@@ -1186,6 +1203,77 @@ public class tiledbJNI {
 
   public static final native int tiledb_query_condition_combine(
       long jarg1, long jarg2, long jarg3, int jarg4, long jarg5);
+
+  public static final native int tiledb_subarray_alloc(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_subarray_set_config(long jarg1, long jarg2, long jarg3);
+
+  public static final native void tiledb_subarray_free(long jarg1);
+
+  public static final native int tiledb_subarray_set_coalesce_ranges(
+      long jarg1, long jarg2, int jarg3);
+
+  public static final native int tiledb_subarray_set_subarray(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_subarray_add_range(
+      long jarg1, long jarg2, long jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_subarray_add_range_by_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_subarray_add_range_var(
+      long jarg1,
+      long jarg2,
+      long jarg3,
+      long jarg4,
+      java.math.BigInteger jarg5,
+      long jarg6,
+      java.math.BigInteger jarg7);
+
+  public static final native int tiledb_subarray_add_range_var_by_name(
+      long jarg1,
+      long jarg2,
+      String jarg3,
+      long jarg4,
+      java.math.BigInteger jarg5,
+      long jarg6,
+      java.math.BigInteger jarg7);
+
+  public static final native int tiledb_subarray_get_range_num(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_subarray_get_range_num_from_name(
+      long jarg1, long jarg2, String jarg3, long jarg4);
+
+  public static final native int tiledb_subarray_get_range(
+      long jarg1,
+      long jarg2,
+      long jarg3,
+      java.math.BigInteger jarg4,
+      long jarg5,
+      long jarg6,
+      long jarg7);
+
+  public static final native int tiledb_subarray_get_range_from_name(
+      long jarg1,
+      long jarg2,
+      String jarg3,
+      java.math.BigInteger jarg4,
+      long jarg5,
+      long jarg6,
+      long jarg7);
+
+  public static final native int tiledb_subarray_get_range_var_size(
+      long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_subarray_get_range_var_size_from_name(
+      long jarg1, long jarg2, String jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_subarray_get_range_var(
+      long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_subarray_get_range_var_from_name(
+      long jarg1, long jarg2, String jarg3, java.math.BigInteger jarg4, long jarg5, long jarg6);
 
   public static final native int tiledb_array_alloc(long jarg1, String jarg2, long jarg3);
 
@@ -1415,6 +1503,9 @@ public class tiledbJNI {
 
   public static final native void tiledb_fragment_info_free(long jarg1);
 
+  public static final native int tiledb_fragment_info_set_config(
+      long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_fragment_info_load(long jarg1, long jarg2);
 
   public static final native int tiledb_fragment_info_load_with_key(
@@ -1513,12 +1604,36 @@ public class tiledbJNI {
   public static final native int tiledb_array_schema_evolution_drop_attribute(
       long jarg1, long jarg2, String jarg3);
 
+  public static final native int tiledb_array_schema_evolution_set_timestamp_range(
+      long jarg1, long jarg2, java.math.BigInteger jarg3, java.math.BigInteger jarg4);
+
+  public static final native int tiledb_array_schema_timestamp_range(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
   public static final native int tiledb_array_evolve(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_array_upgrade_version(long jarg1, String jarg2, long jarg3);
 
+  public static final native int tiledb_subarray_add_point_ranges(
+      long jarg1, long jarg2, long jarg3, long jarg4, java.math.BigInteger jarg5);
+
   public static final native int tiledb_query_add_point_ranges(
       long jarg1, long jarg2, long jarg3, long jarg4, java.math.BigInteger jarg5);
+
+  public static final native void tiledb_query_status_details_t_incomplete_reason_set(
+      long jarg1, tiledb_query_status_details_t jarg1_, int jarg2);
+
+  public static final native int tiledb_query_status_details_t_incomplete_reason_get(
+      long jarg1, tiledb_query_status_details_t jarg1_);
+
+  public static final native long new_tiledb_query_status_details_t();
+
+  public static final native void delete_tiledb_query_status_details_t(long jarg1);
+
+  public static final native int tiledb_query_get_status_details(
+      long jarg1, long jarg2, long jarg3, tiledb_query_status_details_t jarg3_);
+
+  public static final native int tiledb_ctx_alloc_with_error(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);
 

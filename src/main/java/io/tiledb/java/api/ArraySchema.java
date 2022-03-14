@@ -603,6 +603,26 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
+   * Get timestamp range of schema.
+   *
+   * @return timestamp range of schema
+   * @throws TileDBError
+   */
+  public Pair<Long, Long> getTimestampRange() throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long t1 = tiledb.new_ullp();
+    SWIGTYPE_p_unsigned_long_long t2 = tiledb.new_ullp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_timestamp_range(ctx.getCtxp(), getSchemap(), t1, t2));
+      return new Pair(tiledb.ullp_value(t1), tiledb.ullp_value(t2));
+    } catch (TileDBError err) {
+      tiledb.delete_ullp(t1);
+      tiledb.delete_ullp(t2);
+      throw err;
+    }
+  }
+
+  /**
    * Returns a copy of the FilterList of the offsets.
    *
    * @return offsets FilterList
@@ -647,13 +667,33 @@ public class ArraySchema implements AutoCloseable {
    * @throws TileDBError
    */
   public int getAllowDups() throws TileDBError {
+    SWIGTYPE_p_int allowsDupsPtr = tiledb.new_intp();
     try {
-      SWIGTYPE_p_int allowsDupsPtr = tiledb.new_intp();
       ctx.handleError(
           tiledb.tiledb_array_schema_get_allows_dups(ctx.getCtxp(), getSchemap(), allowsDupsPtr));
 
       return tiledb.intp_value(allowsDupsPtr);
     } catch (TileDBError err) {
+      tiledb.delete_intp(allowsDupsPtr);
+      throw err;
+    }
+  }
+
+  /**
+   * Returns the array schema version.
+   *
+   * @return the array schema version
+   * @throws TileDBError
+   */
+  public long getVersion() throws TileDBError {
+    SWIGTYPE_p_unsigned_int versionPtr = tiledb.new_uintp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_version(ctx.getCtxp(), getSchemap(), versionPtr));
+
+      return tiledb.uintp_value(versionPtr);
+    } catch (TileDBError err) {
+      tiledb.delete_uintp(versionPtr);
       throw err;
     }
   }

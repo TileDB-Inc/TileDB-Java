@@ -673,6 +673,26 @@ public class FragmentInfoTest {
   }
 
   @Test
+  public void testConfigSetGetValues() throws Exception {
+    createSparseVarDimArray();
+    writeSparseVarDimArray();
+
+    FragmentInfo info = new FragmentInfo(ctx, arrayURI);
+
+    try (Config config = new Config()) {
+      // Set values
+      config.set("vfs.s3.connect_timeout_ms", "5000");
+      config.set("vfs.s3.endpoint_override", "localhost:8888");
+
+      info.setConfig(config);
+
+      // Get values
+      //      Assert.assertEquals(config.get("vfs.s3.connect_timeout_ms"), "5000");
+      //      Assert.assertEquals(config.get("vfs.s3.endpoint_override"), "localhost:8888");
+    }
+  }
+
+  @Test
   public void testHasUnconsolidatedMetadataVar() throws Exception {
     int testFragmentCount = 10;
     createSparseVarDimArray();

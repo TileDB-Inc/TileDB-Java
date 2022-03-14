@@ -3,6 +3,7 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_array_schema_evolution_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_array_schema_evolution_t;
 import io.tiledb.libtiledb.tiledb;
+import java.math.BigInteger;
 
 public class ArraySchemaEvolution implements AutoCloseable {
   private Context ctx;
@@ -103,6 +104,23 @@ public class ArraySchemaEvolution implements AutoCloseable {
               ctx.getCtxp(), evolutionp, att.getName()));
     } catch (TileDBError err) {
       tiledb.delete_tiledb_array_schema_evolution_tpp(evolutionpp);
+      throw err;
+    }
+  }
+
+  /**
+   * Sets timestamp range in an array schema evolution.
+   *
+   * @param high high value of range
+   * @param low low value of range
+   * @throws TileDBError
+   */
+  public void setTimeStampRange(BigInteger high, BigInteger low) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_evolution_set_timestamp_range(
+              ctx.getCtxp(), evolutionp, low, high));
+    } catch (TileDBError err) {
       throw err;
     }
   }
