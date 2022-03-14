@@ -48,7 +48,8 @@ public enum tiledb_datatype_t {
   TILEDB_TIME_NS(36),
   TILEDB_TIME_PS(37),
   TILEDB_TIME_FS(38),
-  TILEDB_TIME_AS(39);
+  TILEDB_TIME_AS(39),
+  TILEDB_BLOB(40);
 
   public final int swigValue() {
     return swigValue;

@@ -201,6 +201,21 @@ public class Query implements AutoCloseable {
    * @param subarray The targeted subarray.
    * @exception TileDBError A TileDB exception
    */
+  public synchronized Query setSubarray(SubArray subarray) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_query_set_subarray_t(ctx.getCtxp(), queryp, subarray.getSubArrayp()));
+    if (this.subarray != null) {
+      this.subarray.close();
+    }
+    return this;
+  }
+
+  /**
+   * Sets a subarray, defined in the order dimensions were added. Coordinates are inclusive.
+   *
+   * @param subarray The targeted subarray.
+   * @exception TileDBError A TileDB exception
+   */
   public synchronized Query setSubarray(ByteBuffer subarray) throws TileDBError {
     ctx.handleError(Utils.tiledb_query_set_subarray_nio(ctx.getCtxp(), queryp, subarray));
     return this;
@@ -324,7 +339,7 @@ public class Query implements AutoCloseable {
    * Retrieves a range's start and end size for a given variable-length dimensions at a given range
    * index.
    *
-   * @param dimIdx The index of the dimension to add the range to
+   * @param dimIdx The index of the dimension to get the range from
    * @return This query
    * @throws TileDBError A TileDB exception
    */
@@ -347,7 +362,7 @@ public class Query implements AutoCloseable {
   /**
    * Retrieves a specific range of the query subarray along a given variable-length dimension.
    *
-   * @param dimIdx The index of the dimension to add the range to
+   * @param dimIdx The index of the dimension to get the range from
    * @return This query
    * @throws TileDBError A TileDB exception
    */
@@ -469,9 +484,13 @@ public class Query implements AutoCloseable {
    */
   public long getRangeNum(int dimIdx) throws TileDBError {
     uint64_tArray resultArr = new uint64_tArray(1);
-    ctx.handleError(
-        tiledb.tiledb_query_get_range_num(ctx.getCtxp(), queryp, dimIdx, resultArr.cast()));
-    return resultArr.getitem(0).longValue();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_query_get_range_num(ctx.getCtxp(), queryp, dimIdx, resultArr.cast()));
+      return resultArr.getitem(0).longValue();
+    } catch (TileDBError err) {
+      throw err;
+    }
   }
 
   /**
@@ -1843,7 +1862,7 @@ public class Query implements AutoCloseable {
   }
 
   /**
-   * TODO
+   * Sets the QueryCondition for the Query.
    *
    * @param queryCondition
    * @throws TileDBError

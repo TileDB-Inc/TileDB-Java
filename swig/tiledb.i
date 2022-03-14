@@ -87,6 +87,7 @@ import java.nio.ByteBuffer;
 %pointer_functions(tiledb_encryption_type_t, tiledb_encryption_type_tp);
 
 %pointer_functions(tiledb_array_t*, tiledb_array_tpp);
+%pointer_functions(tiledb_subarray_t*, tiledb_subarray_tpp);
 %pointer_functions(tiledb_config_t*, tiledb_config_tpp);
 %pointer_functions(tiledb_config_iter_t*, tiledb_config_iter_tpp);
 %pointer_functions(tiledb_ctx_t*, tiledb_ctx_tpp);

@@ -145,6 +145,14 @@ public class ArraySchemaTest {
   }
 
   @Test
+  public void testArraySchemaVersion() throws Exception {
+    try (Context ctx = new Context();
+        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE, layout)) {
+      Assert.assertEquals(11, schema.getVersion());
+    }
+  }
+
+  @Test
   public void testArraySchemaGetSetAllowDups() throws Exception {
     try (Context ctx = new Context();
         ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE, layout); ) {
