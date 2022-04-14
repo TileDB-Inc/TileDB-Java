@@ -597,6 +597,16 @@ public class tiledbJNI {
 
   public static final native long tiledb_query_condition_tpp_value(long jarg1);
 
+  public static final native long new_tiledb_group_tpp();
+
+  public static final native long copy_tiledb_group_tpp(long jarg1);
+
+  public static final native void delete_tiledb_group_tpp(long jarg1);
+
+  public static final native void tiledb_group_tpp_assign(long jarg1, long jarg2);
+
+  public static final native long tiledb_group_tpp_value(long jarg1);
+
   public static final native int sizeOfInt32();
 
   public static final native int sizeOfInt64();
@@ -1634,6 +1644,63 @@ public class tiledbJNI {
       long jarg1, long jarg2, long jarg3, tiledb_query_status_details_t jarg3_);
 
   public static final native int tiledb_ctx_alloc_with_error(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_group_alloc(long jarg1, String jarg2, long jarg3);
+
+  public static final native int tiledb_group_open(long jarg1, long jarg2, int jarg3);
+
+  public static final native int tiledb_group_close(long jarg1, long jarg2);
+
+  public static final native void tiledb_group_free(long jarg1);
+
+  public static final native int tiledb_group_set_config(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_group_get_config(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_group_put_metadata(
+      long jarg1, long jarg2, String jarg3, int jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_group_delete_metadata(long jarg1, long jarg2, String jarg3);
+
+  public static final native int tiledb_group_get_metadata(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_group_get_metadata_num(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_group_get_metadata_from_index(
+      long jarg1,
+      long jarg2,
+      java.math.BigInteger jarg3,
+      long jarg4,
+      long jarg5,
+      long jarg6,
+      long jarg7,
+      long jarg8);
+
+  public static final native int tiledb_group_has_metadata_key(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_group_add_member(
+      long jarg1, long jarg2, String jarg3, short jarg4, String jarg5);
+
+  public static final native int tiledb_group_remove_member(long jarg1, long jarg2, String jarg3);
+
+  public static final native int tiledb_group_get_member_count(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_group_get_member_by_index(
+      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_group_get_member_by_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_group_is_open(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_group_get_uri(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_group_get_query_type(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_group_dump_str(
+      long jarg1, long jarg2, long jarg3, short jarg4);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);
 

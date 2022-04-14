@@ -156,14 +156,14 @@ public class QueryConditionTest {
       Assert.assertArrayEquals(
           a1_buff,
           new int[] {
-            //            -2147483648,
-            //            -2147483648,
-            //            -2147483648,
-            //            -2147483648,
-            //            -2147483648,
+            -2147483648,
+            -2147483648,
+            -2147483648,
+            -2147483648,
+            -2147483648,
             13,
-            //            -2147483648,
-            //            -2147483648,
+            -2147483648,
+            -2147483648,
             16
           });
 
@@ -171,14 +171,7 @@ public class QueryConditionTest {
       Assert.assertArrayEquals(
           a2_buff,
           new float[] {
-            //            Float.NaN,
-            //                  Float.NaN,
-            //                  Float.NaN,
-            //                  Float.NaN,
-            //                  Float.NaN,
-            15.3f,
-            //                  Float.NaN,
-            //                  Float.NaN,
+            Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 15.3f, Float.NaN, Float.NaN,
             19.1f
           },
           0.1f);
