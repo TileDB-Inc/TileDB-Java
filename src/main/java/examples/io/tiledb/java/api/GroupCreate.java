@@ -36,14 +36,18 @@ package examples.io.tiledb.java.api;
 
 import io.tiledb.java.api.Context;
 import io.tiledb.java.api.Group;
+import io.tiledb.java.api.QueryType;
 import io.tiledb.java.api.TileDBError;
 
 public class GroupCreate {
 
   public static void main(String[] args) throws TileDBError {
     Context ctx = new Context();
-    Group group1 = new Group(ctx, "my_group");
-    Group group2 = new Group(ctx, "my_group/dense_arrays");
-    Group group3 = new Group(ctx, "my_group/sparse_arrays");
+    Group.create(ctx, "my_group");
+    Group.create(ctx, "my_group/dense_arrays");
+    Group.create(ctx, "my_group/sparse_arrays");
+    Group group1 = new Group(ctx, "my_group", QueryType.TILEDB_WRITE);
+    Group group2 = new Group(ctx, "my_group/dense_arrays", QueryType.TILEDB_WRITE);
+    Group group3 = new Group(ctx, "my_group/sparse_arrays", QueryType.TILEDB_WRITE);
   }
 }

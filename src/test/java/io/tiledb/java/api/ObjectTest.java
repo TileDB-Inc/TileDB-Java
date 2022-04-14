@@ -73,9 +73,9 @@ public class ObjectTest {
 
   private void createHierarchy() throws Exception {
     // Create groups
-    new Group(ctx, root.resolve("my_group").toString());
-    new Group(ctx, root.resolve("my_group/dense_arrays").toString());
-    new Group(ctx, root.resolve("my_group/sparse_arrays").toString());
+    Group.create(ctx, root.resolve("my_group").toString());
+    Group.create(ctx, root.resolve("my_group/dense_arrays").toString());
+    Group.create(ctx, root.resolve("my_group/sparse_arrays").toString());
 
     // Create arrays
     createArray(root.resolve("my_group/dense_arrays/array_A").toString(), TILEDB_DENSE);
