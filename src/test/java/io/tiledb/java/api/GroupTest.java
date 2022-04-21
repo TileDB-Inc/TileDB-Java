@@ -160,10 +160,7 @@ public class GroupTest {
     group.putMetadata("key3", intArray);
 
     // close group and reopen in read mode
-    Config config = new Config();
-    config.set("sm.group.timestamp_start", "10");
-    Context context = new Context(config);
-    group.reopen(context, TILEDB_READ);
+    group.reopen(ctx, TILEDB_READ);
 
     // check if the correct metadata keys are present
     Assert.assertEquals(BigInteger.valueOf(3), group.getMetadataNum());
@@ -187,22 +184,15 @@ public class GroupTest {
         (int[]) intArray.toJavaArray(), (int[]) metadataIntArray.toJavaArray());
 
     // close group and reopen in write mode
-    config = new Config();
-    config.set("sm.group.timestamp_start", "20");
-    context = new Context(config);
-    group.reopen(context, TILEDB_WRITE);
+    group.reopen(ctx, TILEDB_WRITE);
     // delete a metadata entry
     group.deleteMetadata("key2");
-    // TODO this delete functionality does not always work. The core library does not have any tests
     // close group and reopen in read mode to check if the correct metadata keys are present.
 
-    config = new Config();
-    config.set("sm.group.timestamp_start", "30");
-    context = new Context(config);
-    group.reopen(context, TILEDB_READ);
-    //        Assert.assertEquals(BigInteger.valueOf(2), group.getMetadataNum()); //TODO uncomment
+    group.reopen(ctx, TILEDB_READ);
+    Assert.assertEquals(BigInteger.valueOf(2), group.getMetadataNum());
     Assert.assertTrue(group.hasMetadataKey("key1"));
-    //    Assert.assertFalse(group.hasMetadataKey("key2")); TODO uncomment
+    Assert.assertFalse(group.hasMetadataKey("key2"));
     Assert.assertTrue(group.hasMetadataKey("key3"));
     Assert.assertFalse(group.hasMetadataKey("key4"));
 
