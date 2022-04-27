@@ -52,4 +52,5 @@ The below table references which versions of TileDB-Java are compatible with whi
 | 0.7.X               | 2.5.X          |
 | 0.8.X               | 2.6.X          |
 | 0.9.X               | 2.7.X          |
+| 0.10.X              | 2.8.X          |
 
