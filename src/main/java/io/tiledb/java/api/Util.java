@@ -1,5 +1,6 @@
 package io.tiledb.java.api;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 /** Contains helper-functions */
@@ -35,6 +36,21 @@ public class Util {
       throw new TileDBError(num + " is larger that the integer max value");
 
     return (int) num;
+  }
+
+  /**
+   * Checks if a given bigInteger value is in the UInt64 range
+   *
+   * @param bigInteger the bigInteger
+   * @return true if the range is ok
+   */
+  public static boolean checkBigIntegerRange(BigInteger bigInteger) throws TileDBError {
+    BigInteger upperLimit = new BigInteger("18446744073709551615");
+    if ((bigInteger.compareTo(upperLimit) > 0)
+        || (bigInteger.compareTo(BigInteger.valueOf(-1L)) <= 0)) {
+      throw new TileDBError(bigInteger + " is outside the uint64 range");
+    }
+    return true;
   }
 
   /**

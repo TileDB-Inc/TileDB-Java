@@ -270,6 +270,7 @@ public class ArraySchema implements AutoCloseable {
    * @exception TileDBError A T
    */
   public void setCapacity(BigInteger capacity) throws TileDBError {
+    Util.checkBigIntegerRange(capacity);
     ctx.handleError(tiledb.tiledb_array_schema_set_capacity(ctx.getCtxp(), schemap, capacity));
   }
 

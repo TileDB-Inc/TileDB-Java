@@ -275,6 +275,7 @@ public class Attribute implements AutoCloseable {
    * @throws TileDBError
    */
   public void setFillValue(NativeArray value, BigInteger size) throws TileDBError {
+    Util.checkBigIntegerRange(size);
     try {
       ctx.handleError(
           tiledb.tiledb_attribute_set_fill_value(
@@ -366,7 +367,7 @@ public class Attribute implements AutoCloseable {
    */
   public void setFillValueNullable(NativeArray value, BigInteger size, boolean valid)
       throws TileDBError {
-
+    Util.checkBigIntegerRange(size);
     try {
       ctx.handleError(
           tiledb.tiledb_attribute_set_fill_value_nullable(
