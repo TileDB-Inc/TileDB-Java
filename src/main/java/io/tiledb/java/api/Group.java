@@ -198,6 +198,7 @@ public class Group implements AutoCloseable {
    * @throws TileDBError
    */
   public String getMemberURIByIndex(BigInteger index) throws TileDBError {
+    Util.checkBigIntegerRange(index);
     SWIGTYPE_p_tiledb_object_t objtypep = tiledb.new_tiledb_object_tp();
     SWIGTYPE_p_p_char uripp = tiledb.new_charpp();
     SWIGTYPE_p_p_char namepp = tiledb.new_charpp(); // useless in this method
@@ -230,6 +231,7 @@ public class Group implements AutoCloseable {
    * @throws TileDBError
    */
   public String getMemberNameByIndex(BigInteger index) throws TileDBError {
+    Util.checkBigIntegerRange(index);
     SWIGTYPE_p_tiledb_object_t objtypep = tiledb.new_tiledb_object_tp();
     SWIGTYPE_p_p_char uripp = tiledb.new_charpp(); // useless in this method
     SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
@@ -287,6 +289,7 @@ public class Group implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public Pair<String, NativeArray> getMetadataFromIndex(BigInteger index) throws TileDBError {
+    Util.checkBigIntegerRange(index);
     if (!isOpen()) throw new TileDBError("Group with URI: " + uri + " is closed");
     SWIGTYPE_p_p_char key = tiledb.new_charpp();
     SWIGTYPE_p_unsigned_int key_len = tiledb.new_uintp();

@@ -115,6 +115,7 @@ public class SubArray implements AutoCloseable {
    */
   public synchronized SubArray addPointRanges(int dimIdx, Object start, BigInteger count)
       throws TileDBError {
+    Util.checkBigIntegerRange(count);
     Datatype dimType;
     int values[];
     try (ArraySchema schema = array.getSchema();
@@ -395,6 +396,7 @@ public class SubArray implements AutoCloseable {
    */
   public synchronized Pair<Long, Long> getRangeVarSize(int dimIdx, BigInteger rangeIdx)
       throws TileDBError {
+    Util.checkBigIntegerRange(rangeIdx);
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
     try {
@@ -418,6 +420,7 @@ public class SubArray implements AutoCloseable {
    */
   public synchronized Pair<Long, Long> getRangeVarSizeByName(String name, BigInteger rangeIdx)
       throws TileDBError {
+    Util.checkBigIntegerRange(rangeIdx);
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
     try {
@@ -442,6 +445,7 @@ public class SubArray implements AutoCloseable {
    */
   public synchronized Pair<String, String> getRangeVar(int dimIdx, BigInteger rangeIdx)
       throws TileDBError {
+    Util.checkBigIntegerRange(rangeIdx);
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
         Domain domain = schema.getDomain()) {
@@ -478,6 +482,7 @@ public class SubArray implements AutoCloseable {
    */
   public synchronized Pair<String, String> getRangeVarByName(String name, BigInteger rangeIdx)
       throws TileDBError {
+    Util.checkBigIntegerRange(rangeIdx);
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
         Domain domain = schema.getDomain()) {

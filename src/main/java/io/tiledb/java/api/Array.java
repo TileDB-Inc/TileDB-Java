@@ -266,6 +266,7 @@ public class Array implements AutoCloseable {
       byte[] key,
       BigInteger timestamp_end)
       throws TileDBError {
+    Util.checkBigIntegerRange(timestamp_end);
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
       ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
@@ -316,6 +317,8 @@ public class Array implements AutoCloseable {
       BigInteger timestamp_start,
       BigInteger timestamp_end)
       throws TileDBError {
+    Util.checkBigIntegerRange(timestamp_start);
+    Util.checkBigIntegerRange(timestamp_end);
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
       ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
@@ -366,6 +369,7 @@ public class Array implements AutoCloseable {
 
   private synchronized void openArray(
       Context ctx, String uri, QueryType query_type, BigInteger timestamp_end) throws TileDBError {
+    Util.checkBigIntegerRange(timestamp_end);
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
       ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
@@ -406,6 +410,8 @@ public class Array implements AutoCloseable {
       BigInteger timestamp_start,
       BigInteger timestamp_end)
       throws TileDBError {
+    Util.checkBigIntegerRange(timestamp_start);
+    Util.checkBigIntegerRange(timestamp_end);
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
       ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
@@ -998,7 +1004,7 @@ public class Array implements AutoCloseable {
    */
   public Pair<String, NativeArray> getMetadataFromIndex(BigInteger index) throws TileDBError {
     checkIsOpen();
-
+    Util.checkBigIntegerRange(index);
     SWIGTYPE_p_p_char key = tiledb.new_charpp();
     SWIGTYPE_p_unsigned_int key_len = tiledb.new_uintp();
     SWIGTYPE_p_tiledb_datatype_t value_type = tiledb.new_tiledb_datatype_tp();
@@ -1130,6 +1136,7 @@ public class Array implements AutoCloseable {
    * bound. The default value is `0`.
    */
   public void setOpenTimestampStart(BigInteger timestamp) throws TileDBError {
+    Util.checkBigIntegerRange(timestamp);
     try {
       ctx.handleError(
           tiledb.tiledb_array_set_open_timestamp_start(ctx.getCtxp(), getArrayp(), timestamp));
@@ -1144,6 +1151,7 @@ public class Array implements AutoCloseable {
    * current timestamp when an array is opened. The default value is `UINT64_MAX`.
    */
   public void setOpenTimestampEnd(BigInteger timestamp) throws TileDBError {
+    Util.checkBigIntegerRange(timestamp);
     try {
       ctx.handleError(
           tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), getArrayp(), timestamp));

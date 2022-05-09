@@ -116,6 +116,8 @@ public class ArraySchemaEvolution implements AutoCloseable {
    * @throws TileDBError
    */
   public void setTimeStampRange(BigInteger high, BigInteger low) throws TileDBError {
+    Util.checkBigIntegerRange(high);
+    Util.checkBigIntegerRange(low);
     try {
       ctx.handleError(
           tiledb.tiledb_array_schema_evolution_set_timestamp_range(
