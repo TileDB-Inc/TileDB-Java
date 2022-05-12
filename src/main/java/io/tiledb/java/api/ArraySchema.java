@@ -702,6 +702,10 @@ public class ArraySchema implements AutoCloseable {
     return schemap;
   }
 
+  public SWIGTYPE_p_p_tiledb_array_schema_t getSchemapp() {
+    return schemapp;
+  }
+
   /** @return The schema Context. */
   public Context getCtx() {
     return ctx;

@@ -8,12 +8,19 @@
 
 package io.tiledb.libtiledb;
 
-public interface tiledbConstants {
-  public static final int TILEDB_COMPRESSION_FILTER_DEFAULT_LEVEL = (-30000);
-  public static final int TILEDB_ERR = (-1);
-  public static final int TILEDB_OK = 0;
-  public static final int TILEDB_OOM = (-2);
-  public static final int TILEDB_VERSION_MAJOR = 2;
-  public static final int TILEDB_VERSION_MINOR = 9;
-  public static final int TILEDB_VERSION_PATCH = 0;
+public class SWIGTYPE_p_tiledb_mime_type_t {
+  private transient long swigCPtr;
+
+  protected SWIGTYPE_p_tiledb_mime_type_t(
+      long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+    swigCPtr = cPtr;
+  }
+
+  protected SWIGTYPE_p_tiledb_mime_type_t() {
+    swigCPtr = 0;
+  }
+
+  protected static long getCPtr(SWIGTYPE_p_tiledb_mime_type_t obj) {
+    return (obj == null) ? 0 : obj.swigCPtr;
+  }
 }

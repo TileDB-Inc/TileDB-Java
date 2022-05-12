@@ -525,6 +525,11 @@ public class Array implements AutoCloseable {
     consolidate(ctx, uri, encryption_type, key, new Config());
   }
 
+  public static void consolidate() {
+    // TODO consolidate fragments. This method seems unstable in the core library for now. Will be
+    // implemented in the JAVA API as soon as it is stable.
+  }
+
   /**
    * Consolidates the fragments of an array into a single fragment.
    *

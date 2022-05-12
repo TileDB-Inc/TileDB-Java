@@ -247,6 +247,16 @@ public class tiledbJNI {
 
   public static final native int intp_value(long jarg1);
 
+  public static final native long new_sizep();
+
+  public static final native long copy_sizep(long jarg1);
+
+  public static final native void delete_sizep(long jarg1);
+
+  public static final native void sizep_assign(long jarg1, long jarg2);
+
+  public static final native long sizep_value(long jarg1);
+
   public static final native long new_floatp();
 
   public static final native long copy_floatp(float jarg1);
@@ -737,9 +747,9 @@ public class tiledbJNI {
 
   public static final native long tiledb_max_path();
 
-  public static final native java.math.BigInteger tiledb_datatype_size(int jarg1);
-
   public static final native java.math.BigInteger tiledb_offset_size();
+
+  public static final native java.math.BigInteger tiledb_datatype_size(int jarg1);
 
   public static final native java.math.BigInteger tiledb_timestamp_now_ms();
 
@@ -788,9 +798,9 @@ public class tiledbJNI {
   public static final native int tiledb_config_get(
       long jarg1, String jarg2, long jarg3, long jarg4);
 
-  public static final native int tiledb_config_load_from_file(long jarg1, String jarg2, long jarg3);
-
   public static final native int tiledb_config_unset(long jarg1, String jarg2, long jarg3);
+
+  public static final native int tiledb_config_load_from_file(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_config_save_to_file(long jarg1, String jarg2, long jarg3);
 
@@ -1521,6 +1531,9 @@ public class tiledbJNI {
   public static final native int tiledb_fragment_info_load_with_key(
       long jarg1, long jarg2, int jarg3, long jarg4, long jarg5);
 
+  public static final native int tiledb_fragment_info_get_fragment_name(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
   public static final native int tiledb_fragment_info_get_fragment_num(
       long jarg1, long jarg2, long jarg3);
 
@@ -1645,6 +1658,9 @@ public class tiledbJNI {
 
   public static final native int tiledb_ctx_alloc_with_error(long jarg1, long jarg2, long jarg3);
 
+  public static final native int tiledb_array_consolidate_fragments(
+      long jarg1, String jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5);
+
   public static final native int tiledb_group_alloc(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_group_open(long jarg1, long jarg2, int jarg3);
@@ -1701,6 +1717,27 @@ public class tiledbJNI {
 
   public static final native int tiledb_group_dump_str(
       long jarg1, long jarg2, long jarg3, short jarg4);
+
+  public static final native int tiledb_filestore_schema_create(
+      long jarg1, String jarg2, long jarg3);
+
+  public static final native int tiledb_filestore_uri_import(
+      long jarg1, String jarg2, String jarg3, int jarg4);
+
+  public static final native int tiledb_filestore_uri_export(
+      long jarg1, String jarg2, String jarg3);
+
+  public static final native int tiledb_filestore_buffer_import(
+      long jarg1, String jarg2, long jarg3, long jarg4, int jarg5);
+
+  public static final native int tiledb_filestore_buffer_export(
+      long jarg1, String jarg2, long jarg3, long jarg4, long jarg5);
+
+  public static final native int tiledb_filestore_size(long jarg1, String jarg2, long jarg3);
+
+  public static final native int tiledb_mime_type_to_str(int jarg1, long jarg2);
+
+  public static final native int tiledb_mime_type_from_str(String jarg1, long jarg2);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);
 
