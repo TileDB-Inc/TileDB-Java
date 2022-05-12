@@ -166,6 +166,7 @@ public class NativeArray implements AutoCloseable {
           return ((double[]) buffer).length;
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           return ((byte[]) buffer).length;
         }
@@ -253,6 +254,7 @@ public class NativeArray implements AutoCloseable {
           break;
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           int8_tArray = Utils.newInt8_tArray((byte[]) buffer);
           break;
@@ -351,6 +353,7 @@ public class NativeArray implements AutoCloseable {
           break;
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           int8_tArray = new int8_tArray(size);
           break;
@@ -450,6 +453,7 @@ public class NativeArray implements AutoCloseable {
           return doubleArray.getitem(index);
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           return int8_tArray.getitem(index);
         }
@@ -541,6 +545,7 @@ public class NativeArray implements AutoCloseable {
           break;
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           int8_tArray.setitem(index, (byte) value);
           break;
@@ -643,6 +648,7 @@ public class NativeArray implements AutoCloseable {
           return PointerUtils.toVoid(doubleArray);
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           return PointerUtils.toVoid(int8_tArray);
         }
@@ -722,6 +728,7 @@ public class NativeArray implements AutoCloseable {
           return PointerUtils.toCPtr(doubleArray);
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           return PointerUtils.toCPtr(int8_tArray);
         }
@@ -833,6 +840,7 @@ public class NativeArray implements AutoCloseable {
           return Utils.doubleArrayGet(doubleArray, position, elements);
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           return Utils.int8ArrayGet(int8_tArray, position, elements);
         }
@@ -914,6 +922,7 @@ public class NativeArray implements AutoCloseable {
           break;
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
           break;
@@ -1005,6 +1014,7 @@ public class NativeArray implements AutoCloseable {
           break;
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
           break;

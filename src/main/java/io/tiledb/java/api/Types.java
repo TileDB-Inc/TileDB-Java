@@ -40,6 +40,7 @@ public class Types {
     } else if (atrrType.equals(double[].class)) {
       return TILEDB_FLOAT64;
     } else if (atrrType.equals(byte[].class)) {
+      // conflict when byte refers to TILEDB_BLOB
       return TILEDB_INT8;
     } else if (atrrType.equals(short[].class)) {
       return TILEDB_INT16;
@@ -64,7 +65,6 @@ public class Types {
     } else if (atrrType.equals(Boolean.class)) {
       return TILEDB_INT8;
     } else {
-      //      return TILEDB_INT8;
       throw new TileDBError("Not supported getType: " + atrrType);
     }
   }
@@ -80,6 +80,7 @@ public class Types {
           return Double.class;
         }
       case TILEDB_INT8:
+      case TILEDB_BLOB:
         {
           return Byte.class;
         }
