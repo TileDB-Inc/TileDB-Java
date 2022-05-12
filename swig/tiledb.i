@@ -61,6 +61,7 @@ import java.nio.ByteBuffer;
 
 %include "cpointer.i"
 %pointer_functions(int, intp);
+%pointer_functions(size_t, sizep);
 %pointer_functions(float, floatp);
 %pointer_functions(void **, voidppp);
 %pointer_functions(int *, intpp);

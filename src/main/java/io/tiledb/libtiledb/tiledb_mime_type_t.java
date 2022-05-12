@@ -8,50 +8,39 @@
 
 package io.tiledb.libtiledb;
 
-public enum tiledb_filter_type_t {
-  TILEDB_FILTER_NONE(0),
-  TILEDB_FILTER_GZIP(1),
-  TILEDB_FILTER_ZSTD(2),
-  TILEDB_FILTER_LZ4(3),
-  TILEDB_FILTER_RLE(4),
-  TILEDB_FILTER_BZIP2(5),
-  TILEDB_FILTER_DOUBLE_DELTA(6),
-  TILEDB_FILTER_BIT_WIDTH_REDUCTION(7),
-  TILEDB_FILTER_BITSHUFFLE(8),
-  TILEDB_FILTER_BYTESHUFFLE(9),
-  TILEDB_FILTER_POSITIVE_DELTA(10),
-  TILEDB_FILTER_CHECKSUM_MD5(12),
-  TILEDB_FILTER_CHECKSUM_SHA256(13),
-  TILEDB_FILTER_DICTIONARY(14);
+public enum tiledb_mime_type_t {
+  TILEDB_MIME_AUTODETECT(0),
+  TILEDB_MIME_TIFF(1),
+  TILEDB_MIME_PDF(2);
 
   public final int swigValue() {
     return swigValue;
   }
 
-  public static tiledb_filter_type_t swigToEnum(int swigValue) {
-    tiledb_filter_type_t[] swigValues = tiledb_filter_type_t.class.getEnumConstants();
+  public static tiledb_mime_type_t swigToEnum(int swigValue) {
+    tiledb_mime_type_t[] swigValues = tiledb_mime_type_t.class.getEnumConstants();
     if (swigValue < swigValues.length
         && swigValue >= 0
         && swigValues[swigValue].swigValue == swigValue) return swigValues[swigValue];
-    for (tiledb_filter_type_t swigEnum : swigValues)
+    for (tiledb_mime_type_t swigEnum : swigValues)
       if (swigEnum.swigValue == swigValue) return swigEnum;
     throw new IllegalArgumentException(
-        "No enum " + tiledb_filter_type_t.class + " with value " + swigValue);
+        "No enum " + tiledb_mime_type_t.class + " with value " + swigValue);
   }
 
   @SuppressWarnings("unused")
-  private tiledb_filter_type_t() {
+  private tiledb_mime_type_t() {
     this.swigValue = SwigNext.next++;
   }
 
   @SuppressWarnings("unused")
-  private tiledb_filter_type_t(int swigValue) {
+  private tiledb_mime_type_t(int swigValue) {
     this.swigValue = swigValue;
     SwigNext.next = swigValue + 1;
   }
 
   @SuppressWarnings("unused")
-  private tiledb_filter_type_t(tiledb_filter_type_t swigEnum) {
+  private tiledb_mime_type_t(tiledb_mime_type_t swigEnum) {
     this.swigValue = swigEnum.swigValue;
     SwigNext.next = this.swigValue + 1;
   }
