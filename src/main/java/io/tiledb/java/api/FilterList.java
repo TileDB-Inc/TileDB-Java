@@ -84,6 +84,12 @@ public class FilterList implements AutoCloseable {
         return new BitWidthReductionFilter(this.ctx, _filterpp);
       case TILEDB_FILTER_POSITIVE_DELTA:
         return new PositiveDeltaFilter(this.ctx, _filterpp);
+      case TILEDB_FILTER_CHECKSUM_MD5:
+        return new CheckSumMD5Filter(this.ctx, _filterpp);
+      case TILEDB_FILTER_CHECKSUM_SHA256:
+        return new CheckSumSHA256Filter(this.ctx, _filterpp);
+      case TILEDB_FILTER_DICTIONARY:
+        return new DictionaryFilter(this.ctx, _filterpp);
       default:
         {
           tiledb.delete_tiledb_filter_tpp(_filterpp);
