@@ -56,6 +56,8 @@ public class QueryTest {
       // a character on "a1" and a vector of two floats on "a2".
       Attribute a1 = new Attribute(ctx, "a1", Character.class);
       Attribute a2 = new Attribute(ctx, "a2", Float.class);
+      a1.setFilterList(new FilterList(ctx).addFilter(new CheckSumMD5Filter(ctx)));
+      a2.setFilterList(new FilterList(ctx).addFilter(new CheckSumSHA256Filter(ctx)));
       a2.setCellValNum(2);
 
       ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);

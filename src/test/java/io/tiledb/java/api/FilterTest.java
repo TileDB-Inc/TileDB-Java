@@ -1,9 +1,37 @@
 package io.tiledb.java.api;
 
+import static io.tiledb.java.api.ArrayType.TILEDB_DENSE;
+import static io.tiledb.java.api.Layout.TILEDB_GLOBAL_ORDER;
+import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
+import static io.tiledb.java.api.QueryType.TILEDB_READ;
+import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class FilterTest {
+  private Context ctx;
+  private String arrayURI;
+
+  @Before
+  public void before() throws TileDBError {
+    this.ctx = new Context();
+    this.arrayURI = "dict_filter_array";
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
+
+  @After
+  public void after() throws TileDBError {
+    if (Files.exists(Paths.get(arrayURI))) {
+      TileDBObject.remove(ctx, arrayURI);
+    }
+  }
 
   @Test
   public void testNoneFiler() throws Exception {
@@ -118,6 +146,107 @@ public class FilterTest {
       try (PositiveDeltaFilter filter = new PositiveDeltaFilter(ctx)) {
         Assert.assertTrue(filter.getWindow() > 0);
       }
+    }
+  }
+
+  @Test
+  public void testCheckSumMD5() throws Exception {
+    try (Context ctx = new Context();
+        CheckSumMD5Filter filter = new CheckSumMD5Filter(ctx)) {}
+  }
+
+  @Test
+  public void testCheckSumSHA256() throws Exception {
+    try (Context ctx = new Context();
+        CheckSumSHA256Filter filter = new CheckSumSHA256Filter(ctx)) {}
+  }
+
+  @Test
+  public void testDictionaryFilter() throws Exception {
+    try (Context ctx = new Context()) {
+      try (DictionaryFilter filter = new DictionaryFilter(ctx, 5)) {
+        Assert.assertEquals(filter.getLevel(), 5);
+      }
+      try (DictionaryFilter filter = new DictionaryFilter(ctx)) {
+        Assert.assertEquals(filter.getLevel(), -1);
+      }
+    }
+  }
+
+  public void arrayCreate() throws TileDBError {
+    Dimension<Integer> d1 =
+        new Dimension<Integer>(ctx, "d1", Datatype.TILEDB_INT32, new Pair<>(0, 5), 1);
+
+    // Create and set getDomain
+    Domain domain = new Domain(ctx);
+    domain.addDimension(d1);
+
+    Attribute a1 = new Attribute(ctx, "a1", Datatype.TILEDB_STRING_ASCII);
+    a1.setCellVar();
+    // add dictionary filter to variable length string attribute
+    a1.setFilterList(new FilterList(ctx).addFilter(new DictionaryFilter(ctx)));
+
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
+    schema.setDomain(domain);
+    schema.addAttribute(a1);
+
+    Array.create(arrayURI, schema);
+  }
+
+  public void arrayWrite() throws TileDBError {
+
+    NativeArray a1_data =
+        new NativeArray(
+            ctx, "foo" + "foo" + "foobar" + "bar" + "bar" + "bar", Datatype.TILEDB_STRING_ASCII);
+    NativeArray a1_off =
+        new NativeArray(ctx, new long[] {0, 3, 6, 12, 15, 18}, Datatype.TILEDB_UINT64);
+
+    // Create query
+    Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+    Query query = new Query(array);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
+
+    query.setBuffer("a1", a1_off, a1_data);
+
+    // Submit query
+    query.submit();
+
+    query.finalizeQuery();
+    query.close();
+    array.close();
+  }
+
+  @Test
+  public void testDictionaryFilterWithData() throws TileDBError {
+    arrayCreate();
+    arrayWrite();
+
+    NativeArray subarray = new NativeArray(ctx, new int[] {0, 5}, Integer.class);
+    // Create array and query
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+        ArraySchema schema = array.getSchema();
+        Query query = new Query(array, TILEDB_READ)) {
+
+      query.setSubarray(subarray);
+
+      query.setLayout(TILEDB_ROW_MAJOR);
+
+      NativeArray a1Data = new NativeArray(ctx, 100, Datatype.TILEDB_STRING_ASCII);
+      NativeArray a1Offsets = new NativeArray(ctx, 100, Datatype.TILEDB_UINT64);
+
+      query.setBuffer("a1", a1Offsets, a1Data);
+
+      // Submit query
+      query.submit();
+
+      long[] a1_offsets = (long[]) query.getVarBuffer("a1");
+      byte[] a1_data = (byte[]) query.getBuffer("a1");
+
+      Assert.assertArrayEquals(a1_offsets, new long[] {0, 3, 6, 12, 15, 18});
+      String[] results = Util.bytesToStrings(a1_offsets, a1_data);
+      Assert.assertArrayEquals(new String[] {"foo", "foo", "foobar", "bar", "bar", "bar"}, results);
     }
   }
 }
