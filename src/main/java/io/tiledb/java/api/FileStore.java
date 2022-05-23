@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020 TileDB, Inc.
+ * Copyright (c) 2022 TileDB, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,11 +44,10 @@ public class FileStore {
     try {
       ctx.handleError(tiledb.tiledb_filestore_schema_create(ctx.getCtxp(), uri, array_schema_pp));
       return new ArraySchema(ctx, array_schema_pp);
-
-    } catch (Exception e) {
+    } catch (TileDBError err) {
       tiledb.delete_tiledb_array_schema_tpp(array_schema_pp);
+      throw err;
     }
-    return null;
   }
 
   /**
@@ -62,9 +61,13 @@ public class FileStore {
    */
   public static void uriImport(
       Context ctx, String filestoreArrayURI, String fileURI, MimeType mimeType) throws TileDBError {
-    ctx.handleError(
-        tiledb.tiledb_filestore_uri_import(
-            ctx.getCtxp(), filestoreArrayURI, fileURI, mimeType.toSwigEnum()));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_filestore_uri_import(
+              ctx.getCtxp(), filestoreArrayURI, fileURI, mimeType.toSwigEnum()));
+    } catch (TileDBError error) {
+      throw error;
+    }
   }
 
   /**
@@ -77,7 +80,12 @@ public class FileStore {
    */
   public static void uriExport(Context ctx, String filestoreArrayURI, String fileURI)
       throws TileDBError {
-    ctx.handleError(tiledb.tiledb_filestore_uri_export(ctx.getCtxp(), fileURI, filestoreArrayURI));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_filestore_uri_export(ctx.getCtxp(), fileURI, filestoreArrayURI));
+    } catch (TileDBError error) {
+      throw error;
+    }
   }
 
   /**
@@ -93,9 +101,13 @@ public class FileStore {
   public static void bufferImport(
       Context ctx, String arrayUri, NativeArray buffer, long bufferSize, MimeType mimeType)
       throws TileDBError {
-    ctx.handleError(
-        tiledb.tiledb_filestore_buffer_import(
-            ctx.getCtxp(), arrayUri, buffer.toVoidPointer(), bufferSize, mimeType.toSwigEnum()));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_filestore_buffer_import(
+              ctx.getCtxp(), arrayUri, buffer.toVoidPointer(), bufferSize, mimeType.toSwigEnum()));
+    } catch (TileDBError error) {
+      throw error;
+    }
   }
 
   /**
@@ -115,8 +127,8 @@ public class FileStore {
       ctx.handleError(
           tiledb.tiledb_filestore_buffer_export(
               ctx.getCtxp(), filestoreArrayURI, offset, buffer.toVoidPointer(), bufferLength));
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (TileDBError err) {
+      throw err;
     }
     return buffer.toJavaArray();
   }

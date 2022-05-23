@@ -93,37 +93,6 @@ public class FragmentsConsolidationTest {
     Assert.assertEquals(1, nFiles);
   }
 
-  //  @Test
-  //  public void testVacuumStartEnd() throws Exception {
-  //    Config config = new Config();
-  //    config.set("sm.vacuum.timestamp_start", "0");
-  //    config.set("sm.vacuum.timestamp_end", "20");
-  //    ctx = new Context(config);
-  //    // create array
-  //    arrayCreate();
-  //    // updates
-  //    arrayWrite1();
-  //    arrayWrite2();
-  //    arrayWrite3();
-  //
-  //    // consolidate
-  //    Array.consolidate(ctx, arrayURI);
-  //    Array.vacuum(ctx, arrayURI);
-  //
-  //    // verify consolidation
-  //    arrayRead();
-  //
-  //    // verify vacuum
-  //    File f = new File(arrayURI);
-  //    int nFiles = 0;
-  //    for (File file : Objects.requireNonNull(f.listFiles())) {
-  //      if (file.isDirectory() && file.getName().equals("__fragments")) {
-  //        nFiles = Objects.requireNonNull(file.listFiles()).length;
-  //      }
-  //    }
-  //    Assert.assertEquals(2, nFiles);
-  //  }
-
   public void arrayCreate() throws Exception {
 
     // Create getDimensions

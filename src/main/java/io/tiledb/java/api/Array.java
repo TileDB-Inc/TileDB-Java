@@ -525,9 +525,37 @@ public class Array implements AutoCloseable {
     consolidate(ctx, uri, encryption_type, key, new Config());
   }
 
-  public static void consolidate() {
-    // TODO consolidate fragments. This method seems unstable in the core library for now. Will be
-    // implemented in the JAVA API as soon as it is stable.
+  /**
+   * Consolidates the given fragment URIs into a single fragment.
+   *
+   * <p>Note: This API needs to be used with caution until we implement consolidation with
+   * timestamps. For now, if the non-empty domain of the consolidated fragments overlap anything in
+   * the fragments that come in between, this could lead to unpredictable behavior.
+   *
+   * @param ctx A TileDB Context
+   * @param uri URI string to TileDB array
+   * @param fragURIs The URIs of the fragments to consolidate
+   * @param numFragments The number of fragments to consolidate
+   * @param config The TileDB config
+   */
+  public static void consolidate(
+      Context ctx, String uri, String[] fragURIs, int numFragments, Config config)
+      throws TileDBError {
+    // TODO
+    //    NativeArray uris = new NativeArray(ctx, fragURIs[0], Datatype.TILEDB_STRING_ASCII,
+    // numFragments);
+    //
+    //    try {
+    //      ctx.handleError(
+    //          tiledb.tiledb_array_consolidate_fragments(
+    //              ctx.getCtxp(),
+    //              uri,
+    //              uris.toCharpp(),
+    //              BigInteger.valueOf(numFragments),
+    //              config.getConfigp()));
+    //    } catch (TileDBError error) {
+    //      throw error;
+    //    }
   }
 
   /**
