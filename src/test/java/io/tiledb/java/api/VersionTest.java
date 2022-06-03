@@ -34,7 +34,7 @@ public class VersionTest {
     Version version = new Version();
     System.out.println(version);
     Assert.assertTrue(version.getMajor() >= 2);
-    Assert.assertTrue(version.getMinor() >= 6);
-    Assert.assertTrue(version.getRevision() >= 0);
+    Assert.assertTrue(version.getMinor() >= 9);
+    Assert.assertTrue(version.getRevision() >= 3);
   }
 }
