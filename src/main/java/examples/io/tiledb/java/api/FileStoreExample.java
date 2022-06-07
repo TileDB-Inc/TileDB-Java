@@ -39,8 +39,7 @@ public class FileStoreExample {
         "<FILENAME>",
         MimeType.TILEDB_MIME_AUTODETECT);
 
-    // Export/download the file from TileDB and save it with a given name. Use s3 link for this
-    // operation!
-    FileStore.uriExport(ctx, "s3://<BUCKET_NAME>/<ARRAY_NAME>", "<OUTPUT_FILENAME>");
+    // Export/download the file from TileDB and save it with a given name.
+    FileStore.uriExport(ctx, "tiledb://<NAMESPACE_NAME>/<ARRAY_NAME>", "<OUTPUT_FILENAME>");
   }
 }
