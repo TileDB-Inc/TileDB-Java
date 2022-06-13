@@ -29,6 +29,7 @@ import io.tiledb.libtiledb.SWIGTYPE_p_p_char;
 import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_config_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_group_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_p_void;
+import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_config_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_datatype_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_group_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_object_t;
@@ -375,6 +376,41 @@ public class Group implements AutoCloseable {
             value.getNativeType().toSwigEnum(),
             value.getSize(),
             value.toVoidPointer()));
+  }
+
+  /**
+   * Cleans up the group metadata Note that this will coarsen the granularity of time traveling (see
+   * docs for more information).
+   *
+   * @param config Configuration parameters for the vacuuming. (`null` means default, which will use
+   *     the config from `ctx`).
+   * @throws TileDBError
+   */
+  public void vacuumMetadata(Config config) throws TileDBError {
+    SWIGTYPE_p_tiledb_config_t configp = null;
+    try {
+      configp = config.getConfigp();
+    } catch (NullPointerException e) {
+      // using null/default
+    }
+    ctx.handleError(tiledb.tiledb_group_vacuum_metadata(ctx.getCtxp(), uri, configp));
+  }
+
+  /**
+   * Consolidates the group metadata into a single group metadata file.
+   *
+   * @param config Configuration parameters for the vacuuming. (`null` means default, which will use
+   *     the config from `ctx`).
+   * @throws TileDBError
+   */
+  public void consolidateMetadata(Config config) throws TileDBError {
+    SWIGTYPE_p_tiledb_config_t configp = null;
+    try {
+      configp = config.getConfigp();
+    } catch (NullPointerException e) {
+      // using null/default
+    }
+    ctx.handleError(tiledb.tiledb_group_consolidate_metadata(ctx.getCtxp(), uri, configp));
   }
 
   /** Close resources */
