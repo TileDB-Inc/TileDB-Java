@@ -251,12 +251,6 @@ jobs:
           mkdir jars
           cp ./build/libs/*.jar jars
 
-      - uses: mikepenz/release-changelog-builder-action@v2
-        name: Build Changelog
-        id: github_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
