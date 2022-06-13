@@ -63,7 +63,7 @@ public class Types {
     } else if (atrrType.equals(Short.class)) {
       return TILEDB_INT16;
     } else if (atrrType.equals(Boolean.class)) {
-      return TILEDB_INT8;
+      return TILEDB_BOOL;
     } else {
       throw new TileDBError("Not supported getType: " + atrrType);
     }
@@ -97,6 +97,7 @@ public class Types {
           return Long.class;
         }
       case TILEDB_UINT8:
+      case TILEDB_BOOL:
         {
           return Short.class;
         }
