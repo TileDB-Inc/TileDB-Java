@@ -197,5 +197,11 @@ public class GroupTest {
     Assert.assertFalse(group.hasMetadataKey("key4"));
 
     group.close();
+
+    //consolidate metadata
+    group.consolidateMetadata(null);
+
+    //vacuum metadata
+    group.vacuumMetadata(null);
   }
 }
