@@ -54,7 +54,7 @@ if (NOT TILEDB_FOUND)
           SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.10.0-rc0/tiledb-macos-x86_64-2.10.0-rc0-b3dd41e.tar.gz")
           SET(DOWNLOAD_SHA1 "4f1cd7d68d3b86f016b1058d8a1a93b65fe89e64")
         else() # Linux
-          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.10.0-rc0/tiledb-linux-x86_64-2.10.0-rc0-b3dd41e.tar.gzz")
+          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.10.0-rc0/tiledb-linux-x86_64-2.10.0-rc0-b3dd41e.tar.gz")
           SET(DOWNLOAD_SHA1 "2d6ab82ad69b0e9a5566783dcd044480874c3f57")
         endif()
 
