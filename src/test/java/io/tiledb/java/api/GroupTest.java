@@ -198,10 +198,10 @@ public class GroupTest {
 
     group.close();
 
-    //consolidate metadata
+    // consolidate metadata
     group.consolidateMetadata(null);
 
-    //vacuum metadata
+    // vacuum metadata
     group.vacuumMetadata(null);
   }
 }
