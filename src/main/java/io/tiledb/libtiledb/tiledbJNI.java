@@ -1718,6 +1718,11 @@ public class tiledbJNI {
   public static final native int tiledb_group_dump_str(
       long jarg1, long jarg2, long jarg3, short jarg4);
 
+  public static final native int tiledb_group_consolidate_metadata(
+      long jarg1, String jarg2, long jarg3);
+
+  public static final native int tiledb_group_vacuum_metadata(long jarg1, String jarg2, long jarg3);
+
   public static final native int tiledb_filestore_schema_create(
       long jarg1, String jarg2, long jarg3);
 
