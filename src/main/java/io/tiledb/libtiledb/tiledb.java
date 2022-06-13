@@ -4950,6 +4950,22 @@ public class tiledb implements tiledbConstants {
         recursive);
   }
 
+  public static int tiledb_group_consolidate_metadata(
+      SWIGTYPE_p_tiledb_ctx_t ctx, String group_uri, SWIGTYPE_p_tiledb_config_t config) {
+    return tiledbJNI.tiledb_group_consolidate_metadata(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        group_uri,
+        SWIGTYPE_p_tiledb_config_t.getCPtr(config));
+  }
+
+  public static int tiledb_group_vacuum_metadata(
+      SWIGTYPE_p_tiledb_ctx_t ctx, String group_uri, SWIGTYPE_p_tiledb_config_t config) {
+    return tiledbJNI.tiledb_group_vacuum_metadata(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        group_uri,
+        SWIGTYPE_p_tiledb_config_t.getCPtr(config));
+  }
+
   public static int tiledb_filestore_schema_create(
       SWIGTYPE_p_tiledb_ctx_t ctx, String uri, SWIGTYPE_p_p_tiledb_array_schema_t array_schema) {
     return tiledbJNI.tiledb_filestore_schema_create(
