@@ -29,6 +29,7 @@ import static io.tiledb.java.api.Datatype.TILEDB_UINT8;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
 import static io.tiledb.libtiledb.tiledb_query_condition_combination_op_t.TILEDB_AND;
+import static io.tiledb.libtiledb.tiledb_query_condition_combination_op_t.TILEDB_OR;
 import static io.tiledb.libtiledb.tiledb_query_condition_op_t.TILEDB_EQ;
 import static io.tiledb.libtiledb.tiledb_query_condition_op_t.TILEDB_GT;
 
@@ -134,7 +135,9 @@ public class QueryConditionTest {
       QueryCondition con1 = new QueryCondition(ctx, "a2", 15.0f, Float.class, TILEDB_GT);
       QueryCondition con2 = new QueryCondition(ctx, "a1", 0, null, TILEDB_EQ);
       QueryCondition con3 = con1.combine(con2, TILEDB_AND);
-      query.setCondition(con3);
+      QueryCondition con4 = new QueryCondition(ctx, "a1", 9, Integer.class, TILEDB_EQ);
+      QueryCondition con5 = con3.combine(con4, TILEDB_OR);
+      query.setCondition(con5);
 
       // Submit query
       query.submit();
@@ -156,23 +159,14 @@ public class QueryConditionTest {
       Assert.assertArrayEquals(
           a1_buff,
           new int[] {
-            -2147483648,
-            -2147483648,
-            -2147483648,
-            -2147483648,
-            -2147483648,
-            13,
-            -2147483648,
-            -2147483648,
-            16
+            -2147483648, 9, -2147483648, -2147483648, -2147483648, 13, -2147483648, -2147483648, 16
           });
 
       // check a2
       Assert.assertArrayEquals(
           a2_buff,
           new float[] {
-            Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 15.3f, Float.NaN, Float.NaN,
-            19.1f
+            Float.NaN, 14.1f, Float.NaN, Float.NaN, Float.NaN, 15.3f, Float.NaN, Float.NaN, 19.1f
           },
           0.1f);
     }
