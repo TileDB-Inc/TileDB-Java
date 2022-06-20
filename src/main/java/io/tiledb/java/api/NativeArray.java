@@ -171,31 +171,19 @@ public class NativeArray implements AutoCloseable {
           return ((byte[]) buffer).length;
         }
       case TILEDB_INT16:
-        {
-          return ((short[]) buffer).length;
-        }
-      case TILEDB_INT32:
-        {
-          return ((int[]) buffer).length;
-        }
-      case TILEDB_INT64:
-        {
-          return ((long[]) buffer).length;
-        }
       case TILEDB_UINT8:
       case TILEDB_BOOL:
         {
           return ((short[]) buffer).length;
         }
+      case TILEDB_INT32:
       case TILEDB_UINT16:
         {
           return ((int[]) buffer).length;
         }
-      case TILEDB_UINT32:
-        {
-          return ((long[]) buffer).length;
-        }
+      case TILEDB_INT64:
       case TILEDB_UINT64:
+      case TILEDB_UINT32:
         {
           return ((long[]) buffer).length;
         }

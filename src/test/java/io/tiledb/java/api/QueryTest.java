@@ -56,6 +56,7 @@ public class QueryTest {
       // a character on "a1" and a vector of two floats on "a2".
       Attribute a1 = new Attribute(ctx, "a1", Character.class);
       Attribute a2 = new Attribute(ctx, "a2", Float.class);
+      Attribute a3 = new Attribute(ctx, "a3", Boolean.class);
       a1.setFilterList(new FilterList(ctx).addFilter(new CheckSumMD5Filter(ctx)));
       a2.setFilterList(new FilterList(ctx).addFilter(new CheckSumSHA256Filter(ctx)));
       a2.setCellValNum(2);
@@ -66,6 +67,7 @@ public class QueryTest {
       schema.setDomain(domain);
       schema.addAttribute(a1);
       schema.addAttribute(a2);
+      schema.addAttribute(a3);
 
       Array.create(arrayURI, schema);
     }
@@ -83,6 +85,13 @@ public class QueryTest {
                 12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
               },
               Float.class);
+      NativeArray a3 =
+          new NativeArray(
+              ctx,
+              new short[] {
+                1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              },
+              Datatype.TILEDB_BOOL);
 
       // Create query
       try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
@@ -90,6 +99,7 @@ public class QueryTest {
         query.setLayout(TILEDB_ROW_MAJOR);
         query.setBuffer("a1", a1);
         query.setBuffer("a2", a2);
+        query.setBuffer("a3", a3);
         // Submit query
         query.submit();
 
@@ -158,11 +168,13 @@ public class QueryTest {
         NativeArray dim2Array = new NativeArray(ctx, 6, Integer.class);
         NativeArray a1Array = new NativeArray(ctx, 12, Character.class);
         NativeArray a2Array = new NativeArray(ctx, 6, Float.class);
+        NativeArray a3Array = new NativeArray(ctx, 6, Boolean.class);
 
         query.setBuffer("rows", dim1Array);
         query.setBuffer("cols", dim2Array);
         query.setBuffer("a1", a1Array);
         query.setBuffer("a2", a2Array);
+        query.setBuffer("a3", a3Array);
 
         // Submit query
         query.submit();
@@ -182,11 +194,13 @@ public class QueryTest {
         int[] dim2 = (int[]) query.getBuffer("cols");
         byte[] a1 = (byte[]) query.getBuffer("a1");
         float[] a2 = (float[]) query.getBuffer("a2");
+        short[] a3 = (short[]) query.getBuffer("a3");
 
         Assert.assertArrayEquals(new int[] {1, 1, 1}, dim1);
         Assert.assertArrayEquals(new int[] {2, 3, 4}, dim2);
         Assert.assertArrayEquals(new byte[] {'b', 'c', 'd'}, a1);
         Assert.assertArrayEquals(new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f}, a2, 0.01f);
+        Assert.assertArrayEquals(new short[] {0, 1, 0}, a3);
       }
     }
 
