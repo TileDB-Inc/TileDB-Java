@@ -136,7 +136,7 @@ public class QueryConditionTest {
       QueryCondition con2 = new QueryCondition(ctx, "a1", 0, null, TILEDB_EQ);
       QueryCondition con3 = con1.combine(con2, TILEDB_AND);
       QueryCondition con4 = new QueryCondition(ctx, "a1", 9, Integer.class, TILEDB_EQ);
-      QueryCondition con5 = con3.combine(con4, TILEDB_OR);
+      QueryCondition con5 = con4.combine(con3, TILEDB_OR);
       query.setCondition(con5);
 
       // Submit query
