@@ -789,7 +789,7 @@ public class Query implements AutoCloseable {
 
     if (!offsets.getNativeType().equals(TILEDB_UINT64)) {
       throw new TileDBError(
-          "Buffer offsets should be of getType TILEDB_UINT64 or Long. Found getType: "
+          "Buffer offsets should be of getType TILEDB_UINT64. Found getType: "
               + offsets.getNativeType());
     }
 
@@ -993,7 +993,7 @@ public class Query implements AutoCloseable {
 
     if (!offsets.getNativeType().equals(TILEDB_UINT64)) {
       throw new TileDBError(
-          "Buffer offsets should be of getType TILEDB_UINT64 or Long. Found getType: "
+          "Buffer offsets should be of getType TILEDB_UINT64. Found getType: "
               + offsets.getNativeType());
     }
 
@@ -1145,7 +1145,7 @@ public class Query implements AutoCloseable {
 
     if (!offsets.getNativeType().equals(TILEDB_UINT64)) {
       throw new TileDBError(
-          "Buffer offsets should be of getType TILEDB_UINT64 or Long. Found getType: "
+          "Buffer offsets should be of getType TILEDB_UINT64. Found getType: "
               + offsets.getNativeType());
     }
     if (offsetElements <= 0 || bufferElements <= 0) {
