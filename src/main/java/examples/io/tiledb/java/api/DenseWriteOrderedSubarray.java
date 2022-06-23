@@ -37,7 +37,8 @@ public class DenseWriteOrderedSubarray {
 
     // Prepare cell buffers
     NativeArray a1_data = new NativeArray(ctx, new int[] {9, 12, 13, 11, 14, 15}, Integer.class);
-    NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 2, 3, 5, 9, 12}, Long.class);
+    NativeArray a2_offsets =
+        new NativeArray(ctx, new long[] {0, 2, 3, 5, 9, 12}, Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 = new NativeArray(ctx, "jjmnnllllooopppp", String.class);
 
     NativeArray buffer_a3 =

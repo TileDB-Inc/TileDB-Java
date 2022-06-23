@@ -61,7 +61,7 @@ public class DenseReadGlobal {
         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
     query.setBuffer(
         "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
+        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
         new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
     query.setBuffer(
         "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));

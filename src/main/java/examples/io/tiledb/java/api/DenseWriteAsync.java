@@ -51,7 +51,7 @@ public class DenseWriteAsync {
               0, 1, 3, 6, 10, 11, 13, 16,
               20, 21, 23, 26, 30, 31, 33, 36
             },
-            Long.class);
+            Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 =
         new NativeArray(
             ctx, "abbcccdddd" + "effggghhhh" + "ijjkkkllll" + "mnnooopppp", String.class);
@@ -60,16 +60,15 @@ public class DenseWriteAsync {
         new NativeArray(
             ctx,
             new float[] {
-              0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f,
-              4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f, 7.1f, 7.2f,
-              8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f,
-              12.1f, 12.2f, 13.1f, 13.2f, 14.1f, 14.2f, 15.1f, 15.2f
+              0.1f, 0.2f, 1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f, 4.1f, 4.2f, 5.1f, 5.2f, 6.1f, 6.2f,
+              7.1f, 7.2f, 8.1f, 8.2f, 9.1f, 9.2f, 10.1f, 10.2f, 11.1f, 11.2f, 12.1f, 12.2f, 13.1f,
+              13.2f, 14.1f, 14.2f, 15.1f, 15.2f
             },
             Float.class);
 
     // Create query
-    Array my_dense_array = new Array(ctx, "my_dense_array");
-    Query query = new Query(my_dense_array, TILEDB_WRITE);
+    Array my_dense_array = new Array(ctx, "my_dense_array", TILEDB_WRITE);
+    Query query = new Query(my_dense_array);
     query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);

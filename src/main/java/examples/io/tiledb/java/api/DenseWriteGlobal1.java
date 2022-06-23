@@ -50,7 +50,7 @@ public class DenseWriteGlobal1 {
               0, 1, 3, 6, 10, 11, 13, 16,
               20, 21, 23, 26, 30, 31, 33, 36
             },
-            Long.class);
+            Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 =
         new NativeArray(
             ctx, "abbcccdddd" + "effggghhhh" + "ijjkkkllll" + "mnnooopppp", String.class);
@@ -76,6 +76,5 @@ public class DenseWriteGlobal1 {
 
     // Submit query
     query.submit();
-    query.close();
   }
 }

@@ -43,11 +43,22 @@ public class GroupCreate {
 
   public static void main(String[] args) throws TileDBError {
     Context ctx = new Context();
+
+    // create groups
     Group.create(ctx, "my_group");
     Group.create(ctx, "my_group/dense_arrays");
     Group.create(ctx, "my_group/sparse_arrays");
-    Group group1 = new Group(ctx, "my_group", QueryType.TILEDB_WRITE);
-    Group group2 = new Group(ctx, "my_group/dense_arrays", QueryType.TILEDB_WRITE);
-    Group group3 = new Group(ctx, "my_group/sparse_arrays", QueryType.TILEDB_WRITE);
+
+    // open group
+    Group group = new Group(ctx, "my_group/sparse_arrays", QueryType.TILEDB_WRITE);
+
+    // add member
+    group.addMember("my_sparse_array", false, "my_sparse_array");
+
+    // reopen array in read mode
+    group.reopen(ctx, QueryType.TILEDB_READ);
+
+    // print the member count
+    System.out.println(group.getMemberCount());
   }
 }
