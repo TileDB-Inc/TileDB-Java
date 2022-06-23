@@ -37,7 +37,7 @@ public class DenseWriteSubarray {
 
     // Prepare cell buffers
     NativeArray a1_data = new NativeArray(ctx, new int[] {112, 113, 114, 115}, Integer.class);
-    NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 1, 3, 6}, Long.class);
+    NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 1, 3, 6}, Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 = new NativeArray(ctx, "mnnooopppp", String.class);
 
     NativeArray buffer_a3 =

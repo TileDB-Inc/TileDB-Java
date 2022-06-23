@@ -96,15 +96,16 @@ jobs:
         shell: bash
         name: assemble
 
-      - name: run_examples
+      - name: Run examples
         run: |
           cd build/libs
           rm *javadoc* *sources*
           p=$(readlink -f *.jar)
           cd ../../src/main/java/examples/io/tiledb/java/api
           javac -cp $p *.java
-          for x in $(ls -1 *.class | sed 's/.class//'); 
+          for x in $(ls -1 *.java | sed 's/.java//'); 
           do 
+          echo $x;
           class_name=examples.io.tiledb.java.api.$x; 
           java -cp $p $class_name; 
           done

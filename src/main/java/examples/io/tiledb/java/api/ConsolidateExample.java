@@ -24,41 +24,19 @@
 
 package examples.io.tiledb.java.api;
 
-import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
-import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+import io.tiledb.java.api.Array;
+import io.tiledb.java.api.Context;
 
-import io.tiledb.java.api.*;
-
-public class DenseWriteUnordered {
+public class ConsolidateExample {
   public static void main(String[] args) throws Exception {
-
     // Create TileDB context
     Context ctx = new Context();
+    String arrayURI = "my_dense_array";
 
-    // Prepare cell buffers
-    NativeArray a1_data = new NativeArray(ctx, new int[] {211, 213, 212, 208}, Integer.class);
-    NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 4, 6, 7}, Datatype.TILEDB_UINT64);
-    NativeArray buffer_var_a2 = new NativeArray(ctx, "wwwwyyxu", String.class);
-    NativeArray buffer_a3 =
-        new NativeArray(
-            ctx,
-            new float[] {211.1f, 211.2f, 213.1f, 213.2f, 212.1f, 212.2f, 208.1f, 208.2f},
-            Float.class);
+    // Consolidate array
+    Array.consolidate(ctx, arrayURI);
 
-    NativeArray d1 = new NativeArray(ctx, new long[] {4, 3, 3, 3}, Long.class);
-    NativeArray d2 = new NativeArray(ctx, new long[] {2, 4, 3, 1}, Long.class);
-
-    // Create query
-    Array my_dense_array = new Array(ctx, "my_dense_array", TILEDB_WRITE);
-    Query query = new Query(my_dense_array);
-    query.setLayout(TILEDB_UNORDERED);
-    query.setBuffer("d1", d1);
-    query.setBuffer("d2", d2);
-    query.setBuffer("a1", a1_data);
-    query.setBuffer("a2", a2_offsets, buffer_var_a2);
-    query.setBuffer("a3", buffer_a3);
-
-    // Submit query
-    query.submit();
+    // Vacuum array
+    Array.vacuum(ctx, arrayURI);
   }
 }

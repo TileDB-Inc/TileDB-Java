@@ -43,6 +43,8 @@ public class DenseReadAsync {
 
     // Create query
     Query query = new Query(my_dense_array, TILEDB_READ);
+    // set subarray
+    query.setSubarray(new NativeArray(ctx, new long[] {1, 4, 1, 4}, Long.class));
     query.setLayout(TILEDB_GLOBAL_ORDER);
     HashMap<String, Pair<Long, Long>> max_sizes = query.getResultEstimations();
 
@@ -50,7 +52,7 @@ public class DenseReadAsync {
         "a1", new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class));
     query.setBuffer(
         "a2",
-        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Long.class),
+        new NativeArray(ctx, max_sizes.get("a2").getFirst().intValue(), Datatype.TILEDB_UINT64),
         new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), String.class));
     query.setBuffer(
         "a3", new NativeArray(ctx, max_sizes.get("a3").getSecond().intValue(), Float.class));

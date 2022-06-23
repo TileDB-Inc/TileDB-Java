@@ -43,8 +43,9 @@ public class TileDBObjectRemove {
     Context ctx = new Context();
 
     // Delete a valid group and array
-    TileDBObject.remove(ctx, "my_group");
-    TileDBObject.remove(ctx, "my_dense_array");
+    TileDBObject.remove(ctx, "my_group_2");
+    TileDBObject.remove(ctx, "my_sparse_array");
+    TileDBObject.remove(ctx, "my_filestore");
 
     // Delete an invalid path
     try {
