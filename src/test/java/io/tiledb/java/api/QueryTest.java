@@ -54,7 +54,7 @@ public class QueryTest {
 
       // Add two attributes "a1" and "a2", so each (i,j) cell can store
       // a character on "a1" and a vector of two floats on "a2".
-      Attribute a1 = new Attribute(ctx, "a1", Character.class);
+      Attribute a1 = new Attribute(ctx, "a1", String.class);
       Attribute a2 = new Attribute(ctx, "a2", Float.class);
       Attribute a3 = new Attribute(ctx, "a3", Boolean.class);
       a1.setFilterList(new FilterList(ctx).addFilter(new CheckSumMD5Filter(ctx)));
@@ -127,7 +127,7 @@ public class QueryTest {
 
         NativeArray dim1Array = new NativeArray(ctx, 6, Integer.class);
         NativeArray dim2Array = new NativeArray(ctx, 6, Integer.class);
-        NativeArray a1Array = new NativeArray(ctx, 12, Character.class);
+        NativeArray a1Array = new NativeArray(ctx, 12, String.class);
         NativeArray a2Array = new NativeArray(ctx, 6, Float.class);
 
         query.setBuffer("rows", dim1Array);
@@ -166,7 +166,7 @@ public class QueryTest {
         // Get the first 6 elements of each attribute/dimension
         NativeArray dim1Array = new NativeArray(ctx, 6, Integer.class);
         NativeArray dim2Array = new NativeArray(ctx, 6, Integer.class);
-        NativeArray a1Array = new NativeArray(ctx, 12, Character.class);
+        NativeArray a1Array = new NativeArray(ctx, 12, String.class);
         NativeArray a2Array = new NativeArray(ctx, 6, Float.class);
         NativeArray a3Array = new NativeArray(ctx, 6, Boolean.class);
 
@@ -1030,7 +1030,7 @@ public class QueryTest {
 
       // Add two attributes "a1" and "a2", so each (i,j) cell can store
       // a character on "a1" and a vector of two floats on "a2".
-      Attribute a1 = new Attribute(ctx, "a1", Character.class);
+      Attribute a1 = new Attribute(ctx, "a1", String.class);
       Attribute a2 = new Attribute(ctx, "a2", Float.class);
       a2.setCellValNum(1);
 
@@ -1163,7 +1163,7 @@ public class QueryTest {
 
         NativeArray dim1Array = new NativeArray(ctx, 100, Integer.class);
         NativeArray dim2Array = new NativeArray(ctx, 100, Integer.class);
-        NativeArray a1Array = new NativeArray(ctx, 100, Character.class);
+        NativeArray a1Array = new NativeArray(ctx, 100, String.class);
         NativeArray a1byteMap = new NativeArray(ctx, 100, Datatype.TILEDB_UINT8);
         NativeArray a2Array = new NativeArray(ctx, 100, Float.class);
         NativeArray a2byteMap = new NativeArray(ctx, 100, Datatype.TILEDB_UINT8);
@@ -1279,7 +1279,7 @@ public class QueryTest {
             4L,
             (long)
                 query
-                    .resultBufferElementsNIO("a1", Datatype.TILEDB_CHAR.getNativeSize())
+                    .resultBufferElementsNIO("a1", Datatype.TILEDB_STRING_ASCII.getNativeSize())
                     .getSecond());
         Assert.assertEquals(
             4L,

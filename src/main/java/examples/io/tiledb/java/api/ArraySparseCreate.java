@@ -51,7 +51,7 @@ public class ArraySparseCreate {
 
     // Create and add getAttributes
     Attribute a1 = new Attribute(ctx, "a1", Datatype.TILEDB_INT32);
-    Attribute a2 = new Attribute(ctx, "a2", Datatype.TILEDB_CHAR);
+    Attribute a2 = new Attribute(ctx, "a2", Datatype.TILEDB_STRING_ASCII);
     a2.setCellValNum(TILEDB_VAR_NUM);
     Attribute a3 = new Attribute(ctx, "a3", Datatype.TILEDB_FLOAT32);
     a3.setCellValNum(2);

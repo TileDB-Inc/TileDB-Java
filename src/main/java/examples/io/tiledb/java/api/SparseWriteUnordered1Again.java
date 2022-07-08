@@ -49,7 +49,7 @@ public class SparseWriteUnordered1Again {
         new NativeArray(ctx, new int[] {107, 104, 106, 105}, Datatype.TILEDB_INT32);
     NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 3, 4, 5}, Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 =
-        new NativeArray(ctx, "yyy" + "u" + "w" + "vvvv", Datatype.TILEDB_CHAR);
+        new NativeArray(ctx, "yyy" + "u" + "w" + "vvvv", Datatype.TILEDB_STRING_ASCII);
 
     NativeArray buffer_a3 =
         new NativeArray(

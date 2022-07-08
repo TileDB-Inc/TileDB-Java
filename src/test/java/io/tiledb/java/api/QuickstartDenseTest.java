@@ -74,7 +74,7 @@ public class QuickstartDenseTest {
 
     // Create and add getAttributes
     Attribute a1 = new Attribute(ctx, "a1", Integer.class);
-    Attribute a2 = new Attribute(ctx, "a2", Character.class);
+    Attribute a2 = new Attribute(ctx, "a2", String.class);
     a2.setCellValNum(TILEDB_VAR_NUM);
     Attribute a3 = new Attribute(ctx, "a3", Float.class);
     a3.setCellValNum(2);
