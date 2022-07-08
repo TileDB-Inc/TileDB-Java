@@ -51,7 +51,7 @@ public class SparseWriteGlobal1 {
     NativeArray a2_offsets =
         new NativeArray(ctx, new long[] {0, 1, 3, 6, 10, 11, 13, 16}, Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 =
-        new NativeArray(ctx, "abbcccdddd" + "effggghhhh", Datatype.TILEDB_CHAR);
+        new NativeArray(ctx, "abbcccdddd" + "effggghhhh", Datatype.TILEDB_STRING_ASCII);
 
     NativeArray buffer_a3 =
         new NativeArray(

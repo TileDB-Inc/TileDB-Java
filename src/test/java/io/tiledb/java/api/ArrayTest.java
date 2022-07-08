@@ -491,7 +491,7 @@ public class ArrayTest {
           TILEDB_FLOAT32,
           TILEDB_INT32,
           TILEDB_INT16,
-          TILEDB_CHAR,
+          TILEDB_STRING_ASCII,
           TILEDB_STRING_ASCII,
           TILEDB_STRING_UTF8
         };

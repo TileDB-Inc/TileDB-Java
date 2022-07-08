@@ -50,7 +50,9 @@ public class SparseWriteUnordered1 {
         new NativeArray(ctx, new long[] {0, 4, 6, 7, 10, 11, 15, 17}, Datatype.TILEDB_UINT64);
     NativeArray buffer_var_a2 =
         new NativeArray(
-            ctx, "hhhh" + "ff" + "a" + "ggg" + "e" + "dddd" + "bb" + "ccc", Datatype.TILEDB_CHAR);
+            ctx,
+            "hhhh" + "ff" + "a" + "ggg" + "e" + "dddd" + "bb" + "ccc",
+            Datatype.TILEDB_STRING_ASCII);
 
     NativeArray buffer_a3 =
         new NativeArray(

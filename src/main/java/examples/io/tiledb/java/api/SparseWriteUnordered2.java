@@ -48,7 +48,8 @@ public class SparseWriteUnordered2 {
     // Prepare cell buffers - #1
     NativeArray a1_data = new NativeArray(ctx, new int[] {7, 5, 0}, Datatype.TILEDB_INT32);
     NativeArray a2_offsets = new NativeArray(ctx, new long[] {0, 4, 6}, Datatype.TILEDB_UINT64);
-    NativeArray buffer_var_a2 = new NativeArray(ctx, "hhhh" + "ff" + "a", Datatype.TILEDB_CHAR);
+    NativeArray buffer_var_a2 =
+        new NativeArray(ctx, "hhhh" + "ff" + "a", Datatype.TILEDB_STRING_ASCII);
 
     NativeArray buffer_a3 =
         new NativeArray(

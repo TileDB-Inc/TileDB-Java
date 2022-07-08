@@ -53,7 +53,7 @@ public class Types {
     } else if (atrrType.equals(Character.class)) {
       return TILEDB_CHAR;
     } else if (atrrType.equals(String.class)) {
-      return TILEDB_CHAR;
+      return TILEDB_STRING_ASCII;
     } else if (atrrType.equals(Float.class)) {
       return TILEDB_FLOAT32;
     } else if (atrrType.equals(Double.class)) {

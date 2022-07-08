@@ -54,7 +54,7 @@ public class MultiAttributeTest {
 
     // Add two attributes "a1" and "a2", so each (i,j) cell can store
     // a character on "a1" and a vector of two floats on "a2".
-    Attribute a1 = new Attribute(ctx, "a1", Character.class);
+    Attribute a1 = new Attribute(ctx, "a1", String.class);
     Attribute a2 = new Attribute(ctx, "a2", Float.class);
     a2.setCellValNum(2);
 
@@ -109,7 +109,7 @@ public class MultiAttributeTest {
     // (of size 6 elements for "a1" and 12 elements for "a2" since
     // it stores two floats per cell)
     query.setSubarray(subarray);
-    query.setBuffer("a1", new NativeArray(ctx, 6, Character.class));
+    query.setBuffer("a1", new NativeArray(ctx, 6, String.class));
     query.setBuffer("a2", new NativeArray(ctx, 12, Float.class));
 
     // Submit query
@@ -145,7 +145,7 @@ public class MultiAttributeTest {
 
     // Prepare the query - subselect over "a1" only
     query.setSubarray(subarray);
-    query.setBuffer("a1", new NativeArray(ctx, 6, Character.class));
+    query.setBuffer("a1", new NativeArray(ctx, 6, String.class));
 
     // Submit query
     query.submit();
