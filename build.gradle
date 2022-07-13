@@ -127,11 +127,12 @@ test {
 jar {
     into(new File('lib').toString()) {
         // Linux and macOS
-        from file("$buildDir/install/lib/libtiledb.dylib")
+        from file("$buildDir/install/lib/libtiledb.so")
         from file("$buildDir/install/lib64/libtiledb.so")
         from file("$buildDir/tiledb_jni/libtiledbjni.so")
 
         from file("$buildDir/install/lib/libtiledb.dylib")
+        from file("$buildDir/install/lib64/libtiledb.dylib")
         from file("$buildDir/tiledb_jni/libtiledbjni.dylib")
 
         // Windows
