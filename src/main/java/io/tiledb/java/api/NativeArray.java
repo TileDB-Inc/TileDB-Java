@@ -1108,6 +1108,25 @@ public class NativeArray implements AutoCloseable {
     return ((long) size) * nativeTypeSize;
   }
 
+  @Override
+  public String toString() {
+    StringBuilder result = new StringBuilder("[");
+    for (int i = 0; i < this.size; i++) {
+      if (floatArray != null) result.append(this.floatArray.getitem(i)).append(", ");
+      else if (doubleArray != null) result.append(this.doubleArray.getitem(i)).append(", ");
+      else if (int8_tArray != null) result.append(this.int8_tArray.getitem(i)).append(", ");
+      else if (int16_tArray != null) result.append(this.int16_tArray.getitem(i)).append(", ");
+      else if (int32_tArray != null) result.append(this.int32_tArray.getitem(i)).append(", ");
+      else if (int64_tArray != null) result.append(this.int64_tArray.getitem(i)).append(", ");
+      else if (uint8_tArray != null) result.append(this.uint8_tArray.getitem(i)).append(", ");
+      else if (uint16_tArray != null) result.append(this.uint16_tArray.getitem(i)).append(", ");
+      else if (uint32_tArray != null) result.append(this.uint32_tArray.getitem(i)).append(", ");
+      else if (uint64_tArray != null) result.append(this.uint64_tArray.getitem(i)).append(", ");
+    }
+    result = new StringBuilder(result.substring(0, result.length() - 2));
+    return result + "]";
+  }
+
   /** Free's NativeArray off heap allocated resources */
   public void close() {
     if (floatArray != null) {
