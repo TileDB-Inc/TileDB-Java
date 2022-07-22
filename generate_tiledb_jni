@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -xe
+
 cd "$(dirname "$0")"
 
 die() {
@@ -95,7 +97,7 @@ fi
 
 # define the necessary macro contants
 # (removed during preprocessor macro expansion)
-g++ -dM -E ${tiledb_header} ${tiledb_experimental_header} | grep "#define TILEDB" > swig/tiledb_generated.h ||
+g++ -dM -I ${prefix_dir}/include -x c++-header -E ${tiledb_header} ${tiledb_experimental_header} | grep "#define TILEDB" > swig/tiledb_generated.h ||
   die "could not write ./swig/tiledb_generated.h tmp file"
 
 # remove system headers
@@ -106,7 +108,7 @@ g++ -E -P -nostdinc++ -I "${tiledb_include}" -x c++ - >> swig/tiledb_generated.h
 # if existing libtiledb generated source exists, delete it
 cleanup_java() {
   if [[ -d ./src/main/java/io/tiledb/libtiledb ]]; then
-    rm -r ./src/main/java/io/tiledb/libtiledb/* 
+    rm -r ./src/main/java/io/tiledb/libtiledb/*  || true
   fi
 }
 
@@ -114,7 +116,7 @@ cleanup_java
 
 cleanup_cxx() {
   if [[ -d ./src/main/c/generated ]]; then
-    rm -r ./src/main/c/generated/* 
+    rm -r ./src/main/c/generated/* || true
   fi
 }
 
@@ -126,7 +128,7 @@ swig -v -java -c++ -package io.tiledb.libtiledb \
 
 cleanup_header() {
   if [[ -f ./swig/tiledb_generated.h ]]; then
-    rm ./swig/tiledb_generated.h
+    rm ./swig/tiledb_generated.h || true
   fi
 }
 
