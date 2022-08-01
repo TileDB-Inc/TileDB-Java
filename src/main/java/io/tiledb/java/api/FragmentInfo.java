@@ -150,6 +150,31 @@ public class FragmentInfo {
   }
 
   /**
+   * Retrieves the number of cells written to the fragments by the user.
+   *
+   * <p>Contributions from each fragment to the total are as described in following.
+   *
+   * <p>In the case of sparse fragments, this is the number of non-empty cells in the fragment.
+   *
+   * <p>In the case of dense fragments, TileDB may add fill values to populate partially populated
+   * tiles. Those fill values are counted in the returned number of cells. In other words, the cell
+   * number is derived from the number of *integral* tiles written in the file.
+   *
+   * <p>note: The count returned is the cumulative total of cells written to all fragments in the
+   * current fragment_info entity, i.e. count may effectively include multiples for any cells that
+   * may be overlapping across the various fragments.
+   *
+   * @return The total number of cells.
+   * @throws TileDBError
+   */
+  public long getTotalCellNum() throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long cellNum = tiledb.new_ullp();
+    tiledb.tiledb_fragment_info_get_total_cell_num(ctx.getCtxp(), fragmentInfop, cellNum);
+
+    return tiledb.ullp_value(cellNum).longValue();
+  }
+
+  /**
    * Returns true if the fragment with the given index is dense.
    *
    * @param fragmentID The fragment ID

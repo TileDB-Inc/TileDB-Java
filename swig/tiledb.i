@@ -45,6 +45,7 @@ import java.nio.ByteBuffer;
 %include "stdint.i"
 %include "carrays.i"
 %array_class(int32_t, int32_tArray);
+%array_class(capi_return_t, capi_return_t);
 %array_class(int64_t, int64_tArray);
 %array_class(char, charArray);
 %array_class(float, floatArray);
