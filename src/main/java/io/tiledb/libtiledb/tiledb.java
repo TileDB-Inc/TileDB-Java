@@ -1193,6 +1193,10 @@ public class tiledb implements tiledbConstants {
     return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_array_schema_evolution_t(cPtr, false);
   }
 
+  public static int tiledb_status(int x) {
+    return tiledbJNI.tiledb_status(x);
+  }
+
   public static int tiledb_query_type_to_str(
       tiledb_query_type_t query_type, SWIGTYPE_p_p_char str) {
     return tiledbJNI.tiledb_query_type_to_str(
@@ -1346,6 +1350,10 @@ public class tiledb implements tiledbConstants {
 
   public static java.math.BigInteger tiledb_timestamp_now_ms() {
     return tiledbJNI.tiledb_timestamp_now_ms();
+  }
+
+  public static String tiledb_timestamps() {
+    return tiledbJNI.tiledb_timestamps();
   }
 
   public static void tiledb_version(
@@ -5030,6 +5038,16 @@ public class tiledb implements tiledbConstants {
   public static int tiledb_mime_type_from_str(String str, SWIGTYPE_p_tiledb_mime_type_t mime_type) {
     return tiledbJNI.tiledb_mime_type_from_str(
         str, SWIGTYPE_p_tiledb_mime_type_t.getCPtr(mime_type));
+  }
+
+  public static int tiledb_fragment_info_get_total_cell_num(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_fragment_info_t fragment_info,
+      SWIGTYPE_p_unsigned_long_long count) {
+    return tiledbJNI.tiledb_fragment_info_get_total_cell_num(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_fragment_info_t.getCPtr(fragment_info),
+        SWIGTYPE_p_unsigned_long_long.getCPtr(count));
   }
 
   public static int tiledb_dimension_dump_stdout(

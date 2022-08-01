@@ -693,6 +693,8 @@ public class tiledbJNI {
 
   public static final native long tiledb_array_schema_evolution_tpp_value(long jarg1);
 
+  public static final native int tiledb_status(int jarg1);
+
   public static final native int tiledb_query_type_to_str(int jarg1, long jarg2);
 
   public static final native int tiledb_query_type_from_str(String jarg1, long jarg2);
@@ -752,6 +754,8 @@ public class tiledbJNI {
   public static final native java.math.BigInteger tiledb_datatype_size(int jarg1);
 
   public static final native java.math.BigInteger tiledb_timestamp_now_ms();
+
+  public static final native String tiledb_timestamps();
 
   public static final native void tiledb_version(long jarg1, long jarg2, long jarg3);
 
@@ -1743,6 +1747,9 @@ public class tiledbJNI {
   public static final native int tiledb_mime_type_to_str(int jarg1, long jarg2);
 
   public static final native int tiledb_mime_type_from_str(String jarg1, long jarg2);
+
+  public static final native int tiledb_fragment_info_get_total_cell_num(
+      long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);
 

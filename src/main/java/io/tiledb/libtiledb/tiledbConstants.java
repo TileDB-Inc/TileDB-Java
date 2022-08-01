@@ -11,9 +11,10 @@ package io.tiledb.libtiledb;
 public interface tiledbConstants {
   public static final int TILEDB_COMPRESSION_FILTER_DEFAULT_LEVEL = (-30000);
   public static final int TILEDB_ERR = (-1);
+  public static final int TILEDB_INVALID_CONTEXT = (-3);
   public static final int TILEDB_OK = 0;
   public static final int TILEDB_OOM = (-2);
   public static final int TILEDB_VERSION_MAJOR = 2;
-  public static final int TILEDB_VERSION_MINOR = 10;
+  public static final int TILEDB_VERSION_MINOR = 11;
   public static final int TILEDB_VERSION_PATCH = 0;
 }
