@@ -76,6 +76,22 @@ public class FilterTest {
   }
 
   @Test
+  public void testFloatScalingFilter() throws Exception {
+    try (Context ctx = new Context()) {
+      try (FloatScalingFilter filter = new FloatScalingFilter(ctx, 10, 10, 10)) {
+        Assert.assertEquals(filter.getFactor(), 10);
+        Assert.assertEquals(filter.getOffset(), 10);
+        Assert.assertEquals(filter.getByteWidth(), 10);
+      }
+      try (FloatScalingFilter filter = new FloatScalingFilter(ctx)) {
+        Assert.assertEquals(filter.getFactor(), 0);
+        Assert.assertEquals(filter.getOffset(), 0);
+        Assert.assertEquals(filter.getByteWidth(), 8);
+      }
+    }
+  }
+
+  @Test
   public void testBzip2Filter() throws Exception {
     try (Context ctx = new Context()) {
       try (Bzip2Filter filter = new Bzip2Filter(ctx, 5)) {
