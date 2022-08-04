@@ -32,6 +32,11 @@ import java.nio.ByteBuffer;
 
 #define __attribute__(x)
 
+// Any typedef struct for a handle derivative must be defined here
+typedef struct tiledb_ctx_t tiledb_ctx_t;
+typedef struct tiledb_filter_t tiledb_filter_t;
+typedef struct tiledb_config_t tiledb_config_t;
+
 %{
 #include <string>
 #include <vector>
@@ -151,7 +156,7 @@ import java.nio.ByteBuffer;
 %include "tiledb_java_extensions.h"
 
 %pragma(java) modulecode=%{
-  
+
   public static int sizeOfType(Object array) {
     Class arrayClass = array.getClass();
     if (arrayClass.equals(int32_tArray.class)) {
