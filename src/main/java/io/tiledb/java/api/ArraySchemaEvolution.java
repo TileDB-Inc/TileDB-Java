@@ -57,7 +57,6 @@ public class ArraySchemaEvolution implements AutoCloseable {
    */
   public void addAttribute(Attribute att) throws TileDBError {
     try {
-      ctx.handleError(tiledb.tiledb_array_schema_evolution_alloc(ctx.getCtxp(), evolutionpp));
       ctx.handleError(
           tiledb.tiledb_array_schema_evolution_add_attribute(
               ctx.getCtxp(), evolutionp, att.getAttributep()));
@@ -78,7 +77,6 @@ public class ArraySchemaEvolution implements AutoCloseable {
    */
   public void dropAttribute(String attName) throws TileDBError {
     try {
-      ctx.handleError(tiledb.tiledb_array_schema_evolution_alloc(ctx.getCtxp(), evolutionpp));
       ctx.handleError(
           tiledb.tiledb_array_schema_evolution_drop_attribute(ctx.getCtxp(), evolutionp, attName));
     } catch (TileDBError err) {
@@ -98,7 +96,6 @@ public class ArraySchemaEvolution implements AutoCloseable {
    */
   public void dropAttribute(Attribute att) throws TileDBError {
     try {
-      ctx.handleError(tiledb.tiledb_array_schema_evolution_alloc(ctx.getCtxp(), evolutionpp));
       ctx.handleError(
           tiledb.tiledb_array_schema_evolution_drop_attribute(
               ctx.getCtxp(), evolutionp, att.getName()));
@@ -138,7 +135,6 @@ public class ArraySchemaEvolution implements AutoCloseable {
    */
   public void evolveArray(String uri) throws TileDBError {
     try {
-      ctx.handleError(tiledb.tiledb_array_schema_evolution_alloc(ctx.getCtxp(), evolutionpp));
       ctx.handleError(tiledb.tiledb_array_evolve(ctx.getCtxp(), uri, evolutionp));
     } catch (TileDBError err) {
       tiledb.delete_tiledb_array_schema_evolution_tpp(evolutionpp);
