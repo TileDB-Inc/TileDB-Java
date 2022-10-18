@@ -178,6 +178,12 @@ public class FilterTest {
   }
 
   @Test
+  public void testXORFilter() throws Exception {
+    try (Context ctx = new Context();
+        XORFilter filter = new XORFilter(ctx)) {}
+  }
+
+  @Test
   public void testDictionaryFilter() throws Exception {
     try (Context ctx = new Context()) {
       try (DictionaryFilter filter = new DictionaryFilter(ctx, 5)) {

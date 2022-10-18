@@ -59,6 +59,7 @@ public class QueryTest {
       Attribute a3 = new Attribute(ctx, "a3", Boolean.class);
       a1.setFilterList(new FilterList(ctx).addFilter(new CheckSumMD5Filter(ctx)));
       a2.setFilterList(new FilterList(ctx).addFilter(new CheckSumSHA256Filter(ctx)));
+      a3.setFilterList(new FilterList(ctx).addFilter(new XORFilter(ctx)));
       a2.setCellValNum(2);
 
       ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);

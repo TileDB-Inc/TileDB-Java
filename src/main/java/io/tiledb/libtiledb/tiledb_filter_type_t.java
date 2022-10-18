@@ -23,7 +23,8 @@ public enum tiledb_filter_type_t {
   TILEDB_FILTER_CHECKSUM_MD5(12),
   TILEDB_FILTER_CHECKSUM_SHA256(13),
   TILEDB_FILTER_DICTIONARY(14),
-  TILEDB_FILTER_SCALE_FLOAT(15);
+  TILEDB_FILTER_SCALE_FLOAT(15),
+  TILEDB_FILTER_XOR(16);
 
   public final int swigValue() {
     return swigValue;
