@@ -160,6 +160,50 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Submits and finalizes the query. This is applicable only to global layout writes. The function
+   * will error out if called on a query with non global layout. Its purpose is to submit the final
+   * chunk (partial or full tile) in a global order write query. `tiledb_query_submit_and_finalize`
+   * drops the tile alignment restriction of the buffers (i.e. compared to the regular global layout
+   * submit call) given the last chunk of a global order write is most frequently smaller in size
+   * than a tile.
+   *
+   * @return The query Status.
+   * @exception TileDBError A TileDB exception
+   */
+  public QueryStatus submitAndFinalize() throws TileDBError {
+    ctx.handleError(tiledb.tiledb_query_submit_and_finalize(ctx.getCtxp(), queryp));
+
+    // Set the actual number of bytes received to each ByteBuffer
+    for (String attribute : byteBuffers_.keySet()) {
+      boolean isVar;
+
+      try (ArraySchema arraySchema = array.getSchema()) {
+        if (arraySchema.hasAttribute(attribute)) {
+          try (Attribute attr = arraySchema.getAttribute(attribute)) {
+            isVar = attr.isVar();
+          }
+        } else {
+          try (Dimension dim = arraySchema.getDomain().getDimension(attribute)) {
+            isVar = dim.isVar();
+          }
+        }
+      }
+
+      if (isVar) {
+        int offset_nbytes = this.buffer_sizes_.get(attribute).getFirst().getitem(0).intValue();
+        int data_nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
+        this.byteBuffers_.get(attribute).getFirst().limit(offset_nbytes);
+        this.byteBuffers_.get(attribute).getSecond().limit(data_nbytes);
+      } else {
+        int nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
+        this.byteBuffers_.get(attribute).getSecond().limit(nbytes);
+      }
+    }
+
+    return getQueryStatus();
+  }
+
+  /**
    * Submit an async query (non-blocking).
    *
    * @exception TileDBError A TileDB exception
@@ -395,6 +439,24 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Sets the update value.
+   *
+   * <p>Note that more than one update value may be set on a query.
+   *
+   * @param column The attribute name.
+   * @param value The value to set.
+   * @param updateValueSize The byte size of `update_value`.
+   * @throws TileDBError
+   */
+  public void addUpdateValue(String column, NativeArray value, BigInteger updateValueSize)
+      throws TileDBError {
+    Util.checkBigIntegerRange(updateValueSize);
+    ctx.handleError(
+        tiledb.tiledb_query_add_update_value(
+            ctx.getCtxp(), this.queryp, column, value.toVoidPointer(), updateValueSize));
+  }
+
+  /**
    * Retrieves the estimated result size for a fixed-sized attribute/dimension.
    *
    * @param ctx The TileDB Context
@@ -408,6 +470,21 @@ public class Query implements AutoCloseable {
     ctx.handleError(tiledb.tiledb_query_get_est_result_size(ctx.getCtxp(), queryp, column, size));
 
     return tiledb.ullp_value(size).longValue();
+  }
+
+  /**
+   * Get the number of relevant fragments from the subarray. Should only be called after size
+   * estimation was asked for.
+   *
+   * @return The number of relevant fragments.
+   * @throws TileDBError
+   */
+  public long getRelevantFragmentNum() throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long num = tiledb.new_ullp();
+
+    ctx.handleError(tiledb.tiledb_query_get_relevant_fragment_num(ctx.getCtxp(), queryp, num));
+
+    return tiledb.ullp_value(num).longValue();
   }
 
   /**

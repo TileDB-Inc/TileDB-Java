@@ -1063,6 +1063,27 @@ public class Array implements AutoCloseable {
   }
 
   /**
+   * Deletes array fragments written between the input timestamps.
+   *
+   * @param timestampStart The epoch timestamp in milliseconds.
+   * @param timestampEnd The epoch timestamp in milliseconds. Use UINT64_MAX for the current
+   *     timestamp.
+   * @throws TileDBError
+   */
+  public void deleteFragments(BigInteger timestampStart, BigInteger timestampEnd)
+      throws TileDBError {
+    Util.checkBigIntegerRange(timestampStart);
+    Util.checkBigIntegerRange(timestampEnd);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_delete_fragments(
+              ctx.getCtxp(), getArrayp(), uri, timestampStart, timestampEnd));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
    * Returns a HashMap with all array metadata in a key-value manner.
    *
    * @return The metadata
@@ -1238,6 +1259,12 @@ public class Array implements AutoCloseable {
     }
   }
 
+  /**
+   * Gets the array config.
+   *
+   * @return The config
+   * @throws TileDBError
+   */
   public Config getConfig() throws TileDBError {
     SWIGTYPE_p_p_tiledb_config_t configpp = tiledb.new_tiledb_config_tpp();
     try {

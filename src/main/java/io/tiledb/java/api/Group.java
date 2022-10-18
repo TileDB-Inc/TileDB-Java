@@ -24,18 +24,7 @@
 
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.SWIGTYPE_p_int;
-import io.tiledb.libtiledb.SWIGTYPE_p_p_char;
-import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_config_t;
-import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_group_t;
-import io.tiledb.libtiledb.SWIGTYPE_p_p_void;
-import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_config_t;
-import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_datatype_t;
-import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_group_t;
-import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_object_t;
-import io.tiledb.libtiledb.SWIGTYPE_p_unsigned_int;
-import io.tiledb.libtiledb.SWIGTYPE_p_unsigned_long_long;
-import io.tiledb.libtiledb.tiledb;
+import io.tiledb.libtiledb.*;
 import java.math.BigInteger;
 
 public class Group implements AutoCloseable {
@@ -376,6 +365,26 @@ public class Group implements AutoCloseable {
             value.getNativeType().toSwigEnum(),
             value.getSize(),
             value.toVoidPointer()));
+  }
+
+  /**
+   * Get a member of a group by name and relative characteristic of that name
+   *
+   * @param name name of member to fetch
+   * @return True if relative
+   * @throws TileDBError
+   */
+  public boolean getIsRelativeURIByName(String name) throws TileDBError {
+    try {
+      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT8);
+      SWIGTYPE_p_unsigned_char relative = arr.getUint8_tArray().cast();
+      ctx.handleError(
+          tiledb.tiledb_group_get_is_relative_uri_by_name(ctx.getCtxp(), groupp, name, relative));
+
+      return ((short) arr.getItem(0) == 1);
+    } catch (TileDBError err) {
+      throw err;
+    }
   }
 
   /**

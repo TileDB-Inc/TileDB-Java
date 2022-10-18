@@ -143,6 +143,16 @@ public class Context implements AutoCloseable {
   }
 
   /**
+   * Error handler for the TileDB C API (JNI) calls. Throws an exception in case of error.
+   *
+   * @param return_t
+   * @throws TileDBError
+   */
+  public void handleError(capi_return_t return_t) throws TileDBError {
+    //    int rc = tiledb.tiledb_status(return_t); // todo implement
+  }
+
+  /**
    * Checks if the filesystem backend is supported.
    *
    * @param fs TileDB filesystem enum
