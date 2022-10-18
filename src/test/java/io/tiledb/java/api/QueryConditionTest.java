@@ -46,11 +46,59 @@ public class QueryConditionTest {
 
   private Context ctx;
   private String arrayURI;
+  private String arrayURISparse;
 
   @Before
   public void setup() throws Exception {
     ctx = new Context();
     arrayURI = temp.getRoot().toPath().resolve("my_dense_array").toString();
+    arrayURISparse = temp.getRoot().toPath().resolve("my_sparse_array").toString();
+  }
+
+  public void arrayCreateSparse() throws TileDBError {
+    // The array will be 4x4 with dimensions "rows" and "cols", with domain [1,4].
+    Dimension<Integer> d1 =
+        new Dimension<Integer>(ctx, "d1", Datatype.TILEDB_STRING_ASCII, null, null);
+
+    // Create and set getDomain
+    Domain domain = new Domain(ctx);
+    domain.addDimension(d1);
+
+    // Add two attributes "a1" and "a2", so each (i,j) cell can store
+    // a character on "a1" and a vector of two floats on "a2".
+    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
+
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_SPARSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
+    schema.setDomain(domain);
+    schema.addAttribute(a1);
+
+    Array.create(arrayURISparse, schema);
+  }
+
+  public void arrayWriteSparse() throws TileDBError {
+
+    NativeArray d_data = new NativeArray(ctx, "aabbccddee", Datatype.TILEDB_STRING_ASCII);
+    NativeArray d_off = new NativeArray(ctx, new long[] {0, 2, 4, 6, 8}, Datatype.TILEDB_UINT64);
+
+    // Prepare cell buffers
+    NativeArray a1 = new NativeArray(ctx, new int[] {1, 2, 3, 4, 5}, Integer.class);
+
+    // Create query
+    Array array = new Array(ctx, arrayURISparse, TILEDB_WRITE);
+    Query query = new Query(array);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
+
+    query.setBuffer("d1", d_off, d_data);
+    query.setBuffer("a1", a1);
+
+    // Submit query
+    query.submit();
+
+    query.finalizeQuery();
+    query.close();
+    array.close();
   }
 
   public void arrayCreate() throws Exception {
@@ -177,5 +225,38 @@ public class QueryConditionTest {
     arrayCreate();
     arrayWrite();
     arrayRead();
+  }
+
+  @Test
+  public void testDataDeletion() throws TileDBError {
+    // create array
+    arrayCreateSparse();
+    arrayWriteSparse();
+
+    // delete data with appropriate QC
+    Array array = new Array(ctx, arrayURISparse, TILEDB_DELETE);
+    Query query = new Query(array, TILEDB_DELETE);
+    QueryCondition deleteQc = new QueryCondition(ctx, "a1", 3, Integer.class, TILEDB_GT);
+    query.setCondition(deleteQc);
+    query.submit();
+    // close resources
+    query.close();
+    deleteQc.close();
+    array.close();
+
+    // check if data was deleted
+    array = new Array(ctx, arrayURISparse, TILEDB_READ);
+
+    query = new Query(array, TILEDB_READ);
+    query.setBuffer("a1", new NativeArray(ctx, 40, Integer.class));
+
+    while (query.getQueryStatus() != QueryStatus.TILEDB_COMPLETED) {
+      query.submit();
+    }
+    int[] a1_buff = (int[]) query.getBuffer("a1");
+    Assert.assertArrayEquals(new int[] {1, 2, 3}, a1_buff);
+    array.close();
+    query.close();
+    deleteQc.close();
   }
 }
