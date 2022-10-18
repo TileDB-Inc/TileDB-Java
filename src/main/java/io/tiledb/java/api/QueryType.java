@@ -4,7 +4,10 @@ import io.tiledb.libtiledb.tiledb_query_type_t;
 
 public enum QueryType {
   TILEDB_READ,
-  TILEDB_WRITE;
+  TILEDB_WRITE,
+  TILEDB_UPDATE,
+  TILEDB_MODIFY_EXCLUSIVE,
+  TILEDB_DELETE;
 
   protected tiledb_query_type_t toSwigEnum() throws TileDBError {
     switch (this) {
@@ -12,6 +15,12 @@ public enum QueryType {
         return tiledb_query_type_t.TILEDB_READ;
       case TILEDB_WRITE:
         return tiledb_query_type_t.TILEDB_WRITE;
+      case TILEDB_DELETE:
+        return tiledb_query_type_t.TILEDB_DELETE;
+      case TILEDB_UPDATE:
+        return tiledb_query_type_t.TILEDB_UPDATE;
+      case TILEDB_MODIFY_EXCLUSIVE:
+        return tiledb_query_type_t.TILEDB_MODIFY_EXCLUSIVE;
       default:
         throw new TileDBError("No such enum value" + this.name());
     }
@@ -23,6 +32,12 @@ public enum QueryType {
         return TILEDB_READ;
       case TILEDB_WRITE:
         return TILEDB_WRITE;
+      case TILEDB_DELETE:
+        return TILEDB_DELETE;
+      case TILEDB_MODIFY_EXCLUSIVE:
+        return TILEDB_MODIFY_EXCLUSIVE;
+      case TILEDB_UPDATE:
+        return TILEDB_UPDATE;
       default:
         throw new TileDBError("No such enum value" + e.name());
     }

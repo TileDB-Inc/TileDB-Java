@@ -92,6 +92,7 @@ typedef struct tiledb_config_t tiledb_config_t;
 %pointer_functions(tiledb_walk_order_t, tiledb_walk_order_tp);
 %pointer_functions(tiledb_vfs_mode_t, tiledb_vfs_mode_tp);
 %pointer_functions(tiledb_encryption_type_t, tiledb_encryption_type_tp);
+%pointer_functions(capi_status_t, capi_status_tp);
 
 %pointer_functions(tiledb_array_t*, tiledb_array_tpp);
 %pointer_functions(tiledb_subarray_t*, tiledb_subarray_tpp);
@@ -111,6 +112,7 @@ typedef struct tiledb_config_t tiledb_config_t;
 %pointer_functions(tiledb_fragment_info_t*, tiledb_fragment_info_tpp);
 %pointer_functions(tiledb_query_condition_t*, tiledb_query_condition_tpp);
 %pointer_functions(tiledb_group_t*, tiledb_group_tpp);
+%pointer_functions(capi_return_t*, capi_return_tpp);
 
 
 %native (sizeOfInt32) int sizeOfInt32();

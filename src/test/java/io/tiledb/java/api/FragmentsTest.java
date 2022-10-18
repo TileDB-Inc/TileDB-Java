@@ -2,8 +2,7 @@ package io.tiledb.java.api;
 
 import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.Layout.*;
-import static io.tiledb.java.api.QueryType.TILEDB_READ;
-import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+import static io.tiledb.java.api.QueryType.*;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -16,10 +15,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FragmentsConsolidationTest {
+public class FragmentsTest {
 
   private Context ctx;
-  private String arrayURI = "fragments_consolidation";
+  private String arrayURI = "fragments_test";
 
   @Before
   public void setup() throws Exception {
@@ -27,6 +26,11 @@ public class FragmentsConsolidationTest {
     if (Files.exists(Paths.get(arrayURI))) {
       TileDBObject.remove(ctx, arrayURI);
     }
+    arrayCreate();
+    // updates
+    arrayWrite1();
+    arrayWrite2();
+    arrayWrite3();
   }
 
   @After
@@ -39,12 +43,6 @@ public class FragmentsConsolidationTest {
 
   @Test
   public void testConsolidate() throws Exception {
-    // create array
-    arrayCreate();
-    // updates
-    arrayWrite1();
-    arrayWrite2();
-    arrayWrite3();
     // consolidate
     Array.consolidate(ctx, arrayURI);
     // verify consolidation
@@ -70,12 +68,6 @@ public class FragmentsConsolidationTest {
 
   @Test
   public void testVacuum() throws Exception {
-    // create array
-    arrayCreate();
-    // updates
-    arrayWrite1();
-    arrayWrite2();
-    arrayWrite3();
     // consolidate
     Array.consolidate(ctx, arrayURI);
     Array.vacuum(ctx, arrayURI);
@@ -211,5 +203,25 @@ public class FragmentsConsolidationTest {
     Assert.assertArrayEquals(
         data,
         new int[] {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216});
+  }
+
+  @Test
+  public void testDeleteFragments() throws Exception {
+    Array array = new Array(ctx, arrayURI, TILEDB_MODIFY_EXCLUSIVE);
+
+    array.deleteFragments(BigInteger.valueOf(10L), BigInteger.valueOf(20L));
+
+    File f = new File(arrayURI);
+    int nFiles = 0;
+    File frag = null;
+    for (File file : Objects.requireNonNull(f.listFiles())) {
+      if (file.isDirectory() && file.getName().equals("__fragments")) {
+        frag = Objects.requireNonNull(file.listFiles())[0];
+        nFiles = Objects.requireNonNull(file.listFiles()).length;
+      }
+    }
+    Assert.assertEquals(1, nFiles);
+    Assert.assertTrue(frag.getName().startsWith("__30_30_"));
+    array.close();
   }
 }

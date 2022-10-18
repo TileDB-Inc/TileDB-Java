@@ -264,6 +264,23 @@ public class FragmentInfo {
   }
 
   /**
+   * Retrieves the config from fragment info.
+   *
+   * @return The config
+   * @throws TileDBError
+   */
+  public Config getConfig() throws TileDBError {
+    SWIGTYPE_p_p_tiledb_config_t configpp = tiledb.new_tiledb_config_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_config(ctx.getCtxp(), fragmentInfop, configpp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_config_tpp(configpp);
+    }
+    return new Config(configpp);
+  }
+
+  /**
    * Retrieves the non-empty domain from a fragment for a given dimension index. Applicable to
    * var-sized dimensions.
    *
