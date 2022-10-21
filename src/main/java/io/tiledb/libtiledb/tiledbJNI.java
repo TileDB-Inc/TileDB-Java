@@ -918,6 +918,8 @@ public class tiledbJNI {
 
   public static final native int tiledb_status(long jarg1, capi_return_t jarg1_);
 
+  public static final native int tiledb_status_code(long jarg1, capi_return_t jarg1_);
+
   public static final native long tiledb_filter_type_to_str(int jarg1, long jarg2);
 
   public static final native long tiledb_filter_type_from_str(String jarg1, long jarg2);

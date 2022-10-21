@@ -1243,6 +1243,10 @@ public class tiledb implements tiledbConstants {
     return tiledbJNI.tiledb_status(capi_return_t.getCPtr(x), x);
   }
 
+  public static int tiledb_status_code(capi_return_t x) {
+    return tiledbJNI.tiledb_status_code(capi_return_t.getCPtr(x), x);
+  }
+
   public static capi_return_t tiledb_filter_type_to_str(
       tiledb_filter_type_t filter_type, SWIGTYPE_p_p_char str) {
     return new capi_return_t(
