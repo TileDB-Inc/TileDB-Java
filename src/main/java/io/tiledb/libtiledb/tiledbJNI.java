@@ -103,6 +103,10 @@ public class tiledbJNI {
 
   public static final native long capi_return_t_frompointer(long jarg1, capi_return_t jarg1_);
 
+  public static final native long new_pthread_mutexattr_t(int jarg1);
+
+  public static final native void delete_pthread_mutexattr_t(long jarg1);
+
   public static final native long new_int64_tArray(int jarg1);
 
   public static final native void delete_int64_tArray(long jarg1);
@@ -728,189 +732,45 @@ public class tiledbJNI {
 
   public static final native long tiledb_array_schema_evolution_tpp_value(long jarg1);
 
-  public static final native void __mbstate_t___mbstate8_set(
-      long jarg1, __mbstate_t jarg1_, String jarg2);
-
-  public static final native String __mbstate_t___mbstate8_get(long jarg1, __mbstate_t jarg1_);
-
-  public static final native void __mbstate_t__mbstateL_set(
-      long jarg1, __mbstate_t jarg1_, long jarg2);
-
-  public static final native long __mbstate_t__mbstateL_get(long jarg1, __mbstate_t jarg1_);
-
   public static final native long new___mbstate_t();
 
   public static final native void delete___mbstate_t(long jarg1);
-
-  public static final native void __darwin_pthread_handler_rec___routine_set(
-      long jarg1, __darwin_pthread_handler_rec jarg1_, long jarg2);
-
-  public static final native long __darwin_pthread_handler_rec___routine_get(
-      long jarg1, __darwin_pthread_handler_rec jarg1_);
-
-  public static final native void __darwin_pthread_handler_rec___arg_set(
-      long jarg1, __darwin_pthread_handler_rec jarg1_, long jarg2);
-
-  public static final native long __darwin_pthread_handler_rec___arg_get(
-      long jarg1, __darwin_pthread_handler_rec jarg1_);
-
-  public static final native void __darwin_pthread_handler_rec___next_set(
-      long jarg1,
-      __darwin_pthread_handler_rec jarg1_,
-      long jarg2,
-      __darwin_pthread_handler_rec jarg2_);
-
-  public static final native long __darwin_pthread_handler_rec___next_get(
-      long jarg1, __darwin_pthread_handler_rec jarg1_);
 
   public static final native long new___darwin_pthread_handler_rec();
 
   public static final native void delete___darwin_pthread_handler_rec(long jarg1);
 
-  public static final native void _opaque_pthread_attr_t___sig_set(
-      long jarg1, _opaque_pthread_attr_t jarg1_, int jarg2);
-
-  public static final native int _opaque_pthread_attr_t___sig_get(
-      long jarg1, _opaque_pthread_attr_t jarg1_);
-
-  public static final native void _opaque_pthread_attr_t___opaque_set(
-      long jarg1, _opaque_pthread_attr_t jarg1_, String jarg2);
-
-  public static final native String _opaque_pthread_attr_t___opaque_get(
-      long jarg1, _opaque_pthread_attr_t jarg1_);
-
   public static final native long new__opaque_pthread_attr_t();
 
   public static final native void delete__opaque_pthread_attr_t(long jarg1);
-
-  public static final native void _opaque_pthread_cond_t___sig_set(
-      long jarg1, _opaque_pthread_cond_t jarg1_, int jarg2);
-
-  public static final native int _opaque_pthread_cond_t___sig_get(
-      long jarg1, _opaque_pthread_cond_t jarg1_);
-
-  public static final native void _opaque_pthread_cond_t___opaque_set(
-      long jarg1, _opaque_pthread_cond_t jarg1_, String jarg2);
-
-  public static final native String _opaque_pthread_cond_t___opaque_get(
-      long jarg1, _opaque_pthread_cond_t jarg1_);
 
   public static final native long new__opaque_pthread_cond_t();
 
   public static final native void delete__opaque_pthread_cond_t(long jarg1);
 
-  public static final native void _opaque_pthread_condattr_t___sig_set(
-      long jarg1, _opaque_pthread_condattr_t jarg1_, int jarg2);
-
-  public static final native int _opaque_pthread_condattr_t___sig_get(
-      long jarg1, _opaque_pthread_condattr_t jarg1_);
-
-  public static final native void _opaque_pthread_condattr_t___opaque_set(
-      long jarg1, _opaque_pthread_condattr_t jarg1_, String jarg2);
-
-  public static final native String _opaque_pthread_condattr_t___opaque_get(
-      long jarg1, _opaque_pthread_condattr_t jarg1_);
-
   public static final native long new__opaque_pthread_condattr_t();
 
   public static final native void delete__opaque_pthread_condattr_t(long jarg1);
-
-  public static final native void _opaque_pthread_mutex_t___sig_set(
-      long jarg1, _opaque_pthread_mutex_t jarg1_, int jarg2);
-
-  public static final native int _opaque_pthread_mutex_t___sig_get(
-      long jarg1, _opaque_pthread_mutex_t jarg1_);
-
-  public static final native void _opaque_pthread_mutex_t___opaque_set(
-      long jarg1, _opaque_pthread_mutex_t jarg1_, String jarg2);
-
-  public static final native String _opaque_pthread_mutex_t___opaque_get(
-      long jarg1, _opaque_pthread_mutex_t jarg1_);
 
   public static final native long new__opaque_pthread_mutex_t();
 
   public static final native void delete__opaque_pthread_mutex_t(long jarg1);
 
-  public static final native void _opaque_pthread_mutexattr_t___sig_set(
-      long jarg1, _opaque_pthread_mutexattr_t jarg1_, int jarg2);
-
-  public static final native int _opaque_pthread_mutexattr_t___sig_get(
-      long jarg1, _opaque_pthread_mutexattr_t jarg1_);
-
-  public static final native void _opaque_pthread_mutexattr_t___opaque_set(
-      long jarg1, _opaque_pthread_mutexattr_t jarg1_, String jarg2);
-
-  public static final native String _opaque_pthread_mutexattr_t___opaque_get(
-      long jarg1, _opaque_pthread_mutexattr_t jarg1_);
-
   public static final native long new__opaque_pthread_mutexattr_t();
 
   public static final native void delete__opaque_pthread_mutexattr_t(long jarg1);
-
-  public static final native void _opaque_pthread_once_t___sig_set(
-      long jarg1, _opaque_pthread_once_t jarg1_, int jarg2);
-
-  public static final native int _opaque_pthread_once_t___sig_get(
-      long jarg1, _opaque_pthread_once_t jarg1_);
-
-  public static final native void _opaque_pthread_once_t___opaque_set(
-      long jarg1, _opaque_pthread_once_t jarg1_, String jarg2);
-
-  public static final native String _opaque_pthread_once_t___opaque_get(
-      long jarg1, _opaque_pthread_once_t jarg1_);
 
   public static final native long new__opaque_pthread_once_t();
 
   public static final native void delete__opaque_pthread_once_t(long jarg1);
 
-  public static final native void _opaque_pthread_rwlock_t___sig_set(
-      long jarg1, _opaque_pthread_rwlock_t jarg1_, int jarg2);
-
-  public static final native int _opaque_pthread_rwlock_t___sig_get(
-      long jarg1, _opaque_pthread_rwlock_t jarg1_);
-
-  public static final native void _opaque_pthread_rwlock_t___opaque_set(
-      long jarg1, _opaque_pthread_rwlock_t jarg1_, String jarg2);
-
-  public static final native String _opaque_pthread_rwlock_t___opaque_get(
-      long jarg1, _opaque_pthread_rwlock_t jarg1_);
-
   public static final native long new__opaque_pthread_rwlock_t();
 
   public static final native void delete__opaque_pthread_rwlock_t(long jarg1);
 
-  public static final native void _opaque_pthread_rwlockattr_t___sig_set(
-      long jarg1, _opaque_pthread_rwlockattr_t jarg1_, int jarg2);
-
-  public static final native int _opaque_pthread_rwlockattr_t___sig_get(
-      long jarg1, _opaque_pthread_rwlockattr_t jarg1_);
-
-  public static final native void _opaque_pthread_rwlockattr_t___opaque_set(
-      long jarg1, _opaque_pthread_rwlockattr_t jarg1_, String jarg2);
-
-  public static final native String _opaque_pthread_rwlockattr_t___opaque_get(
-      long jarg1, _opaque_pthread_rwlockattr_t jarg1_);
-
   public static final native long new__opaque_pthread_rwlockattr_t();
 
   public static final native void delete__opaque_pthread_rwlockattr_t(long jarg1);
-
-  public static final native void _opaque_pthread_t___sig_set(
-      long jarg1, _opaque_pthread_t jarg1_, int jarg2);
-
-  public static final native int _opaque_pthread_t___sig_get(long jarg1, _opaque_pthread_t jarg1_);
-
-  public static final native void _opaque_pthread_t___cleanup_stack_set(
-      long jarg1, _opaque_pthread_t jarg1_, long jarg2, __darwin_pthread_handler_rec jarg2_);
-
-  public static final native long _opaque_pthread_t___cleanup_stack_get(
-      long jarg1, _opaque_pthread_t jarg1_);
-
-  public static final native void _opaque_pthread_t___opaque_set(
-      long jarg1, _opaque_pthread_t jarg1_, String jarg2);
-
-  public static final native String _opaque_pthread_t___opaque_get(
-      long jarg1, _opaque_pthread_t jarg1_);
 
   public static final native long new__opaque_pthread_t();
 
