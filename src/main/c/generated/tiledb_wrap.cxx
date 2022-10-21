@@ -6248,25 +6248,46 @@ SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_delete_1_1opaque_1pth
 }
 
 
-// SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1status(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-//   jint jresult = 0 ;
-//   SwigValueWrapper< capi_return_t > arg1 ;
-//   capi_return_t *argp1 ;
-//   capi_status_t result;
-//
-//   (void)jenv;
-//   (void)jcls;
-//   (void)jarg1_;
-//   argp1 = *(capi_return_t **)&jarg1;
-//   if (!argp1) {
-//     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "Attempt to dereference null capi_return_t");
-//     return 0;
-//   }
-//   arg1 = *argp1;
-//   result = (capi_status_t)tiledb_status(arg1);
-//   jresult = (jint)result;
-//   return jresult;
-// }
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1status(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  SwigValueWrapper< capi_return_t > arg1 ;
+  capi_return_t *argp1 ;
+  capi_status_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  argp1 = *(capi_return_t **)&jarg1; 
+  if (!argp1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "Attempt to dereference null capi_return_t");
+    return 0;
+  }
+  arg1 = *argp1; 
+  result = (capi_status_t)tiledb_status(arg1);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1status_1code(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
+  SwigValueWrapper< capi_return_t > arg1 ;
+  capi_return_t *argp1 ;
+  capi_status_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  argp1 = *(capi_return_t **)&jarg1; 
+  if (!argp1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "Attempt to dereference null capi_return_t");
+    return 0;
+  }
+  arg1 = *argp1; 
+  result = (capi_status_t)tiledb_status_code(arg1);
+  jresult = (jint)result; 
+  return jresult;
+}
 
 
 SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1filter_1type_1to_1str(JNIEnv *jenv, jclass jcls, jint jarg1, jlong jarg2) {

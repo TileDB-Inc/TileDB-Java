@@ -149,7 +149,8 @@ public class Context implements AutoCloseable {
    * @throws TileDBError
    */
   public void handleError(capi_return_t return_t) throws TileDBError {
-    //    int rc = tiledb.tiledb_status(return_t); // todo implement
+    int rc = tiledb.tiledb_status_code(return_t);
+    this.handleError(rc);
   }
 
   /**
