@@ -539,7 +539,7 @@ public class ArraySchema implements AutoCloseable {
    */
   public FilterList getValidityFilterList() throws TileDBError {
     FilterList filterlist;
-    SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
+    SWIGTYPE_p_p_tiledb_filter_list_handle_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
     try {
       ctx.handleError(
           tiledb.tiledb_array_schema_get_validity_filter_list(
@@ -575,7 +575,7 @@ public class ArraySchema implements AutoCloseable {
    */
   public FilterList getCoordsFilterList() throws TileDBError {
     FilterList filterlist;
-    SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
+    SWIGTYPE_p_p_tiledb_filter_list_handle_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
     try {
       ctx.handleError(
           tiledb.tiledb_array_schema_get_coords_filter_list(
@@ -631,7 +631,7 @@ public class ArraySchema implements AutoCloseable {
    */
   public FilterList getOffsetsFilterList() throws TileDBError {
     FilterList filterlist;
-    SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
+    SWIGTYPE_p_p_tiledb_filter_list_handle_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
     try {
       ctx.handleError(
           tiledb.tiledb_array_schema_get_offsets_filter_list(

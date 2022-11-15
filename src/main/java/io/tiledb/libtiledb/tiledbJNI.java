@@ -103,10 +103,6 @@ public class tiledbJNI {
 
   public static final native long capi_return_t_frompointer(long jarg1, capi_return_t jarg1_);
 
-  public static final native long new_pthread_mutexattr_t(int jarg1);
-
-  public static final native void delete_pthread_mutexattr_t(long jarg1);
-
   public static final native long new_int64_tArray(int jarg1);
 
   public static final native void delete_int64_tArray(long jarg1);
@@ -732,53 +728,63 @@ public class tiledbJNI {
 
   public static final native long tiledb_array_schema_evolution_tpp_value(long jarg1);
 
-  public static final native long new___mbstate_t();
-
-  public static final native void delete___mbstate_t(long jarg1);
-
-  public static final native long new___darwin_pthread_handler_rec();
-
-  public static final native void delete___darwin_pthread_handler_rec(long jarg1);
-
-  public static final native long new__opaque_pthread_attr_t();
-
-  public static final native void delete__opaque_pthread_attr_t(long jarg1);
-
-  public static final native long new__opaque_pthread_cond_t();
-
-  public static final native void delete__opaque_pthread_cond_t(long jarg1);
-
-  public static final native long new__opaque_pthread_condattr_t();
-
-  public static final native void delete__opaque_pthread_condattr_t(long jarg1);
-
-  public static final native long new__opaque_pthread_mutex_t();
-
-  public static final native void delete__opaque_pthread_mutex_t(long jarg1);
-
-  public static final native long new__opaque_pthread_mutexattr_t();
-
-  public static final native void delete__opaque_pthread_mutexattr_t(long jarg1);
-
-  public static final native long new__opaque_pthread_once_t();
-
-  public static final native void delete__opaque_pthread_once_t(long jarg1);
-
-  public static final native long new__opaque_pthread_rwlock_t();
-
-  public static final native void delete__opaque_pthread_rwlock_t(long jarg1);
-
-  public static final native long new__opaque_pthread_rwlockattr_t();
-
-  public static final native void delete__opaque_pthread_rwlockattr_t(long jarg1);
-
-  public static final native long new__opaque_pthread_t();
-
-  public static final native void delete__opaque_pthread_t(long jarg1);
-
   public static final native int tiledb_status(long jarg1, capi_return_t jarg1_);
 
   public static final native int tiledb_status_code(long jarg1, capi_return_t jarg1_);
+
+  public static final native long tiledb_error_message(long jarg1, long jarg2);
+
+  public static final native void tiledb_error_free(long jarg1);
+
+  public static final native long tiledb_config_alloc(long jarg1, long jarg2);
+
+  public static final native void tiledb_config_free(long jarg1);
+
+  public static final native long tiledb_config_set(
+      long jarg1, String jarg2, String jarg3, long jarg4);
+
+  public static final native long tiledb_config_get(
+      long jarg1, String jarg2, long jarg3, long jarg4);
+
+  public static final native long tiledb_config_unset(long jarg1, String jarg2, long jarg3);
+
+  public static final native long tiledb_config_load_from_file(
+      long jarg1, String jarg2, long jarg3);
+
+  public static final native long tiledb_config_save_to_file(long jarg1, String jarg2, long jarg3);
+
+  public static final native long tiledb_config_compare(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_config_iter_alloc(
+      long jarg1, String jarg2, long jarg3, long jarg4);
+
+  public static final native long tiledb_config_iter_reset(
+      long jarg1, long jarg2, String jarg3, long jarg4);
+
+  public static final native void tiledb_config_iter_free(long jarg1);
+
+  public static final native long tiledb_config_iter_here(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native long tiledb_config_iter_next(long jarg1, long jarg2);
+
+  public static final native long tiledb_config_iter_done(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_ctx_alloc(long jarg1, long jarg2);
+
+  public static final native void tiledb_ctx_free(long jarg1);
+
+  public static final native long tiledb_ctx_get_stats(long jarg1, long jarg2);
+
+  public static final native long tiledb_ctx_get_config(long jarg1, long jarg2);
+
+  public static final native long tiledb_ctx_get_last_error(long jarg1, long jarg2);
+
+  public static final native long tiledb_ctx_is_supported_fs(long jarg1, int jarg2, long jarg3);
+
+  public static final native long tiledb_ctx_cancel_tasks(long jarg1);
+
+  public static final native long tiledb_ctx_set_tag(long jarg1, String jarg2, String jarg3);
 
   public static final native long tiledb_filter_type_to_str(int jarg1, long jarg2);
 
@@ -799,6 +805,24 @@ public class tiledbJNI {
 
   public static final native long tiledb_filter_get_option(
       long jarg1, long jarg2, int jarg3, long jarg4);
+
+  public static final native long tiledb_filter_list_alloc(long jarg1, long jarg2);
+
+  public static final native void tiledb_filter_list_free(long jarg1);
+
+  public static final native long tiledb_filter_list_add_filter(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_filter_list_set_max_chunk_size(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_filter_list_get_nfilters(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_filter_list_get_filter_from_index(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native long tiledb_filter_list_get_max_chunk_size(
+      long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_query_type_to_str(int jarg1, long jarg2);
 
@@ -856,10 +880,6 @@ public class tiledbJNI {
 
   public static final native void tiledb_version(long jarg1, long jarg2, long jarg3);
 
-  public static final native int tiledb_error_message(long jarg1, long jarg2);
-
-  public static final native void tiledb_error_free(long jarg1);
-
   public static final native int tiledb_buffer_alloc(long jarg1, long jarg2);
 
   public static final native void tiledb_buffer_free(long jarg1);
@@ -889,74 +909,7 @@ public class tiledbJNI {
 
   public static final native int tiledb_buffer_list_flatten(long jarg1, long jarg2, long jarg3);
 
-  public static final native int tiledb_config_alloc(long jarg1, long jarg2);
-
-  public static final native void tiledb_config_free(long jarg1);
-
-  public static final native int tiledb_config_set(
-      long jarg1, String jarg2, String jarg3, long jarg4);
-
-  public static final native int tiledb_config_get(
-      long jarg1, String jarg2, long jarg3, long jarg4);
-
-  public static final native int tiledb_config_unset(long jarg1, String jarg2, long jarg3);
-
-  public static final native int tiledb_config_load_from_file(long jarg1, String jarg2, long jarg3);
-
-  public static final native int tiledb_config_save_to_file(long jarg1, String jarg2, long jarg3);
-
-  public static final native int tiledb_config_compare(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_config_iter_alloc(
-      long jarg1, String jarg2, long jarg3, long jarg4);
-
-  public static final native int tiledb_config_iter_reset(
-      long jarg1, long jarg2, String jarg3, long jarg4);
-
-  public static final native void tiledb_config_iter_free(long jarg1);
-
-  public static final native int tiledb_config_iter_here(
-      long jarg1, long jarg2, long jarg3, long jarg4);
-
-  public static final native int tiledb_config_iter_next(long jarg1, long jarg2);
-
-  public static final native int tiledb_config_iter_done(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_ctx_alloc(long jarg1, long jarg2);
-
-  public static final native void tiledb_ctx_free(long jarg1);
-
-  public static final native int tiledb_ctx_get_stats(long jarg1, long jarg2);
-
-  public static final native int tiledb_ctx_get_config(long jarg1, long jarg2);
-
-  public static final native int tiledb_ctx_get_last_error(long jarg1, long jarg2);
-
-  public static final native int tiledb_ctx_is_supported_fs(long jarg1, int jarg2, long jarg3);
-
-  public static final native int tiledb_ctx_cancel_tasks(long jarg1);
-
-  public static final native int tiledb_ctx_set_tag(long jarg1, String jarg2, String jarg3);
-
   public static final native int tiledb_group_create(long jarg1, String jarg2);
-
-  public static final native long tiledb_filter_list_alloc(long jarg1, long jarg2);
-
-  public static final native void tiledb_filter_list_free(long jarg1);
-
-  public static final native long tiledb_filter_list_add_filter(long jarg1, long jarg2, long jarg3);
-
-  public static final native long tiledb_filter_list_set_max_chunk_size(
-      long jarg1, long jarg2, long jarg3);
-
-  public static final native long tiledb_filter_list_get_nfilters(
-      long jarg1, long jarg2, long jarg3);
-
-  public static final native long tiledb_filter_list_get_filter_from_index(
-      long jarg1, long jarg2, long jarg3, long jarg4);
-
-  public static final native long tiledb_filter_list_get_max_chunk_size(
-      long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_attribute_alloc(
       long jarg1, String jarg2, int jarg3, long jarg4);
@@ -1730,6 +1683,8 @@ public class tiledbJNI {
   public static final native int tiledb_array_schema_timestamp_range(
       long jarg1, long jarg2, long jarg3, long jarg4);
 
+  public static final native int tiledb_array_delete_array(long jarg1, long jarg2, String jarg3);
+
   public static final native int tiledb_array_evolve(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_array_upgrade_version(long jarg1, String jarg2, long jarg3);
@@ -1759,7 +1714,7 @@ public class tiledbJNI {
   public static final native int tiledb_query_get_status_details(
       long jarg1, long jarg2, long jarg3, tiledb_query_status_details_t jarg3_);
 
-  public static final native int tiledb_ctx_alloc_with_error(long jarg1, long jarg2, long jarg3);
+  public static final native long tiledb_ctx_alloc_with_error(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_consolidate_fragments(
       long jarg1, String jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5);

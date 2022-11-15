@@ -66,9 +66,9 @@ public class Config implements AutoCloseable {
    */
   public Config() throws TileDBError {
     SWIGTYPE_p_p_tiledb_config_t _configpp = tiledb.new_tiledb_config_tpp();
-    SWIGTYPE_p_p_tiledb_error_t _errorpp = tiledb.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_error_handle_t _errorpp = tiledb.new_tiledb_error_tpp();
     try {
-      int rc = tiledb.tiledb_config_alloc(_configpp, _errorpp);
+      capi_return_t rc = tiledb.tiledb_config_alloc(_configpp, _errorpp);
       checkConfigError(rc, _errorpp);
     } catch (TileDBError err) {
       tiledb.delete_tiledb_config_tpp(_configpp);
@@ -136,9 +136,9 @@ public class Config implements AutoCloseable {
 
   private void init(String filename) throws TileDBError {
     SWIGTYPE_p_p_tiledb_config_t _configpp = tiledb.new_tiledb_config_tpp();
-    SWIGTYPE_p_p_tiledb_error_t _errorpp = tiledb.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_error_handle_t _errorpp = tiledb.new_tiledb_error_tpp();
     try {
-      int rc = tiledb.tiledb_config_alloc(_configpp, _errorpp);
+      capi_return_t rc = tiledb.tiledb_config_alloc(_configpp, _errorpp);
       checkConfigError(rc, _errorpp);
     } catch (TileDBError err) {
       tiledb.delete_tiledb_config_tpp(_configpp);
@@ -147,7 +147,7 @@ public class Config implements AutoCloseable {
     }
     SWIGTYPE_p_tiledb_config_t _configp = tiledb.tiledb_config_tpp_value(_configpp);
     try {
-      int rc = tiledb.tiledb_config_load_from_file(_configp, filename, _errorpp);
+      capi_return_t rc = tiledb.tiledb_config_load_from_file(_configp, filename, _errorpp);
       checkConfigError(rc, _errorpp);
     } catch (TileDBError err) {
       tiledb.delete_tiledb_config_tpp(_configpp);
@@ -169,10 +169,10 @@ public class Config implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public String get(String parameter) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_error_handle_t errorpp = tiledb.new_tiledb_error_tpp();
     SWIGTYPE_p_p_char valuepp = tiledb.new_charpp();
     try {
-      int rc = tiledb.tiledb_config_get(configp, parameter, valuepp, errorpp);
+      capi_return_t rc = tiledb.tiledb_config_get(configp, parameter, valuepp, errorpp);
       checkConfigError(rc, errorpp);
       tiledb.delete_tiledb_error_tpp(errorpp);
     } catch (TileDBError err) {
@@ -195,9 +195,9 @@ public class Config implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public void set(String parameter, String value) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_error_handle_t errorpp = tiledb.new_tiledb_error_tpp();
     try {
-      int rc = tiledb.tiledb_config_set(configp, parameter, value, errorpp);
+      capi_return_t rc = tiledb.tiledb_config_set(configp, parameter, value, errorpp);
       checkConfigError(rc, errorpp);
     } finally {
       tiledb.delete_tiledb_error_tpp(errorpp);
@@ -211,9 +211,9 @@ public class Config implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public void unset(String parameter) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_error_handle_t errorpp = tiledb.new_tiledb_error_tpp();
     try {
-      int rc = tiledb.tiledb_config_unset(configp, parameter, errorpp);
+      capi_return_t rc = tiledb.tiledb_config_unset(configp, parameter, errorpp);
       checkConfigError(rc, errorpp);
     } finally {
       tiledb.delete_tiledb_error_tpp(errorpp);
@@ -240,23 +240,23 @@ public class Config implements AutoCloseable {
    */
   public HashMap<String, String> parameters(String prefix) throws TileDBError {
     HashMap<String, String> result = new HashMap<String, String>();
-    SWIGTYPE_p_p_tiledb_config_iter_t iterpp = tiledb.new_tiledb_config_iter_tpp();
-    SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_config_iter_handle_t iterpp = tiledb.new_tiledb_config_iter_tpp();
+    SWIGTYPE_p_p_tiledb_error_handle_t errorpp = tiledb.new_tiledb_error_tpp();
     try {
-      int rc = tiledb.tiledb_config_iter_alloc(configp, prefix, iterpp, errorpp);
+      capi_return_t rc = tiledb.tiledb_config_iter_alloc(configp, prefix, iterpp, errorpp);
       checkConfigError(rc, errorpp);
     } catch (TileDBError err) {
       tiledb.delete_tiledb_config_iter_tpp(iterpp);
       tiledb.delete_tiledb_error_tpp(errorpp);
       throw err;
     }
-    SWIGTYPE_p_tiledb_config_iter_t iterp = tiledb.tiledb_config_iter_tpp_value(iterpp);
+    SWIGTYPE_p_tiledb_config_iter_handle_t iterp = tiledb.tiledb_config_iter_tpp_value(iterpp);
     while (hasMoreParams(iterp)) {
       errorpp = tiledb.new_tiledb_error_tpp();
       SWIGTYPE_p_p_char parampp = tiledb.new_charpp();
       SWIGTYPE_p_p_char valuepp = tiledb.new_charpp();
       try {
-        int rc = tiledb.tiledb_config_iter_here(iterp, parampp, valuepp, errorpp);
+        capi_return_t rc = tiledb.tiledb_config_iter_here(iterp, parampp, valuepp, errorpp);
         checkConfigError(rc, errorpp);
       } catch (TileDBError err) {
         tiledb.delete_charpp(parampp);
@@ -278,9 +278,9 @@ public class Config implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public void saveToFile(String filename) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_error_handle_t errorpp = tiledb.new_tiledb_error_tpp();
     try {
-      int rc = tiledb.tiledb_config_save_to_file(configp, filename, errorpp);
+      capi_return_t rc = tiledb.tiledb_config_save_to_file(configp, filename, errorpp);
       checkConfigError(rc, errorpp);
     } finally {
       tiledb.delete_tiledb_error_tpp(errorpp);
@@ -302,21 +302,21 @@ public class Config implements AutoCloseable {
     saveToFile(new File(uri).getAbsolutePath());
   }
 
-  private void next(SWIGTYPE_p_tiledb_config_iter_t iterp) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
+  private void next(SWIGTYPE_p_tiledb_config_iter_handle_t iterp) throws TileDBError {
+    SWIGTYPE_p_p_tiledb_error_handle_t errorpp = tiledb.new_tiledb_error_tpp();
     try {
-      int rc = tiledb.tiledb_config_iter_next(iterp, errorpp);
+      capi_return_t rc = tiledb.tiledb_config_iter_next(iterp, errorpp);
       checkConfigError(rc, errorpp);
     } finally {
       tiledb.delete_tiledb_error_tpp(errorpp);
     }
   }
 
-  private boolean hasMoreParams(SWIGTYPE_p_tiledb_config_iter_t iterp) throws TileDBError {
+  private boolean hasMoreParams(SWIGTYPE_p_tiledb_config_iter_handle_t iterp) throws TileDBError {
     SWIGTYPE_p_int done = tiledb.new_intp();
-    SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
+    SWIGTYPE_p_p_tiledb_error_handle_t errorpp = tiledb.new_tiledb_error_tpp();
     try {
-      int rc = tiledb.tiledb_config_iter_done(iterp, done, errorpp);
+      capi_return_t rc = tiledb.tiledb_config_iter_done(iterp, done, errorpp);
       checkConfigError(rc, errorpp);
     } catch (TileDBError err) {
       tiledb.delete_intp(done);
@@ -328,11 +328,13 @@ public class Config implements AutoCloseable {
     return hasMore;
   }
 
-  private void checkConfigError(int returnCode, SWIGTYPE_p_p_tiledb_error_t error)
+  private void checkConfigError(capi_return_t returnCode, SWIGTYPE_p_p_tiledb_error_handle_t error)
       throws TileDBError {
-    if (returnCode == tiledb.TILEDB_ERR) {
+    if (tiledb.tiledb_status_code(returnCode) == tiledb.TILEDB_ERR) {
       SWIGTYPE_p_p_char msgpp = tiledb.new_charpp();
-      int ret = tiledb.tiledb_error_message(tiledb.tiledb_error_tpp_value(error), msgpp);
+      int ret =
+          tiledb.tiledb_status_code(
+              tiledb.tiledb_error_message(tiledb.tiledb_error_tpp_value(error), msgpp));
       if (ret == tiledb.TILEDB_ERR) {
         tiledb.delete_charpp(msgpp);
         tiledb.tiledb_error_free(error);

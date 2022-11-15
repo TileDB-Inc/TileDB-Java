@@ -231,7 +231,7 @@ public class Dimension<T> implements AutoCloseable {
    */
   public FilterList getFilterList() throws TileDBError {
     FilterList filterlist;
-    SWIGTYPE_p_p_tiledb_filter_list_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
+    SWIGTYPE_p_p_tiledb_filter_list_handle_t filterlistpp = tiledb.new_tiledb_filter_list_tpp();
     try {
       ctx.handleError(
           tiledb.tiledb_dimension_get_filter_list(ctx.getCtxp(), dimensionp, filterlistpp));
