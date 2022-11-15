@@ -199,9 +199,9 @@ public class GroupTest {
     group.close();
 
     // consolidate metadata
-    group.consolidateMetadata(null);
+    group.consolidateMetadata(ctx.getConfig());
 
     // vacuum metadata
-    group.vacuumMetadata(null);
+    group.vacuumMetadata(ctx.getConfig());
   }
 }

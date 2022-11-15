@@ -6,11 +6,11 @@ public class FilterList implements AutoCloseable {
 
   private Context ctx;
 
-  private SWIGTYPE_p_tiledb_filter_list_t filter_listp;
-  private SWIGTYPE_p_p_tiledb_filter_list_t filter_listpp;
+  private SWIGTYPE_p_tiledb_filter_list_handle_t filter_listp;
+  private SWIGTYPE_p_p_tiledb_filter_list_handle_t filter_listpp;
 
   public FilterList(Context ctx) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_filter_list_t _filter_listpp = tiledb.new_tiledb_filter_list_tpp();
+    SWIGTYPE_p_p_tiledb_filter_list_handle_t _filter_listpp = tiledb.new_tiledb_filter_list_tpp();
     try {
       ctx.handleError(tiledb.tiledb_filter_list_alloc(ctx.getCtxp(), _filter_listpp));
     } catch (TileDBError err) {
@@ -22,13 +22,13 @@ public class FilterList implements AutoCloseable {
     this.filter_listpp = _filter_listpp;
   }
 
-  protected FilterList(Context ctx, SWIGTYPE_p_p_tiledb_filter_list_t filter_listpp) {
+  protected FilterList(Context ctx, SWIGTYPE_p_p_tiledb_filter_list_handle_t filter_listpp) {
     this.ctx = ctx;
     this.filter_listp = tiledb.tiledb_filter_list_tpp_value(filter_listpp);
     this.filter_listpp = filter_listpp;
   }
 
-  protected SWIGTYPE_p_tiledb_filter_list_t getFilterListp() {
+  protected SWIGTYPE_p_tiledb_filter_list_handle_t getFilterListp() {
     return this.filter_listp;
   }
 

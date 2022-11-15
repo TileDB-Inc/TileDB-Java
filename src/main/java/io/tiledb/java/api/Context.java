@@ -116,8 +116,8 @@ public class Context implements AutoCloseable {
     }
 
     // Get error
-    SWIGTYPE_p_p_tiledb_error_t errorpp = tiledb.new_tiledb_error_tpp();
-    rc = tiledb.tiledb_ctx_get_last_error(ctxp, errorpp);
+    SWIGTYPE_p_p_tiledb_error_handle_t errorpp = tiledb.new_tiledb_error_tpp();
+    rc = tiledb.tiledb_status_code(tiledb.tiledb_ctx_get_last_error(ctxp, errorpp));
     if (rc != tiledb.TILEDB_OK) {
       tiledb.tiledb_error_free(errorpp);
       tiledb.delete_tiledb_error_tpp(errorpp);
@@ -126,7 +126,9 @@ public class Context implements AutoCloseable {
 
     // Get error message
     SWIGTYPE_p_p_char msgpp = tiledb.new_charpp();
-    rc = tiledb.tiledb_error_message(tiledb.tiledb_error_tpp_value(errorpp), msgpp);
+    rc =
+        tiledb.tiledb_status_code(
+            tiledb.tiledb_error_message(tiledb.tiledb_error_tpp_value(errorpp), msgpp));
     String msg = tiledb.charpp_value(msgpp);
     if (rc != tiledb.TILEDB_OK) {
       tiledb.tiledb_error_free(errorpp);
@@ -174,7 +176,8 @@ public class Context implements AutoCloseable {
 
   private void createContext(Config config) throws TileDBError {
     SWIGTYPE_p_p_tiledb_ctx_t _ctxpp = tiledb.new_tiledb_ctx_tpp();
-    if (tiledb.tiledb_ctx_alloc(config.getConfigp(), _ctxpp) != tiledb.TILEDB_OK) {
+    if (tiledb.tiledb_status_code(tiledb.tiledb_ctx_alloc(config.getConfigp(), _ctxpp))
+        != tiledb.TILEDB_OK) {
       tiledb.delete_tiledb_ctx_tpp(_ctxpp);
       throw new TileDBError("[TileDB::JavaAPI] Error: Failed to create context");
     }
@@ -193,7 +196,7 @@ public class Context implements AutoCloseable {
   /** @return A Config object containing all configuration values of the Context. */
   public Config getConfig() throws TileDBError {
     SWIGTYPE_p_p_tiledb_config_t _configpp = tiledb.new_tiledb_config_tpp();
-    int rc = tiledb.tiledb_ctx_get_config(ctxp, _configpp);
+    int rc = tiledb.tiledb_status_code(tiledb.tiledb_ctx_get_config(ctxp, _configpp));
     if (rc != tiledb.TILEDB_OK) {
       tiledb.delete_tiledb_config_tpp(_configpp);
       handleError(rc);
