@@ -746,6 +746,15 @@ public class Array implements AutoCloseable {
   }
 
   /**
+   * Deletes all written array data.
+   *
+   * @throws TileDBError
+   */
+  public void delete() throws TileDBError {
+    ctx.handleError(tiledb.tiledb_array_delete_array(ctx.getCtxp(), this.arrayp, this.uri));
+  }
+
+  /**
    * Get the non-empty domain of an array, returning the bounding coordinates for each dimension.
    *
    * @return A HashMap of dimension names and (lower, upper) inclusive bounding coordinate range

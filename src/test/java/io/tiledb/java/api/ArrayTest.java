@@ -3,8 +3,7 @@ package io.tiledb.java.api;
 import static io.tiledb.java.api.Datatype.*;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.Layout.TILEDB_UNORDERED;
-import static io.tiledb.java.api.QueryType.TILEDB_READ;
-import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
+import static io.tiledb.java.api.QueryType.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -272,6 +271,13 @@ public class ArrayTest {
         array_b, readArrayBetween(ts_b, ts_c.subtract(BigInteger.valueOf(1L))));
 
     Assert.assertArrayEquals(array_c, readArrayAt(ts_c));
+  }
+
+  @Test
+  public void testDeleteArray() throws TileDBError {
+    Array.create(arrayURI, schemaCreate());
+    Array array = new Array(new Context(), arrayURI, TILEDB_MODIFY_EXCLUSIVE);
+    array.delete();
   }
 
   @Test
