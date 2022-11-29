@@ -14,6 +14,15 @@ public class WebPFilter extends Filter {
     super(ctx, tiledb_filter_type_t.TILEDB_FILTER_WEBP);
   }
 
+  /**
+   * Constructor.
+   *
+   * @param ctx The context param
+   * @param quality The quality param
+   * @param inputFormat The input format param as a tiledb_filter_webp_format_t enum value
+   * @param lossless The lossless param as an 1(yes) or 0(no). if lossless is set quality is ignored
+   * @throws TileDBError
+   */
   public WebPFilter(
       Context ctx, float quality, tiledb_filter_webp_format_t inputFormat, short lossless)
       throws TileDBError {
