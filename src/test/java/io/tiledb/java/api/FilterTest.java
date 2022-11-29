@@ -136,6 +136,12 @@ public class FilterTest {
   }
 
   @Test
+  public void testBitSort() throws Exception {
+    try (Context ctx = new Context();
+        BitSortFilter filter = new BitSortFilter(ctx)) {}
+  }
+
+  @Test
   public void testByteShuffle() throws Exception {
     try (Context ctx = new Context();
         ByteShuffleFilter filter = new ByteShuffleFilter(ctx)) {}

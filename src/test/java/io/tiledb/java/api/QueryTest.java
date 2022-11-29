@@ -57,7 +57,10 @@ public class QueryTest {
       Attribute a1 = new Attribute(ctx, "a1", String.class);
       Attribute a2 = new Attribute(ctx, "a2", Float.class);
       Attribute a3 = new Attribute(ctx, "a3", Boolean.class);
-      a1.setFilterList(new FilterList(ctx).addFilter(new CheckSumMD5Filter(ctx)));
+      a1.setFilterList(
+          new FilterList(ctx)
+              .addFilter(new CheckSumMD5Filter(ctx))
+              .addFilter(new BitShuffleFilter(ctx)));
       a2.setFilterList(new FilterList(ctx).addFilter(new CheckSumSHA256Filter(ctx)));
       a3.setFilterList(new FilterList(ctx).addFilter(new XORFilter(ctx)));
       a2.setCellValNum(2);
