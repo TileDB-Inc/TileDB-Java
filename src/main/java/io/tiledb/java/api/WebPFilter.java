@@ -91,7 +91,7 @@ public class WebPFilter extends Filter {
     return quality;
   }
 
-  public short getlossless() throws TileDBError {
+  public short getLossless() throws TileDBError {
     Context ctx = getCtx();
     short lossless;
     try (NativeArray losslessArray = new NativeArray(ctx, 1, Short.class)) {
