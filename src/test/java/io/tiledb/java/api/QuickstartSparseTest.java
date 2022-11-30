@@ -48,7 +48,9 @@ public class QuickstartSparseTest {
 
   @Before
   public void setup() throws Exception {
-    ctx = new Context();
+    Config config = new Config();
+    config.set("tiledb.sm.bitsort_filter_enabled", "true");
+    ctx = new Context(config);
     arrayURI = temp.getRoot().toPath().resolve("my_sparse_array").toString();
   }
 
