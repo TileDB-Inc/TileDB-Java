@@ -1,5 +1,7 @@
 package io.tiledb.java.api;
 
+import io.tiledb.libtiledb.SWIGTYPE_p_p_char;
+import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_datatype_t;
 import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.tiledb_datatype_t;
 
@@ -389,6 +391,53 @@ public enum Datatype {
         return TILEDB_BOOL;
       default:
         throw new TileDBError("No such enum value " + e.name());
+    }
+  }
+
+  /**
+   * Returns the input datatype size for a given type. Returns zero if the type is not valid.
+   *
+   * @return The size
+   * @throws TileDBError
+   */
+  public long size() throws TileDBError {
+    return tiledb.tiledb_datatype_size(this.toSwigEnum()).longValue();
+  }
+
+  /**
+   * Returns a string representation of the given datatype.
+   *
+   * @return The String representation
+   */
+  @Override
+  public String toString() {
+    String result;
+    SWIGTYPE_p_p_char resultpp = tiledb.new_charpp();
+    try (Context ctx = new Context()) {
+      ctx.handleError(tiledb.tiledb_datatype_to_str(this.toSwigEnum(), resultpp));
+      result = tiledb.charpp_value(resultpp);
+    } catch (TileDBError e) {
+      tiledb.delete_charpp(resultpp);
+      throw new RuntimeException(e);
+    }
+    return result;
+  }
+
+  /**
+   * Parses a datatype from the given string.
+   *
+   * @param datatype String representation to parse
+   * @return The parsed datatype
+   * @throws TileDBError
+   */
+  public static tiledb_datatype_t fromString(String datatype) throws TileDBError {
+    SWIGTYPE_p_tiledb_datatype_t dtypep = tiledb.new_tiledb_datatype_tp();
+    try (Context ctx = new Context()) {
+      ctx.handleError(tiledb.tiledb_datatype_from_str(datatype, dtypep));
+      return tiledb.tiledb_datatype_tp_value(dtypep);
+    } catch (TileDBError e) {
+      tiledb.delete_tiledb_datatype_tp(dtypep);
+      throw e;
     }
   }
 }
