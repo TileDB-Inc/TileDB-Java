@@ -751,6 +751,7 @@ public class Array implements AutoCloseable {
    * @throws TileDBError
    */
   public void delete() throws TileDBError {
+    this.close();
     ctx.handleError(tiledb.tiledb_array_delete(ctx.getCtxp(), this.uri));
   }
 
