@@ -288,4 +288,13 @@ public class DatatypeTest {
       }
     }
   }
+
+  @Test
+  public void testSize() throws TileDBError {
+    Assert.assertEquals(4, Datatype.TILEDB_FLOAT32.size());
+    Assert.assertEquals(4, Datatype.TILEDB_INT32.size());
+    Assert.assertEquals(8, Datatype.TILEDB_INT64.size());
+    Assert.assertEquals(1, Datatype.TILEDB_STRING_ASCII.size());
+    Assert.assertEquals(8, Datatype.TILEDB_FLOAT64.size());
+  }
 }
