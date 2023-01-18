@@ -84,6 +84,15 @@ public class Group implements AutoCloseable {
   }
 
   /**
+   * Returns the query type
+   *
+   * @return The query type
+   */
+  public QueryType getQueryType() {
+    return queryType;
+  }
+
+  /**
    * It deletes a metadata key-value item from an open group. The group must be opened in WRITE
    * mode, otherwise the function will error out.
    *
