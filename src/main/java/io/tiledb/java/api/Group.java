@@ -31,11 +31,11 @@ public class Group implements AutoCloseable {
   private Context ctx;
   private final String uri;
   private QueryType queryType;
-  private SWIGTYPE_p_tiledb_group_t groupp;
-  private SWIGTYPE_p_p_tiledb_group_t grouppp;
+  private SWIGTYPE_p_tiledb_group_handle_t groupp;
+  private SWIGTYPE_p_p_tiledb_group_handle_t grouppp;
 
   public Group(Context ctx, String uri, QueryType queryType) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_group_t grouppp = tiledb.new_tiledb_group_tpp();
+    SWIGTYPE_p_p_tiledb_group_handle_t grouppp = tiledb.new_tiledb_group_tpp();
     try {
       ctx.handleError(tiledb.tiledb_group_alloc(ctx.getCtxp(), uri, grouppp));
     } catch (TileDBError err) {
@@ -55,7 +55,7 @@ public class Group implements AutoCloseable {
    *
    * @return the group pointer
    */
-  protected SWIGTYPE_p_tiledb_group_t getGroupp() {
+  protected SWIGTYPE_p_tiledb_group_handle_t getGroupp() {
     return this.groupp;
   }
 

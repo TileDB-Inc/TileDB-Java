@@ -770,6 +770,10 @@ public class tiledbJNI {
 
   public static final native long tiledb_config_iter_done(long jarg1, long jarg2, long jarg3);
 
+  public static final native long tiledb_filesystem_to_str(int jarg1, long jarg2);
+
+  public static final native long tiledb_filesystem_from_str(String jarg1, long jarg2);
+
   public static final native long tiledb_ctx_alloc(long jarg1, long jarg2);
 
   public static final native void tiledb_ctx_free(long jarg1);
@@ -785,6 +789,26 @@ public class tiledbJNI {
   public static final native long tiledb_ctx_cancel_tasks(long jarg1);
 
   public static final native long tiledb_ctx_set_tag(long jarg1, String jarg2, String jarg3);
+
+  public static final native long tiledb_datatype_to_str(int jarg1, long jarg2);
+
+  public static final native long tiledb_datatype_from_str(String jarg1, long jarg2);
+
+  public static final native java.math.BigInteger tiledb_datatype_size(int jarg1);
+
+  public static final native long tiledb_buffer_alloc(long jarg1, long jarg2);
+
+  public static final native void tiledb_buffer_free(long jarg1);
+
+  public static final native long tiledb_buffer_set_type(long jarg1, long jarg2, int jarg3);
+
+  public static final native long tiledb_buffer_get_type(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_buffer_get_data(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native long tiledb_buffer_set_data(
+      long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4);
 
   public static final native long tiledb_filter_type_to_str(int jarg1, long jarg2);
 
@@ -824,21 +848,19 @@ public class tiledbJNI {
   public static final native long tiledb_filter_list_get_max_chunk_size(
       long jarg1, long jarg2, long jarg3);
 
-  public static final native int tiledb_query_type_to_str(int jarg1, long jarg2);
+  public static final native long tiledb_group_create(long jarg1, String jarg2);
 
-  public static final native int tiledb_query_type_from_str(String jarg1, long jarg2);
+  public static final native long tiledb_object_type_to_str(int jarg1, long jarg2);
 
-  public static final native int tiledb_object_type_to_str(int jarg1, long jarg2);
+  public static final native long tiledb_object_type_from_str(String jarg1, long jarg2);
 
-  public static final native int tiledb_object_type_from_str(String jarg1, long jarg2);
+  public static final native long tiledb_walk_order_to_str(int jarg1, long jarg2);
 
-  public static final native int tiledb_filesystem_to_str(int jarg1, long jarg2);
+  public static final native long tiledb_walk_order_from_str(String jarg1, long jarg2);
 
-  public static final native int tiledb_filesystem_from_str(String jarg1, long jarg2);
+  public static final native long tiledb_query_type_to_str(int jarg1, long jarg2);
 
-  public static final native int tiledb_datatype_to_str(int jarg1, long jarg2);
-
-  public static final native int tiledb_datatype_from_str(String jarg1, long jarg2);
+  public static final native long tiledb_query_type_from_str(String jarg1, long jarg2);
 
   public static final native int tiledb_array_type_to_str(int jarg1, long jarg2);
 
@@ -856,10 +878,6 @@ public class tiledbJNI {
 
   public static final native int tiledb_query_status_from_str(String jarg1, long jarg2);
 
-  public static final native int tiledb_walk_order_to_str(int jarg1, long jarg2);
-
-  public static final native int tiledb_walk_order_from_str(String jarg1, long jarg2);
-
   public static final native int tiledb_vfs_mode_to_str(int jarg1, long jarg2);
 
   public static final native int tiledb_vfs_mode_from_str(String jarg1, long jarg2);
@@ -872,27 +890,11 @@ public class tiledbJNI {
 
   public static final native java.math.BigInteger tiledb_offset_size();
 
-  public static final native java.math.BigInteger tiledb_datatype_size(int jarg1);
-
   public static final native java.math.BigInteger tiledb_timestamp_now_ms();
 
   public static final native String tiledb_timestamps();
 
   public static final native void tiledb_version(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_buffer_alloc(long jarg1, long jarg2);
-
-  public static final native void tiledb_buffer_free(long jarg1);
-
-  public static final native int tiledb_buffer_set_type(long jarg1, long jarg2, int jarg3);
-
-  public static final native int tiledb_buffer_get_type(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_buffer_get_data(
-      long jarg1, long jarg2, long jarg3, long jarg4);
-
-  public static final native int tiledb_buffer_set_data(
-      long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4);
 
   public static final native int tiledb_buffer_list_alloc(long jarg1, long jarg2);
 
@@ -908,8 +910,6 @@ public class tiledbJNI {
       long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_buffer_list_flatten(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_group_create(long jarg1, String jarg2);
 
   public static final native int tiledb_attribute_alloc(
       long jarg1, String jarg2, int jarg3, long jarg4);
@@ -1667,6 +1667,76 @@ public class tiledbJNI {
 
   public static final native int tiledb_fragment_info_dump(long jarg1, long jarg2, long jarg3);
 
+  public static final native long tiledb_group_alloc(long jarg1, String jarg2, long jarg3);
+
+  public static final native void tiledb_group_free(long jarg1);
+
+  public static final native long tiledb_group_open(long jarg1, long jarg2, int jarg3);
+
+  public static final native long tiledb_group_close(long jarg1, long jarg2);
+
+  public static final native long tiledb_group_set_config(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_group_get_config(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_group_put_metadata(
+      long jarg1, long jarg2, String jarg3, int jarg4, long jarg5, long jarg6);
+
+  public static final native int tiledb_group_delete_group(
+      long jarg1, long jarg2, String jarg3, short jarg4);
+
+  public static final native long tiledb_group_delete_metadata(
+      long jarg1, long jarg2, String jarg3);
+
+  public static final native long tiledb_group_get_metadata(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native long tiledb_group_get_metadata_num(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_group_get_metadata_from_index(
+      long jarg1,
+      long jarg2,
+      java.math.BigInteger jarg3,
+      long jarg4,
+      long jarg5,
+      long jarg6,
+      long jarg7,
+      long jarg8);
+
+  public static final native long tiledb_group_has_metadata_key(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native long tiledb_group_add_member(
+      long jarg1, long jarg2, String jarg3, short jarg4, String jarg5);
+
+  public static final native long tiledb_group_remove_member(long jarg1, long jarg2, String jarg3);
+
+  public static final native long tiledb_group_get_member_count(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_group_get_member_by_index(
+      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native long tiledb_group_get_member_by_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native long tiledb_group_get_is_relative_uri_by_name(
+      long jarg1, long jarg2, String jarg3, long jarg4);
+
+  public static final native long tiledb_group_is_open(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_group_get_uri(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_group_get_query_type(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_group_dump_str(
+      long jarg1, long jarg2, long jarg3, short jarg4);
+
+  public static final native long tiledb_group_consolidate_metadata(
+      long jarg1, String jarg2, long jarg3);
+
+  public static final native long tiledb_group_vacuum_metadata(
+      long jarg1, String jarg2, long jarg3);
+
   public static final native int tiledb_array_schema_evolution_alloc(long jarg1, long jarg2);
 
   public static final native void tiledb_array_schema_evolution_free(long jarg1);
@@ -1682,6 +1752,8 @@ public class tiledbJNI {
 
   public static final native int tiledb_array_schema_timestamp_range(
       long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native int tiledb_array_delete(long jarg1, String jarg2);
 
   public static final native int tiledb_array_delete_array(long jarg1, long jarg2, String jarg3);
 
@@ -1714,75 +1786,8 @@ public class tiledbJNI {
   public static final native int tiledb_query_get_status_details(
       long jarg1, long jarg2, long jarg3, tiledb_query_status_details_t jarg3_);
 
-  public static final native long tiledb_ctx_alloc_with_error(long jarg1, long jarg2, long jarg3);
-
   public static final native int tiledb_array_consolidate_fragments(
       long jarg1, String jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5);
-
-  public static final native int tiledb_group_alloc(long jarg1, String jarg2, long jarg3);
-
-  public static final native int tiledb_group_open(long jarg1, long jarg2, int jarg3);
-
-  public static final native int tiledb_group_close(long jarg1, long jarg2);
-
-  public static final native void tiledb_group_free(long jarg1);
-
-  public static final native int tiledb_group_set_config(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_group_get_config(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_group_put_metadata(
-      long jarg1, long jarg2, String jarg3, int jarg4, long jarg5, long jarg6);
-
-  public static final native int tiledb_group_delete_metadata(long jarg1, long jarg2, String jarg3);
-
-  public static final native int tiledb_group_get_metadata(
-      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5, long jarg6);
-
-  public static final native int tiledb_group_get_metadata_num(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_group_get_metadata_from_index(
-      long jarg1,
-      long jarg2,
-      java.math.BigInteger jarg3,
-      long jarg4,
-      long jarg5,
-      long jarg6,
-      long jarg7,
-      long jarg8);
-
-  public static final native int tiledb_group_has_metadata_key(
-      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
-
-  public static final native int tiledb_group_add_member(
-      long jarg1, long jarg2, String jarg3, short jarg4, String jarg5);
-
-  public static final native int tiledb_group_remove_member(long jarg1, long jarg2, String jarg3);
-
-  public static final native int tiledb_group_get_member_count(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_group_get_member_by_index(
-      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5, long jarg6);
-
-  public static final native int tiledb_group_get_member_by_name(
-      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
-
-  public static final native int tiledb_group_get_is_relative_uri_by_name(
-      long jarg1, long jarg2, String jarg3, long jarg4);
-
-  public static final native int tiledb_group_is_open(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_group_get_uri(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_group_get_query_type(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_group_dump_str(
-      long jarg1, long jarg2, long jarg3, short jarg4);
-
-  public static final native int tiledb_group_consolidate_metadata(
-      long jarg1, String jarg2, long jarg3);
-
-  public static final native int tiledb_group_vacuum_metadata(long jarg1, String jarg2, long jarg3);
 
   public static final native int tiledb_filestore_schema_create(
       long jarg1, String jarg2, long jarg3);
@@ -1807,6 +1812,25 @@ public class tiledbJNI {
 
   public static final native int tiledb_fragment_info_get_total_cell_num(
       long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_consolidation_plan_create_with_mbr(
+      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4);
+
+  public static final native void tiledb_consolidation_plan_free(long jarg1);
+
+  public static final native int tiledb_consolidation_plan_get_num_nodes(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_consolidation_plan_get_num_fragments(
+      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4);
+
+  public static final native int tiledb_consolidation_plan_get_fragment_uri(
+      long jarg1, long jarg2, java.math.BigInteger jarg3, java.math.BigInteger jarg4, long jarg5);
+
+  public static final native int tiledb_consolidation_plan_dump_json_str(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_consolidation_plan_free_json_str(long jarg1);
 
   public static final native int tiledb_dimension_dump_stdout(long jarg1, long jarg2);
 
