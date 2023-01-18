@@ -78,10 +78,10 @@ public class FilterTest {
   @Test
   public void testFloatScalingFilter() throws Exception {
     try (Context ctx = new Context()) {
-      try (FloatScalingFilter filter = new FloatScalingFilter(ctx, 10.0, 10.0, 10L)) {
+      try (FloatScalingFilter filter = new FloatScalingFilter(ctx, 10.0, 10.0, 4)) {
         Assert.assertEquals(filter.getFactor(), 10.0, 0);
         Assert.assertEquals(filter.getOffset(), 10.0, 0);
-        Assert.assertEquals(filter.getByteWidth(), 10L, 0);
+        Assert.assertEquals(filter.getByteWidth(), 4, 0);
       }
       try (FloatScalingFilter filter = new FloatScalingFilter(ctx)) {
         Assert.assertEquals(filter.getFactor(), 1.0, 0);
