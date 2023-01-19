@@ -1368,6 +1368,27 @@ static capi_return_t* capi_return_tpp_value(capi_return_t* *obj) {
 }
 
 
+static tiledb_consolidation_plan_t* *new_tiledb_consolidation_plan_tpp() { 
+  return new tiledb_consolidation_plan_t*(); 
+}
+
+static tiledb_consolidation_plan_t* *copy_tiledb_consolidation_plan_tpp(tiledb_consolidation_plan_t* value) { 
+  return new tiledb_consolidation_plan_t*(value); 
+}
+
+static void delete_tiledb_consolidation_plan_tpp(tiledb_consolidation_plan_t* *obj) { 
+  if (obj) delete obj; 
+}
+
+static void tiledb_consolidation_plan_tpp_assign(tiledb_consolidation_plan_t* *obj, tiledb_consolidation_plan_t* value) {
+  *obj = value;
+}
+
+static tiledb_consolidation_plan_t* tiledb_consolidation_plan_tpp_value(tiledb_consolidation_plan_t* *obj) {
+  return *obj;
+}
+
+
 static tiledb_array_schema_evolution_t* *new_tiledb_array_schema_evolution_tpp() { 
   return new tiledb_array_schema_evolution_t*(); 
 }
@@ -5136,6 +5157,68 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_capi_1return_1tpp_1v
   arg1 = *(capi_return_t ***)&jarg1; 
   result = (capi_return_t *)capi_return_tpp_value(arg1);
   *(capi_return_t **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1tiledb_1consolidation_1plan_1tpp(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  tiledb_consolidation_plan_t **result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (tiledb_consolidation_plan_t **)new_tiledb_consolidation_plan_tpp();
+  *(tiledb_consolidation_plan_t ***)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_copy_1tiledb_1consolidation_1plan_1tpp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_consolidation_plan_t *arg1 = (tiledb_consolidation_plan_t *) 0 ;
+  tiledb_consolidation_plan_t **result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_consolidation_plan_t **)&jarg1; 
+  result = (tiledb_consolidation_plan_t **)copy_tiledb_consolidation_plan_tpp(arg1);
+  *(tiledb_consolidation_plan_t ***)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_delete_1tiledb_1consolidation_1plan_1tpp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  tiledb_consolidation_plan_t **arg1 = (tiledb_consolidation_plan_t **) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_consolidation_plan_t ***)&jarg1; 
+  delete_tiledb_consolidation_plan_tpp(arg1);
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1consolidation_1plan_1tpp_1assign(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  tiledb_consolidation_plan_t **arg1 = (tiledb_consolidation_plan_t **) 0 ;
+  tiledb_consolidation_plan_t *arg2 = (tiledb_consolidation_plan_t *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_consolidation_plan_t ***)&jarg1; 
+  arg2 = *(tiledb_consolidation_plan_t **)&jarg2; 
+  tiledb_consolidation_plan_tpp_assign(arg1,arg2);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1consolidation_1plan_1tpp_1value(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  tiledb_consolidation_plan_t **arg1 = (tiledb_consolidation_plan_t **) 0 ;
+  tiledb_consolidation_plan_t *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_consolidation_plan_t ***)&jarg1; 
+  result = (tiledb_consolidation_plan_t *)tiledb_consolidation_plan_tpp_value(arg1);
+  *(tiledb_consolidation_plan_t **)&jresult = result; 
   return jresult;
 }
 

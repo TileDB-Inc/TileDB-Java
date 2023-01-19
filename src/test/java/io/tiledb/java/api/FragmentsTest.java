@@ -49,6 +49,17 @@ public class FragmentsTest {
     arrayRead();
   }
 
+  @Test
+  public void testConsolidationPlan() throws TileDBError {
+    ConsolidationPlan consolidationPlan =
+        new ConsolidationPlan(ctx, BigInteger.valueOf(1024 * 1024), arrayURI);
+    Assert.assertEquals(1, consolidationPlan.getNumNodes());
+    Assert.assertEquals(3, consolidationPlan.getNumFragments(BigInteger.ZERO));
+
+    String notNull = consolidationPlan.getFragmentURI(BigInteger.ZERO, BigInteger.ZERO);
+    notNull = consolidationPlan.dumpJSONString();
+  }
+
   //  @Test
   //  public void testConsolidateStartEnd() throws Exception {
   //    Config config = new Config();
