@@ -35,9 +35,9 @@ public class GroupTest {
 
   @After
   public void teardown() throws Exception {
-    if (Files.exists(Paths.get("test_group"))) {
-      TileDBObject.remove(ctx, "test_group");
-    }
+    //    if (Files.exists(Paths.get("test_group"))) {
+    //      TileDBObject.remove(ctx, "test_group");
+    //    }
     if (Files.exists(Paths.get("array1"))) {
       TileDBObject.remove(ctx, "array1");
     }
@@ -135,7 +135,7 @@ public class GroupTest {
     group.reopen(ctx, QueryType.TILEDB_READ);
     Assert.assertEquals(2, group.getMemberCount());
 
-    group.close();
+    group.delete((short) 0);
   }
 
   @Test

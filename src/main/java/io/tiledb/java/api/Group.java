@@ -495,4 +495,17 @@ public class Group implements AutoCloseable {
   public static void create(Context ctx, String uri) throws TileDBError {
     ctx.handleError(tiledb.tiledb_group_create(ctx.getCtxp(), uri));
   }
+
+  /**
+   * Deletes written data from an open group. The group must be opened in MODIFY_EXCLUSIVE mode,
+   * otherwise the function will error out.
+   *
+   * @param recursive 1 if all data inside the group is to be deleted
+   * @throws TileDBError
+   */
+  public void delete(short recursive) throws TileDBError {
+    this.reopen(ctx, QueryType.TILEDB_MODIFY_EXCLUSIVE);
+    ctx.handleError(
+        tiledb.tiledb_group_delete_group(ctx.getCtxp(), this.groupp, this.uri, recursive));
+  }
 }
