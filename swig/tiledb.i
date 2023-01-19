@@ -113,6 +113,7 @@ typedef struct tiledb_config_t tiledb_config_t;
 %pointer_functions(tiledb_query_condition_t*, tiledb_query_condition_tpp);
 %pointer_functions(tiledb_group_t*, tiledb_group_tpp);
 %pointer_functions(capi_return_t*, capi_return_tpp);
+%pointer_functions(tiledb_consolidation_plan_t*, tiledb_consolidation_plan_tpp);
 
 
 %native (sizeOfInt32) int sizeOfInt32();

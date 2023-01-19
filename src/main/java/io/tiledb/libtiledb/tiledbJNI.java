@@ -652,6 +652,16 @@ public class tiledbJNI {
 
   public static final native long capi_return_tpp_value(long jarg1);
 
+  public static final native long new_tiledb_consolidation_plan_tpp();
+
+  public static final native long copy_tiledb_consolidation_plan_tpp(long jarg1);
+
+  public static final native void delete_tiledb_consolidation_plan_tpp(long jarg1);
+
+  public static final native void tiledb_consolidation_plan_tpp_assign(long jarg1, long jarg2);
+
+  public static final native long tiledb_consolidation_plan_tpp_value(long jarg1);
+
   public static final native int sizeOfInt32();
 
   public static final native int sizeOfInt64();
