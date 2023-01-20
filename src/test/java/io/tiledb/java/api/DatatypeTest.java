@@ -291,10 +291,26 @@ public class DatatypeTest {
 
   @Test
   public void testSize() throws TileDBError {
-    Assert.assertEquals(4, Datatype.TILEDB_FLOAT32.size());
     Assert.assertEquals(4, Datatype.TILEDB_INT32.size());
     Assert.assertEquals(8, Datatype.TILEDB_INT64.size());
-    Assert.assertEquals(1, Datatype.TILEDB_STRING_ASCII.size());
+    Assert.assertEquals(4, Datatype.TILEDB_FLOAT32.size());
     Assert.assertEquals(8, Datatype.TILEDB_FLOAT64.size());
+    Assert.assertEquals(1, Datatype.TILEDB_CHAR.size());
+    Assert.assertEquals(1, Datatype.TILEDB_INT8.size());
+    Assert.assertEquals(1, Datatype.TILEDB_UINT8.size());
+    Assert.assertEquals(2, Datatype.TILEDB_INT16.size());
+    Assert.assertEquals(2, Datatype.TILEDB_UINT16.size());
+    Assert.assertEquals(4, Datatype.TILEDB_UINT32.size());
+    Assert.assertEquals(8, Datatype.TILEDB_UINT64.size());
+    Assert.assertEquals(1, Datatype.TILEDB_STRING_ASCII.size());
+    Assert.assertEquals(1, Datatype.TILEDB_STRING_UTF8.size());
+    Assert.assertEquals(2, Datatype.TILEDB_STRING_UTF16.size());
+    Assert.assertEquals(4, Datatype.TILEDB_STRING_UTF32.size());
+    Assert.assertEquals(2, Datatype.TILEDB_STRING_UCS2.size());
+    Assert.assertEquals(4, Datatype.TILEDB_STRING_UCS4.size());
+    Assert.assertEquals(8, Datatype.TILEDB_DATETIME_YEAR.size());
+    Assert.assertEquals(8, Datatype.TILEDB_TIME_HR.size());
+    Assert.assertEquals(1, Datatype.TILEDB_BLOB.size());
+    Assert.assertEquals(1, Datatype.TILEDB_BOOL.size());
   }
 }
