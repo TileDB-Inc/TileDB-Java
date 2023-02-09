@@ -1,0 +1,49 @@
+name: nightly
+on:
+  schedule:
+    - cron: "0 2 * * *" # Every night at 2 AM UTC (9 PM EST; 10 PM EDT)
+  workflow_dispatch:
+jobs:
+  test_macos_ubuntu:
+    runs-on: ${{ matrix.os }}
+    name: nightly-${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["macos-latest", "ubuntu-latest"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Force TileDB to build from Dev branch
+        shell: bash
+        run: |
+          awk '/TILEDB_GIT_TAG/{sub("=.*","=dev")};{print}' gradle.properties > gradle.properties.new && mv gradle.properties.new gradle.properties
+          awk '/DOWNLOAD_TILEDB_PREBUILT/{sub("=.*","=OFF")};{print}' gradle.properties > gradle.properties.new && mv gradle.properties.new gradle.properties
+      - run: |
+          ./gradlew assemble
+        shell: bash
+        name: Assemble
+      - run: |
+          ./gradlew test
+        shell: bash
+        name: Test
+
+  Test_Windows:
+    runs-on: windows-2019
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Force TileDB to build from Dev branch
+        shell: pwsh
+        run: |
+          (Get-Content gradle.properties) | ForEach-Object { $_ -replace 'TILEDB_GIT_TAG=.*', 'TILEDB_GIT_TAG=dev' } | Set-Content gradle.properties
+          (Get-Content gradle.properties) | ForEach-Object { $_ -replace 'DOWNLOAD_TILEDB_PREBUILT=.*', 'DOWNLOAD_TILEDB_PREBUILT=OFF' } | Set-Content gradle.properties
+      - name: assemble
+        uses: gradle/gradle-build-action@v1
+        with:
+          arguments: assemble
+
+      - name: test
+        uses: gradle/gradle-build-action@v1
+        with:
+          arguments: test
