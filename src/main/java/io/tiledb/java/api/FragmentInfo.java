@@ -25,29 +25,6 @@ public class FragmentInfo {
   }
 
   /**
-   * @param ctx
-   * @param uri
-   * @param key The encryption key
-   * @throws TileDBError
-   */
-  public FragmentInfo(Context ctx, String uri, EncryptionType encryptionType, String key)
-      throws TileDBError {
-    this.ctx = ctx;
-    this.uri = uri;
-    this.fragmentInfopp = tiledb.new_tiledb_fragment_info_tpp();
-
-    try (NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
-      ctx.handleError(
-          tiledb.tiledb_fragment_info_load_with_key(
-              ctx.getCtxp(),
-              fragmentInfop,
-              encryptionType.toSwigEnum(),
-              keyArray.toVoidPointer(),
-              keyArray.getSize()));
-    }
-  }
-
-  /**
    * Set the fragment info config. Useful for passing timestamp ranges and encryption key via the
    * config before loading the fragment info.
    *
