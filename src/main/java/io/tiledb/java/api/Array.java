@@ -63,8 +63,13 @@ public class Array implements AutoCloseable {
    *
    * <pre><b>Example:</b>
    * {@code
-   *   Context ctx = new Context();
-   *   Array array new Array(ctx, "s3://bucket-name/array-name");
+   *
+   * String key = "0123456789abcdeF0123456789abcdeF";
+   * Config config = new Config();
+   * config.set("sm.encryption_type", "AES_256_GCM");
+   * config.set("sm.encryption_key", key);
+   * Context ctx = new Context(config);
+   * Array array new Array(ctx, "s3://bucket-name/array-name");
    * }</pre>
    *
    * @param ctx TileDB context
@@ -76,32 +81,19 @@ public class Array implements AutoCloseable {
   }
 
   /**
-   * Constructs an Array object, opening the array for the given query type.
-   *
-   * <pre><b>Example:</b>
-   * {@code
-   * Context ctx = new Context();
-   * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ);
-   * }
-   * </pre>
-   *
-   * @param ctx TileDB context
-   * @param uri The array URI
-   * @param query_type Query type to open the array for.
-   * @exception TileDBError A TileDB exception
-   */
-  public Array(Context ctx, String uri, QueryType query_type) throws TileDBError {
-    this(ctx, uri, query_type, EncryptionType.TILEDB_NO_ENCRYPTION, new byte[] {});
-  }
-
-  /**
    * Constructs an Array object, opening the array for the given query type at a user-given
    * timestamp (time-travelling).
    *
    * <pre><b>Example:</b>
    * {@code
-   * Context ctx = new Context();
-   * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ);
+   * <pre><b>Example:</b>
+   * {@code
+   * String key = "0123456789abcdeF0123456789abcdeF";
+   * Config config = new Config();
+   * config.set("sm.encryption_type", "AES_256_GCM");
+   * config.set("sm.encryption_key", key);
+   * Context ctx = new Context(config);
+   * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ, end);
    * }
    * </pre>
    *
@@ -113,13 +105,23 @@ public class Array implements AutoCloseable {
    */
   public Array(Context ctx, String uri, QueryType query_type, BigInteger timestamp_end)
       throws TileDBError {
-    openArray(ctx, uri, query_type, timestamp_end);
+    this.setOpenTimestampEnd(timestamp_end);
+    openArray(ctx, uri, query_type);
   }
 
   /**
    * Constructs an Array object opening the array for reading at a user-given interval
    * (time-travelling).
    *
+   * <pre><b>Example:</b>
+   * {@code
+   * String key = "0123456789abcdeF0123456789abcdeF";
+   * Config config = new Config();
+   * config.set("sm.encryption_type", "AES_256_GCM");
+   * config.set("sm.encryption_key", key);
+   * Context ctx = new Context(config);
+   * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ, end, start);
+   * }
    * @param ctx TileDB context
    * @param uri The array URI
    * @param query_type Query type to open the array for.
@@ -134,7 +136,9 @@ public class Array implements AutoCloseable {
       BigInteger timestamp_start,
       BigInteger timestamp_end)
       throws TileDBError {
-    openArray(ctx, uri, query_type, timestamp_start, timestamp_end);
+    this.setOpenTimestampStart(timestamp_start);
+    this.setOpenTimestampEnd(timestamp_end);
+    openArray(ctx, uri, query_type);
   }
 
   /**
@@ -142,88 +146,25 @@ public class Array implements AutoCloseable {
    *
    * <pre><b>Example:</b>
    * {@code
-   * Context ctx = new Context();
    * String key = "0123456789abcdeF0123456789abcdeF";
-   * Array array new Array(ctx, "s3://bucket-name/array-name",
-   *                       TILEDB_READ,
-   *                       TILEDB_AES_256_GCM,
-   *                       key.getBytes(StandardCharsets.UTF_8));
+   * Config config = new Config();
+   * config.set("sm.encryption_type", "AES_256_GCM");
+   * config.set("sm.encryption_key", key);
+   * Context ctx = new Context(config);
+   * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ);
    * }
    * </pre>
    *
    * @param ctx TileDB context
    * @param uri The array URI
    * @param query_type Query type to open the array for
-   * @param encryption_type The encryption type to use
-   * @param key The encryption key to use
    * @throws TileDBError A TileDB exception
    */
-  public Array(
-      Context ctx, String uri, QueryType query_type, EncryptionType encryption_type, byte[] key)
-      throws TileDBError {
-    openArray(ctx, uri, query_type, encryption_type, key);
+  public Array(Context ctx, String uri, QueryType query_type) throws TileDBError {
+    openArray(ctx, uri, query_type);
   }
 
-  /**
-   * Constructs an Array object, opening the encrypted array for the given query type.
-   *
-   * <pre><b>Example:</b>
-   * {@code
-   * Context ctx = new Context();
-   * String key = "0123456789abcdeF0123456789abcdeF";
-   * Array array new Array(ctx, "s3://bucket-name/array-name",
-   *                       TILEDB_READ,
-   *                       TILEDB_AES_256_GCM,
-   *                       key.getBytes(StandardCharsets.UTF_8));
-   * }
-   * </pre>
-   *
-   * @param ctx TileDB context
-   * @param uri The array URI
-   * @param query_type Query type to open the array for
-   * @param encryption_type The encryption type to use
-   * @param key The encryption key to use
-   * @param timestamp_end The end timestamp
-   * @throws TileDBError A TileDB exception
-   */
-  public Array(
-      Context ctx,
-      String uri,
-      QueryType query_type,
-      EncryptionType encryption_type,
-      byte[] key,
-      BigInteger timestamp_end)
-      throws TileDBError {
-    openArray(ctx, uri, query_type, encryption_type, key, timestamp_end);
-  }
-
-  /**
-   * Constructs an Array object opening the encrypted array for reading at a user-given interval
-   * (time-travelling).
-   *
-   * @param ctx TileDB context
-   * @param uri The array URI
-   * @param query_type Query type to open the array for.
-   * @param timestamp_start The start timestamp
-   * @param timestamp_end The end timestamp
-   * @param encryption_type The encryption type to use
-   * @param key The encryption key to use
-   * @exception TileDBError A TileDB exception
-   */
-  public Array(
-      Context ctx,
-      String uri,
-      QueryType query_type,
-      BigInteger timestamp_start,
-      BigInteger timestamp_end,
-      EncryptionType encryption_type,
-      byte[] key)
-      throws TileDBError {
-    openArray(ctx, uri, query_type, encryption_type, key, timestamp_start, timestamp_end);
-  }
-
-  private synchronized void openArray(
-      Context ctx, String uri, QueryType query_type, EncryptionType encryption_type, byte[] key)
+  private synchronized void openArray(Context ctx, String uri, QueryType query_type)
       throws TileDBError {
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
@@ -234,159 +175,6 @@ public class Array implements AutoCloseable {
     }
     SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
     ArraySchema _schema;
-    try (NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
-      try {
-        ctx.handleError(
-            tiledb.tiledb_array_open_with_key(
-                ctx.getCtxp(),
-                _arrayp,
-                query_type.toSwigEnum(),
-                encryption_type.toSwigEnum(),
-                keyArray.toVoidPointer(),
-                keyArray.getSize()));
-      } catch (TileDBError err) {
-        tiledb.delete_tiledb_array_tpp(_arraypp);
-        throw err;
-      }
-      _schema = new ArraySchema(ctx, uri, encryption_type, key);
-    }
-    this.ctx = ctx;
-    this.uri = uri;
-    this.query_type = query_type;
-    this.schema = _schema;
-    this.arraypp = _arraypp;
-    this.arrayp = _arrayp;
-  }
-
-  private synchronized void openArray(
-      Context ctx,
-      String uri,
-      QueryType query_type,
-      EncryptionType encryption_type,
-      byte[] key,
-      BigInteger timestamp_end)
-      throws TileDBError {
-    Util.checkBigIntegerRange(timestamp_end);
-    SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
-    try {
-      ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
-    } catch (TileDBError err) {
-      tiledb.delete_tiledb_array_tpp(_arraypp);
-      throw err;
-    }
-    SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
-    ArraySchema _schema;
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), _arrayp, timestamp_end));
-    } catch (TileDBError err) {
-      throw err;
-    }
-
-    try (NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
-      try {
-        ctx.handleError(
-            tiledb.tiledb_array_open_with_key(
-                ctx.getCtxp(),
-                _arrayp,
-                query_type.toSwigEnum(),
-                encryption_type.toSwigEnum(),
-                keyArray.toVoidPointer(),
-                keyArray.getSize()));
-      } catch (TileDBError err) {
-        tiledb.delete_tiledb_array_tpp(_arraypp);
-        throw err;
-      }
-      _schema = new ArraySchema(ctx, uri, encryption_type, key);
-    }
-    this.ctx = ctx;
-    this.uri = uri;
-    this.query_type = query_type;
-    this.schema = _schema;
-    this.arraypp = _arraypp;
-    this.arrayp = _arrayp;
-  }
-
-  private synchronized void openArray(
-      Context ctx,
-      String uri,
-      QueryType query_type,
-      EncryptionType encryption_type,
-      byte[] key,
-      BigInteger timestamp_start,
-      BigInteger timestamp_end)
-      throws TileDBError {
-    Util.checkBigIntegerRange(timestamp_start);
-    Util.checkBigIntegerRange(timestamp_end);
-    SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
-    try {
-      ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
-    } catch (TileDBError err) {
-      tiledb.delete_tiledb_array_tpp(_arraypp);
-      throw err;
-    }
-    SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
-    ArraySchema _schema;
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_set_open_timestamp_start(ctx.getCtxp(), _arrayp, timestamp_start));
-    } catch (TileDBError err) {
-      throw err;
-    }
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), _arrayp, timestamp_end));
-    } catch (TileDBError err) {
-      throw err;
-    }
-
-    try (NativeArray keyArray = new NativeArray(ctx, key, Byte.class)) {
-      try {
-        ctx.handleError(
-            tiledb.tiledb_array_open_with_key(
-                ctx.getCtxp(),
-                _arrayp,
-                query_type.toSwigEnum(),
-                encryption_type.toSwigEnum(),
-                keyArray.toVoidPointer(),
-                keyArray.getSize()));
-      } catch (TileDBError err) {
-        tiledb.delete_tiledb_array_tpp(_arraypp);
-        throw err;
-      }
-      _schema = new ArraySchema(ctx, uri, encryption_type, key);
-    }
-    this.ctx = ctx;
-    this.uri = uri;
-    this.query_type = query_type;
-    this.schema = _schema;
-    this.arraypp = _arraypp;
-    this.arrayp = _arrayp;
-  }
-
-  private synchronized void openArray(
-      Context ctx, String uri, QueryType query_type, BigInteger timestamp_end) throws TileDBError {
-    Util.checkBigIntegerRange(timestamp_end);
-    SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
-    try {
-      ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
-    } catch (TileDBError err) {
-      tiledb.delete_tiledb_array_tpp(_arraypp);
-      throw err;
-    }
-    SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
-    ArraySchema _schema;
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), _arrayp, timestamp_end));
-    } catch (TileDBError err) {
-      throw err;
-    }
-
     try {
       ctx.handleError(tiledb.tiledb_array_open(ctx.getCtxp(), _arrayp, query_type.toSwigEnum()));
     } catch (TileDBError err) {
@@ -398,54 +186,6 @@ public class Array implements AutoCloseable {
     this.ctx = ctx;
     this.uri = uri;
     this.query_type = query_type;
-    this.schema = _schema;
-    this.arraypp = _arraypp;
-    this.arrayp = _arrayp;
-  }
-
-  private synchronized void openArray(
-      Context ctx,
-      String uri,
-      QueryType query_type,
-      BigInteger timestamp_start,
-      BigInteger timestamp_end)
-      throws TileDBError {
-    Util.checkBigIntegerRange(timestamp_start);
-    Util.checkBigIntegerRange(timestamp_end);
-    SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
-    try {
-      ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
-    } catch (TileDBError err) {
-      tiledb.delete_tiledb_array_tpp(_arraypp);
-      throw err;
-    }
-    SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
-    ArraySchema _schema;
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_set_open_timestamp_start(ctx.getCtxp(), _arrayp, timestamp_start));
-    } catch (TileDBError err) {
-      throw err;
-    }
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), _arrayp, timestamp_end));
-    } catch (TileDBError err) {
-      throw err;
-    }
-
-    try {
-      ctx.handleError(tiledb.tiledb_array_open(ctx.getCtxp(), _arrayp, query_type.toSwigEnum()));
-    } catch (TileDBError err) {
-      tiledb.delete_tiledb_array_tpp(_arraypp);
-      throw err;
-    }
-    _schema = new ArraySchema(ctx, uri);
-
-    this.ctx = ctx;
-    this.uri = uri;
     this.schema = _schema;
     this.arraypp = _arraypp;
     this.arrayp = _arrayp;

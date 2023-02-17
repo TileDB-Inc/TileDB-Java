@@ -28,11 +28,16 @@ public class ArrayTest {
 
   @Before
   public void setup() throws Exception {
-    ctx = new Context();
+    String keyString = "0123456789abcdeF0123456789abcdeF";
+    Config config = new Config();
+    config.set("sm.encryption_type", "AES_256_GCM");
+    config.set("sm.encryption_key", keyString);
+    ctx = new Context(config);
+
     arrayURI = temp.getRoot().toString();
     dimName = "d1";
     attributeName = "a1";
-    String keyString = "0123456789abcdeF0123456789abcdeF";
+
     key = keyString.getBytes(StandardCharsets.US_ASCII);
   }
 
@@ -121,16 +126,14 @@ public class ArrayTest {
   }
 
   public void insertArbitraryValuesEncrypted(NativeArray a_data) throws TileDBError {
-    try (Array array =
-        new Array(ctx, arrayURI, TILEDB_WRITE, EncryptionType.TILEDB_AES_256_GCM, key)) {
+    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE)) {
       insertArbitraryValuesMeth(array, a_data);
     }
   }
 
   public void insertArbitraryValuesEncrypted(NativeArray a_data, BigInteger timestamp)
       throws TileDBError {
-    try (Array array =
-        new Array(ctx, arrayURI, TILEDB_WRITE, EncryptionType.TILEDB_AES_256_GCM, key, timestamp)) {
+    try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE, timestamp)) {
       insertArbitraryValuesMeth(array, a_data);
     }
   }
@@ -165,15 +168,7 @@ public class ArrayTest {
 
   public long[] readArrayBetweenEncrypted(BigInteger timestamp_start, BigInteger timestamp_end)
       throws TileDBError {
-    return readArray(
-        new Array(
-            ctx,
-            arrayURI,
-            TILEDB_READ,
-            timestamp_start,
-            timestamp_end,
-            EncryptionType.TILEDB_AES_256_GCM,
-            key));
+    return readArray(new Array(ctx, arrayURI, TILEDB_READ, timestamp_start, timestamp_end));
   }
 
   public long[] readArrayAt(BigInteger timestamp) throws TileDBError {
@@ -181,8 +176,7 @@ public class ArrayTest {
   }
 
   public long[] readArrayAtEncrypted(BigInteger timestamp) throws TileDBError {
-    return readArray(
-        new Array(ctx, arrayURI, TILEDB_READ, EncryptionType.TILEDB_AES_256_GCM, key, timestamp));
+    return readArray(new Array(ctx, arrayURI, TILEDB_READ, timestamp));
   }
 
   @Test
