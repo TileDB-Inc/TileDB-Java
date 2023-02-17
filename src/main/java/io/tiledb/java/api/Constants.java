@@ -18,5 +18,4 @@ public class Constants {
   public static final int TILEDB_VERSION_MINOR = tiledb.TILEDB_VERSION_MINOR;
   public static final int TILEDB_VERSION_PATCH = tiledb.TILEDB_VERSION_PATCH;
   public static final long TILEDB_VAR_NUM = tiledb.tiledb_var_num();
-  public static final String TILEDB_COORDS = tiledb.tiledb_coords();
 }
