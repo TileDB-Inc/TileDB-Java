@@ -73,6 +73,7 @@ typedef struct tiledb_config_t tiledb_config_t;
 %pointer_functions(char *, charpp);
 %pointer_functions(unsigned int, uintp);
 %pointer_functions(unsigned long long, ullp);
+%pointer_functions(unsigned long, ulp);
 
 %include "typemaps.i"
 %include "enums.swg"

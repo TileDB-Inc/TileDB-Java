@@ -223,6 +223,28 @@ public class tiledb implements tiledbConstants {
     return tiledbJNI.ullp_value(SWIGTYPE_p_unsigned_long_long.getCPtr(obj));
   }
 
+  public static SWIGTYPE_p_unsigned_long new_ulp() {
+    long cPtr = tiledbJNI.new_ulp();
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, false);
+  }
+
+  public static SWIGTYPE_p_unsigned_long copy_ulp(long value) {
+    long cPtr = tiledbJNI.copy_ulp(value);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, false);
+  }
+
+  public static void delete_ulp(SWIGTYPE_p_unsigned_long obj) {
+    tiledbJNI.delete_ulp(SWIGTYPE_p_unsigned_long.getCPtr(obj));
+  }
+
+  public static void ulp_assign(SWIGTYPE_p_unsigned_long obj, long value) {
+    tiledbJNI.ulp_assign(SWIGTYPE_p_unsigned_long.getCPtr(obj), value);
+  }
+
+  public static long ulp_value(SWIGTYPE_p_unsigned_long obj) {
+    return tiledbJNI.ulp_value(SWIGTYPE_p_unsigned_long.getCPtr(obj));
+  }
+
   public static SWIGTYPE_p_tiledb_object_t new_tiledb_object_tp() {
     long cPtr = tiledbJNI.new_tiledb_object_tp();
     return (cPtr == 0) ? null : new SWIGTYPE_p_tiledb_object_t(cPtr, false);

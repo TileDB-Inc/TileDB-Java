@@ -696,6 +696,27 @@ static unsigned long long ullp_value(unsigned long long *obj) {
 }
 
 
+static unsigned long *new_ulp() { 
+  return new unsigned long(); 
+}
+
+static unsigned long *copy_ulp(unsigned long value) { 
+  return new unsigned long(value); 
+}
+
+static void delete_ulp(unsigned long *obj) { 
+  if (obj) delete obj; 
+}
+
+static void ulp_assign(unsigned long *obj, unsigned long value) {
+  *obj = value;
+}
+
+static unsigned long ulp_value(unsigned long *obj) {
+  return *obj;
+}
+
+
 static tiledb_object_t *new_tiledb_object_tp() { 
   return new tiledb_object_t(); 
 }
@@ -3171,6 +3192,68 @@ SWIGEXPORT jobject JNICALL Java_io_tiledb_libtiledb_tiledbJNI_ullp_1value(JNIEnv
     jenv->DeleteLocalRef(ba);
     jresult = bigint;
   }
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_new_1ulp(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  unsigned long *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (unsigned long *)new_ulp();
+  *(unsigned long **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_copy_1ulp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  unsigned long arg1 ;
+  unsigned long *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (unsigned long)jarg1; 
+  result = (unsigned long *)copy_ulp(arg1);
+  *(unsigned long **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_delete_1ulp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  unsigned long *arg1 = (unsigned long *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(unsigned long **)&jarg1; 
+  delete_ulp(arg1);
+}
+
+
+SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_ulp_1assign(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  unsigned long *arg1 = (unsigned long *) 0 ;
+  unsigned long arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(unsigned long **)&jarg1; 
+  arg2 = (unsigned long)jarg2; 
+  ulp_assign(arg1,arg2);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_ulp_1value(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  unsigned long *arg1 = (unsigned long *) 0 ;
+  unsigned long result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(unsigned long **)&jarg1; 
+  result = (unsigned long)ulp_value(arg1);
+  jresult = (jlong)result; 
   return jresult;
 }
 

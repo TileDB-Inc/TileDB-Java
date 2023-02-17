@@ -331,6 +331,16 @@ public class tiledbJNI {
 
   public static final native java.math.BigInteger ullp_value(long jarg1);
 
+  public static final native long new_ulp();
+
+  public static final native long copy_ulp(long jarg1);
+
+  public static final native void delete_ulp(long jarg1);
+
+  public static final native void ulp_assign(long jarg1, long jarg2);
+
+  public static final native long ulp_value(long jarg1);
+
   public static final native long new_tiledb_object_tp();
 
   public static final native long copy_tiledb_object_tp(int jarg1);

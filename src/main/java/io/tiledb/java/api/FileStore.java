@@ -25,7 +25,7 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_array_schema_t;
-import io.tiledb.libtiledb.SWIGTYPE_p_size_t;
+import io.tiledb.libtiledb.SWIGTYPE_p_unsigned_long;
 import io.tiledb.libtiledb.tiledb;
 
 public class FileStore {
@@ -142,15 +142,16 @@ public class FileStore {
    * @throws TileDBError
    */
   public static long getSize(Context ctx, String filestoreURI) throws TileDBError {
-    SWIGTYPE_p_size_t sizep = tiledb.new_sizep();
+    SWIGTYPE_p_unsigned_long sizep = tiledb.new_ulp();
+
     try {
       ctx.handleError(tiledb.tiledb_filestore_size(ctx.getCtxp(), filestoreURI, sizep));
     } catch (TileDBError err) {
-      tiledb.delete_sizep(sizep);
+      tiledb.delete_ulp(sizep);
       throw err;
     }
-    long result = tiledb.sizep_value(sizep);
-    tiledb.delete_sizep(sizep);
+    long result = tiledb.ulp_value(sizep);
+    tiledb.delete_ulp(sizep);
     return result;
   }
 }

@@ -111,6 +111,9 @@ public class FileStoreTest {
     byte[] exportedBuffer = (byte[]) FileStore.bufferExport(ctx, arrayURI, 0, 33);
     String exportedBufferString = new String(exportedBuffer, StandardCharsets.UTF_8);
 
+    long size = FileStore.getSize(ctx, arrayURI);
+    // TODO assert size
+
     Assert.assertEquals("Simple text file.\nWith two lines.", exportedBufferString);
 
     // cleanup
