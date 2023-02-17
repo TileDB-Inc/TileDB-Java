@@ -1,5 +1,4 @@
 %module tiledb
-
 %pragma(java) jniclassimports=%{
 import io.tiledb.libtiledb.NativeLibLoader;
 import java.nio.ByteBuffer;
@@ -155,6 +154,19 @@ typedef struct tiledb_config_t tiledb_config_t;
 // tiledb_experimental.h
 %pointer_functions(tiledb_array_schema_evolution_t*, tiledb_array_schema_evolution_tpp);
 
+%ignore __mbstate_t;
+%ignore _opaque_pthread_attr_t;
+%ignore _opaque_pthread_cond_t;
+%ignore _opaque_pthread_condattr_t;
+%ignore _opaque_pthread_mutex_t;
+%ignore _opaque_pthread_mutexattr_t;
+%ignore _opaque_pthread_once_t;
+%ignore _opaque_pthread_rwlock_t;
+%ignore _opaque_pthread_rwlockattr_t;
+%ignore _opaque_pthread_t;
+%ignore __darwin_pthread_handler_rec;
+
+
 %include "tiledb_generated.h"
 %include "tiledb_java_extensions.h"
 
@@ -188,3 +200,4 @@ typedef struct tiledb_config_t tiledb_config_t;
     return -1;
   }
 %}
+
