@@ -25,7 +25,7 @@ public enum tiledb_filter_type_t {
   TILEDB_FILTER_DICTIONARY(14),
   TILEDB_FILTER_SCALE_FLOAT(15),
   TILEDB_FILTER_XOR(16),
-  TILEDB_FILTER_BITSORT(17),
+  TILEDB_FILTER_DEPRECATED(17),
   TILEDB_FILTER_WEBP(18);
 
   public final int swigValue() {
