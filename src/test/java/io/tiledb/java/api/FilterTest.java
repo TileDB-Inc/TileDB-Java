@@ -136,15 +136,6 @@ public class FilterTest {
   }
 
   @Test
-  public void testBitSort() throws Exception {
-    Config config = new Config();
-    config.set("tiledb.sm.bitsort_filter_enabled", "true");
-    try (Context ctx = new Context(config);
-        BitSortFilter filter = new BitSortFilter(ctx)) {}
-    config.close();
-  }
-
-  @Test
   public void testByteShuffle() throws Exception {
     try (Context ctx = new Context();
         ByteShuffleFilter filter = new ByteShuffleFilter(ctx)) {}

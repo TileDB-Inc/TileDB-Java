@@ -72,7 +72,6 @@ public class QuickstartSparseTest {
     domain.addDimension(d1);
     domain.addDimension(d2);
 
-    d1.setFilterList(new FilterList(ctx).addFilter(new BitSortFilter(ctx)));
     d2.setFilterList(new FilterList(ctx).addFilter(new BitShuffleFilter(ctx)));
 
     // Create and add getAttributes

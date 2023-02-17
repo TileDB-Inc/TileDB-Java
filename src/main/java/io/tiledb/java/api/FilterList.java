@@ -96,8 +96,6 @@ public class FilterList implements AutoCloseable {
         return new XORFilter(this.ctx, _filterpp);
       case TILEDB_FILTER_WEBP:
         return new WebPFilter(this.ctx, _filterpp);
-      case TILEDB_FILTER_BITSORT:
-        return new BitSortFilter(this.ctx, _filterpp);
       default:
         {
           tiledb.delete_tiledb_filter_tpp(_filterpp);
