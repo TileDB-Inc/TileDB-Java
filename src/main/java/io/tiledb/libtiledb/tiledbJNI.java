@@ -27,37 +27,14 @@ public class tiledbJNI {
   public static final native int tiledb_query_set_subarray_nio(
       long jarg1, long jarg2, ByteBuffer jarg3);
 
-  public static final native int tiledb_query_set_buffer_nio(
+  public static final native int tiledb_query_set_data_buffer_nio(
       long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
 
-  public static final native int tiledb_query_set_buffer_var_nio(
-      long jarg1,
-      long jarg2,
-      String jarg3,
-      ByteBuffer jarg4,
-      long jarg5,
-      ByteBuffer jarg6,
-      long jarg7);
+  public static final native int tiledb_query_set_offsets_buffer_nio(
+      long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
 
-  public static final native int tiledb_query_set_buffer_nullable_nio(
-      long jarg1,
-      long jarg2,
-      String jarg3,
-      ByteBuffer jarg4,
-      long jarg5,
-      ByteBuffer jarg6,
-      long jarg7);
-
-  public static final native int tiledb_query_set_buffer_var_nullable_nio(
-      long jarg1,
-      long jarg2,
-      String jarg3,
-      ByteBuffer jarg4,
-      long jarg5,
-      ByteBuffer jarg6,
-      long jarg7,
-      ByteBuffer jarg8,
-      long jarg9);
+  public static final native int tiledb_query_set_validity_buffer_nio(
+      long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
 
   public static final native int tiledb_query_submit_async_java(
       long jarg1,
@@ -250,6 +227,15 @@ public class tiledbJNI {
   public static final native long voidpArray_getitem(long jarg1, int jarg2);
 
   public static final native void voidpArray_setitem(long jarg1, int jarg2, long jarg3);
+
+  public static final native long new_ullArray(int jarg1);
+
+  public static final native void delete_ullArray(long jarg1);
+
+  public static final native java.math.BigInteger ullArray_getitem(long jarg1, int jarg2);
+
+  public static final native void ullArray_setitem(
+      long jarg1, int jarg2, java.math.BigInteger jarg3);
 
   public static final native long new_intp();
 
@@ -1822,8 +1808,6 @@ public class tiledbJNI {
 
   public static final native int tiledb_query_get_status_details(
       long jarg1, long jarg2, long jarg3, tiledb_query_status_details_t jarg3_);
-
-  public static final native long tiledb_ctx_alloc_with_error(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_consolidate_fragments(
       long jarg1, String jarg2, long jarg3, java.math.BigInteger jarg4, long jarg5);

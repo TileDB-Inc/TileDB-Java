@@ -84,18 +84,12 @@ public class Array implements AutoCloseable {
    * Constructs an Array object, opening the array for the given query type at a user-given
    * timestamp (time-travelling).
    *
-   * <pre><b>Example:</b>
-   * {@code
-   * <pre><b>Example:</b>
-   * {@code
-   * String key = "0123456789abcdeF0123456789abcdeF";
-   * Config config = new Config();
-   * config.set("sm.encryption_type", "AES_256_GCM");
-   * config.set("sm.encryption_key", key);
-   * Context ctx = new Context(config);
-   * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ, end);
-   * }
-   * </pre>
+   * <p>Example
+   *
+   * <p>String key = "0123456789abcdeF0123456789abcdeF"; Config config = new Config();
+   * config.set("sm.encryption_type", "AES_256_GCM"); config.set("sm.encryption_key", key); Context
+   * ctx = new Context(config); Array array new Array(ctx, "s3://bucket-name/array-name",
+   * TILEDB_READ, end);
    *
    * @param ctx TileDB context
    * @param uri The array URI
@@ -105,23 +99,20 @@ public class Array implements AutoCloseable {
    */
   public Array(Context ctx, String uri, QueryType query_type, BigInteger timestamp_end)
       throws TileDBError {
-    this.setOpenTimestampEnd(timestamp_end);
-    openArray(ctx, uri, query_type);
+    openArray(ctx, uri, query_type, null, timestamp_end);
   }
 
   /**
    * Constructs an Array object opening the array for reading at a user-given interval
    * (time-travelling).
    *
-   * <pre><b>Example:</b>
-   * {@code
-   * String key = "0123456789abcdeF0123456789abcdeF";
-   * Config config = new Config();
-   * config.set("sm.encryption_type", "AES_256_GCM");
-   * config.set("sm.encryption_key", key);
-   * Context ctx = new Context(config);
-   * Array array new Array(ctx, "s3://bucket-name/array-name", TILEDB_READ, end, start);
-   * }
+   * <p>Example
+   *
+   * <p>String key = "0123456789abcdeF0123456789abcdeF"; Config config = new Config();
+   * config.set("sm.encryption_type", "AES_256_GCM"); config.set("sm.encryption_key", key); Context
+   * ctx = new Context(config); Array array new Array(ctx, "s3://bucket-name/array-name",
+   * TILEDB_READ, end, start);
+   *
    * @param ctx TileDB context
    * @param uri The array URI
    * @param query_type Query type to open the array for.
@@ -136,9 +127,7 @@ public class Array implements AutoCloseable {
       BigInteger timestamp_start,
       BigInteger timestamp_end)
       throws TileDBError {
-    this.setOpenTimestampStart(timestamp_start);
-    this.setOpenTimestampEnd(timestamp_end);
-    openArray(ctx, uri, query_type);
+    openArray(ctx, uri, query_type, timestamp_start, timestamp_end);
   }
 
   /**
@@ -161,10 +150,15 @@ public class Array implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public Array(Context ctx, String uri, QueryType query_type) throws TileDBError {
-    openArray(ctx, uri, query_type);
+    openArray(ctx, uri, query_type, null, null);
   }
 
-  private synchronized void openArray(Context ctx, String uri, QueryType query_type)
+  private synchronized void openArray(
+      Context ctx,
+      String uri,
+      QueryType query_type,
+      BigInteger timestamp_start,
+      BigInteger timestamp_end)
       throws TileDBError {
     SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
@@ -174,6 +168,27 @@ public class Array implements AutoCloseable {
       throw err;
     }
     SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
+
+    if (timestamp_start != null) {
+      Util.checkBigIntegerRange(timestamp_start);
+      try {
+        ctx.handleError(
+            tiledb.tiledb_array_set_open_timestamp_start(ctx.getCtxp(), _arrayp, timestamp_start));
+      } catch (TileDBError err) {
+        throw err;
+      }
+    }
+
+    if (timestamp_end != null) {
+      Util.checkBigIntegerRange(timestamp_end);
+      try {
+        ctx.handleError(
+            tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), _arrayp, timestamp_end));
+      } catch (TileDBError err) {
+        throw err;
+      }
+    }
+
     ArraySchema _schema;
     try {
       ctx.handleError(tiledb.tiledb_array_open(ctx.getCtxp(), _arrayp, query_type.toSwigEnum()));
@@ -933,35 +948,6 @@ public class Array implements AutoCloseable {
       throw err;
     }
     return _schema;
-  }
-
-  /**
-   * Sets the starting timestamp to use when opening (and reopening) the array. This is an inclusive
-   * bound. The default value is `0`.
-   */
-  public void setOpenTimestampStart(BigInteger timestamp) throws TileDBError {
-    Util.checkBigIntegerRange(timestamp);
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_set_open_timestamp_start(ctx.getCtxp(), getArrayp(), timestamp));
-    } catch (TileDBError err) {
-      throw err;
-    }
-  }
-
-  /**
-   * Sets the ending timestamp to use when opening (and reopening) the array. This is an inclusive
-   * bound. The UINT64_MAX timestamp is a reserved timestamp that will be interpretted as the
-   * current timestamp when an array is opened. The default value is `UINT64_MAX`.
-   */
-  public void setOpenTimestampEnd(BigInteger timestamp) throws TileDBError {
-    Util.checkBigIntegerRange(timestamp);
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), getArrayp(), timestamp));
-    } catch (TileDBError err) {
-      throw err;
-    }
   }
 
   /**

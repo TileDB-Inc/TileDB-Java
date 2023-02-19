@@ -7,8 +7,8 @@ import java.net.URI;
 public class VFS implements AutoCloseable {
 
   private Context ctx;
-  private SWIGTYPE_p_tiledb_vfs_t vfsp;
-  private SWIGTYPE_p_p_tiledb_vfs_t vfspp;
+  private SWIGTYPE_p_tiledb_vfs_handle_t vfsp;
+  private SWIGTYPE_p_p_tiledb_vfs_handle_t vfspp;
 
   /**
    * Constructor for creating new TileDB VFS handle with a given configuration
@@ -18,7 +18,7 @@ public class VFS implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public VFS(Context ctx, Config config) throws TileDBError {
-    SWIGTYPE_p_p_tiledb_vfs_t vfspp = tiledb.new_tiledb_vfs_tpp();
+    SWIGTYPE_p_p_tiledb_vfs_handle_t vfspp = tiledb.new_tiledb_vfs_tpp();
     try {
       ctx.handleError(tiledb.tiledb_vfs_alloc(ctx.getCtxp(), config.getConfigp(), vfspp));
     } catch (TileDBError err) {
@@ -45,7 +45,7 @@ public class VFS implements AutoCloseable {
    *
    * @return A SWIG pointer wrapper to a tiledb_vfs_t object handle
    */
-  protected SWIGTYPE_p_tiledb_vfs_t getVFSp() {
+  protected SWIGTYPE_p_tiledb_vfs_handle_t getVFSp() {
     return this.vfsp;
   }
 
@@ -495,7 +495,7 @@ public class VFS implements AutoCloseable {
    */
   public byte[] readAllBytes(String path) throws TileDBError {
     Long nbytes = fileSize(path);
-    SWIGTYPE_p_p_tiledb_vfs_fh_t vfsFHpp = tiledb.new_tiledb_vfs_fh_tpp();
+    SWIGTYPE_p_p_tiledb_vfs_fh_handle_t vfsFHpp = tiledb.new_tiledb_vfs_fh_tpp();
     try {
       ctx.handleError(
           tiledb.tiledb_vfs_open(
@@ -505,7 +505,7 @@ public class VFS implements AutoCloseable {
       throw err;
     }
     byte[] resultBuffer;
-    SWIGTYPE_p_tiledb_vfs_fh_t vfsFHp = tiledb.tiledb_vfs_fh_tpp_value(vfsFHpp);
+    SWIGTYPE_p_tiledb_vfs_fh_handle_t vfsFHp = tiledb.tiledb_vfs_fh_tpp_value(vfsFHpp);
     try (NativeArray byteBuffer = new NativeArray(ctx, nbytes.intValue(), Datatype.TILEDB_INT8)) {
       ctx.handleError(
           tiledb.tiledb_vfs_read(
@@ -546,7 +546,7 @@ public class VFS implements AutoCloseable {
     if (mode[0] == VFSMode.TILEDB_VFS_READ) {
       throw new TileDBError("VFSMode for write must be TILEDB_VFS_WRITE or TILEDB_VFS_APPEND");
     }
-    SWIGTYPE_p_p_tiledb_vfs_fh_t vfsFHpp = tiledb.new_tiledb_vfs_fh_tpp();
+    SWIGTYPE_p_p_tiledb_vfs_fh_handle_t vfsFHpp = tiledb.new_tiledb_vfs_fh_tpp();
     try {
       ctx.handleError(
           tiledb.tiledb_vfs_open(ctx.getCtxp(), vfsp, path, mode[0].toSwigEnum(), vfsFHpp));
@@ -554,7 +554,7 @@ public class VFS implements AutoCloseable {
       tiledb.tiledb_vfs_fh_free(vfsFHpp);
       throw err;
     }
-    SWIGTYPE_p_tiledb_vfs_fh_t vfsFHp = tiledb.tiledb_vfs_fh_tpp_value(vfsFHpp);
+    SWIGTYPE_p_tiledb_vfs_fh_handle_t vfsFHp = tiledb.tiledb_vfs_fh_tpp_value(vfsFHpp);
     try (NativeArray byteBuffer = new NativeArray(ctx, bytes, Byte.class)) {
       ctx.handleError(
           tiledb.tiledb_vfs_write(

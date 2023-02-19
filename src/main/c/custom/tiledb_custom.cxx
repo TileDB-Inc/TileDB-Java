@@ -1151,7 +1151,7 @@ extern "C" {
     return jresult;
   }
 
-  SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1set_1buffer_1nio(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jobject jarg4, jlong jarg5) {
+  SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1set_1data_1buffer_1nio(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jobject jarg4, jlong jarg5) {
     void* buffer = (void *)jenv->GetDirectBufferAddress(jarg4);
 
     jint jresult = 0 ;
@@ -1173,15 +1173,14 @@ extern "C" {
     }
     arg4 = *(void **)&jarg4;
     arg5 = *(uint64_t **)&jarg5;
-    result = (int32_t)tiledb_query_set_buffer(arg1,arg2,(char const *)arg3, buffer,arg5);
+    result = (int32_t)tiledb_query_set_data_buffer(arg1,arg2,(char const *)arg3, buffer,arg5);
     jresult = (jint)result;
     if (arg3) jenv->ReleaseStringUTFChars(jarg3, (const char *)arg3);
     return jresult;
   }
 
-  SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1set_1buffer_1var_1nio(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jobject jarg4, jlong jarg5, jobject jarg6, jlong jarg7) {
-    void* offsets = (void *)jenv->GetDirectBufferAddress(jarg4);
-    void* buffer = (void *)jenv->GetDirectBufferAddress(jarg6);
+  SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1set_1offsets_1buffer_1nio(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jobject jarg4, jlong jarg5) {
+    void* buffer = (void *)jenv->GetDirectBufferAddress(jarg4);
 
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
@@ -1189,8 +1188,6 @@ extern "C" {
     char *arg3 = (char *) 0 ;
     uint64_t *arg4 = (uint64_t *) 0 ;
     uint64_t *arg5 = (uint64_t *) 0 ;
-    void *arg6 = (void *) 0 ;
-    uint64_t *arg7 = (uint64_t *) 0 ;
     int32_t result;
 
     (void)jenv;
@@ -1204,23 +1201,21 @@ extern "C" {
     }
     arg4 = *(uint64_t **)&jarg4;
     arg5 = *(uint64_t **)&jarg5;
-    arg6 = *(void **)&jarg6;
-    arg7 = *(uint64_t **)&jarg7;
-    result = (int32_t)tiledb_query_set_buffer_var(arg1,arg2,(char const *)arg3,(uint64_t *)offsets,arg5,buffer,arg7);
+    result = (int32_t)tiledb_query_set_offsets_buffer(arg1,arg2,(char const *)arg3,(uint64_t *)buffer,arg5);
     jresult = (jint)result;
     if (arg3) jenv->ReleaseStringUTFChars(jarg3, (const char *)arg3);
     return jresult;
   }
 
-  SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1set_1buffer_1nullable_1nio(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jobject jarg4, jlong jarg5, jobject jarg6, jlong jarg7) {
+  SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1set_1validity_1buffer_1nio(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jobject jarg4, jlong jarg5) {
+    void* buffer = (void *)jenv->GetDirectBufferAddress(jarg4);
+
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
     tiledb_query_t *arg2 = (tiledb_query_t *) 0 ;
     char *arg3 = (char *) 0 ;
-    void *arg4 = (void *) 0 ;
+    uint8_t *arg4 = (uint8_t *) 0 ;
     uint64_t *arg5 = (uint64_t *) 0 ;
-    uint8_t *arg6 = (uint8_t *) 0 ;
-    uint64_t *arg7 = (uint64_t *) 0 ;
     int32_t result;
 
     (void)jenv;
@@ -1232,49 +1227,13 @@ extern "C" {
       arg3 = (char *)jenv->GetStringUTFChars(jarg3, 0);
       if (!arg3) return 0;
     }
-    arg4 = *(void **)&jarg4;
+    arg4 = *(uint8_t **)&jarg4;
     arg5 = *(uint64_t **)&jarg5;
-    arg6 = *(uint8_t **)&jarg6;
-    arg7 = *(uint64_t **)&jarg7;
-    result = (int32_t)tiledb_query_set_buffer_nullable(arg1,arg2,(char const *)arg3,(void *)jenv->GetDirectBufferAddress(jarg4),arg5,(uint8_t *)jenv->GetDirectBufferAddress(jarg6),arg7);
+    result = (int32_t)tiledb_query_set_validity_buffer(arg1,arg2,(char const *)arg3,arg4,arg5);
     jresult = (jint)result;
     if (arg3) jenv->ReleaseStringUTFChars(jarg3, (const char *)arg3);
     return jresult;
   }
-
-  SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1set_1buffer_1var_1nullable_1nio(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jobject jarg4, jlong jarg5, jobject jarg6, jlong jarg7, jobject jarg8, jlong jarg9) {
-      uint64_t * offsets = (uint64_t *)jenv->GetDirectBufferAddress(jarg4);
-      void * values = (void *)jenv->GetDirectBufferAddress(jarg6);
-      uint8_t * validity_bytemap = (uint8_t *)jenv->GetDirectBufferAddress(jarg8);
-
-      jint jresult = 0 ;
-      tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
-      tiledb_query_t *arg2 = (tiledb_query_t *) 0 ;
-      char *arg3 = (char *) 0 ;
-      uint64_t *arg5 = (uint64_t *) 0 ;
-      uint64_t *arg7 = (uint64_t *) 0 ;
-      uint64_t *arg9 = (uint64_t *) 0 ;
-      int32_t result;
-
-      (void)jenv;
-      (void)jcls;
-      arg1 = *(tiledb_ctx_t **)&jarg1;
-      arg2 = *(tiledb_query_t **)&jarg2;
-      arg3 = 0;
-      if (jarg3) {
-        arg3 = (char *)jenv->GetStringUTFChars(jarg3, 0);
-        if (!arg3) return 0;
-      }
-      arg5 = *(uint64_t **)&jarg5;
-      arg7 = *(uint64_t **)&jarg7;
-      arg9 = *(uint64_t **)&jarg9;
-      result = (int32_t)tiledb_query_set_buffer_var_nullable(arg1,arg2,(char const *)arg3, offsets, arg5, values, arg7, validity_bytemap, arg9);
-      jresult = (jint)result;
-      if (arg3) jenv->ReleaseStringUTFChars(jarg3, (const char *)arg3);
-      return jresult;
-    }
-
-
 #ifdef __cplusplus
 }
 #endif
