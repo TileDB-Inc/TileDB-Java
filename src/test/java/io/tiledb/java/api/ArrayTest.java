@@ -210,7 +210,7 @@ public class ArrayTest {
   public void testLoadingEncryptedArrayNoKeyErrors() throws Exception {
     // Test that we can create the encrypted array
     Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
-    new ArraySchema(ctx, arrayURI).close();
+    new ArraySchema(new Context(), arrayURI).close();
   }
 
   @Test(expected = TileDBError.class)
@@ -270,7 +270,7 @@ public class ArrayTest {
   @Test
   public void testDeleteArray() throws TileDBError {
     Array.create(arrayURI, schemaCreate());
-    Array array = new Array(new Context(), arrayURI, TILEDB_MODIFY_EXCLUSIVE);
+    Array array = new Array(ctx, arrayURI, TILEDB_MODIFY_EXCLUSIVE);
     array.delete();
   }
 
@@ -820,9 +820,10 @@ public class ArrayTest {
       e.printStackTrace();
     }
 
+    Context context = new Context();
     // READ BEFORE UPGRADE
-    Array array = new Array(ctx, testArrayURIString("quickstart_sparse_array_v2"), TILEDB_READ);
-    NativeArray subarray = new NativeArray(ctx, new int[] {1, 4, 1, 4}, Integer.class);
+    Array array = new Array(context, testArrayURIString("quickstart_sparse_array_v2"), TILEDB_READ);
+    NativeArray subarray = new NativeArray(context, new int[] {1, 4, 1, 4}, Integer.class);
 
     // Create query
     Query query = new Query(array, TILEDB_READ);
@@ -841,7 +842,7 @@ public class ArrayTest {
     query.close();
 
     // upgrade array
-    array.upgradeVersion(ctx, array.getConfig());
+    array.upgradeVersion(context, array.getConfig());
 
     // check schema
     array.getSchema().check();

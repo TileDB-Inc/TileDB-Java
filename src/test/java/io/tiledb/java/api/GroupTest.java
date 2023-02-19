@@ -35,9 +35,9 @@ public class GroupTest {
 
   @After
   public void teardown() throws Exception {
-    //    if (Files.exists(Paths.get("test_group"))) {
-    //      TileDBObject.remove(ctx, "test_group");
-    //    }
+    if (Files.exists(Paths.get("test_group"))) {
+      TileDBObject.remove(ctx, "test_group");
+    }
     if (Files.exists(Paths.get("array1"))) {
       TileDBObject.remove(ctx, "array1");
     }
