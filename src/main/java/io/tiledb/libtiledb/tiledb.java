@@ -45,6 +45,25 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_p_void.getCPtr(ary), index, SWIGTYPE_p_void.getCPtr(value));
   }
 
+  public static SWIGTYPE_p_unsigned_long_long new_ullArray(int nelements) {
+    long cPtr = tiledbJNI.new_ullArray(nelements);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long_long(cPtr, false);
+  }
+
+  public static void delete_ullArray(SWIGTYPE_p_unsigned_long_long ary) {
+    tiledbJNI.delete_ullArray(SWIGTYPE_p_unsigned_long_long.getCPtr(ary));
+  }
+
+  public static java.math.BigInteger ullArray_getitem(
+      SWIGTYPE_p_unsigned_long_long ary, int index) {
+    return tiledbJNI.ullArray_getitem(SWIGTYPE_p_unsigned_long_long.getCPtr(ary), index);
+  }
+
+  public static void ullArray_setitem(
+      SWIGTYPE_p_unsigned_long_long ary, int index, java.math.BigInteger value) {
+    tiledbJNI.ullArray_setitem(SWIGTYPE_p_unsigned_long_long.getCPtr(ary), index, value);
+  }
+
   public static SWIGTYPE_p_int new_intp() {
     long cPtr = tiledbJNI.new_intp();
     return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, false);
@@ -5502,18 +5521,6 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_tiledb_query_t.getCPtr(query),
         tiledb_query_status_details_t.getCPtr(status_details),
         status_details);
-  }
-
-  public static capi_return_t tiledb_ctx_alloc_with_error(
-      SWIGTYPE_p_tiledb_config_t config,
-      SWIGTYPE_p_p_tiledb_ctx_t ctx,
-      SWIGTYPE_p_p_tiledb_error_handle_t error) {
-    return new capi_return_t(
-        tiledbJNI.tiledb_ctx_alloc_with_error(
-            SWIGTYPE_p_tiledb_config_t.getCPtr(config),
-            SWIGTYPE_p_p_tiledb_ctx_t.getCPtr(ctx),
-            SWIGTYPE_p_p_tiledb_error_handle_t.getCPtr(error)),
-        true);
   }
 
   public static int tiledb_array_consolidate_fragments(

@@ -188,13 +188,13 @@ public class Utils {
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_query_t.getCPtr(query), subarray);
   }
 
-  public static int tiledb_query_set_buffer_nio(
+  public static int tiledb_query_set_data_buffer_nio(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_query_t query,
       String name,
       ByteBuffer buffer,
       SWIGTYPE_p_unsigned_long_long buffer_size) {
-    return tiledbJNI.tiledb_query_set_buffer_nio(
+    return tiledbJNI.tiledb_query_set_data_buffer_nio(
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         SWIGTYPE_p_tiledb_query_t.getCPtr(query),
         name,
@@ -202,62 +202,32 @@ public class Utils {
         SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_size));
   }
 
-  public static int tiledb_query_set_buffer_nullable_nio(
+  public static int tiledb_query_set_offsets_buffer_nio(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_query_t query,
       String name,
       ByteBuffer buffer,
-      SWIGTYPE_p_unsigned_long_long buffer_size,
-      ByteBuffer validity_bytemap,
-      SWIGTYPE_p_unsigned_long_long validity_bytemap_size) {
-    return tiledbJNI.tiledb_query_set_buffer_nullable_nio(
+      SWIGTYPE_p_unsigned_long_long buffer_size) {
+    return tiledbJNI.tiledb_query_set_offsets_buffer_nio(
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         SWIGTYPE_p_tiledb_query_t.getCPtr(query),
         name,
         buffer,
-        SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_size),
-        validity_bytemap,
-        SWIGTYPE_p_unsigned_long_long.getCPtr(validity_bytemap_size));
+        SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_size));
   }
 
-  public static int tiledb_query_set_buffer_var_nio(
+  public static int tiledb_query_set_validity_buffer_nio(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_query_t query,
       String name,
-      ByteBuffer buffer_off,
-      SWIGTYPE_p_unsigned_long_long buffer_off_size,
-      ByteBuffer buffer_val,
-      SWIGTYPE_p_unsigned_long_long buffer_val_size) {
-    return tiledbJNI.tiledb_query_set_buffer_var_nio(
-        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
-        SWIGTYPE_p_tiledb_query_t.getCPtr(query),
-        name,
-        buffer_off,
-        SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_off_size),
-        buffer_val,
-        SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_val_size));
-  }
-
-  public static int tiledb_query_set_buffer_var_nullable_nio(
-      SWIGTYPE_p_tiledb_ctx_t ctx,
-      SWIGTYPE_p_tiledb_query_t query,
-      String name,
-      ByteBuffer offsets,
-      SWIGTYPE_p_unsigned_long_long offsets_size,
       ByteBuffer buffer,
-      SWIGTYPE_p_unsigned_long_long buffer_size,
-      ByteBuffer validity_bytemap,
-      SWIGTYPE_p_unsigned_long_long validity_bytemap_size) {
-    return tiledbJNI.tiledb_query_set_buffer_var_nullable_nio(
+      SWIGTYPE_p_unsigned_long_long buffer_size) {
+    return tiledbJNI.tiledb_query_set_validity_buffer_nio(
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
         SWIGTYPE_p_tiledb_query_t.getCPtr(query),
         name,
-        offsets,
-        SWIGTYPE_p_unsigned_long_long.getCPtr(offsets_size),
         buffer,
-        SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_size),
-        validity_bytemap,
-        SWIGTYPE_p_unsigned_long_long.getCPtr(validity_bytemap_size));
+        SWIGTYPE_p_unsigned_long_long.getCPtr(buffer_size));
   }
 
   public static int tiledb_object_ls(

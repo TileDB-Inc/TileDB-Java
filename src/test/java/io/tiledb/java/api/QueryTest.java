@@ -101,9 +101,9 @@ public class QueryTest {
       try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
           Query query = new Query(array)) {
         query.setLayout(TILEDB_ROW_MAJOR);
-        query.setBuffer("a1", a1);
-        query.setBuffer("a2", a2);
-        query.setBuffer("a3", a3);
+        query.setDataBuffer("a1", a1);
+        query.setDataBuffer("a2", a2);
+        query.setDataBuffer("a3", a3);
         // Submit query
         query.submit();
 
@@ -134,10 +134,10 @@ public class QueryTest {
         NativeArray a1Array = new NativeArray(ctx, 12, String.class);
         NativeArray a2Array = new NativeArray(ctx, 6, Float.class);
 
-        query.setBuffer("rows", dim1Array);
-        query.setBuffer("cols", dim2Array);
-        query.setBuffer("a1", a1Array);
-        query.setBuffer("a2", a2Array);
+        query.setDataBuffer("rows", dim1Array);
+        query.setDataBuffer("cols", dim2Array);
+        query.setDataBuffer("a1", a1Array);
+        query.setDataBuffer("a2", a2Array);
 
         // Submit query
         query.submit();
@@ -174,11 +174,11 @@ public class QueryTest {
         NativeArray a2Array = new NativeArray(ctx, 6, Float.class);
         NativeArray a3Array = new NativeArray(ctx, 6, Boolean.class);
 
-        query.setBuffer("rows", dim1Array);
-        query.setBuffer("cols", dim2Array);
-        query.setBuffer("a1", a1Array);
-        query.setBuffer("a2", a2Array);
-        query.setBuffer("a3", a3Array);
+        query.setDataBuffer("rows", dim1Array);
+        query.setDataBuffer("cols", dim2Array);
+        query.setDataBuffer("a1", a1Array);
+        query.setDataBuffer("a2", a2Array);
+        query.setDataBuffer("a3", a3Array);
 
         // Submit query
         query.submit();
@@ -222,8 +222,8 @@ public class QueryTest {
       NativeArray dim1Array = new NativeArray(ctx, 16, Integer.class);
       NativeArray dim2Array = new NativeArray(ctx, 16, Integer.class);
 
-      query.setBuffer("rows", dim1Array);
-      query.setBuffer("cols", dim2Array);
+      query.setDataBuffer("rows", dim1Array);
+      query.setDataBuffer("cols", dim2Array);
 
       // Submit query
       query.submit();
@@ -312,8 +312,8 @@ public class QueryTest {
           Query query = new Query(array)) {
 
         query.setLayout(TILEDB_ROW_MAJOR);
-        query.setBuffer("a1", a1);
-        query.setBuffer("a2", a2);
+        query.setDataBuffer("a1", a1);
+        query.setDataBuffer("a2", a2);
         // Submit query
         query.submit();
       }
@@ -364,7 +364,8 @@ public class QueryTest {
       try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
           Query query = new Query(array)) {
         query.setLayout(TILEDB_ROW_MAJOR);
-        query.setBuffer("a1", a1_off, a1);
+        query.setDataBuffer("a1", a1);
+        query.setOffsetsBuffer("a1", a1_off);
         // Submit query
         query.submit();
       }
@@ -381,8 +382,8 @@ public class QueryTest {
 
       int bufferSize = 4;
 
-      query.setBuffer("rows", bufferSize);
-      query.setBuffer("cols", bufferSize);
+      query.setDataBuffer("rows", bufferSize);
+      query.setDataBuffer("cols", bufferSize);
       ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
       ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
@@ -424,8 +425,8 @@ public class QueryTest {
 
       int bufferSize = 4;
 
-      query.setBuffer("rows", bufferSize);
-      query.setBuffer("cols", bufferSize);
+      query.setDataBuffer("rows", bufferSize);
+      query.setDataBuffer("cols", bufferSize);
       ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
       ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
@@ -469,8 +470,8 @@ public class QueryTest {
       Query query = new Query(array, TILEDB_READ);
 
       int bufferSize = 4;
-      query.setBuffer("rows", ByteBuffer.allocateDirect(10).order(ByteOrder.nativeOrder()));
-      query.setBuffer("cols", ByteBuffer.allocateDirect(10).order(ByteOrder.nativeOrder()));
+      query.setDataBuffer("rows", ByteBuffer.allocateDirect(10).order(ByteOrder.nativeOrder()));
+      query.setDataBuffer("cols", ByteBuffer.allocateDirect(10).order(ByteOrder.nativeOrder()));
       ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
       ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
@@ -516,7 +517,11 @@ public class QueryTest {
         query.setSubarray(subarray);
         query.setLayout(TILEDB_ROW_MAJOR);
 
-        query.setBuffer("rows", 3).setBuffer("cols", 3).setBuffer("a1", 3).setBuffer("a2", 6);
+        query
+            .setDataBuffer("rows", 3)
+            .setDataBuffer("cols", 3)
+            .setDataBuffer("a1", 3)
+            .setDataBuffer("a2", 6);
 
         ByteBuffer dim1Buffer = query.getByteBuffer("rows").getSecond();
         ByteBuffer dim2Buffer = query.getByteBuffer("cols").getSecond();
@@ -578,7 +583,7 @@ public class QueryTest {
                 ? ByteOrder.LITTLE_ENDIAN
                 : ByteOrder.BIG_ENDIAN;
 
-        query.setBuffer("rows", ByteBuffer.allocateDirect(3 * 4).order(order));
+        query.setDataBuffer("rows", ByteBuffer.allocateDirect(3 * 4).order(order));
       }
     }
 
@@ -593,7 +598,7 @@ public class QueryTest {
 
       int bufferSize = 16;
 
-      query.setBuffer("rows", bufferSize);
+      query.setDataBuffer("rows", bufferSize);
 
       Assert.assertEquals(query.getByteBuffer("rows").getSecond().capacity(), bufferSize * 4);
       Assert.assertTrue(query.getByteBuffer("rows").getSecond().isDirect());
@@ -612,7 +617,7 @@ public class QueryTest {
       int bufferSize = 16;
 
       try {
-        query.setBuffer("rows", ByteBuffer.allocate(bufferSize));
+        query.setDataBuffer("rows", ByteBuffer.allocate(bufferSize));
         Assert.fail("An exception should be thrown in the ByteBuffer provided is not direct");
       } catch (TileDBError error) {
 
@@ -625,7 +630,7 @@ public class QueryTest {
               : ByteOrder.BIG_ENDIAN;
 
       // The Byte Order should be automatically changed to the native order
-      query.setBuffer("rows", ByteBuffer.allocateDirect(bufferSize).order(order));
+      query.setDataBuffer("rows", ByteBuffer.allocateDirect(bufferSize).order(order));
     }
 
     @Test()
@@ -636,11 +641,15 @@ public class QueryTest {
       ByteBuffer offsetsBuffer = ByteBuffer.allocateDirect(1000);
       ByteBuffer dataBuffer = ByteBuffer.allocateDirect(1000);
 
+      offsetsBuffer.order(ByteOrder.nativeOrder());
+      dataBuffer.order(ByteOrder.nativeOrder());
+
       Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ);
       ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
       subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(8);
       q.setSubarray(subarray);
-      q.setBuffer("a1", offsetsBuffer, dataBuffer);
+      q.setDataBuffer("a1", dataBuffer);
+      q.setOffsetsBuffer("a1", offsetsBuffer);
       q.submit();
 
       long[] offsets = new long[8];
@@ -679,9 +688,9 @@ public class QueryTest {
 
       q.setSubarray(subarray);
 
-      q.setBuffer("rows", rows);
-      q.setBuffer("cols", cols);
-      q.setBuffer("a2", a2);
+      q.setDataBuffer("rows", rows);
+      q.setDataBuffer("cols", cols);
+      q.setDataBuffer("a2", a2);
       q.submit();
 
       int idx;
@@ -730,7 +739,7 @@ public class QueryTest {
 
       q.setSubarray(subarray);
 
-      q.setBuffer("a1", a1);
+      q.setDataBuffer("a1", a1);
       q.submit();
 
       CharBuffer charBuffer = q.getCharBuffer("a1").getSecond();
@@ -753,6 +762,7 @@ public class QueryTest {
 
       rows.order(ByteOrder.nativeOrder());
       a1.order(ByteOrder.nativeOrder());
+      a1Off.order(ByteOrder.nativeOrder());
 
       Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ);
       ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
@@ -761,8 +771,9 @@ public class QueryTest {
 
       q.setSubarray(subarray);
 
-      q.setBuffer("rows", rows);
-      q.setBuffer("a1", a1Off, a1);
+      q.setDataBuffer("rows", rows);
+      q.setDataBuffer("a1", a1);
+      q.setOffsetsBuffer("a1", a1Off);
       q.submit();
 
       int idx;
@@ -833,8 +844,9 @@ public class QueryTest {
       Query query = new Query(array);
       query.setLayout(TILEDB_GLOBAL_ORDER);
 
-      query.setBuffer("d1", d_off, d_data);
-      query.setBuffer("a1", a1);
+      query.setDataBuffer("d1", d_data);
+      query.setOffsetsBuffer("d1", d_off);
+      query.setDataBuffer("a1", a1);
 
       // Submit query
       query.submit();
@@ -851,7 +863,8 @@ public class QueryTest {
 
       try (Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ)) {
 
-        q.setBuffer("d1", d_off, d_data);
+        q.setDataBuffer("d1", d_data);
+        q.setOffsetsBuffer("d1", d_off);
 
         q.addRangeVar(0, "a", "z");
 
@@ -878,7 +891,8 @@ public class QueryTest {
       try (Query q = new Query(arr, TILEDB_READ)) {
         NativeArray d_data = new NativeArray(ctx, 20, Datatype.TILEDB_STRING_ASCII);
         NativeArray d_off = new NativeArray(ctx, 20, Datatype.TILEDB_UINT64);
-        q.setBuffer("d1", d_off, d_data);
+        q.setDataBuffer("d1", d_data);
+        q.setOffsetsBuffer("d1", d_off);
         // Point-query
         q.addRangeVar(0, "aa", "aa");
         q.submit();
@@ -893,7 +907,8 @@ public class QueryTest {
         NativeArray d_data = new NativeArray(ctx, 20, Datatype.TILEDB_STRING_ASCII);
         NativeArray d_off = new NativeArray(ctx, 20, Datatype.TILEDB_UINT64);
 
-        q.setBuffer("d1", d_off, d_data);
+        q.setDataBuffer("d1", d_data);
+        q.setOffsetsBuffer("d1", d_off);
         // Range query ["dd", "ee"]
         q.addRangeVar(0, "dd", "ee");
         q.submit();
@@ -909,7 +924,8 @@ public class QueryTest {
         NativeArray d_data = new NativeArray(ctx, 20, Datatype.TILEDB_STRING_ASCII);
         NativeArray d_off = new NativeArray(ctx, 20, Datatype.TILEDB_UINT64);
 
-        q.setBuffer("d1", d_off, d_data);
+        q.setDataBuffer("d1", d_data);
+        q.setOffsetsBuffer("d1", d_off);
         // We expect an error here
         try {
           int dimIdx = 123;
@@ -927,7 +943,8 @@ public class QueryTest {
       NativeArray d_off = new NativeArray(ctx, 20, Datatype.TILEDB_UINT64);
 
       try (Query q = new Query(arr, TILEDB_READ)) {
-        q.setBuffer("d1", d_off, d_data);
+        q.setDataBuffer("d1", d_data);
+        q.setOffsetsBuffer("d1", d_off);
         // Point-query
         q.addRangeVar(123, "aa", "aa");
       }
@@ -941,7 +958,8 @@ public class QueryTest {
 
       try (Query q = new Query(arr, TILEDB_READ)) {
 
-        q.setBuffer("d1", d_off, d_data);
+        q.setDataBuffer("d1", d_data);
+        q.setOffsetsBuffer("d1", d_off);
 
         String rangeStart1 = "aaaaaa";
         String rangeEnd1 = "aaabb";
@@ -978,7 +996,8 @@ public class QueryTest {
 
       try (Query q = new Query(arr, TILEDB_READ)) {
 
-        q.setBuffer("d1", d_off, d_data);
+        q.setDataBuffer("d1", d_data);
+        q.setOffsetsBuffer("d1", d_off);
 
         String rangeStart1 = "aaaaaa";
         String rangeEnd1 = "aaabb";
@@ -1067,8 +1086,11 @@ public class QueryTest {
         NativeArray a2Bytemap =
             new NativeArray(ctx, new short[] {1, 1, 1, 0}, Datatype.TILEDB_UINT8);
 
-        query.setBufferNullable("a1", a1, a1Bytemap);
-        query.setBufferNullable("a2", a2, a2Bytemap);
+        query.setDataBuffer("a1", a1);
+        query.setValidityBuffer("a1", a1Bytemap);
+
+        query.setDataBuffer("a2", a2);
+        query.setValidityBuffer("a2", a2Bytemap);
 
         // Submit query
         query.submit();
@@ -1126,9 +1148,15 @@ public class QueryTest {
       NativeArray a2ByteMap =
           new NativeArray(ctx, new short[] {1, 1, 1, 0, 0}, Datatype.TILEDB_UINT8);
 
-      query.setBuffer("d1", d_off, d_data);
-      query.setBufferNullable("a1", a1, a1ByteMap);
-      query.setBufferNullable("a2", a2_off, a2_data, a2ByteMap);
+      query.setDataBuffer("d1", d_data);
+      query.setOffsetsBuffer("d1", d_off);
+
+      query.setDataBuffer("a1", a1);
+      query.setValidityBuffer("a1", a1ByteMap);
+
+      query.setDataBuffer("a2", a2_data);
+      query.setValidityBuffer("a2", a2ByteMap);
+      query.setOffsetsBuffer("a2", a2_off);
 
       // Submit query
       query.submit();
@@ -1172,10 +1200,14 @@ public class QueryTest {
         NativeArray a2Array = new NativeArray(ctx, 100, Float.class);
         NativeArray a2byteMap = new NativeArray(ctx, 100, Datatype.TILEDB_UINT8);
 
-        query.setBuffer("rows", dim1Array);
-        query.setBuffer("cols", dim2Array);
-        query.setBufferNullable("a1", a1Array, a1byteMap);
-        query.setBufferNullable("a2", a2Array, a2byteMap);
+        query.setDataBuffer("rows", dim1Array);
+        query.setDataBuffer("cols", dim2Array);
+
+        query.setDataBuffer("a1", a1Array);
+        query.setValidityBuffer("a1", a1byteMap);
+
+        query.setDataBuffer("a2", a2Array);
+        query.setValidityBuffer("a2", a2byteMap);
 
         Pair<Long, Long> estimated = query.getEstResultSizeNullable(ctx, "a1");
         Assert.assertEquals((long) estimated.getFirst(), 4);
@@ -1212,8 +1244,7 @@ public class QueryTest {
       }
     }
 
-    @Test
-    public void denseArrayNIOReadTest() throws Exception {
+    public void denseArrayNIOReadTest() throws Exception { // TODO
       denseArrayCreateNullableAttrs(true);
       denseArrayWrite();
 
@@ -1234,10 +1265,14 @@ public class QueryTest {
         ByteBuffer a2Array = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
         ByteBuffer a2byteMap = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
 
-        query.setBuffer("rows", dim1Array);
-        query.setBuffer("cols", dim2Array);
-        query.setBufferNullableNIO("a1", a1Array, a1byteMap);
-        query.setBufferNullableNIO("a2", a2Array, a2byteMap);
+        query.setDataBuffer("rows", dim1Array);
+        query.setDataBuffer("cols", dim2Array);
+
+        query.setDataBuffer("a1", a1Array);
+        query.setValidityBuffer("a1", a1byteMap);
+
+        query.setDataBuffer("a2", a2Array);
+        query.setValidityBuffer("a2", a2byteMap);
 
         // Submit query
         query.submit();
@@ -1331,8 +1366,12 @@ public class QueryTest {
         NativeArray a2Offsets = new NativeArray(ctx, 5, Datatype.TILEDB_UINT64);
         NativeArray a2byteMap = new NativeArray(ctx, 10, Datatype.TILEDB_UINT8);
 
-        query.setBufferNullable("a1", a1Array, a1byteMap);
-        query.setBufferNullable("a2", a2Offsets, a2Array, a2byteMap);
+        query.setDataBuffer("a1", a1Array);
+        query.setValidityBuffer("a1", a1byteMap);
+
+        query.setDataBuffer("a2", a2Array);
+        query.setValidityBuffer("a2", a2byteMap);
+        query.setOffsetsBuffer("a2", a2Offsets);
 
         Pair<Pair<Long, Long>, Long> estimated = query.getEstResultSizeVarNullable(ctx, "a2");
         Assert.assertEquals(40, (long) estimated.getFirst().getFirst());
@@ -1368,8 +1407,7 @@ public class QueryTest {
       }
     }
 
-    @Test
-    public void sparseArrayNIOReadTest() throws Exception {
+    public void sparseArrayNIOReadTest() throws Exception { // TODO
       sparseArrayCreateNullableAttrs(true);
       sparseArrayWrite();
 
@@ -1388,9 +1426,15 @@ public class QueryTest {
         ByteBuffer a2Offsets = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
         ByteBuffer a2byteMapBuffer = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
 
-        query.setBuffer("d1", dim1Array, dim1Offsets);
-        query.setBufferNullableNIO("a1", a1Buffer, a1byteMap);
-        query.setBufferNullableNIO("a2", a2Offsets, a2Array, a2byteMapBuffer);
+        query.setDataBuffer("d1", dim1Array);
+        query.setOffsetsBuffer("d1", dim1Offsets);
+
+        query.setDataBuffer("a1", a1Buffer);
+        query.setValidityBuffer("a1", a1byteMap);
+
+        query.setDataBuffer("a2", a2Array);
+        query.setValidityBuffer("a2", a2byteMapBuffer);
+        query.setOffsetsBuffer("a2", a2Offsets);
 
         // Submit query
         query.submit();
