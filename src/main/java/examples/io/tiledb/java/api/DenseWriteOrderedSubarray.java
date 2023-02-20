@@ -53,7 +53,12 @@ public class DenseWriteOrderedSubarray {
     Array my_dense_array = new Array(ctx, "my_dense_array", TILEDB_WRITE);
     Query query = new Query(my_dense_array);
     query.setLayout(TILEDB_ROW_MAJOR);
-    query.setSubarray(new NativeArray(ctx, new long[] {3, 4, 2, 4}, Long.class));
+
+    SubArray subArray = new SubArray(ctx, my_dense_array);
+    subArray.addRange(0, 3L, 4L, null);
+    subArray.addRange(1, 2L, 4L, null);
+    query.setSubarray(subArray);
+
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);

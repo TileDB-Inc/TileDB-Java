@@ -176,7 +176,9 @@ public class DatatypeTest {
     arrayWrite();
     Array array = new Array(ctx, arrayURI);
     try (Query query = new Query(array, TILEDB_READ)) {
-      NativeArray subarray = new NativeArray(ctx, new int[] {1, 20}, Integer.class);
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, 1, 20, null);
+
       query.setBuffer("a1", new NativeArray(ctx, 4, Datatype.TILEDB_TIME_AS));
       query.setBuffer("a2", new NativeArray(ctx, 4, Datatype.TILEDB_TIME_MIN));
       query.setBuffer("a3", new NativeArray(ctx, 4, Datatype.TILEDB_TIME_HR));
@@ -188,7 +190,7 @@ public class DatatypeTest {
       query.setBuffer("a9", new NativeArray(ctx, 4, Datatype.TILEDB_TIME_FS));
       query.setBuffer("a10", new NativeArray(ctx, 4, Datatype.TILEDB_TIME_AS));
 
-      query.setSubarray(subarray).setLayout(TILEDB_ROW_MAJOR);
+      query.setSubarray(subArray).setLayout(TILEDB_ROW_MAJOR);
       while (query.getQueryStatus() != QueryStatus.TILEDB_COMPLETED) {
         query.submit();
       }

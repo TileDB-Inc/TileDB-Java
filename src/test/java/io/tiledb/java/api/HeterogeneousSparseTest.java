@@ -110,13 +110,16 @@ public class HeterogeneousSparseTest {
 
     NativeArray d2_data = new NativeArray(ctx, 20, Datatype.TILEDB_INT32);
 
-    try (Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ)) {
+    try (Array array = new Array(ctx, arrayURI);
+        Query q = new Query(array, TILEDB_READ)) {
       q.setLayout(TILEDB_GLOBAL_ORDER);
 
       q.setBuffer("d1", d_off, d_data);
       q.setBuffer("d2", d2_data);
 
-      q.addRangeVar(0, "a", "z");
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRangeVar(0, "a", "z");
+      q.setSubarray(subArray);
 
       q.submit();
 

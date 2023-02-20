@@ -8,7 +8,6 @@ import java.io.File;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Assert;
@@ -125,14 +124,17 @@ public class FragmentsTest {
     // Prepare cell buffers
     NativeArray data = new NativeArray(ctx, new int[] {1, 2, 3, 4, 5, 6, 7, 8}, Integer.class);
 
-    NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 1, 4}, Integer.class);
-
     // Create query
     Array array = new Array(ctx, arrayURI, TILEDB_WRITE, BigInteger.valueOf(10L));
+
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 1, 2, null);
+    subArray.addRange(1, 1, 4, null);
+
     Query query = new Query(array);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     // Submit query
     query.submit();
     query.close();
@@ -143,14 +145,17 @@ public class FragmentsTest {
     // Prepare cell buffers
     NativeArray data = new NativeArray(ctx, new int[] {101, 102, 103, 104}, Integer.class);
 
-    NativeArray subarray = new NativeArray(ctx, new int[] {2, 3, 2, 3}, Integer.class);
-
     // Create query
     Array array = new Array(ctx, arrayURI, TILEDB_WRITE, BigInteger.valueOf(20L));
+
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 2, 3, null);
+    subArray.addRange(1, 2, 3, null);
+
     Query query = new Query(array);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
 
     // Submit query
     query.submit();
@@ -187,12 +192,14 @@ public class FragmentsTest {
     Array array = new Array(ctx, arrayURI, TILEDB_READ);
 
     // Calcuate maximum buffer sizes for the query results per attribute
-    NativeArray subarray = new NativeArray(ctx, new int[] {1, 4, 1, 4}, Integer.class);
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 1, 4, null);
+    subArray.addRange(1, 1, 4, null);
 
     // Create query
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     query.setBuffer("a", new NativeArray(ctx, 16, Integer.class));
     query.setBuffer("rows", new NativeArray(ctx, 16, Integer.class));
     query.setBuffer("cols", new NativeArray(ctx, 16, Integer.class));
@@ -200,7 +207,6 @@ public class FragmentsTest {
     // Submit query
     query.submit();
     // Print cell values (assumes all getAttributes are read)
-    HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
 
     int[] rows = (int[]) query.getBuffer("rows");
     int[] cols = (int[]) query.getBuffer("cols");

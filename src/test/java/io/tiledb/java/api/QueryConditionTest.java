@@ -162,14 +162,15 @@ public class QueryConditionTest {
     // Print non-empty getDomain
 
     Array my_dense_array = new Array(ctx, arrayURI);
-    HashMap<String, Pair> dom = my_dense_array.nonEmptyDomain();
 
-    NativeArray subarray = new NativeArray(ctx, new long[] {1, 4, 1, 4}, Long.class);
+    SubArray subArray = new SubArray(ctx, my_dense_array);
+    subArray.addRange(0, 1L, 3L, null);
+    subArray.addRange(1, 1L, 3L, null);
 
     // Create query
     try (Query query = new Query(my_dense_array, TILEDB_READ)) {
       query.setLayout(TILEDB_ROW_MAJOR);
-      query.setSubarray(subarray);
+      query.setSubarray(subArray);
       HashMap<String, Pair<Long, Long>> max_sizes = new HashMap<>();
       max_sizes.put("a1", query.getEstResultSizeNullable(ctx, "a1"));
       max_sizes.put("a2", new Pair<>(0L, query.getEstResultSize(ctx, "a2")));

@@ -30,14 +30,12 @@ public class MultiRangeQueryTest {
 
   @Test
   public void test() throws Exception {
-    arrayRead(false);
-    arrayRead(true);
+    arrayRead();
   }
 
   @Test
   public void testPointRanges() throws Exception {
-    arrayReadPointRanges(false);
-    arrayReadPointRanges(true);
+    arrayReadPointRanges();
   }
 
   public void arrayCreate() throws Exception {
@@ -93,37 +91,24 @@ public class MultiRangeQueryTest {
     }
   }
 
-  private void arrayRead(boolean useSubArray) throws Exception {
+  private void arrayRead() throws Exception {
     // Create array and query
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
         Query query = new Query(array, TILEDB_READ)) {
 
       // Slice only rows 1, 2 and cols 2, 3, 4
-
-      if (useSubArray) {
-        SubArray subArray = new SubArray(ctx, array);
-        subArray.addRange(0, (int) 1, (int) 2, null);
-        subArray.addRange(1, (int) 2, (int) 4, null);
-        Assert.assertEquals(1, subArray.getRangeNum(0));
-        Assert.assertEquals(1, subArray.getRangeNum(1));
-        Assert.assertEquals(1, subArray.getRange(0, 0).getFirst());
-        Assert.assertEquals(2, subArray.getRange(0, 0).getSecond());
-        Assert.assertEquals(2, subArray.getRange(1, 0).getFirst());
-        Assert.assertEquals(4, subArray.getRange(1, 0).getSecond());
-        query.setSubarray(subArray);
-      } else {
-        query.addRange(0, (int) 1, (int) 2);
-        query.addRange(1, (int) 2, (int) 4);
-      }
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, (int) 1, (int) 2, null);
+      subArray.addRange(1, (int) 2, (int) 4, null);
+      Assert.assertEquals(1, subArray.getRangeNum(0));
+      Assert.assertEquals(1, subArray.getRangeNum(1));
+      Assert.assertEquals(1, subArray.getRange(0, 0).getFirst());
+      Assert.assertEquals(2, subArray.getRange(0, 0).getSecond());
+      Assert.assertEquals(2, subArray.getRange(1, 0).getFirst());
+      Assert.assertEquals(4, subArray.getRange(1, 0).getSecond());
+      query.setSubarray(subArray);
 
       query.setLayout(TILEDB_ROW_MAJOR);
-
-      Assert.assertEquals(1, query.getRangeNum(0));
-      Assert.assertEquals(1, query.getRangeNum(1));
-      Assert.assertEquals(1, query.getRange(0, 0).getFirst());
-      Assert.assertEquals(2, query.getRange(0, 0).getSecond());
-      Assert.assertEquals(2, query.getRange(1, 0).getFirst());
-      Assert.assertEquals(4, query.getRange(1, 0).getSecond());
 
       // Prepare the vector that will hold the result
       // (of size 6 elements for "a1" and 12 elements for "a2" since
@@ -150,7 +135,7 @@ public class MultiRangeQueryTest {
     }
   }
 
-  private void arrayReadPointRanges(boolean useSubArray) throws Exception {
+  private void arrayReadPointRanges() throws Exception {
     // Create array and query
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
         Query query = new Query(array, TILEDB_READ)) {
@@ -158,29 +143,19 @@ public class MultiRangeQueryTest {
       // Slice only rows 1, 2 and cols 2, 3, 4
       int[] rangesRows = {1, 2};
       int[] rangeColumns = {2, 3, 4};
-      if (useSubArray) {
-        SubArray subArray = new SubArray(ctx, array);
-        subArray.addPointRanges(0, rangesRows, BigInteger.valueOf(2));
-        subArray.addPointRanges(1, rangeColumns, BigInteger.valueOf(3));
-        Assert.assertEquals(1, subArray.getRangeNum(0));
-        Assert.assertEquals(1, subArray.getRangeNum(1));
-        Assert.assertEquals(1, subArray.getRange(0, 0).getFirst());
-        Assert.assertEquals(2, subArray.getRange(0, 0).getSecond());
-        Assert.assertEquals(2, subArray.getRange(1, 0).getFirst());
-        Assert.assertEquals(4, subArray.getRange(1, 0).getSecond());
-        query.setSubarray(subArray);
-      } else {
-        query.addPointRanges(0, rangesRows, BigInteger.valueOf(2));
-        query.addPointRanges(1, rangeColumns, BigInteger.valueOf(3));
-      }
-      query.setLayout(TILEDB_ROW_MAJOR);
 
-      Assert.assertEquals(1, query.getRangeNum(0));
-      Assert.assertEquals(1, query.getRangeNum(1));
-      Assert.assertEquals(1, query.getRange(0, 0).getFirst());
-      Assert.assertEquals(2, query.getRange(0, 0).getSecond());
-      Assert.assertEquals(2, query.getRange(1, 0).getFirst());
-      Assert.assertEquals(4, query.getRange(1, 0).getSecond());
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addPointRanges(0, rangesRows, BigInteger.valueOf(2));
+      subArray.addPointRanges(1, rangeColumns, BigInteger.valueOf(3));
+      Assert.assertEquals(1, subArray.getRangeNum(0));
+      Assert.assertEquals(1, subArray.getRangeNum(1));
+      Assert.assertEquals(1, subArray.getRange(0, 0).getFirst());
+      Assert.assertEquals(2, subArray.getRange(0, 0).getSecond());
+      Assert.assertEquals(2, subArray.getRange(1, 0).getFirst());
+      Assert.assertEquals(4, subArray.getRange(1, 0).getSecond());
+      query.setSubarray(subArray);
+
+      query.setLayout(TILEDB_ROW_MAJOR);
 
       // Prepare the vector that will hold the result
       // (of size 6 elements for "a1" and 12 elements for "a2" since
@@ -204,14 +179,6 @@ public class MultiRangeQueryTest {
       for (int i = 0; i < a2.length; i++) {
         Assert.assertEquals(a2[i], expected_a2[i], 0.01f);
       }
-    }
-  }
-
-  @Test(expected = TileDBError.class)
-  public void wrongDatatype() throws Exception {
-    try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
-        Query query = new Query(array, TILEDB_READ)) {
-      query.addRange(0, (long) 1, (long) 2);
     }
   }
 }

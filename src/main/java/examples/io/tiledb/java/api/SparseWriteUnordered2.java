@@ -87,9 +87,11 @@ public class SparseWriteUnordered2 {
 
     d1_buff = new NativeArray(ctx, new long[] {3, 3, 2, 1, 1}, Datatype.TILEDB_INT64);
     d2_buff = new NativeArray(ctx, new long[] {3, 1, 3, 2, 4}, Datatype.TILEDB_INT64);
+    query.close();
 
-    // Reset buffers
-    query.resetBuffers();
+    query = new Query(my_sparse_array);
+    query.setLayout(TILEDB_UNORDERED);
+
     query.setBuffer("d1", d1_buff);
     query.setBuffer("d2", d2_buff);
     query.setBuffer("a1", a1_data);

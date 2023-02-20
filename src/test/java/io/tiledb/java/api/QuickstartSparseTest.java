@@ -152,7 +152,9 @@ public class QuickstartSparseTest {
     // e.getValue().getSecond() + ")");
     // }
 
-    NativeArray subarray = new NativeArray(ctx, new long[] {1l, 4l, 1l, 4l}, Long.class);
+    SubArray subArray = new SubArray(ctx, my_sparse_array);
+    subArray.addRange(0, 1L, 4L, null);
+    subArray.addRange(1, 1L, 4L, null);
 
     // for (Map.Entry<String, Pair<Long,Long>> e : max_sizes.entrySet()){
     //  System.out.println(e.getKey() + " ("+e.getValue().getFirst()+",
@@ -162,7 +164,7 @@ public class QuickstartSparseTest {
     // Create query
     try (Query query = new Query(my_sparse_array, TILEDB_READ)) {
       query.setLayout(TILEDB_GLOBAL_ORDER);
-      query.setSubarray(subarray);
+      query.setSubarray(subArray);
       max_sizes.put("d1", new Pair<>(0L, query.getEstResultSize(ctx, "d1")));
       max_sizes.put("d2", new Pair<>(0L, query.getEstResultSize(ctx, "d2")));
       max_sizes.put("a1", new Pair<>(0L, query.getEstResultSize(ctx, "a1")));

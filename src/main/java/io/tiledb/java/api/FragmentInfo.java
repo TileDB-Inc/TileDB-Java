@@ -642,21 +642,4 @@ public class FragmentInfo {
 
     return tiledb.charpp_value(name);
   }
-
-  /**
-   * Get the fragment name.
-   *
-   * @param fragmentID The fragment info object.
-   * @return The fragment name.
-   * @throws TileDBError
-   */
-  public String getFragmentName(long fragmentID) throws TileDBError {
-    SWIGTYPE_p_p_char name = tiledb.new_charpp();
-
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_fragment_name(
-            ctx.getCtxp(), fragmentInfop, fragmentID, name));
-
-    return tiledb.charpp_value(name);
-  }
 }

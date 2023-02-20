@@ -21,7 +21,6 @@ import java.nio.ByteBuffer;
   public final static native int tiledb_query_set_data_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
   public final static native int tiledb_query_set_offsets_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
   public final static native int tiledb_query_set_validity_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
-  public final static native int tiledb_query_submit_async_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, long jarg2, SWIGTYPE_p_tiledb_query_t jarg2_, Object jarg3);
   public final static native int tiledb_object_walk_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, int jarg3, Object jarg4);
   public final static native int tiledb_object_ls_java(long jarg1, SWIGTYPE_p_tiledb_ctx_t jarg1_, String jarg2, Object jarg3);
   public final static native long java_path_callback();
@@ -44,6 +43,30 @@ typedef struct tiledb_config_t tiledb_config_t;
 #include "tiledb/tiledb_experimental.h"
 #include "tiledb_java_extensions.h"
 %}
+
+%ignore tiledb_ctx_alloc_with_error;
+
+// ignore some deprecated methods
+%ignore tiledb_query_submit_async;
+%ignore tiledb_array_schema_load_with_key;
+%ignore tiledb_query_set_subarray;
+%ignore tiledb_query_add_range;
+%ignore tiledb_query_add_range_by_name;
+%ignore tiledb_query_add_range_var;
+%ignore tiledb_query_add_range_var_by_name;
+%ignore tiledb_query_get_range_num;
+%ignore tiledb_query_get_range_num_from_name;
+%ignore tiledb_query_get_range;
+%ignore tiledb_query_get_range_from_name;
+%ignore tiledb_query_get_range_var_size;
+%ignore tiledb_query_get_range_var_size_from_name;
+%ignore tiledb_query_get_range_var;
+%ignore tiledb_query_get_range_var_from_name;
+%ignore tiledb_array_create_with_key;
+%ignore tiledb_array_consolidate_with_key;
+%ignore tiledb_fragment_info_get_fragment_name;
+%ignore tiledb_array_delete_array;
+%ignore tiledb_query_add_point_ranges;
 
 %include "stdint.i"
 %include "carrays.i"

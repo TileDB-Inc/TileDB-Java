@@ -106,11 +106,12 @@ public class PerformanceTestDenseArray {
       for (int k = offset; k < offset + max / 10; k++) {
         d[k - offset] = k;
       }
-      try (NativeArray id_data = new NativeArray(ctx, d, Integer.class);
-          NativeArray sub =
-              new NativeArray(ctx, new int[] {offset, offset - 1 + max / 10}, Integer.class)) {
+      try (NativeArray id_data = new NativeArray(ctx, d, Integer.class)) {
+        SubArray subArray = new SubArray(ctx, array);
+        subArray.addRange(0, offset, offset - 1 + max / 10, null);
+
         query.setBuffer("id", id_data);
-        query.setSubarray(sub);
+        query.setSubarray(subArray);
         query.submit();
       }
     }
@@ -118,12 +119,13 @@ public class PerformanceTestDenseArray {
 
   private void read(String arrayURI) throws Exception {
     try (Array array = new Array(ctx, arrayURI);
-        Query query = new Query(array, QueryType.TILEDB_READ);
-        NativeArray subarray = new NativeArray(ctx, 2, Datatype.TILEDB_INT32)) {
+        Query query = new Query(array, QueryType.TILEDB_READ)) {
       HashMap<String, Pair> nonempty = array.nonEmptyDomain();
-      subarray.setItem(0, nonempty.get("d1").getFirst());
-      subarray.setItem(1, nonempty.get("d1").getSecond());
-      query.setSubarray(subarray);
+
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, nonempty.get("d1").getFirst(), nonempty.get("d1").getSecond(), null);
+
+      query.setSubarray(subArray);
       query.setBuffer("id", new NativeArray(ctx, (int) max, Integer.class));
       query.submit();
       int[] id_buff = (int[]) query.getBuffer("id");
