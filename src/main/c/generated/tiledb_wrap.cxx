@@ -11680,6 +11680,26 @@ SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1inf
 }
 
 
+SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1fragment_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4) {
+  jint jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_fragment_info_t *arg2 = (tiledb_fragment_info_t *) 0 ;
+  uint32_t arg3 ;
+  char **arg4 = (char **) 0 ;
+  int32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_fragment_info_t **)&jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  arg4 = *(char ***)&jarg4; 
+  result = (int32_t)tiledb_fragment_info_get_fragment_name(arg1,arg2,arg3,(char const **)arg4);
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1fragment_1info_1get_1fragment_1name_1v2(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4) {
   jint jresult = 0 ;
   tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;

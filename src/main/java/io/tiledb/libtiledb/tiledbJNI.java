@@ -1437,6 +1437,9 @@ public class tiledbJNI {
 
   public static final native int tiledb_fragment_info_load(long jarg1, long jarg2);
 
+  public static final native int tiledb_fragment_info_get_fragment_name(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
   public static final native int tiledb_fragment_info_get_fragment_name_v2(
       long jarg1, long jarg2, long jarg3, long jarg4);
 

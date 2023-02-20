@@ -4067,6 +4067,18 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_tiledb_fragment_info_t.getCPtr(fragment_info));
   }
 
+  public static int tiledb_fragment_info_get_fragment_name(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_fragment_info_t fragment_info,
+      long fid,
+      SWIGTYPE_p_p_char name) {
+    return tiledbJNI.tiledb_fragment_info_get_fragment_name(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+        SWIGTYPE_p_tiledb_fragment_info_t.getCPtr(fragment_info),
+        fid,
+        SWIGTYPE_p_p_char.getCPtr(name));
+  }
+
   public static int tiledb_fragment_info_get_fragment_name_v2(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_fragment_info_t fragment_info,

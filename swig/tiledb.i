@@ -64,7 +64,6 @@ typedef struct tiledb_config_t tiledb_config_t;
 %ignore tiledb_query_get_range_var_from_name;
 %ignore tiledb_array_create_with_key;
 %ignore tiledb_array_consolidate_with_key;
-%ignore tiledb_fragment_info_get_fragment_name;
 %ignore tiledb_array_delete_array;
 %ignore tiledb_query_add_point_ranges;
 
