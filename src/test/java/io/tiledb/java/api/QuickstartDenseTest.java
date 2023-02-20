@@ -275,13 +275,4 @@ public class QuickstartDenseTest {
       } while (query.getQueryStatus() == QueryStatus.TILEDB_INCOMPLETE);
     }
   }
-
-  private class ReadCallback implements Callback {
-
-    public ReadCallback() {}
-
-    public void call() {
-      callbackCalled = true;
-    }
-  }
 }
