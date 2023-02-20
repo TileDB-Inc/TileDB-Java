@@ -1427,13 +1427,6 @@ public class Query implements AutoCloseable {
     return new Pair(tiledb.ullp_value(t1), tiledb.ullp_value(t2));
   }
 
-  // Default noop async completion callback
-  private static class DefaultCallback implements Callback {
-    public DefaultCallback() {}
-
-    public void call() {}
-  }
-
   @Override
   public String toString() {
     switch (type) {
