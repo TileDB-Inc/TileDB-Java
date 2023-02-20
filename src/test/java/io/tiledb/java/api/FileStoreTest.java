@@ -1,7 +1,6 @@
 package io.tiledb.java.api;
 
 import static io.tiledb.java.api.Datatype.TILEDB_BLOB;
-import static io.tiledb.java.api.Datatype.TILEDB_UINT64;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 
@@ -124,11 +123,12 @@ public class FileStoreTest {
     // read array to check correctness
     Array array = new Array(ctx, arrayURI);
     // the file is known has a size of 33 bytes in mac/linux and 34 bytes in windows
-    NativeArray subarray = new NativeArray(ctx, new long[] {0, 32}, TILEDB_UINT64);
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 0L, 32L, null);
 
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
 
     query.setBuffer("contents", new NativeArray(ctx, 100, TILEDB_BLOB));
     // Submit query

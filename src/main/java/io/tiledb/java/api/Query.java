@@ -204,42 +204,6 @@ public class Query implements AutoCloseable {
   }
 
   /**
-   * Submit an async query (non-blocking).
-   *
-   * @exception TileDBError A TileDB exception
-   */
-  public void submitAsync() throws TileDBError {
-    submitAsync(new DefaultCallback());
-  }
-
-  /**
-   * Submit an async query, with callback.
-   *
-   * @param callback Callback function.
-   * @exception TileDBError A TileDB exception
-   */
-  public void submitAsync(Callback callback) throws TileDBError {
-    ctx.handleError(Utils.tiledb_query_submit_async(ctx.getCtxp(), queryp, callback));
-  }
-
-  /**
-   * Sets a subarray, defined in the order dimensions were added. Coordinates are inclusive.
-   *
-   * @param subarray The targeted subarray.
-   * @exception TileDBError A TileDB exception
-   */
-  public synchronized Query setSubarray(NativeArray subarray) throws TileDBError {
-    Types.typeCheck(subarray.getNativeType(), array.getSchema().getDomain().getType());
-    ctx.handleError(
-        tiledb.tiledb_query_set_subarray(ctx.getCtxp(), queryp, subarray.toVoidPointer()));
-    if (this.subarray != null) {
-      this.subarray.close();
-    }
-    this.subarray = subarray;
-    return this;
-  }
-
-  /**
    * Sets a subarray, defined in the order dimensions were added. Coordinates are inclusive.
    *
    * @param subarray The targeted subarray.
@@ -263,179 +227,6 @@ public class Query implements AutoCloseable {
   public synchronized Query setSubarray(ByteBuffer subarray) throws TileDBError {
     ctx.handleError(Utils.tiledb_query_set_subarray_nio(ctx.getCtxp(), queryp, subarray));
     return this;
-  }
-
-  /**
-   * Adds a set of point ranges along subarray dimension index. Each value in the target array is
-   * added as `add_range(x,x)` for count elements. The datatype of the range components must be the
-   * same as the type of the dimension of the array in the query.
-   *
-   * @param dimIdx The dimension index
-   * @param start The range start
-   * @param count Number of ranges to add
-   * @return This query
-   * @throws TileDBError A TileDB exception
-   */
-  public synchronized Query addPointRanges(int dimIdx, Object start, BigInteger count)
-      throws TileDBError {
-    Datatype dimType;
-    int values[];
-    try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(dimIdx).getType();
-      values = (int[]) start;
-    }
-
-    try (NativeArray arr = new NativeArray(ctx, values.length, dimType)) {
-      int i = 0;
-      for (int value : values) {
-        arr.setItem(i, value);
-        i++;
-      }
-      ctx.handleError(
-          tiledb.tiledb_query_add_point_ranges(
-              ctx.getCtxp(), queryp, dimIdx, arr.toVoidPointer(), count));
-    }
-    return this;
-  }
-
-  /**
-   * Adds a 1D range along a subarray dimension, which is in the form (start, end). The datatype of
-   * the range components must be the same as the type of the domain of the array in the query.
-   *
-   * @param dimIdx The index of the dimension to add the range to
-   * @param start The range start
-   * @param end The range end
-   * @return This query
-   * @throws TileDBError A TileDB exception
-   */
-  public synchronized Query addRange(int dimIdx, Object start, Object end) throws TileDBError {
-    Datatype dimType;
-    try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(dimIdx).getType();
-    }
-
-    // We use java type check here because we can not tell the difference between unsigned and
-    // signed
-    // values coming from java, i.e. A UINT16 and INT32 are both Integer classes in java.
-    Types.javaTypeCheck(start.getClass(), dimType.javaClass());
-    Types.javaTypeCheck(end.getClass(), dimType.javaClass());
-
-    try (NativeArray startArr = new NativeArray(ctx, 1, dimType);
-        NativeArray endArr = new NativeArray(ctx, 1, dimType)) {
-      startArr.setItem(0, start);
-      endArr.setItem(0, end);
-
-      ctx.handleError(
-          tiledb.tiledb_query_add_range(
-              ctx.getCtxp(),
-              queryp,
-              dimIdx,
-              startArr.toVoidPointer(),
-              endArr.toVoidPointer(),
-              null));
-    }
-
-    return this;
-  }
-
-  /**
-   * Adds a 1D variable-sized range along a subarray dimension, which is in the form (start, end).
-   * Applicable only to variable-sized dimensions.
-   *
-   * @param dimIdx The index of the dimension to add the range to
-   * @param start The range start
-   * @param end The range end
-   * @return This query
-   * @throws TileDBError A TileDB exception
-   */
-  public synchronized Query addRangeVar(int dimIdx, String start, String end) throws TileDBError {
-    Datatype dimType;
-    try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(dimIdx).getType();
-    }
-
-    Types.javaTypeCheck(start.getClass(), dimType.javaClass());
-    Types.javaTypeCheck(end.getClass(), dimType.javaClass());
-
-    try (NativeArray startArr = new NativeArray(ctx, 1, dimType);
-        NativeArray endArr = new NativeArray(ctx, 1, dimType)) {
-      startArr.setItem(0, start);
-      endArr.setItem(0, end);
-
-      ctx.handleError(
-          tiledb.tiledb_query_add_range_var(
-              ctx.getCtxp(),
-              queryp,
-              dimIdx,
-              startArr.toVoidPointer(),
-              BigInteger.valueOf(start.length()),
-              endArr.toVoidPointer(),
-              BigInteger.valueOf(end.length())));
-    }
-
-    return this;
-  }
-
-  /**
-   * Retrieves a range's start and end size for a given variable-length dimensions at a given range
-   * index.
-   *
-   * @param dimIdx The index of the dimension to get the range from
-   * @return This query
-   * @throws TileDBError A TileDB exception
-   */
-  public synchronized Pair<Long, Long> getRangeVarSize(int dimIdx, BigInteger rangeIdx)
-      throws TileDBError {
-    SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
-    SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
-    try {
-      ctx.handleError(
-          tiledb.tiledb_query_get_range_var_size(
-              ctx.getCtxp(), queryp, dimIdx, rangeIdx, startSize, endSize));
-
-      return new Pair(
-          tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
-    } catch (TileDBError error) {
-      throw error;
-    }
-  }
-
-  /**
-   * Retrieves a specific range of the query subarray along a given variable-length dimension.
-   *
-   * @param dimIdx The index of the dimension to get the range from
-   * @return This query
-   * @throws TileDBError A TileDB exception
-   */
-  public synchronized Pair<String, String> getRangeVar(int dimIdx, BigInteger rangeIdx)
-      throws TileDBError {
-    Datatype dimType;
-    try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(dimIdx).getType();
-    }
-
-    Pair<Long, Long> size = this.getRangeVarSize(dimIdx, rangeIdx);
-
-    try (NativeArray startArr = new NativeArray(ctx, size.getFirst().intValue(), dimType);
-        NativeArray endArr = new NativeArray(ctx, size.getSecond().intValue(), dimType)) {
-
-      ctx.handleError(
-          tiledb.tiledb_query_get_range_var(
-              ctx.getCtxp(),
-              queryp,
-              dimIdx,
-              rangeIdx,
-              startArr.toVoidPointer(),
-              endArr.toVoidPointer()));
-
-      Object start = new String((byte[]) startArr.toJavaArray());
-      Object end = new String((byte[]) endArr.toJavaArray());
-      return new Pair(start, end);
-    }
   }
 
   /**
@@ -550,68 +341,6 @@ public class Query implements AutoCloseable {
             ctx.getCtxp(), queryp, column, size, validity));
 
     return new Pair(tiledb.ullp_value(size).longValue(), tiledb.ullp_value(validity).longValue());
-  }
-
-  /**
-   * Retrieves the number of ranges of the query subarray along a given dimension.
-   *
-   * @param dimIdx The index of the dimension whose range number to retrieve
-   * @return The number of ranges of the dimension
-   * @throws TileDBError A TileDB exception
-   */
-  public long getRangeNum(int dimIdx) throws TileDBError {
-    uint64_tArray resultArr = new uint64_tArray(1);
-    try {
-      ctx.handleError(
-          tiledb.tiledb_query_get_range_num(ctx.getCtxp(), queryp, dimIdx, resultArr.cast()));
-      return resultArr.getitem(0).longValue();
-    } catch (TileDBError err) {
-      throw err;
-    }
-  }
-
-  /**
-   * Retrieves a specific range of the query subarray along a given dimension.
-   *
-   * @param dimIdx The index of the dimension to retrieve the range from
-   * @param rangeIdx The index of the range to retrieve
-   * @return Pair of (start, end) of the range.
-   * @throws TileDBError A TileDB exception
-   */
-  public Pair<Object, Object> getRange(int dimIdx, long rangeIdx) throws TileDBError {
-    Datatype dimType;
-    try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(dimIdx).getType();
-    }
-
-    SWIGTYPE_p_p_void startArrpp = tiledb.new_voidpArray(1);
-    SWIGTYPE_p_p_void endArrpp = tiledb.new_voidpArray(1);
-    SWIGTYPE_p_p_void strideArrpp = tiledb.new_voidpArray(1);
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_query_get_range(
-              ctx.getCtxp(),
-              queryp,
-              dimIdx,
-              BigInteger.valueOf(rangeIdx),
-              startArrpp,
-              endArrpp,
-              strideArrpp));
-
-      try (NativeArray startArr = new NativeArray(ctx, dimType, startArrpp, 1);
-          NativeArray endArr = new NativeArray(ctx, dimType, endArrpp, 1)) {
-        Object start = startArr.getItem(0);
-        Object end = endArr.getItem(0);
-        return new Pair<>(start, end);
-      }
-
-    } finally {
-      tiledb.delete_voidpArray(startArrpp);
-      tiledb.delete_voidpArray(endArrpp);
-      tiledb.delete_voidpArray(strideArrpp);
-    }
   }
 
   /**
@@ -1266,30 +995,23 @@ public class Query implements AutoCloseable {
   }
 
   /** Clears all attribute buffers. */
-  public synchronized void resetBuffers() {
+  private synchronized void resetBuffers() {
     for (Pair<NativeArray, NativeArray> buffer : buffers_.values()) {
-      buffer.getSecond().close();
+      if (buffer.getFirst() != null) buffer.getFirst().close();
+      if (buffer.getSecond() != null) buffer.getSecond().close();
     }
-    for (Pair<ByteBuffer, ByteBuffer> buffer : byteBuffers_.values()) {
-      buffer.getSecond().clear();
-    }
-    byteBuffers_.clear();
-    buffers_.clear();
 
-    for (Pair<NativeArray, NativeArray> var_buffer : buffers_.values()) {
-      var_buffer.getFirst().close();
-      var_buffer.getSecond().close();
+    for (Pair<ByteBuffer, ByteBuffer> buffer : byteBuffers_.values()) {
+      if (buffer.getFirst() != null) buffer.getFirst().clear();
+      if (buffer.getSecond() != null) buffer.getSecond().clear();
     }
-    for (Pair<ByteBuffer, ByteBuffer> var_buffer : byteBuffers_.values()) {
-      var_buffer.getFirst().clear();
-      var_buffer.getSecond().clear();
-    }
+
     byteBuffers_.clear();
     buffers_.clear();
 
     for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
-      size_pair.getFirst().delete();
-      size_pair.getSecond().delete();
+      if (size_pair.getFirst() != null) size_pair.getFirst().delete();
+      if (size_pair.getSecond() != null) size_pair.getSecond().delete();
     }
     buffer_sizes_.clear();
   }
@@ -1780,14 +1502,7 @@ public class Query implements AutoCloseable {
   @Override
   public synchronized void close() {
     if (queryp != null) {
-      for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
-        if (size_pair.getFirst() != null) size_pair.getFirst().delete();
-        if (size_pair.getFirst() != null) size_pair.getSecond().delete();
-      }
-      for (Pair<NativeArray, NativeArray> buffer : buffers_.values()) {
-        if (buffer.getFirst() != null) buffer.getFirst().close();
-        if (buffer.getSecond() != null) buffer.getSecond().close();
-      }
+      resetBuffers();
       if (subarray != null) {
         subarray.close();
       }

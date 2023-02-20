@@ -124,8 +124,12 @@ public class QueryTest {
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
           ArraySchema schema = array.getSchema();
           Query query = new Query(array, TILEDB_READ)) {
-        query.addRange(0, 1, 2);
-        query.addRange(1, 2, 4);
+
+        SubArray subArray = new SubArray(ctx, array);
+        subArray.addRange(0, 1, 2, null);
+        subArray.addRange(1, 2, 4, null);
+
+        query.setSubarray(subArray);
 
         query.setLayout(TILEDB_ROW_MAJOR);
 
@@ -159,8 +163,11 @@ public class QueryTest {
           Query query = new Query(array, TILEDB_READ)) {
 
         // Slice only rows 1, 2 and cols 2, 3, 4
-        query.addRange(0, 1, 2);
-        query.addRange(1, 2, 4);
+        SubArray subArray = new SubArray(ctx, array);
+        subArray.addRange(0, 1, 2, null);
+        subArray.addRange(1, 2, 4, null);
+
+        query.setSubarray(subArray);
         query.setLayout(TILEDB_ROW_MAJOR);
 
         // Prepare the vector that will hold the result
@@ -214,8 +221,11 @@ public class QueryTest {
 
       Query query = new Query(array, TILEDB_READ);
 
-      query.addRange(0, 1, 4);
-      query.addRange(1, 1, 4);
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, 1, 4, null);
+      subArray.addRange(1, 1, 4, null);
+
+      query.setSubarray(subArray);
       query.setLayout(TILEDB_ROW_MAJOR);
 
       // Get the first 6 elements of each attribute/dimension
@@ -387,8 +397,11 @@ public class QueryTest {
       ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
       ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
-      query.addRange(0, 1, 4);
-      query.addRange(1, 1, 4);
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, 1, 4, null);
+      subArray.addRange(1, 1, 4, null);
+
+      query.setSubarray(subArray);
 
       query.setLayout(TILEDB_ROW_MAJOR);
 
@@ -861,12 +874,15 @@ public class QueryTest {
       NativeArray d_data = new NativeArray(ctx, 20, Datatype.TILEDB_STRING_ASCII);
       NativeArray d_off = new NativeArray(ctx, 20, Datatype.TILEDB_UINT64);
 
-      try (Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ)) {
+      try (Array array = new Array(ctx, arrayURI);
+          Query q = new Query(array, TILEDB_READ)) {
 
         q.setDataBuffer("d1", d_data);
         q.setOffsetsBuffer("d1", d_off);
 
-        q.addRangeVar(0, "a", "z");
+        SubArray subArray = new SubArray(ctx, array);
+        subArray.addRangeVar(0, "a", "z");
+        q.setSubarray(subArray);
 
         while (q.getQueryStatus() != QueryStatus.TILEDB_COMPLETED) {
           q.submit();
@@ -894,7 +910,9 @@ public class QueryTest {
         q.setDataBuffer("d1", d_data);
         q.setOffsetsBuffer("d1", d_off);
         // Point-query
-        q.addRangeVar(0, "aa", "aa");
+        SubArray subArray = new SubArray(ctx, arr);
+        subArray.addRangeVar(0, "aa", "aa");
+        q.setSubarray(subArray);
         q.submit();
 
         byte[] data = (byte[]) q.getBuffer("d1");
@@ -910,7 +928,9 @@ public class QueryTest {
         q.setDataBuffer("d1", d_data);
         q.setOffsetsBuffer("d1", d_off);
         // Range query ["dd", "ee"]
-        q.addRangeVar(0, "dd", "ee");
+        SubArray subArray = new SubArray(ctx, arr);
+        subArray.addRangeVar(0, "dd", "ee");
+        q.setSubarray(subArray);
         q.submit();
 
         byte[] data = (byte[]) q.getBuffer("d1");
@@ -929,7 +949,9 @@ public class QueryTest {
         // We expect an error here
         try {
           int dimIdx = 123;
-          q.addRangeVar(dimIdx, "dd", "ee");
+          SubArray subArray = new SubArray(ctx, arr);
+          subArray.addRange(dimIdx, "dd", "ee", null);
+          q.setSubarray(subArray);
           Assert.fail("An error should be thrown for invalid dimension: " + dimIdx);
         } catch (TileDBError error) {
         }
@@ -946,83 +968,9 @@ public class QueryTest {
         q.setDataBuffer("d1", d_data);
         q.setOffsetsBuffer("d1", d_off);
         // Point-query
-        q.addRangeVar(123, "aa", "aa");
-      }
-    }
-
-    @Test
-    public void testGetRangeVar() throws TileDBError {
-      Array arr = new Array(ctx, arrayURI);
-      NativeArray d_data = new NativeArray(ctx, 20, Datatype.TILEDB_STRING_ASCII);
-      NativeArray d_off = new NativeArray(ctx, 20, Datatype.TILEDB_UINT64);
-
-      try (Query q = new Query(arr, TILEDB_READ)) {
-
-        q.setDataBuffer("d1", d_data);
-        q.setOffsetsBuffer("d1", d_off);
-
-        String rangeStart1 = "aaaaaa";
-        String rangeEnd1 = "aaabb";
-
-        String rangeStart2 = "aaaaaa";
-        String rangeEnd2 = "aaabb";
-
-        String rangeStart3 = "aaaaaa";
-        String rangeEnd3 = "aaabb";
-
-        // Point-query
-        q.addRangeVar(0, rangeStart1, rangeEnd1);
-        q.addRangeVar(0, rangeStart2, rangeEnd2);
-        q.addRangeVar(0, rangeStart3, rangeEnd3);
-
-        Pair<String, String> range1 = q.getRangeVar(0, BigInteger.valueOf(0));
-        Pair<String, String> range2 = q.getRangeVar(0, BigInteger.valueOf(1));
-        Pair<String, String> range3 = q.getRangeVar(0, BigInteger.valueOf(2));
-
-        Assert.assertEquals(rangeStart1, range1.getFirst());
-        Assert.assertEquals(rangeEnd1, range1.getSecond());
-        Assert.assertEquals(rangeStart2, range2.getFirst());
-        Assert.assertEquals(rangeEnd2, range2.getSecond());
-        Assert.assertEquals(rangeStart3, range3.getFirst());
-        Assert.assertEquals(rangeEnd3, range3.getSecond());
-      }
-    }
-
-    @Test
-    public void testGetRangeVarSize() throws TileDBError {
-      Array arr = new Array(ctx, arrayURI);
-      NativeArray d_data = new NativeArray(ctx, 20, Datatype.TILEDB_STRING_ASCII);
-      NativeArray d_off = new NativeArray(ctx, 20, Datatype.TILEDB_UINT64);
-
-      try (Query q = new Query(arr, TILEDB_READ)) {
-
-        q.setDataBuffer("d1", d_data);
-        q.setOffsetsBuffer("d1", d_off);
-
-        String rangeStart1 = "aaaaaa";
-        String rangeEnd1 = "aaabb";
-
-        String rangeStart2 = "aaaaaa";
-        String rangeEnd2 = "aaabb";
-
-        String rangeStart3 = "aaaaaa";
-        String rangeEnd3 = "aaabb";
-
-        // Point-query
-        q.addRangeVar(0, rangeStart1, rangeEnd1);
-        q.addRangeVar(0, rangeStart2, rangeEnd2);
-        q.addRangeVar(0, rangeStart3, rangeEnd3);
-
-        Pair<Long, Long> size1 = q.getRangeVarSize(0, BigInteger.valueOf(0));
-        Pair<Long, Long> size2 = q.getRangeVarSize(0, BigInteger.valueOf(1));
-        Pair<Long, Long> size3 = q.getRangeVarSize(0, BigInteger.valueOf(2));
-
-        Assert.assertEquals(rangeStart1.length(), (long) size1.getFirst());
-        Assert.assertEquals(rangeEnd1.length(), (long) size1.getSecond());
-        Assert.assertEquals(rangeStart2.length(), (long) size2.getFirst());
-        Assert.assertEquals(rangeEnd2.length(), (long) size2.getSecond());
-        Assert.assertEquals(rangeStart3.length(), (long) size3.getFirst());
-        Assert.assertEquals(rangeEnd3.length(), (long) size3.getSecond());
+        SubArray subArray = new SubArray(ctx, arr);
+        subArray.addRange(123, "aa", "aa", null);
+        q.setSubarray(subArray);
       }
     }
   }
@@ -1189,8 +1137,11 @@ public class QueryTest {
           Query query = new Query(array, TILEDB_READ)) {
 
         // Fetch all cells
-        query.addRange(0, 1, 2);
-        query.addRange(1, 1, 2);
+        SubArray subArray = new SubArray(ctx, array);
+        subArray.addRange(0, 1, 2, null);
+        subArray.addRange(1, 1, 2, null);
+
+        query.setSubarray(subArray);
         query.setLayout(TILEDB_ROW_MAJOR);
 
         NativeArray dim1Array = new NativeArray(ctx, 100, Integer.class);
@@ -1254,8 +1205,11 @@ public class QueryTest {
           Query query = new Query(array, TILEDB_READ)) {
 
         // Fetch all cells
-        query.addRange(0, 1, 2);
-        query.addRange(1, 1, 2);
+        SubArray subArray = new SubArray(ctx, array);
+        subArray.addRange(0, 1, 2, null);
+        subArray.addRange(1, 1, 2, null);
+
+        query.setSubarray(subArray);
         query.setLayout(TILEDB_ROW_MAJOR);
 
         ByteBuffer dim1Array = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());

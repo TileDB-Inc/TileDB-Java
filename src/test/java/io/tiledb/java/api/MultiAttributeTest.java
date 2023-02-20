@@ -99,7 +99,9 @@ public class MultiAttributeTest {
     Array array = new Array(ctx, arrayURI, TILEDB_READ);
 
     // Slice only rows 1, 2 and cols 2, 3, 4
-    NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Integer.class);
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 1, 2, null);
+    subArray.addRange(1, 2, 4, null);
 
     // Create query
     Query query = new Query(array, TILEDB_READ);
@@ -108,7 +110,7 @@ public class MultiAttributeTest {
     // Prepare the vector that will hold the result
     // (of size 6 elements for "a1" and 12 elements for "a2" since
     // it stores two floats per cell)
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     query.setBuffer("a1", new NativeArray(ctx, 6, String.class));
     query.setBuffer("a2", new NativeArray(ctx, 12, Float.class));
 
@@ -137,14 +139,16 @@ public class MultiAttributeTest {
     Array array = new Array(ctx, arrayURI, TILEDB_READ);
 
     // Slice only rows 1, 2 and cols 2, 3, 4
-    NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 2, 4}, Integer.class);
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 1, 2, null);
+    subArray.addRange(1, 2, 4, null);
 
     // Create query
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
 
     // Prepare the query - subselect over "a1" only
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     query.setBuffer("a1", new NativeArray(ctx, 6, String.class));
 
     // Submit query

@@ -38,12 +38,14 @@ public class DenseReadOrderedSubarray {
 
     // Compute maximum buffer elements for the query results per attribute
     Array my_dense_array = new Array(ctx, "my_dense_array");
-    NativeArray subarray = new NativeArray(ctx, new long[] {3l, 4l, 2l, 4l}, Long.class);
+    SubArray subArray = new SubArray(ctx, my_dense_array);
+    subArray.addRange(0, 3L, 4L, null);
+    subArray.addRange(1, 2L, 4L, null);
 
     // Create query
     Query query = new Query(my_dense_array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     int bufferSize = 1024;
     query.setBuffer("a1", new NativeArray(ctx, bufferSize, Integer.class));
     query.setBuffer(

@@ -69,14 +69,17 @@ public class WritingDensePadding {
     // Prepare cell buffers
     NativeArray data = new NativeArray(ctx, new int[] {1, 2, 3, 4}, Integer.class);
 
-    NativeArray subarray = new NativeArray(ctx, new int[] {2, 3, 1, 2}, Integer.class);
-
     // Create query
     Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 2, 3, null);
+    subArray.addRange(1, 1, 2, null);
+
     Query query = new Query(array);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     // Submit query
     query.submit();
     query.close();
@@ -90,10 +93,14 @@ public class WritingDensePadding {
     // Calcuate maximum buffer sizes for the query results per attribute
     NativeArray subarray = new NativeArray(ctx, new int[] {1, 4, 1, 4}, Integer.class);
 
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 1, 4, null);
+    subArray.addRange(1, 1, 4, null);
+
     // Create query
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     query.setBuffer("a", new NativeArray(ctx, 16, Integer.class));
 
     // Submit query

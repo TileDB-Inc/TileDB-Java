@@ -1056,28 +1056,6 @@ extern "C" {
     return ret;
   }
 
-  JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1submit_1async_1java(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jobject jarg3) {
-    jint jresult = 0 ;
-    tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
-    tiledb_query_t *arg2 = (tiledb_query_t *) 0 ;
-    void (*arg3)(void *) = (void (*)(void *)) java_callback ;
-    jobject arg4 ;
-    int result;
-
-    (void)jenv;
-    (void)jcls;
-    (void)jarg1_;
-    (void)jarg2_;
-    arg1 = *(tiledb_ctx_t **)&jarg1;
-    arg2 = *(tiledb_query_t **)&jarg2;
-    struct Callback* callback = new Callback;
-    callback->obj=jenv->NewGlobalRef(jarg3);
-    callback->cls=jenv->GetObjectClass(jarg3);
-    result = (int)tiledb_query_submit_async(arg1,arg2,arg3,(void *) callback);
-    jresult = (jint)result;
-    return jresult;
-  }
-
   JNIEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1object_1walk_1java(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jint jarg3, jobject jarg4) {
     jint jresult = 0 ;
     tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;

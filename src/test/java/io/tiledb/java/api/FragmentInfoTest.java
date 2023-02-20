@@ -737,14 +737,17 @@ public class FragmentInfoTest {
     // Prepare cell buffers
     NativeArray data = new NativeArray(ctx, new int[] {1, 2, 3, 4, 5, 6, 7, 8}, Integer.class);
 
-    NativeArray subarray = new NativeArray(ctx, new int[] {1, 2, 1, 4}, Integer.class);
-
     // Create query
     Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
+
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 1, 2, null);
+    subArray.addRange(1, 1, 4, null);
+
     Query query = new Query(array);
     query.setLayout(TILEDB_ROW_MAJOR);
     query.setBuffer("a", data);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     // Submit query
     query.submit();
     query.close();

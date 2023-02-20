@@ -186,14 +186,6 @@ extern "C" {
         return print_path;
     }
 
-    TILEDB_EXPORT int tiledb_query_submit_async_jc(
-        tiledb_ctx_t* ctx,
-        tiledb_query_t* query,
-        void (*callback)(void*),
-        jobject callback_data){
-        return tiledb_query_submit_async(ctx, query, callback, (void *) &callback_data);
-    }
-
     TILEDB_EXPORT int tiledb_object_walk_jc(
         tiledb_ctx_t* ctx,
         const char* path,

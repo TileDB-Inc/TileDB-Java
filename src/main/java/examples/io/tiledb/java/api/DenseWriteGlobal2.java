@@ -77,8 +77,8 @@ public class DenseWriteGlobal2 {
             },
             Float.class);
 
-    // Reset buffers
-    query.resetBuffers();
+    query = new Query(my_dense_array);
+    query.setLayout(TILEDB_GLOBAL_ORDER);
     query.setBuffer("a1", a1_data);
     query.setBuffer("a2", a2_offsets, buffer_var_a2);
     query.setBuffer("a3", buffer_a3);

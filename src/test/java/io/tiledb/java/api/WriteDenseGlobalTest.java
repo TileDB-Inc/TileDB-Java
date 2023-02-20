@@ -37,11 +37,14 @@ public class WriteDenseGlobalTest {
   public void writeArray() throws Exception {
     try (Context ctx = new Context();
         Array array = new Array(ctx, arrayURI, QueryType.TILEDB_WRITE);
-        Query query = new Query(array);
-        NativeArray subarray = new NativeArray(ctx, new int[] {1, 4, 1, 2}, Integer.class)) {
+        Query query = new Query(array)) {
+
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, 1, 4, null);
+      subArray.addRange(1, 1, 2, null);
 
       try (NativeArray data = new NativeArray(ctx, new int[] {1, 2, 3, 4}, Integer.class)) {
-        query.setLayout(Layout.TILEDB_GLOBAL_ORDER).setBuffer("a", data).setSubarray(subarray);
+        query.setLayout(Layout.TILEDB_GLOBAL_ORDER).setBuffer("a", data).setSubarray(subArray);
         query.submit();
         for (int i = 0; i < 4; i++) {
           data.setItem(i, 5 + i);
@@ -58,10 +61,12 @@ public class WriteDenseGlobalTest {
         Query query = new Query(array);
         NativeArray data = new NativeArray(ctx, 16, Integer.class)) {
 
-      try (NativeArray subarray = new NativeArray(ctx, new int[] {1, 4, 1, 4}, Integer.class)) {
-        query.setSubarray(subarray).setBuffer("a", data).setLayout(Layout.TILEDB_ROW_MAJOR);
-        query.submit();
-      }
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, 1, 4, null);
+      subArray.addRange(1, 1, 4, null);
+
+      query.setSubarray(subArray).setBuffer("a", data).setLayout(Layout.TILEDB_ROW_MAJOR);
+      query.submit();
 
       return (int[]) data.toJavaArray();
     }

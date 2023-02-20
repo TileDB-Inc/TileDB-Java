@@ -139,11 +139,12 @@ public class ArrayTest {
   }
 
   public long[] readArray(Array array) throws TileDBError {
-    NativeArray sub_array = new NativeArray(ctx, new long[] {1, 4, 1, 2}, Long.class);
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 1L, 4L, null);
     // Create query
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
-    query.setSubarray(sub_array);
+    query.setSubarray(subArray);
     query.setBuffer(attributeName, new NativeArray(ctx, 10, Long.class));
 
     // Submit query
@@ -196,12 +197,11 @@ public class ArrayTest {
   public void testEncryptedArrayExists() throws Exception {
     // Test that we can create the encrypted array
     Assert.assertFalse(Array.exists(ctx, arrayURI));
-    Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
+    Array.create(arrayURI, schemaCreate());
     Assert.assertTrue(Array.exists(ctx, arrayURI));
 
     // Test that we can decrypt the array
-    try (ArraySchema schema =
-        new ArraySchema(ctx, arrayURI, EncryptionType.TILEDB_AES_256_GCM, key)) {
+    try (ArraySchema schema = new ArraySchema(ctx, arrayURI)) {
       Assert.assertEquals(schema.getArrayType(), ArrayType.TILEDB_DENSE);
     }
   }
@@ -209,34 +209,32 @@ public class ArrayTest {
   @Test(expected = TileDBError.class)
   public void testLoadingEncryptedArrayNoKeyErrors() throws Exception {
     // Test that we can create the encrypted array
-    Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
+    Array.create(arrayURI, schemaCreate());
     new ArraySchema(new Context(), arrayURI).close();
   }
 
   @Test(expected = TileDBError.class)
   public void testLoadingEncryptedArrayWrongKeyErrors() throws Exception {
     // Test that we can create the encrypted array
-    Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
+    Array.create(arrayURI, schemaCreate());
     String keyString = "0123456789abcdeF0123456789abcdeZ";
-    new ArraySchema(
-            ctx,
-            arrayURI,
-            EncryptionType.TILEDB_AES_256_GCM,
-            keyString.getBytes(StandardCharsets.US_ASCII))
-        .close();
+    Config config = new Config();
+    config.set("sm.encryption_type", "AES_256_GCM");
+    config.set("sm.encryption_key", keyString);
+    Context ctx = new Context(config);
+    new ArraySchema(ctx, arrayURI).close();
   }
 
   @Test(expected = TileDBError.class)
   public void testLoadingEncryptedArrayWrongKeyLenErrors() throws Exception {
     // Test that we can create the encrypted array
-    Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
+    Array.create(arrayURI, schemaCreate());
     String keyString = "0123456789abcdeF0123456789a";
-    new ArraySchema(
-            ctx,
-            arrayURI,
-            EncryptionType.TILEDB_AES_256_GCM,
-            keyString.getBytes(StandardCharsets.US_ASCII))
-        .close();
+    Config config = new Config();
+    config.set("sm.encryption_type", "AES_256_GCM");
+    config.set("sm.encryption_key", keyString);
+    Context ctx = new Context(config);
+    new ArraySchema(ctx, arrayURI).close();
   }
 
   @Test
@@ -276,7 +274,7 @@ public class ArrayTest {
 
   @Test
   public void testArrayOpenAtEncrypted() throws Exception {
-    Array.create(arrayURI, schemaCreate(), EncryptionType.TILEDB_AES_256_GCM, key);
+    Array.create(arrayURI, schemaCreate());
 
     long[] array_a = new long[] {1, 2, 3, 6};
     BigInteger ts_a = BigInteger.valueOf(10L);
@@ -823,12 +821,14 @@ public class ArrayTest {
     Context context = new Context();
     // READ BEFORE UPGRADE
     Array array = new Array(context, testArrayURIString("quickstart_sparse_array_v2"), TILEDB_READ);
-    NativeArray subarray = new NativeArray(context, new int[] {1, 4, 1, 4}, Integer.class);
+    SubArray subArray = new SubArray(ctx, array);
+    subArray.addRange(0, 1, 4, null);
+    subArray.addRange(1, 1, 4, null);
 
     // Create query
     Query query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     query.setBuffer("a", new NativeArray(ctx, 16, Integer.class));
     query.setBuffer("rows", new NativeArray(ctx, 16, Integer.class));
     query.setBuffer("cols", new NativeArray(ctx, 16, Integer.class));
@@ -850,7 +850,7 @@ public class ArrayTest {
     // READ AFTER UPGRADE
     query = new Query(array, TILEDB_READ);
     query.setLayout(TILEDB_ROW_MAJOR);
-    query.setSubarray(subarray);
+    query.setSubarray(subArray);
     query.setBuffer("a", new NativeArray(ctx, 16, Integer.class));
     query.setBuffer("rows", new NativeArray(ctx, 16, Integer.class));
     query.setBuffer("cols", new NativeArray(ctx, 16, Integer.class));

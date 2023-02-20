@@ -245,13 +245,15 @@ public class FilterTest {
     arrayCreate();
     arrayWrite();
 
-    NativeArray subarray = new NativeArray(ctx, new int[] {0, 5}, Integer.class);
     // Create array and query
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
         ArraySchema schema = array.getSchema();
         Query query = new Query(array, TILEDB_READ)) {
 
-      query.setSubarray(subarray);
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, 0, 5, null);
+
+      query.setSubarray(subArray);
 
       query.setLayout(TILEDB_ROW_MAJOR);
 

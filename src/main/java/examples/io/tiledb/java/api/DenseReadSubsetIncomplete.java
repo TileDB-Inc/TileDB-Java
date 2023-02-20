@@ -40,8 +40,13 @@ public class DenseReadSubsetIncomplete {
     // Create query
     Query query = new Query(my_dense_array, TILEDB_READ);
     query.setLayout(TILEDB_COL_MAJOR);
-    long[] subarray = {1l, 4l, 1l, 4l};
-    query.setSubarray(new NativeArray(ctx, subarray, Long.class));
+
+    SubArray subArray = new SubArray(ctx, my_dense_array);
+    subArray.addRange(0, 1L, 4L, null);
+    subArray.addRange(1, 1L, 4L, null);
+
+    query.setSubarray(subArray);
+
     query.setBuffer("a1", new NativeArray(ctx, 34, Integer.class));
 
     // Loop until the query is completed
