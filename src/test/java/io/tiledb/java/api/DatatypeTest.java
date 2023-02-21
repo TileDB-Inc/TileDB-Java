@@ -177,7 +177,7 @@ public class DatatypeTest {
     Array array = new Array(ctx, arrayURI);
     try (Query query = new Query(array, TILEDB_READ)) {
       SubArray subArray = new SubArray(ctx, array);
-      subArray.addRange(0, 1, 20, null);
+      subArray.addRange(0, 1, 4, null);
 
       query.setBuffer("a1", new NativeArray(ctx, 4, Datatype.TILEDB_TIME_AS));
       query.setBuffer("a2", new NativeArray(ctx, 4, Datatype.TILEDB_TIME_MIN));
@@ -215,9 +215,6 @@ public class DatatypeTest {
       Assert.assertArrayEquals(new long[] {73, 75, 76, 79}, a8_buff);
       Assert.assertArrayEquals(new long[] {83, 85, 86, 89}, a9_buff);
       Assert.assertArrayEquals(new long[] {93, 95, 96, 99}, a10_buff);
-
-    } catch (TileDBError tileDBError) {
-      tileDBError.printStackTrace();
     }
   }
 
