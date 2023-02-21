@@ -912,6 +912,8 @@ public class QueryTest {
         // Point-query
         SubArray subArray = new SubArray(ctx, arr);
         subArray.addRangeVar(0, "aa", "aa");
+        Assert.assertEquals("aa", subArray.getRangeVar(0, 0).getFirst());
+        Assert.assertEquals("aa", subArray.getRangeVar(0, 0).getSecond());
         q.setSubarray(subArray);
         q.submit();
 

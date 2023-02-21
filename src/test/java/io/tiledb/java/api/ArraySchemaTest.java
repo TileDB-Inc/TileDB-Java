@@ -33,7 +33,7 @@ public class ArraySchemaTest {
   public ArraySchema schemaCreate(Context ctx, ArrayType arrayType, Layout cellOrder)
       throws TileDBError {
     Dimension<Long> d1 =
-        new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
+        new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1L, 4L), 2l);
     Domain domain = new Domain(ctx);
     domain.addDimension(d1);
 
@@ -178,6 +178,7 @@ public class ArraySchemaTest {
       schema.addDimensionLabel(
           new DimensionLabel(
               ctx, 0, "TESTLABEL", TILEDB_INCREASING_DATA, tiledb_datatype_t.TILEDB_UINT64));
+
       schema.setDimensionLabelTileExtend("TESTLABEL", 2, TILEDB_INT64);
       schema.setDimensionLabelFilterList("TESTLABEL", filterList);
 
@@ -191,6 +192,23 @@ public class ArraySchemaTest {
       Assert.assertEquals(1, dimensionLabel.getLabelCellValNum());
       Assert.assertEquals("__labels/l0", dimensionLabel.getURI());
       Assert.assertEquals(TILEDB_INCREASING_DATA, dimensionLabel.getLabelOrder());
+
+      Array.create("dimension_label_array", schema);
+      Array array = new Array(ctx, "dimension_label_array");
+
+      SubArray subArray = new SubArray(ctx, array);
+      Assert.assertFalse(subArray.hasLabelRanges(0));
+
+      subArray.addLabelRange("TESTLABEL", 1L, 4L, null);
+      subArray.addLabelRange("TESTLABEL", 1L, 2L, null);
+      Assert.assertEquals(2, subArray.getLabelRangeNum("TESTLABEL"));
+
+      Assert.assertEquals(1L, subArray.getLabelRange("TESTLABEL", 0).getFirst());
+      Assert.assertEquals(4L, subArray.getLabelRange("TESTLABEL", 0).getSecond());
+
+      Assert.assertEquals("TESTLABEL", subArray.getLabelName(0));
+
+      TileDBObject.remove(ctx, "dimension_label_array");
     }
   }
 }
