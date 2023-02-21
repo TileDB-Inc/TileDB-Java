@@ -1,5 +1,7 @@
 package io.tiledb.java.api;
 
+import io.tiledb.libtiledb.SWIGTYPE_p_int;
+import io.tiledb.libtiledb.SWIGTYPE_p_p_char;
 import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_subarray_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_p_void;
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_subarray_t;
@@ -49,7 +51,7 @@ public class SubArray implements AutoCloseable {
    *
    * @param config The input configuration
    */
-  public void setConfig(Config config) throws TileDBError {
+  public synchronized void setConfig(Config config) throws TileDBError {
     try {
       ctx.handleError(
           tiledb.tiledb_subarray_set_config(ctx.getCtxp(), this.subArrayp, config.getConfigp()));
@@ -269,7 +271,7 @@ public class SubArray implements AutoCloseable {
    * @return The number of ranges of the dimension
    * @throws TileDBError A TileDB exception
    */
-  public long getRangeNum(int dimIdx) throws TileDBError {
+  public synchronized long getRangeNum(int dimIdx) throws TileDBError {
     uint64_tArray resultArr = new uint64_tArray(1);
     try {
       ctx.handleError(
@@ -287,7 +289,7 @@ public class SubArray implements AutoCloseable {
    * @return The number of ranges of the dimension
    * @throws TileDBError A TileDB exception
    */
-  public long getRangeNumFromName(String name) throws TileDBError {
+  public synchronized long getRangeNumFromName(String name) throws TileDBError {
     uint64_tArray resultArr = new uint64_tArray(1);
     try {
       ctx.handleError(
@@ -307,7 +309,7 @@ public class SubArray implements AutoCloseable {
    * @return Pair of (start, end) of the range.
    * @throws TileDBError A TileDB exception
    */
-  public Pair<Object, Object> getRange(int dimIdx, long rangeIdx) throws TileDBError {
+  public synchronized Pair<Object, Object> getRange(int dimIdx, long rangeIdx) throws TileDBError {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
         Domain domain = schema.getDomain()) {
@@ -351,7 +353,8 @@ public class SubArray implements AutoCloseable {
    * @return Pair of (start, end) of the range.
    * @throws TileDBError A TileDB exception
    */
-  public Pair<Object, Object> getRangeFromName(String name, long rangeIdx) throws TileDBError {
+  public synchronized Pair<Object, Object> getRangeFromName(String name, long rangeIdx)
+      throws TileDBError {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
         Domain domain = schema.getDomain()) {
@@ -394,15 +397,14 @@ public class SubArray implements AutoCloseable {
    * @return This subArray
    * @throws TileDBError A TileDB exception
    */
-  public synchronized Pair<Long, Long> getRangeVarSize(int dimIdx, BigInteger rangeIdx)
+  public synchronized Pair<Long, Long> getRangeVarSize(int dimIdx, long rangeIdx)
       throws TileDBError {
-    Util.checkBigIntegerRange(rangeIdx);
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
     try {
       ctx.handleError(
           tiledb.tiledb_subarray_get_range_var_size(
-              ctx.getCtxp(), subArrayp, dimIdx, rangeIdx, startSize, endSize));
+              ctx.getCtxp(), subArrayp, dimIdx, BigInteger.valueOf(rangeIdx), startSize, endSize));
 
       return new Pair(
           tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
@@ -443,9 +445,8 @@ public class SubArray implements AutoCloseable {
    * @return This query
    * @throws TileDBError A TileDB exception
    */
-  public synchronized Pair<String, String> getRangeVar(int dimIdx, BigInteger rangeIdx)
+  public synchronized Pair<String, String> getRangeVar(int dimIdx, long rangeIdx)
       throws TileDBError {
-    Util.checkBigIntegerRange(rangeIdx);
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
         Domain domain = schema.getDomain()) {
@@ -462,7 +463,7 @@ public class SubArray implements AutoCloseable {
               ctx.getCtxp(),
               subArrayp,
               dimIdx,
-              rangeIdx,
+              BigInteger.valueOf(rangeIdx),
               startArr.toVoidPointer(),
               endArr.toVoidPointer()));
 
@@ -517,7 +518,7 @@ public class SubArray implements AutoCloseable {
    * @param flag boolean input flag
    * @throws TileDBError
    */
-  public void setCoalesceRanges(boolean flag) throws TileDBError {
+  public synchronized void setCoalesceRanges(boolean flag) throws TileDBError {
     short coalesce = flag ? (short) 1 : (short) 0;
 
     try {
@@ -543,6 +544,257 @@ public class SubArray implements AutoCloseable {
     } catch (TileDBError err) {
       throw err;
     }
+  }
+
+  //  tiledb_subarray_add_label_range_var
+  //
+  //          tiledb_subarray_get_label_name
+  //
+  //
+  //  tiledb_subarray_get_label_range
+  //
+  //          tiledb_subarray_get_label_range_num
+  //
+  //
+  //  tiledb_subarray_get_label_range_var
+  //
+  //
+  //          tiledb_subarray_get_label_range_var_size
+
+  /**
+   * Retrieves a specific label range of the subarray from the ranges set for the given dimension
+   * label name.
+   *
+   * @param name The name of the dimension label to retrieve the range from.
+   * @param rangeIndex The index of the range to retrieve.
+   * @return a pair of objects as the range
+   */
+  public synchronized Pair<Object, Object> getLabelRange(String name, long rangeIndex)
+      throws TileDBError {
+    Datatype dimType;
+    try (ArraySchema schema = array.getSchema()) {
+      dimType = schema.getDimensionLabelFromName(name).getLabelType();
+    }
+
+    SWIGTYPE_p_p_void startArrpp = tiledb.new_voidpArray(1);
+    SWIGTYPE_p_p_void endArrpp = tiledb.new_voidpArray(1);
+    SWIGTYPE_p_p_void strideArrpp = tiledb.new_voidpArray(1);
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_subarray_get_label_range(
+              ctx.getCtxp(),
+              subArrayp,
+              name,
+              BigInteger.valueOf(rangeIndex),
+              startArrpp,
+              endArrpp,
+              strideArrpp));
+
+      try (NativeArray startArr = new NativeArray(ctx, dimType, startArrpp, 1);
+          NativeArray endArr = new NativeArray(ctx, dimType, endArrpp, 1)) {
+        Object start = startArr.getItem(0);
+        Object end = endArr.getItem(0);
+        return new Pair<>(start, end);
+      }
+
+    } finally {
+      tiledb.delete_voidpArray(startArrpp);
+      tiledb.delete_voidpArray(endArrpp);
+      tiledb.delete_voidpArray(strideArrpp);
+    }
+  }
+
+  /**
+   * Gets the name of the dimension label for label ranges set on this dimension of the subarray.
+   *
+   * @param dimIndex The dimension index the label ranges are set on.
+   * @return The label name
+   */
+  public synchronized String getLabelName(long dimIndex) throws TileDBError {
+    String name;
+    SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_subarray_get_label_name(ctx.getCtxp(), subArrayp, dimIndex, namepp));
+    } catch (TileDBError err) {
+      tiledb.delete_charpp(namepp);
+      throw err;
+    }
+    name = tiledb.charpp_value(namepp);
+    tiledb.delete_charpp(namepp);
+    return name;
+  }
+
+  /**
+   * Adds a 1D range along a subarray for a dimension label, which is in the form (start, end,
+   * stride). The datatype of the range components must be the same as the datatype of label.
+   *
+   * @param name The name of the dimension label to add the range to.
+   * @param start The range start.
+   * @param end The range end.
+   * @param stride The range stride.
+   *     <p>The stride is currently unsupported. Use 0/NULL/nullptr as the stride argument.
+   */
+  public synchronized void addLabelRange(String name, Object start, Object end, Object stride)
+      throws TileDBError {
+    Datatype type;
+    try (ArraySchema schema = array.getSchema()) {
+      type = schema.getDimensionLabelFromName(name).getLabelType();
+    }
+
+    // We use java type check here because we can not tell the difference between unsigned and
+    // signed
+    // values coming from java, i.e. A UINT16 and INT32 are both Integer classes in java.
+    Types.javaTypeCheck(start.getClass(), type.javaClass());
+    Types.javaTypeCheck(end.getClass(), type.javaClass());
+
+    try (NativeArray startArr = new NativeArray(ctx, 1, type);
+        NativeArray endArr = new NativeArray(ctx, 1, type)) {
+      startArr.setItem(0, start);
+      endArr.setItem(0, end);
+
+      ctx.handleError(
+          tiledb.tiledb_subarray_add_label_range(
+              ctx.getCtxp(),
+              subArrayp,
+              name,
+              startArr.toVoidPointer(),
+              endArr.toVoidPointer(),
+              null));
+    }
+  }
+
+  /**
+   * Retrieves the number of label ranges set for the subarray for the dimension label with the
+   * given name.
+   *
+   * @param name The name of the dimension label whose range number to retrieve.
+   * @return The number of ranges
+   */
+  public synchronized long getLabelRangeNum(String name) throws TileDBError {
+    uint64_tArray resultArr = new uint64_tArray(1);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_subarray_get_label_range_num(
+              ctx.getCtxp(), subArrayp, name, resultArr.cast()));
+      return resultArr.getitem(0).longValue();
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Adds a 1D variable-sized range for a dimension label along a subarray, which is in the form
+   * (start, end). Applicable only to variable-sized dimension labels.
+   *
+   * @param name The name of the dimension label to add the range to.
+   * @param start The range start.
+   * @param startSize The size of the range start in bytes.
+   * @param end The range end.
+   * @param endSize The size of the range end in bytes.
+   */
+  public synchronized void addLabelRangeVar(
+      String name, String start, long startSize, String end, long endSize) throws TileDBError {
+
+    Datatype dimType;
+    try (ArraySchema schema = array.getSchema()) {
+      dimType = schema.getDimensionLabelFromName(name).getLabelType();
+    }
+
+    Types.javaTypeCheck(start.getClass(), dimType.javaClass());
+    Types.javaTypeCheck(end.getClass(), dimType.javaClass());
+
+    try (NativeArray startArr = new NativeArray(ctx, 1, dimType);
+        NativeArray endArr = new NativeArray(ctx, 1, dimType)) {
+      startArr.setItem(0, start);
+      endArr.setItem(0, end);
+
+      ctx.handleError(
+          tiledb.tiledb_subarray_add_label_range_var(
+              ctx.getCtxp(),
+              subArrayp,
+              name,
+              startArr.toVoidPointer(),
+              BigInteger.valueOf(start.length()),
+              endArr.toVoidPointer(),
+              BigInteger.valueOf(end.length())));
+    }
+  }
+
+  /**
+   * Retrieves a specific range of the subarray for a variable-length dimension label at the given
+   * name
+   *
+   * @param name The name of the dimension to retrieve the range from.
+   * @param rangeIdx The index of the range to retrieve.
+   * @return The var range as a Pair of Strings
+   */
+  public synchronized Pair<String, String> getLabelRangeVar(String name, long rangeIdx)
+      throws TileDBError {
+    Datatype dimType;
+    try (ArraySchema schema = array.getSchema()) {
+      dimType = schema.getDimensionLabelFromName(name).getLabelType();
+    }
+
+    Pair<Long, Long> size = this.getLabelRangeVarSize(name, rangeIdx);
+
+    try (NativeArray startArr = new NativeArray(ctx, size.getFirst().intValue(), dimType);
+        NativeArray endArr = new NativeArray(ctx, size.getSecond().intValue(), dimType)) {
+
+      ctx.handleError(
+          tiledb.tiledb_subarray_get_label_range_var(
+              ctx.getCtxp(),
+              subArrayp,
+              name,
+              BigInteger.valueOf(rangeIdx),
+              startArr.toVoidPointer(),
+              endArr.toVoidPointer()));
+
+      Object start = new String((byte[]) startArr.toJavaArray());
+      Object end = new String((byte[]) endArr.toJavaArray());
+      return new Pair(start, end);
+    }
+  }
+
+  /**
+   * Retrieves a range's start and end size for a given variable-length dimension label with the
+   * given dimension label name and at the given range index.
+   *
+   * @param name The name of the dimension label to retrieve the range from.
+   * @param rangeIdx The index of the range to retrieve.
+   * @return The sizes as a pair of Longs
+   */
+  public synchronized Pair<Long, Long> getLabelRangeVarSize(String name, long rangeIdx)
+      throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
+    SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_subarray_get_label_range_var_size(
+              ctx.getCtxp(), subArrayp, name, BigInteger.valueOf(rangeIdx), startSize, endSize));
+
+      return new Pair(
+          tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+    } catch (TileDBError error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Checks whether the subarray has label ranges set on the requested dimension.
+   *
+   * @param index The index of the dimension to check for label ranges.
+   * @return True if the subarray has label ranges
+   */
+  public synchronized boolean hasLabelRanges(long index) throws TileDBError {
+    SWIGTYPE_p_int hasLabelRanges = tiledb.new_intp();
+    ctx.handleError(
+        tiledb.tiledb_subarray_has_label_ranges(
+            ctx.getCtxp(), getSubArrayp(), index, hasLabelRanges));
+    boolean result = tiledb.intp_value(hasLabelRanges) > 0;
+    tiledb.delete_intp(hasLabelRanges);
+    return result;
   }
 
   @Override
