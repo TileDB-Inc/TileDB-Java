@@ -648,6 +648,7 @@ public class FragmentInfo {
    *
    * @param fragmentID The fragment info object.
    * @return The fragment name.
+   * @deprecated use getFragmentNameV2(long fragmentID) instead
    * @throws TileDBError
    */
   @Deprecated
@@ -659,5 +660,21 @@ public class FragmentInfo {
             ctx.getCtxp(), fragmentInfop, fragmentID, name));
 
     return tiledb.charpp_value(name);
+  }
+
+  /**
+   * Get the fragment name.
+   *
+   * @param fragmentID The fragment info object.
+   * @return The fragment name.
+   * @throws TileDBError
+   */
+  public TileDBString getFragmentNameV2(long fragmentID) throws TileDBError {
+    SWIGTYPE_p_p_tiledb_string_handle_t name = tiledb.new_tiledb_string_handle_tpp();
+
+    ctx.handleError(
+        tiledb.tiledb_fragment_info_get_fragment_name_v2(
+            ctx.getCtxp(), fragmentInfop, fragmentID, name));
+    return new TileDBString(ctx, name);
   }
 }

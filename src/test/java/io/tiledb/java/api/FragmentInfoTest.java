@@ -80,6 +80,7 @@ public class FragmentInfoTest {
     long numFragments = info.getFragmentNum();
     for (int i = 0; i < numFragments; ++i) {
       Assert.assertNotNull(info.getArraySchemaName(i));
+      Assert.assertNotNull(info.getFragmentNameV2(i).getView().getFirst());
     }
 
     Assert.assertEquals(testFragmentCount, numFragments);

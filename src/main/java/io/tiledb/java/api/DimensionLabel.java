@@ -194,10 +194,6 @@ public class DimensionLabel {
     return Datatype.fromSwigEnum(type);
   }
 
-  public void setCtx(Context ctx) {
-    this.ctx = ctx;
-  }
-
   public void close() {
     if (dimlabelp != null && dimlabelpp != null) {
       tiledb.tiledb_dimension_label_free(dimlabelpp);
