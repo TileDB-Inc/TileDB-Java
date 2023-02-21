@@ -1,5 +1,10 @@
 package io.tiledb.java.api;
 
+import static io.tiledb.java.api.Datatype.TILEDB_INT64;
+import static io.tiledb.java.api.Datatype.TILEDB_UINT64;
+import static io.tiledb.libtiledb.tiledb_data_order_t.TILEDB_INCREASING_DATA;
+
+import io.tiledb.libtiledb.tiledb_datatype_t;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.*;
@@ -159,6 +164,33 @@ public class ArraySchemaTest {
       Assert.assertNotEquals(1, schema.getAllowDups());
       schema.setAllowDups(1);
       Assert.assertEquals(1, schema.getAllowDups());
+    }
+  }
+
+  @Test
+  public void testDimensionLabels() throws Exception {
+    try (Context ctx = new Context();
+        ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE, layout)) {
+
+      GzipFilter filter = new GzipFilter(ctx, 5);
+      FilterList filterList = new FilterList(ctx).addFilter(filter);
+
+      schema.addDimensionLabel(
+          new DimensionLabel(
+              ctx, 0, "TESTLABEL", TILEDB_INCREASING_DATA, tiledb_datatype_t.TILEDB_UINT64));
+      schema.setDimensionLabelTileExtend("TESTLABEL", 2, TILEDB_INT64);
+      schema.setDimensionLabelFilterList("TESTLABEL", filterList);
+
+      DimensionLabel dimensionLabel = schema.getDimensionLabelFromName("TESTLABEL");
+
+      Assert.assertTrue(schema.hasDimensionLabel("TESTLABEL"));
+      Assert.assertEquals("TESTLABEL", dimensionLabel.getName());
+      Assert.assertEquals(0, dimensionLabel.getDimensionIndex());
+      Assert.assertEquals(TILEDB_UINT64, dimensionLabel.getLabelType());
+      Assert.assertEquals("label", dimensionLabel.getLabelAttrName());
+      Assert.assertEquals(1, dimensionLabel.getLabelCellValNum());
+      Assert.assertEquals("__labels/l0", dimensionLabel.getURI());
+      Assert.assertEquals(TILEDB_INCREASING_DATA, dimensionLabel.getLabelOrder());
     }
   }
 }

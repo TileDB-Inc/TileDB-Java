@@ -106,6 +106,7 @@ typedef struct tiledb_config_t tiledb_config_t;
 %pointer_functions(tiledb_query_status_t, tiledb_query_status_tp);
 %pointer_functions(tiledb_filesystem_t, tiledb_filesystem_tp);
 %pointer_functions(tiledb_datatype_t, tiledb_datatype_tp);
+%pointer_functions(tiledb_data_order_t, tiledb_data_order_tp);
 %pointer_functions(tiledb_array_type_t, tiledb_array_type_tp);
 %pointer_functions(tiledb_layout_t, tiledb_layout_tp);
 %pointer_functions(tiledb_filter_type_t, tiledb_filter_type_tp);
@@ -135,6 +136,7 @@ typedef struct tiledb_config_t tiledb_config_t;
 %pointer_functions(tiledb_group_t*, tiledb_group_tpp);
 %pointer_functions(capi_return_t*, capi_return_tpp);
 %pointer_functions(tiledb_consolidation_plan_t*, tiledb_consolidation_plan_tpp);
+%pointer_functions(tiledb_dimension_label_t*, tiledb_dimension_label_tpp);
 
 
 %native (sizeOfInt32) int sizeOfInt32();

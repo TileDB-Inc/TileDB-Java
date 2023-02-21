@@ -640,6 +640,99 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
+   * Sets a filter on a dimension label filter in an array schema.
+   *
+   * @param name The dimension label name.
+   * @param filterList The filter_list to be set.
+   */
+  public void setDimensionLabelFilterList(String name, FilterList filterList) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_set_dimension_label_filter_list(
+              ctx.getCtxp(), getSchemap(), name, filterList.getFilterListp()));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Sets the tile extent on a dimension label in an array schema.
+   *
+   * @param name The dimension label name.
+   * @param labelType The type of the dimension the tile extent is being set on.
+   * @param tileExtend The tile extent for the dimension of the dimension label.
+   *     <p>Note: The dimension label tile extent must be the same datatype as the dimension it is
+   *     set on, not as the label.
+   */
+  public void setDimensionLabelTileExtend(String name, long tileExtend, Datatype labelType)
+      throws TileDBError {
+    try (NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT64)) {
+
+      arr.setItem(0, tileExtend);
+      ctx.handleError(
+          tiledb.tiledb_array_schema_set_dimension_label_tile_extent(
+              ctx.getCtxp(), getSchemap(), name, labelType.toSwigEnum(), arr.toVoidPointer()));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Adds a DimensionLabel to the array schema.
+   *
+   * @param dimensionLabel The dimension label object
+   */
+  public void addDimensionLabel(DimensionLabel dimensionLabel) throws TileDBError {
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_add_dimension_label(
+              ctx.getCtxp(),
+              getSchemap(),
+              dimensionLabel.getDimensionIndex(),
+              dimensionLabel.getName(),
+              dimensionLabel.getLabelOrder(),
+              dimensionLabel.getLabelType().toSwigEnum()));
+    } catch (TileDBError err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Retrieves a dimension label from an array schema with the requested name.
+   *
+   * @param name Name of the target dimension label to return.
+   * @return a DimensionLabel object
+   */
+  public DimensionLabel getDimensionLabelFromName(String name) {
+    SWIGTYPE_p_p_tiledb_dimension_label_handle_t dimensioLabelpp =
+        tiledb.new_tiledb_dimension_label_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_dimension_label_from_name(
+              ctx.getCtxp(), getSchemap(), name, dimensioLabelpp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_dimension_label_tpp(dimensioLabelpp);
+    }
+    return new DimensionLabel(ctx, dimensioLabelpp);
+  }
+
+  /**
+   * Checks if the schema has a dimension label of the given name.
+   *
+   * @param name Name of the target dimension label to check for.
+   * @return True if the ArraySchema has a label with the given name
+   */
+  public boolean hasDimensionLabel(String name) throws TileDBError {
+    SWIGTYPE_p_int hasDimLabel = tiledb.new_intp();
+    ctx.handleError(
+        tiledb.tiledb_array_schema_has_dimension_label(
+            ctx.getCtxp(), getSchemap(), name, hasDimLabel));
+    boolean result = tiledb.intp_value(hasDimLabel) > 0;
+    tiledb.delete_intp(hasDimLabel);
+    return result;
+  }
+
+  /**
    * Returns the array schema version.
    *
    * @return the array schema version

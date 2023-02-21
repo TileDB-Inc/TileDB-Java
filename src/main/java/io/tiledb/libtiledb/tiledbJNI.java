@@ -361,6 +361,16 @@ public class tiledbJNI {
 
   public static final native int tiledb_datatype_tp_value(long jarg1);
 
+  public static final native long new_tiledb_data_order_tp();
+
+  public static final native long copy_tiledb_data_order_tp(int jarg1);
+
+  public static final native void delete_tiledb_data_order_tp(long jarg1);
+
+  public static final native void tiledb_data_order_tp_assign(long jarg1, int jarg2);
+
+  public static final native int tiledb_data_order_tp_value(long jarg1);
+
   public static final native long new_tiledb_array_type_tp();
 
   public static final native long copy_tiledb_array_type_tp(int jarg1);
@@ -641,6 +651,16 @@ public class tiledbJNI {
   public static final native void tiledb_consolidation_plan_tpp_assign(long jarg1, long jarg2);
 
   public static final native long tiledb_consolidation_plan_tpp_value(long jarg1);
+
+  public static final native long new_tiledb_dimension_label_tpp();
+
+  public static final native long copy_tiledb_dimension_label_tpp(long jarg1);
+
+  public static final native void delete_tiledb_dimension_label_tpp(long jarg1);
+
+  public static final native void tiledb_dimension_label_tpp_assign(long jarg1, long jarg2);
+
+  public static final native long tiledb_dimension_label_tpp_value(long jarg1);
 
   public static final native int sizeOfInt32();
 
