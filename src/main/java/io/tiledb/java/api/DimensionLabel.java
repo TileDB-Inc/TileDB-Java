@@ -9,7 +9,9 @@ import io.tiledb.libtiledb.SWIGTYPE_p_unsigned_int;
 import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.tiledb_data_order_t;
 import io.tiledb.libtiledb.tiledb_datatype_t;
+import jdk.jfr.Experimental;
 
+@Experimental
 public class DimensionLabel {
   private Context ctx;
   private SWIGTYPE_p_tiledb_dimension_label_handle_t dimlabelp;
