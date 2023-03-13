@@ -995,7 +995,7 @@ public class Query implements AutoCloseable {
   }
 
   /** Clears all attribute buffers. */
-  private synchronized void resetBuffers() {
+  public synchronized void resetBuffers() {
     for (Pair<NativeArray, NativeArray> buffer : buffers_.values()) {
       if (buffer.getFirst() != null) buffer.getFirst().close();
       if (buffer.getSecond() != null) buffer.getSecond().close();
