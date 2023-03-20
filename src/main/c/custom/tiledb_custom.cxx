@@ -1207,7 +1207,7 @@ extern "C" {
     }
     arg4 = *(uint8_t **)&jarg4;
     arg5 = *(uint64_t **)&jarg5;
-    result = (int32_t)tiledb_query_set_validity_buffer(arg1,arg2,(char const *)arg3,arg4,arg5);
+    result = (int32_t)tiledb_query_set_validity_buffer(arg1,arg2,(char const *)arg3,(uint8_t *)buffer,arg5);
     jresult = (jint)result;
     if (arg3) jenv->ReleaseStringUTFChars(jarg3, (const char *)arg3);
     return jresult;

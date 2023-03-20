@@ -553,7 +553,13 @@ public class Query implements AutoCloseable {
     uint64_tArray buffer_validity_bytemap_size = new uint64_tArray(1);
     buffer_validity_bytemap_size.setitem(0, BigInteger.valueOf(bytemap.getNBytes()));
 
-    validityByteMaps_.put(attr, bytemap);
+    if (validityByteMaps_.containsKey(attr)) {
+      NativeArray byteMap = validityByteMaps_.get(attr);
+      if (byteMap != null) byteMap.close();
+      validityByteMaps_.put(attr, bytemap);
+    } else {
+      validityByteMaps_.put(attr, bytemap);
+    }
     validityByteMapSizes_.put(attr, buffer_validity_bytemap_size);
 
     ctx.handleError(
@@ -568,7 +574,7 @@ public class Query implements AutoCloseable {
   }
 
   /**
-   * Sets a validity byte-map for a fixed-sized attribute.
+   * Sets a validity byte-map for an attribute.
    *
    * @param attr The attribute name.
    * @param buffer NativeBuffer to be used for the attribute values.
@@ -593,6 +599,12 @@ public class Query implements AutoCloseable {
     uint64_tArray buffer_validity_bytemap_size = new uint64_tArray(1);
 
     buffer_validity_bytemap_size.setitem(0, BigInteger.valueOf(buffer.capacity()));
+
+    // Close previous buffers if they exist for this attribute
+    if (validityByteMaps_.containsKey(attr)) {
+      NativeArray prevBuff = validityByteMaps_.get(attr);
+      prevBuff.close();
+    }
 
     validityByteMapsByteBuffers_.put(attr, buffer);
     validityByteMapSizes_.put(attr, buffer_validity_bytemap_size);
@@ -1006,14 +1018,29 @@ public class Query implements AutoCloseable {
       if (buffer.getSecond() != null) buffer.getSecond().clear();
     }
 
+    for (NativeArray buffer : validityByteMaps_.values()) {
+      if (buffer != null) buffer.close();
+    }
+
+    for (ByteBuffer buffer : validityByteMapsByteBuffers_.values()) {
+      if (buffer != null) buffer.clear();
+    }
+
     byteBuffers_.clear();
     buffers_.clear();
+    validityByteMapsByteBuffers_.clear();
+    validityByteMaps_.clear();
 
     for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
       if (size_pair.getFirst() != null) size_pair.getFirst().delete();
       if (size_pair.getSecond() != null) size_pair.getSecond().delete();
     }
     buffer_sizes_.clear();
+
+    for (uint64_tArray size : validityByteMapSizes_.values()) {
+      if (size != null) size.delete();
+    }
+    validityByteMapSizes_.clear();
   }
 
   public synchronized Query resetBufferSizes(Long val) {
