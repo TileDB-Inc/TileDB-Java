@@ -1197,7 +1197,8 @@ public class QueryTest {
       }
     }
 
-    public void denseArrayNIOReadTest() throws Exception { // TODO
+    @Test
+    public void denseArrayNIOReadTest() throws Exception {
       denseArrayCreateNullableAttrs(true);
       denseArrayWrite();
 
@@ -1363,7 +1364,8 @@ public class QueryTest {
       }
     }
 
-    public void sparseArrayNIOReadTest() throws Exception { // TODO
+    @Test
+    public void sparseArrayNIOReadTest() throws Exception {
       sparseArrayCreateNullableAttrs(true);
       sparseArrayWrite();
 
