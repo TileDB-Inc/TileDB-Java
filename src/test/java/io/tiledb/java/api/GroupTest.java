@@ -1,11 +1,13 @@
 package io.tiledb.java.api;
 
 import static io.tiledb.java.api.ArrayType.TILEDB_DENSE;
+import static io.tiledb.java.api.Datatype.TILEDB_STRING_UTF8;
 import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.junit.After;
@@ -141,47 +143,62 @@ public class GroupTest {
   @Test
   public void metadataTest() throws TileDBError {
     Group.create(ctx, "test_group");
+
     Group group = new Group(ctx, "test_group", TILEDB_WRITE);
 
     NativeArray shortArray = new NativeArray(ctx, new short[] {18, 19, 20, 21}, Short.class);
     NativeArray longArray = new NativeArray(ctx, new long[] {8L, 9L, 0L, 1L}, Long.class);
-    NativeArray intArray = new NativeArray(ctx, new int[] {7, 1, 3, 2}, Integer.class);
-
-    // put metadata in closed group
-    try {
-      group.putMetadata("key1", shortArray);
-      throw new TileDBError("Put metadata in closed group");
-    } catch (TileDBError error) {
-    }
+    NativeArray intArray = new NativeArray(ctx, new int[] {7, 1, 3, 2}, Datatype.TILEDB_INT32);
+    NativeArray stringArray = new NativeArray(ctx, "test", Datatype.TILEDB_STRING_ASCII);
+    NativeArray stringUtf8 = new NativeArray(ctx, "русский", TILEDB_STRING_UTF8);
 
     // put metadata in open group
     group.putMetadata("key1", shortArray);
     group.putMetadata("key2", longArray);
     group.putMetadata("key3", intArray);
+    group.putMetadata("key4", stringArray);
+    group.putMetadata("key5", stringUtf8);
 
     // close group and reopen in read mode
     group.reopen(ctx, TILEDB_READ);
 
     // check if the correct metadata keys are present
-    Assert.assertEquals(BigInteger.valueOf(3), group.getMetadataNum());
+    Assert.assertEquals(BigInteger.valueOf(5), group.getMetadataNum());
     Assert.assertTrue(group.hasMetadataKey("key1"));
     Assert.assertTrue(group.hasMetadataKey("key2"));
     Assert.assertTrue(group.hasMetadataKey("key3"));
-    Assert.assertFalse(group.hasMetadataKey("key4"));
+    Assert.assertTrue(group.hasMetadataKey("key4"));
+    Assert.assertTrue(group.hasMetadataKey("key5"));
+    Assert.assertFalse(group.hasMetadataKey("key6"));
 
     // check values of metadata keys
     NativeArray metadataShortArray = group.getMetadata("key1", Datatype.TILEDB_INT16);
     NativeArray metadataLongArray = group.getMetadata("key2", Datatype.TILEDB_INT64);
     NativeArray metadataIntArray = group.getMetadata("key3", Datatype.TILEDB_INT32);
+    NativeArray metadataStringArray = group.getMetadata("key4", Datatype.TILEDB_STRING_ASCII);
+    NativeArray metadataStringUtf8 = group.getMetadata("key5", TILEDB_STRING_UTF8);
+
     Assert.assertNotNull(metadataShortArray);
     Assert.assertNotNull(metadataIntArray);
     Assert.assertNotNull(metadataLongArray);
+    Assert.assertNotNull(metadataStringArray);
+    Assert.assertNotNull(metadataStringUtf8);
+
     Assert.assertArrayEquals(
         (short[]) shortArray.toJavaArray(), (short[]) metadataShortArray.toJavaArray());
     Assert.assertArrayEquals(
         (long[]) longArray.toJavaArray(), (long[]) metadataLongArray.toJavaArray());
     Assert.assertArrayEquals(
         (int[]) intArray.toJavaArray(), (int[]) metadataIntArray.toJavaArray());
+    Assert.assertEquals(
+        "test",
+        new String((byte[]) metadataStringArray.toJavaArray(), StandardCharsets.ISO_8859_1));
+    Assert.assertArrayEquals(
+        (byte[]) stringArray.toJavaArray(), (byte[]) metadataStringArray.toJavaArray());
+    Assert.assertArrayEquals(
+        (byte[]) stringUtf8.toJavaArray(), (byte[]) metadataStringUtf8.toJavaArray());
+    Assert.assertEquals(
+        "русский", new String((byte[]) metadataStringUtf8.toJavaArray(), StandardCharsets.UTF_8));
 
     // close group and reopen in write mode
     group.reopen(ctx, TILEDB_WRITE);
@@ -190,11 +207,12 @@ public class GroupTest {
     // close group and reopen in read mode to check if the correct metadata keys are present.
 
     group.reopen(ctx, TILEDB_READ);
-    Assert.assertEquals(BigInteger.valueOf(2), group.getMetadataNum());
+    Assert.assertEquals(BigInteger.valueOf(4), group.getMetadataNum());
     Assert.assertTrue(group.hasMetadataKey("key1"));
     Assert.assertFalse(group.hasMetadataKey("key2"));
     Assert.assertTrue(group.hasMetadataKey("key3"));
-    Assert.assertFalse(group.hasMetadataKey("key4"));
+    Assert.assertTrue(group.hasMetadataKey("key4"));
+    Assert.assertTrue(group.hasMetadataKey("key5"));
 
     group.close();
 
