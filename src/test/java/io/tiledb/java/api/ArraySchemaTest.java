@@ -41,6 +41,7 @@ public class ArraySchemaTest {
     ArraySchema schema = new ArraySchema(ctx, arrayType);
     schema.setTileOrder(Layout.TILEDB_ROW_MAJOR);
     schema.setCellOrder(cellOrder);
+    Assert.assertNotNull(schema.toString());
     schema.setDomain(domain);
     schema.addAttribute(a1);
     return schema;

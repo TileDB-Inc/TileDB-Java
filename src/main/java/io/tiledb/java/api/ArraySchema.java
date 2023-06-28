@@ -76,6 +76,7 @@ public class ArraySchema implements AutoCloseable {
 
   private Context ctx;
   private ArrayType arrayType;
+  private boolean domainIsSet = false;
   private HashMap<String, Attribute> attributes;
 
   private SWIGTYPE_p_tiledb_array_schema_t schemap;
@@ -331,6 +332,7 @@ public class ArraySchema implements AutoCloseable {
   public void setDomain(Domain domain) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_array_schema_set_domain(ctx.getCtxp(), getSchemap(), domain.getDomainp()));
+    domainIsSet = true;
   }
 
   /**
@@ -771,7 +773,7 @@ public class ArraySchema implements AutoCloseable {
       StringBuilder s = new StringBuilder("ArraySchema<");
       s.append(getArrayType().name());
       s.append(" ");
-      s.append(getDomain());
+      if (domainIsSet) s.append(getDomain());
       for (Map.Entry e : getAttributes().entrySet()) {
         s.append(" ");
         s.append(e.getValue());
