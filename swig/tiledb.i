@@ -33,6 +33,8 @@ import java.nio.ByteBuffer;
 typedef struct tiledb_ctx_t tiledb_ctx_t;
 typedef struct tiledb_filter_t tiledb_filter_t;
 typedef struct tiledb_config_t tiledb_config_t;
+typedef struct tiledb_dimension_t tiledb_dimension_t;
+typedef struct tiledb_domain_t tiledb_domain_t;
 
 %{
 #include <string>
@@ -67,7 +69,7 @@ typedef struct tiledb_config_t tiledb_config_t;
 %ignore tiledb_array_delete_array;
 %ignore tiledb_query_add_point_ranges;
 
-%include "stdint.i"
+// %include "stdint.i"
 %include "carrays.i"
 %array_class(int32_t, int32_tArray);
 %array_class(capi_return_t, capi_return_t);
@@ -139,7 +141,6 @@ typedef struct tiledb_config_t tiledb_config_t;
 %pointer_functions(tiledb_dimension_label_t*, tiledb_dimension_label_tpp);
 %pointer_functions(tiledb_string_handle_t*, tiledb_string_handle_tpp);
 
-
 %native (sizeOfInt32) int sizeOfInt32();
 %native (sizeOfInt64) int sizeOfInt64();
 %native (sizeOfChar) int sizeOfChar();
@@ -190,7 +191,50 @@ typedef struct tiledb_config_t tiledb_config_t;
 %ignore _opaque_pthread_rwlockattr_t;
 %ignore _opaque_pthread_t;
 %ignore __darwin_pthread_handler_rec;
-
+%ignore __sbuf;
+%ignore renameat;
+%ignore renamex_np;
+%ignore renameatx_np;
+%ignore ctermid;
+%ignore fileno;
+%ignore pclose;
+%ignore __srget;
+%ignore __svfscanf;
+%ignore __swbuf;
+%ignore __sputc;
+%ignore flockfile;
+%ignore ftrylockfile;
+%ignore funlockfile;
+%ignore getc_unlocked;
+%ignore getchar_unlocked;
+%ignore putc_unlocked;
+%ignore putchar_unlocked;
+%ignore getw;
+%ignore putw;
+%ignore fseeko;
+%ignore ftello;
+%ignore snprintf;
+%ignore vfscanf;
+%ignore vscanf;
+%ignore vsnprintf;
+%ignore vsscanf;
+%ignore dprintf;
+%ignore vdprintf;
+%ignore getdelim;
+%ignore getline;
+%ignore fmemopen;
+%ignore open_memstream;
+%ignore sys_nerr_get;
+%ignore sys_errlist_get;
+%ignore asprintf;
+%ignore ctermid_r;
+%ignore fgetln;
+%ignore fmtcheck;
+%ignore fpurge;
+%ignore setbuffer;
+%ignore setlinebuf;
+%ignore vasprintf;
+%ignore funopen;
 
 %include "tiledb_generated.h"
 %include "tiledb_java_extensions.h"
