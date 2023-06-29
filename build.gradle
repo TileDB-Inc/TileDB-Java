@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'io.tiledb'
-version '0.17.9-SNAPSHOT'
+version '0.18.0-SNAPSHOT'
 
 repositories {
     jcenter()

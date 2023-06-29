@@ -33,8 +33,8 @@ public class VersionTest {
   public void testVersion() {
     Version version = new Version();
     System.out.println(version);
-    Assert.assertTrue(version.getMajor() >= 2);
-    Assert.assertTrue(version.getMinor() >= 15);
-    Assert.assertTrue(version.getRevision() >= 4);
+    Assert.assertTrue(version.getMajor() == 2);
+    Assert.assertTrue(version.getMinor() == 16);
+    Assert.assertTrue(version.getRevision() == 0);
   }
 }

@@ -830,6 +830,21 @@ public class tiledbJNI {
   public static final native long tiledb_buffer_set_data(
       long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4);
 
+  public static final native long tiledb_buffer_list_alloc(long jarg1, long jarg2);
+
+  public static final native void tiledb_buffer_list_free(long jarg1);
+
+  public static final native long tiledb_buffer_list_get_num_buffers(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_buffer_list_get_buffer(
+      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4);
+
+  public static final native long tiledb_buffer_list_get_total_size(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_buffer_list_flatten(long jarg1, long jarg2, long jarg3);
+
   public static final native long tiledb_data_order_to_str(int jarg1, long jarg2);
 
   public static final native long tiledb_data_order_from_str(String jarg1, long jarg2);
@@ -871,6 +886,38 @@ public class tiledbJNI {
 
   public static final native long tiledb_filter_list_get_max_chunk_size(
       long jarg1, long jarg2, long jarg3);
+
+  public static final native int sys_nerr_get();
+
+  public static final native long sys_errlist_get();
+
+  public static final native int tiledb_dimension_alloc(
+      long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, long jarg6);
+
+  public static final native void tiledb_dimension_free(long jarg1);
+
+  public static final native int tiledb_dimension_set_filter_list(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_set_cell_val_num(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_get_filter_list(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_get_cell_val_num(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_get_name(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_get_type(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_get_domain(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_get_tile_extent(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_dimension_dump(long jarg1, long jarg2, long jarg3);
 
   public static final native long tiledb_group_create(long jarg1, String jarg2);
 
@@ -992,21 +1039,6 @@ public class tiledbJNI {
 
   public static final native void tiledb_version(long jarg1, long jarg2, long jarg3);
 
-  public static final native int tiledb_buffer_list_alloc(long jarg1, long jarg2);
-
-  public static final native void tiledb_buffer_list_free(long jarg1);
-
-  public static final native int tiledb_buffer_list_get_num_buffers(
-      long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_buffer_list_get_buffer(
-      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4);
-
-  public static final native int tiledb_buffer_list_get_total_size(
-      long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_buffer_list_flatten(long jarg1, long jarg2, long jarg3);
-
   public static final native int tiledb_attribute_alloc(
       long jarg1, String jarg2, int jarg3, long jarg4);
 
@@ -1068,34 +1100,6 @@ public class tiledbJNI {
       long jarg1, long jarg2, String jarg3, long jarg4);
 
   public static final native int tiledb_domain_dump(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_dimension_alloc(
-      long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, long jarg6);
-
-  public static final native void tiledb_dimension_free(long jarg1);
-
-  public static final native int tiledb_dimension_set_filter_list(
-      long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_dimension_set_cell_val_num(
-      long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_dimension_get_filter_list(
-      long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_dimension_get_cell_val_num(
-      long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_dimension_get_name(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_dimension_get_type(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_dimension_get_domain(long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_dimension_get_tile_extent(
-      long jarg1, long jarg2, long jarg3);
-
-  public static final native int tiledb_dimension_dump(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_schema_alloc(long jarg1, int jarg2, long jarg3);
 
@@ -1255,6 +1259,8 @@ public class tiledbJNI {
 
   public static final native int tiledb_query_condition_combine(
       long jarg1, long jarg2, long jarg3, int jarg4, long jarg5);
+
+  public static final native int tiledb_query_condition_negate(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_subarray_alloc(long jarg1, long jarg2, long jarg3);
 
@@ -1626,6 +1632,8 @@ public class tiledbJNI {
   public static final native long tiledb_group_vacuum_metadata(
       long jarg1, String jarg2, long jarg3);
 
+  public static final native int tiledb_query_get_plan(long jarg1, long jarg2, long jarg3);
+
   public static final native void tiledb_dimension_label_free(long jarg1);
 
   public static final native long tiledb_dimension_label_get_dimension_index(
@@ -1699,6 +1707,8 @@ public class tiledbJNI {
 
   public static final native long tiledb_subarray_has_label_ranges(
       long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native long tiledb_log_warn(long jarg1, String jarg2);
 
   public static final native int tiledb_array_schema_evolution_alloc(long jarg1, long jarg2);
 

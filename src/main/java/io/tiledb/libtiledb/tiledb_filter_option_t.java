@@ -17,7 +17,8 @@ public enum tiledb_filter_option_t {
   TILEDB_SCALE_FLOAT_OFFSET(5),
   TILEDB_WEBP_QUALITY(6),
   TILEDB_WEBP_INPUT_FORMAT(7),
-  TILEDB_WEBP_LOSSLESS(8);
+  TILEDB_WEBP_LOSSLESS(8),
+  TILEDB_COMPRESSION_REINTERPRET_DATATYPE(9);
 
   public final int swigValue() {
     return swigValue;
