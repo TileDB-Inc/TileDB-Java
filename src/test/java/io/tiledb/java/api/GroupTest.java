@@ -136,8 +136,6 @@ public class GroupTest {
     // check if member is removed
     group.reopen(ctx, QueryType.TILEDB_READ);
     Assert.assertEquals(2, group.getMemberCount());
-
-    group.delete((short) 0);
   }
 
   @Test

@@ -25,13 +25,30 @@ public class FragmentInfo {
   }
 
   /**
+   * @param ctx
+   * @param uri
+   * @param config
+   * @throws TileDBError
+   */
+  public FragmentInfo(Context ctx, String uri, Config config) throws TileDBError {
+    this.ctx = ctx;
+    this.uri = uri;
+
+    this.fragmentInfopp = tiledb.new_tiledb_fragment_info_tpp();
+    ctx.handleError(tiledb.tiledb_fragment_info_alloc(ctx.getCtxp(), uri, fragmentInfopp));
+    fragmentInfop = tiledb.tiledb_fragment_info_tpp_value(this.fragmentInfopp);
+    this.setConfig(config);
+    ctx.handleError(tiledb.tiledb_fragment_info_load(ctx.getCtxp(), fragmentInfop));
+  }
+
+  /**
    * Set the fragment info config. Useful for passing timestamp ranges and encryption key via the
    * config before loading the fragment info.
    *
    * @param config the TileDB config
    * @throws TileDBError
    */
-  public void setConfig(Config config) throws TileDBError {
+  private void setConfig(Config config) throws TileDBError {
     try {
       ctx.handleError(
           tiledb.tiledb_fragment_info_set_config(

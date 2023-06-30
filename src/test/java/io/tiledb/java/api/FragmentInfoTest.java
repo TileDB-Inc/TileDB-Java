@@ -678,18 +678,16 @@ public class FragmentInfoTest {
     createSparseVarDimArray();
     writeSparseVarDimArray();
 
-    FragmentInfo info = new FragmentInfo(ctx, arrayURI);
-
     try (Config config = new Config()) {
       // Set values
       config.set("vfs.s3.connect_timeout_ms", "5000");
       config.set("vfs.s3.endpoint_override", "localhost:8888");
 
-      info.setConfig(config);
+      FragmentInfo info = new FragmentInfo(ctx, arrayURI, config);
 
       // Get values
-      //      Assert.assertEquals(config.get("vfs.s3.connect_timeout_ms"), "5000");
-      //      Assert.assertEquals(config.get("vfs.s3.endpoint_override"), "localhost:8888");
+      Assert.assertEquals(info.getConfig().get("vfs.s3.connect_timeout_ms"), "5000");
+      Assert.assertEquals(info.getConfig().get("vfs.s3.endpoint_override"), "localhost:8888");
     }
   }
 
