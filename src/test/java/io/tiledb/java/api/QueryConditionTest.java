@@ -32,8 +32,7 @@ import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
 import static io.tiledb.libtiledb.tiledb_query_condition_combination_op_t.TILEDB_AND;
 import static io.tiledb.libtiledb.tiledb_query_condition_combination_op_t.TILEDB_OR;
-import static io.tiledb.libtiledb.tiledb_query_condition_op_t.TILEDB_EQ;
-import static io.tiledb.libtiledb.tiledb_query_condition_op_t.TILEDB_GT;
+import static io.tiledb.libtiledb.tiledb_query_condition_op_t.*;
 
 import java.util.HashMap;
 import org.junit.Assert;
@@ -194,8 +193,6 @@ public class QueryConditionTest {
       query.submit();
 
       // Print cell values (assumes all getAttributes are read)
-      HashMap<String, Pair<Long, Long>> result_el = query.resultBufferElements();
-
       int[] a1_buff = (int[]) query.getBuffer("a1");
       float[] a2_buff = (float[]) query.getBuffer("a2");
       //      for (int i = 0; i < a1_buff.length; i++) {
@@ -228,6 +225,28 @@ public class QueryConditionTest {
     arrayCreate();
     arrayWrite();
     arrayRead();
+  }
+
+  @Test
+  public void testNegation() throws TileDBError {
+    // create array
+    arrayCreateSparse();
+    arrayWriteSparse();
+
+    // check if data was deleted
+    Array array = new Array(ctx, arrayURISparse);
+
+    Query query = new Query(array, TILEDB_READ);
+    query.setDataBuffer("a1", new NativeArray(ctx, 40, Integer.class));
+    QueryCondition con = new QueryCondition(ctx, "a1", 3, Integer.class, TILEDB_GT);
+    query.setCondition(con.negate());
+    query.submit();
+
+    int[] a1_buff = (int[]) query.getBuffer("a1");
+    Assert.assertArrayEquals(new int[] {1, 2, 3}, a1_buff);
+    array.close();
+    query.close();
+    con.close();
   }
 
   @Test

@@ -161,7 +161,15 @@ public class QueryCondition implements AutoCloseable {
     }
   }
 
-  public QueryCondition combine(QueryCondition con2, tiledb_query_condition_combination_op_t OP)
+  /**
+   * Combines this instance with another instance to form a multi-clause condition object.
+   *
+   * @param rhs The right-hand-side query condition object.
+   * @param OP The logical combination operator that combines this instance with `rhs`
+   * @return The result Query Condition
+   * @throws TileDBError
+   */
+  public QueryCondition combine(QueryCondition rhs, tiledb_query_condition_combination_op_t OP)
       throws TileDBError {
     SWIGTYPE_p_p_tiledb_query_condition_t combinedCondition;
     try {
@@ -169,11 +177,33 @@ public class QueryCondition implements AutoCloseable {
       ctx.handleError(tiledb.tiledb_query_condition_alloc(ctx.getCtxp(), conditionpp));
       ctx.handleError(
           tiledb.tiledb_query_condition_combine(
-              ctx.getCtxp(), conditionp, con2.getConditionp(), OP, combinedCondition));
+              ctx.getCtxp(), conditionp, rhs.getConditionp(), OP, combinedCondition));
     } catch (TileDBError err) {
       tiledb.delete_tiledb_query_condition_tpp(conditionpp);
       throw err;
     }
     return new QueryCondition(ctx, combinedCondition);
+  }
+
+  /**
+   * Create a query condition representing a negation of the input query condition. Currently, this
+   * is performed by applying De Morgan's theorem recursively to the query condition's internal
+   * representation.
+   *
+   * @return The negated Query Condition
+   * @throws TileDBError
+   */
+  public QueryCondition negate() throws TileDBError {
+    SWIGTYPE_p_p_tiledb_query_condition_t negatedCondition;
+    try {
+      negatedCondition = tiledb.new_tiledb_query_condition_tpp();
+      ctx.handleError(tiledb.tiledb_query_condition_alloc(ctx.getCtxp(), conditionpp));
+      ctx.handleError(
+          tiledb.tiledb_query_condition_negate(ctx.getCtxp(), conditionp, negatedCondition));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_query_condition_tpp(conditionpp);
+      throw err;
+    }
+    return new QueryCondition(ctx, negatedCondition);
   }
 }
