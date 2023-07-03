@@ -1338,6 +1338,22 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Fetches a query plan string representation given a context and an unsubmitted yet fully formed
+   * query object. The returned query plan is represented as valid JSON, but the API is still
+   * experimental, there is no JSON schema describing it and the content of the returned query plan
+   * will most likely change.
+   *
+   * @return The plan.
+   * @exception TileDBError A TileDB exception
+   */
+  public String getPlan() throws TileDBError {
+    SWIGTYPE_p_p_tiledb_string_handle_t plan = tiledb.new_tiledb_string_handle_tpp();
+
+    ctx.handleError(tiledb.tiledb_query_get_plan(ctx.getCtxp(), queryp, plan));
+    return new TileDBString(ctx, plan).getView().getFirst();
+  }
+
+  /**
    * Returns the validity buffer of a nullable attribute
    *
    * @param attribute name of the attribute
