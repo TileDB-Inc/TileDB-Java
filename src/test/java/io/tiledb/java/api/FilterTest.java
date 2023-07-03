@@ -6,6 +6,7 @@ import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
+import io.tiledb.libtiledb.tiledb_datatype_t;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.junit.After;
@@ -125,6 +126,18 @@ public class FilterTest {
       }
       try (DoubleDeltaFilter filter = new DoubleDeltaFilter(ctx)) {
         Assert.assertEquals(filter.getLevel(), -1);
+      }
+    }
+  }
+
+  @Test
+  public void testDeltaFilter() throws Exception {
+    // DD accepts compression level, but it is an ignored parameter
+    try (Context ctx = new Context()) {
+      try (DeltaFilter filter = new DeltaFilter(ctx, 5, tiledb_datatype_t.TILEDB_INT32)) {
+        Assert.assertEquals(filter.getLevel(), 5);
+        Assert.assertEquals(
+            tiledb_datatype_t.TILEDB_INT32, filter.getCompressionReinterpretDatatype());
       }
     }
   }
