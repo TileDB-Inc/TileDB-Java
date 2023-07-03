@@ -8,6 +8,7 @@ import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
+import io.tiledb.libtiledb.tiledb_datatype_t;
 import java.math.BigInteger;
 import java.nio.*;
 import java.nio.charset.StandardCharsets;
@@ -61,7 +62,10 @@ public class QueryTest {
           new FilterList(ctx)
               .addFilter(new CheckSumMD5Filter(ctx))
               .addFilter(new BitShuffleFilter(ctx)));
-      a2.setFilterList(new FilterList(ctx).addFilter(new CheckSumSHA256Filter(ctx)));
+      a2.setFilterList(
+          new FilterList(ctx)
+              .addFilter(new CheckSumSHA256Filter(ctx))
+              .addFilter(new DeltaFilter(ctx, 1, tiledb_datatype_t.TILEDB_INT32)));
       a3.setFilterList(new FilterList(ctx).addFilter(new XORFilter(ctx)));
       a2.setCellValNum(2);
 
