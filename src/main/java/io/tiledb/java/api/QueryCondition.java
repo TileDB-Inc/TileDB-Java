@@ -39,6 +39,8 @@ public class QueryCondition implements AutoCloseable {
     this.conditionpp = conditionpp;
   }
 
+  @Deprecated
+  /** Use new constructor instead. */
   public QueryCondition(
       Context ctx,
       String attributeName,
@@ -82,6 +84,65 @@ public class QueryCondition implements AutoCloseable {
       throw err;
     }
     this.ctx = ctx;
+  }
+
+  /**
+   * Constructor
+   *
+   * @param ctx The context
+   * @param attributeName The name of the field this operation applies to
+   * @param type The datatype
+   * @param value The value to compare to. Can also be null.
+   * @param OP The relational operation between the value of the field and `condition_value`
+   * @throws TileDBError
+   */
+  public QueryCondition(
+      Context ctx,
+      Datatype type,
+      String attributeName,
+      Object value,
+      tiledb_query_condition_op_t OP)
+      throws TileDBError {
+    try {
+      this.ctx = ctx;
+
+      if (type == null) {
+        throw new TileDBError("Datatype can not be null");
+      }
+
+      conditionpp = tiledb.new_tiledb_query_condition_tpp();
+      ctx.handleError(tiledb.tiledb_query_condition_alloc(ctx.getCtxp(), conditionpp));
+      conditionp = tiledb.tiledb_query_condition_tpp_value(conditionpp);
+
+      if (value == null) {
+        ctx.handleError(
+            tiledb.tiledb_query_condition_init(
+                ctx.getCtxp(), conditionp, attributeName, null, BigInteger.valueOf(0), OP));
+        return;
+      }
+
+      NativeArray array;
+      if (value.getClass().isArray()) {
+        array = new NativeArray(ctx, value, type);
+      } else {
+        int byteSize = type.getNativeSize();
+        array = new NativeArray(ctx, byteSize, type);
+        array.setItem(0, value);
+      }
+
+      ctx.handleError(
+          tiledb.tiledb_query_condition_init(
+              ctx.getCtxp(),
+              conditionp,
+              attributeName,
+              array.toVoidPointer(),
+              BigInteger.valueOf(array.getSize()),
+              OP));
+
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_query_condition_tpp(conditionpp);
+      throw err;
+    }
   }
 
   public SWIGTYPE_p_tiledb_query_condition_t getConditionp() {

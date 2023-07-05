@@ -25,6 +25,8 @@
 package io.tiledb.java.api;
 
 import static io.tiledb.java.api.ArrayType.*;
+import static io.tiledb.java.api.Datatype.TILEDB_FLOAT32;
+import static io.tiledb.java.api.Datatype.TILEDB_INT32;
 import static io.tiledb.java.api.Datatype.TILEDB_UINT8;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
@@ -114,9 +116,9 @@ public class QueryConditionTest {
     domain.addDimension(d2);
 
     // Create and add getAttributes
-    Attribute a1 = new Attribute(ctx, "a1", Integer.class);
+    Attribute a1 = new Attribute(ctx, "a1", TILEDB_INT32);
     a1.setNullable(true);
-    Attribute a2 = new Attribute(ctx, "a2", Float.class);
+    Attribute a2 = new Attribute(ctx, "a2", TILEDB_FLOAT32);
 
     ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
     schema.setTileOrder(TILEDB_ROW_MAJOR);
@@ -136,13 +138,13 @@ public class QueryConditionTest {
 
     // Prepare cell buffers
     NativeArray a1_data =
-        new NativeArray(ctx, new int[] {8, 9, 10, 11, 12, 13, 14, 15, 16}, Integer.class);
+        new NativeArray(ctx, new int[] {8, 9, 10, 11, 12, 13, 14, 15, 16}, TILEDB_INT32);
 
     NativeArray buffer_a2 =
         new NativeArray(
             ctx,
             new float[] {13.2f, 14.1f, 14.2f, 15.1f, 15.2f, 15.3f, 16.1f, 18.3f, 19.1f},
-            Float.class);
+            TILEDB_FLOAT32);
 
     // Create query
     NativeArray a1Bytemap =
@@ -176,15 +178,15 @@ public class QueryConditionTest {
       max_sizes.put("a2", new Pair<>(0L, query.getEstResultSize(ctx, "a2")));
       query.setBufferNullable(
           "a1",
-          new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), Integer.class),
+          new NativeArray(ctx, max_sizes.get("a1").getSecond().intValue(), TILEDB_INT32),
           new NativeArray(ctx, 16, TILEDB_UINT8));
       query.setBuffer(
           "a2", new NativeArray(ctx, max_sizes.get("a2").getSecond().intValue(), Float.class));
       // null + normal + combined condition test
-      QueryCondition con1 = new QueryCondition(ctx, "a2", 15.0f, Float.class, TILEDB_GT);
-      QueryCondition con2 = new QueryCondition(ctx, "a1", 0, null, TILEDB_EQ);
+      QueryCondition con1 = new QueryCondition(ctx, TILEDB_FLOAT32, "a2", 15.0f, TILEDB_GT);
+      QueryCondition con2 = new QueryCondition(ctx, TILEDB_INT32, "a1", null, TILEDB_EQ);
       QueryCondition con3 = con1.combine(con2, TILEDB_AND);
-      QueryCondition con4 = new QueryCondition(ctx, "a1", 9, Integer.class, TILEDB_EQ);
+      QueryCondition con4 = new QueryCondition(ctx, TILEDB_INT32, "a1", 9, TILEDB_EQ);
       QueryCondition con5 = con4.combine(con3, TILEDB_OR);
       query.setCondition(con5);
 
@@ -237,7 +239,7 @@ public class QueryConditionTest {
     // delete data with appropriate QC
     Array array = new Array(ctx, arrayURISparse, TILEDB_DELETE);
     Query query = new Query(array, TILEDB_DELETE);
-    QueryCondition deleteQc = new QueryCondition(ctx, "a1", 3, Integer.class, TILEDB_GT);
+    QueryCondition deleteQc = new QueryCondition(ctx, TILEDB_INT32, "a1", 3, TILEDB_GT);
     query.setCondition(deleteQc);
     query.submit();
     // close resources
