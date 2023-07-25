@@ -129,6 +129,8 @@ public class Query implements AutoCloseable {
   public QueryStatus submit() throws TileDBError {
     ctx.handleError(tiledb.tiledb_query_submit(ctx.getCtxp(), queryp));
 
+    if (this.type == QueryType.TILEDB_WRITE) return getQueryStatus();
+
     // Set the actual number of bytes received to each ByteBuffer
     for (String attribute : byteBuffers_.keySet()) {
       boolean isVar;
