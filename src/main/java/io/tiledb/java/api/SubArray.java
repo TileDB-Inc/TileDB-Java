@@ -798,14 +798,11 @@ public class SubArray implements AutoCloseable {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
     if (subArrayp != null && subArraypp != null) {
       tiledb.tiledb_subarray_free(subArraypp);
       subArrayp = null;
       subArraypp = null;
-      if (array != null) {
-        array.close();
-      }
     }
   }
 }
