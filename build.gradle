@@ -126,18 +126,33 @@ test {
 
 jar {
     into(new File('lib').toString()) {
-        // Linux and macOS
-        from file("$buildDir/install/lib/libtiledb.so")
-        from file("$buildDir/install/lib64/libtiledb.so")
+        String tiledbHome = System.getenv("TILEDB_HOME")
+
+        if (tiledbHome != null) {
+            // linux
+            from file("$tiledbHome/lib/libtiledb.so")
+            from file("$tiledbHome/lib64/libtiledb.so")
+            // macOS
+            from file("$tiledbHome/lib/libtiledb.dylib")
+            from file("$tiledbHome/lib64/libtiledb.dylib")
+            // windows
+            from file("$tiledbHome/bin/tbb.dll")
+            from file("$tiledbHome/bin/tiledb.dll")
+
+        } else {
+            // linux
+            from file("$buildDir/install/lib/libtiledb.so")
+            from file("$buildDir/install/lib64/libtiledb.so")
+            // macOS
+            from file("$buildDir/install/lib/libtiledb.dylib")
+            from file("$buildDir/install/lib64/libtiledb.dylib")
+            // Windows
+            from file("$buildDir/install/bin/tbb.dll")
+            from file("$buildDir/install/bin/tiledb.dll")
+        }
+        // jni
         from file("$buildDir/tiledb_jni/libtiledbjni.so")
-
-        from file("$buildDir/install/lib/libtiledb.dylib")
-        from file("$buildDir/install/lib64/libtiledb.dylib")
         from file("$buildDir/tiledb_jni/libtiledbjni.dylib")
-
-        // Windows
-        from file("$buildDir/install/bin/tbb.dll")
-        from file("$buildDir/install/bin/tiledb.dll")
         from file("$buildDir/tiledb_jni/Release/tiledbjni.dll")
     }
 
