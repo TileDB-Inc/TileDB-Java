@@ -48,7 +48,7 @@ public class FragmentInfo {
    * @param config the TileDB config
    * @throws TileDBError
    */
-  private void setConfig(Config config) throws TileDBError {
+  public void setConfig(Config config) throws TileDBError {
     try {
       ctx.handleError(
           tiledb.tiledb_fragment_info_set_config(
@@ -686,12 +686,12 @@ public class FragmentInfo {
    * @return The fragment name.
    * @throws TileDBError
    */
-  public String getFragmentNameV2(long fragmentID) throws TileDBError {
+  public TileDBString getFragmentNameV2(long fragmentID) throws TileDBError {
     SWIGTYPE_p_p_tiledb_string_handle_t name = tiledb.new_tiledb_string_handle_tpp();
 
     ctx.handleError(
         tiledb.tiledb_fragment_info_get_fragment_name_v2(
             ctx.getCtxp(), fragmentInfop, fragmentID, name));
-    return new TileDBString(ctx, name).getView().getFirst();
+    return new TileDBString(ctx, name);
   }
 }

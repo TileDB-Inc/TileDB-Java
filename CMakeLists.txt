@@ -118,6 +118,13 @@ if (WIN32)
     PRIVATE
       ${PCRE2_POSIX}
       ${PCRE2_8}
+      WebServices
+      Winhttp
+      Wininet
+      Userenv
+      Version
+      Secur32
+      Ncrypt
   )
 endif()
 
