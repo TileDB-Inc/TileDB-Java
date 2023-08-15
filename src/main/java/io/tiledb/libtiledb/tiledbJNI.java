@@ -887,10 +887,6 @@ public class tiledbJNI {
   public static final native long tiledb_filter_list_get_max_chunk_size(
       long jarg1, long jarg2, long jarg3);
 
-  public static final native int sys_nerr_get();
-
-  public static final native long sys_errlist_get();
-
   public static final native int tiledb_dimension_alloc(
       long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, long jarg6);
 

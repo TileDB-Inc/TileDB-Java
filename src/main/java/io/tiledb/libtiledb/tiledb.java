@@ -1972,15 +1972,6 @@ public class tiledb implements tiledbConstants {
         true);
   }
 
-  public static int getSys_nerr() {
-    return tiledbJNI.sys_nerr_get();
-  }
-
-  public static SWIGTYPE_p_p_char getSys_errlist() {
-    long cPtr = tiledbJNI.sys_errlist_get();
-    return (cPtr == 0) ? null : new SWIGTYPE_p_p_char(cPtr, false);
-  }
-
   public static int tiledb_dimension_alloc(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       String name,
