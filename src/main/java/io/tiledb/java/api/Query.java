@@ -1010,39 +1010,23 @@ public class Query implements AutoCloseable {
 
   /** Clears all attribute buffers. */
   public synchronized void resetBuffers() {
+    for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
+      if (size_pair.getFirst() != null) size_pair.getFirst().delete();
+      if (size_pair.getSecond() != null) size_pair.getSecond().delete();
+    }
+
     for (Pair<NativeArray, NativeArray> buffer : buffers_.values()) {
       if (buffer.getFirst() != null) buffer.getFirst().close();
       if (buffer.getSecond() != null) buffer.getSecond().close();
-    }
-
-    for (Pair<ByteBuffer, ByteBuffer> buffer : byteBuffers_.values()) {
-      if (buffer.getFirst() != null) buffer.getFirst().clear();
-      if (buffer.getSecond() != null) buffer.getSecond().clear();
     }
 
     for (NativeArray buffer : validityByteMaps_.values()) {
       if (buffer != null) buffer.close();
     }
 
-    for (ByteBuffer buffer : validityByteMapsByteBuffers_.values()) {
-      if (buffer != null) buffer.clear();
-    }
-
-    byteBuffers_.clear();
-    buffers_.clear();
-    validityByteMapsByteBuffers_.clear();
-    validityByteMaps_.clear();
-
-    for (Pair<uint64_tArray, uint64_tArray> size_pair : buffer_sizes_.values()) {
-      if (size_pair.getFirst() != null) size_pair.getFirst().delete();
-      if (size_pair.getSecond() != null) size_pair.getSecond().delete();
-    }
-    buffer_sizes_.clear();
-
     for (uint64_tArray size : validityByteMapSizes_.values()) {
       if (size != null) size.delete();
     }
-    validityByteMapSizes_.clear();
   }
 
   public synchronized Query resetBufferSizes(Long val) {
