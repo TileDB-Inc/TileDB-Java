@@ -14,7 +14,9 @@ public enum tiledb_query_condition_op_t {
   TILEDB_GT(2),
   TILEDB_GE(3),
   TILEDB_EQ(4),
-  TILEDB_NE(5);
+  TILEDB_NE(5),
+  TILEDB_IN(6),
+  TILEDB_NOT_IN(7);
 
   public final int swigValue() {
     return swigValue;

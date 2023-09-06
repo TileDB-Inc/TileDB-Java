@@ -35,6 +35,8 @@ typedef struct tiledb_filter_t tiledb_filter_t;
 typedef struct tiledb_config_t tiledb_config_t;
 typedef struct tiledb_dimension_t tiledb_dimension_t;
 typedef struct tiledb_domain_t tiledb_domain_t;
+typedef struct tiledb_attribute_t tiledb_attribute_t;
+typedef struct tiledb_enumeration_t tiledb_enumeration_t;
 
 %{
 #include <string>
