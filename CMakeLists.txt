@@ -108,26 +108,6 @@ target_link_libraries(tiledbjni
     ${JAVA_JVM_LIBRARY}
 )
 
-# Temporary work-around for windows linkage issue with TileDB 2.9
-if (WIN32)
-  get_target_property(LIBMAGIC_LIB libmagic IMPORTED_LOCATION)
-  get_filename_component(LIBMAGIC_LIB_PATH ${LIBMAGIC_LIB} DIRECTORY)
-  find_library(PCRE2_POSIX pcre2-posix REQUIRED PATHS ${LIBMAGIC_LIB_PATH})
-  find_library(PCRE2_8 pcre2-8 REQUIRED PATHS ${LIBMAGIC_LIB_PATH})
-  target_link_libraries(tiledbjni
-    PRIVATE
-      ${PCRE2_POSIX}
-      ${PCRE2_8}
-      WebServices
-      Winhttp
-      Wininet
-      Userenv
-      Version
-      Secur32
-      Ncrypt
-  )
-endif()
-
 if (TARGET TileDB::tiledb_static)
   target_link_libraries(tiledbjni
     PRIVATE
