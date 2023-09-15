@@ -382,6 +382,32 @@ public class Attribute implements AutoCloseable {
   }
 
   /**
+   * Set the enumeration name on an attribute
+   *
+   * @param name The target attribute
+   * @throws TileDBError
+   */
+  public void setEnumerationName(String name) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_attribute_set_enumeration_name(ctx.getCtxp(), getAttributep(), name));
+  }
+
+  /**
+   * Get the attribute's enumeration name if it has one.
+   *
+   * @return The attribute's enumeration name if it has one
+   * @throws TileDBError
+   */
+  public String getEnumerationName() throws TileDBError {
+    if (this.name != null) return this.name;
+    SWIGTYPE_p_p_tiledb_string_handle_t name = tiledb.new_tiledb_string_handle_tpp();
+
+    ctx.handleError(
+        tiledb.tiledb_attribute_get_enumeration_name(ctx.getCtxp(), getAttributep(), name));
+    return new TileDBString(ctx, name).getView().getFirst();
+  }
+
+  /**
    * Sets the default fill value for the input, nullable attribute. This value will be used for the
    * input attribute whenever querying (1) an empty cell in a dense array, or (2) a non-empty cell
    * (in either dense or sparse array) when values on the input attribute are missing (e.g., if the

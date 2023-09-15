@@ -95,15 +95,15 @@ if [[ ! -x `which swig` ]]; then
   die "swig wrapper generator not found in path"
 fi
 
-## define the necessary macro constants
-## (removed during preprocessor macro expansion)
-#g++ -dM -I ${prefix_dir}/include -x c++-header -E ${tiledb_header} ${tiledb_experimental_header} | grep "#define TILEDB" > swig/tiledb_generated.h ||
-#  die "could not write ./swig/tiledb_generated.h tmp file"
-#
-### remove system headers
-#awk '!/#\s*include/ || /tiledb_/ || /tiledb\/api/ {print}' ${tiledb_header} ${tiledb_experimental_header} |
-#   g++ -E -P -nostdinc++  -I "${prefix_dir}/include/tiledb" -I "${prefix_dir}/include/" -x c++ - >> swig/tiledb_generated.h ||
-#   die "error generating temp combined swig/tiledb_generated.h header for swig generation"
+# define the necessary macro constants
+# (removed during preprocessor macro expansion)
+g++ -dM -I ${prefix_dir}/include -x c++-header -E ${tiledb_header} ${tiledb_experimental_header} | grep "#define TILEDB" > swig/tiledb_generated.h ||
+  die "could not write ./swig/tiledb_generated.h tmp file"
+
+## remove system headers
+awk '!/#\s*include/ || /tiledb_/ || /tiledb\/api/ {print}' ${tiledb_header} ${tiledb_experimental_header} |
+   g++ -E -P -nostdinc++  -I "${prefix_dir}/include/tiledb" -I "${prefix_dir}/include/" -x c++ - >> swig/tiledb_generated.h ||
+   die "error generating temp combined swig/tiledb_generated.h header for swig generation"
 
 # if existing libtiledb generated source exists, delete it
 cleanup_java() {

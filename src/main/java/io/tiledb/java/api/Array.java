@@ -523,6 +523,27 @@ public class Array implements AutoCloseable {
   }
 
   /**
+   * Retrieves an enumeration given the name (key)
+   *
+   * @param name The Enumeration name
+   * @return The Enumeration
+   * @throws TileDBError
+   */
+  public Enumeration getEnumeration(String name) throws TileDBError {
+    Enumeration _enumeration;
+    SWIGTYPE_p_p_tiledb_enumeration_t enumerationpp = tiledb.new_tiledb_enumeration_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_get_enumeration(ctx.getCtxp(), getArrayp(), name, enumerationpp));
+      _enumeration = new Enumeration(ctx, enumerationpp);
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_enumeration_tpp(enumerationpp);
+      throw err;
+    }
+    return _enumeration;
+  }
+
+  /**
    * Retrieves the non-empty domain range sizes from an array for a given dimension name. This is
    * the union of the non-empty domains of the array fragments on the given dimension. Applicable
    * only to var-sized dimensions.

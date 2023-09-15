@@ -125,6 +125,30 @@ public class ArraySchemaEvolution implements AutoCloseable {
   }
 
   /**
+   * Adds an enumeration to an array schema evolution
+   *
+   * @param e The enumeration to be added
+   * @throws TileDBError
+   */
+  public void addEnumeration(Enumeration e) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_array_schema_evolution_add_enumeration(
+            ctx.getCtxp(), getEvolutionp(), e.getEnumerationp()));
+  }
+
+  /**
+   * Drops an enumeration from an array schema evolution.
+   *
+   * @param name The name of the enumeration to be dropped
+   * @throws TileDBError
+   */
+  public void dropEnumeration(String name) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_array_schema_evolution_drop_enumeration(
+            ctx.getCtxp(), getEvolutionp(), name));
+  }
+
+  /**
    * Evolves the schema of an array.
    *
    * <p>**Example:** ArraySchemaEvolution schemaEvolution = new ArraySchemaEvolution(ctx);

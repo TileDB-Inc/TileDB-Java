@@ -5,6 +5,7 @@ import static io.tiledb.java.api.Layout.TILEDB_ROW_MAJOR;
 import static io.tiledb.java.api.QueryType.TILEDB_READ;
 import static io.tiledb.java.api.QueryType.TILEDB_WRITE;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -101,6 +102,76 @@ public class DatatypeTest {
     Collections.addAll(dtypes, otherDtypes);
     Collections.addAll(dtypes, timeDtypes);
     return dtypes;
+  }
+
+  @Test
+  public void testEnumeratedDatatype() throws Exception {
+    Dimension<Integer> rows =
+        new Dimension<>(ctx, "rows", Integer.class, new Pair<Integer, Integer>(1, 4), 2);
+
+    Domain domain = new Domain(ctx);
+    domain.addDimension(rows);
+
+    Attribute a1 = new Attribute(ctx, "a1", Datatype.TILEDB_INT32);
+
+    ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
+    schema.setTileOrder(TILEDB_ROW_MAJOR);
+    schema.setCellOrder(TILEDB_ROW_MAJOR);
+    schema.setDomain(domain);
+    schema.addAttribute(a1);
+
+    NativeArray enums = new NativeArray(ctx, new int[] {0, 1, 2, 3}, Datatype.TILEDB_INT32);
+
+    Enumeration en =
+        new Enumeration(
+            ctx,
+            "test_enum",
+            1,
+            Datatype.TILEDB_INT32,
+            false,
+            enums,
+            BigInteger.valueOf(enums.getSize() * Datatype.TILEDB_INT32.getNativeSize()),
+            null,
+            BigInteger.ZERO);
+
+    schema.addEnumeration(en);
+    a1.setEnumerationName("test_enum");
+
+    Array.create(arrayURI, schema);
+
+    Array array = new Array(ctx, arrayURI);
+    String attGetEnumName = array.getSchema().getAttribute("a1").getEnumerationName();
+    Assert.assertEquals("test_enum", attGetEnumName);
+
+    Enumeration e = array.getEnumeration("test_enum");
+
+    Assert.assertEquals("test_enum", e.getName());
+    Assert.assertEquals(Datatype.TILEDB_INT32, e.getType());
+    Assert.assertEquals(1, e.getCellValNum());
+    Assert.assertFalse(e.getOrdered());
+    Assert.assertArrayEquals(new int[] {0, 1, 2, 3}, (int[]) e.getData());
+    array.close();
+
+    // Schema evolution
+    ArraySchemaEvolution evolution = new ArraySchemaEvolution(ctx);
+    Enumeration en2 =
+        new Enumeration(
+            ctx,
+            "test_enum2",
+            1,
+            Datatype.TILEDB_INT32,
+            false,
+            enums,
+            BigInteger.valueOf(enums.getSize() * Datatype.TILEDB_INT32.getNativeSize()),
+            null,
+            BigInteger.ZERO);
+    evolution.addEnumeration(en2);
+    evolution.evolveArray(arrayURI);
+
+    // reopen array
+    array = new Array(ctx, arrayURI);
+    e = array.getEnumeration("test_enum2");
+    Assert.assertEquals(e.getName(), "test_enum2");
   }
 
   public void arrayCreate() throws Exception {
