@@ -142,6 +142,7 @@ typedef struct tiledb_enumeration_t tiledb_enumeration_t;
 %pointer_functions(tiledb_consolidation_plan_t*, tiledb_consolidation_plan_tpp);
 %pointer_functions(tiledb_dimension_label_t*, tiledb_dimension_label_tpp);
 %pointer_functions(tiledb_string_handle_t*, tiledb_string_handle_tpp);
+%pointer_functions(tiledb_enumeration_t*, tiledb_enumeration_tpp);
 
 %native (sizeOfInt32) int sizeOfInt32();
 %native (sizeOfInt64) int sizeOfInt64();

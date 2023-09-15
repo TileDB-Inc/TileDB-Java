@@ -735,6 +735,18 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
+   * Add an enumeration to the array schema.
+   *
+   * @param enumeration The enumeration to add
+   * @throws TileDBError
+   */
+  public void addEnumeration(Enumeration enumeration) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_array_schema_add_enumeration(
+            ctx.getCtxp(), getSchemap(), enumeration.getEnumerationp()));
+  }
+
+  /**
    * Returns the array schema version.
    *
    * @return the array schema version
