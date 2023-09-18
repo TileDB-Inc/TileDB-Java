@@ -158,7 +158,7 @@ public class DatatypeTest {
     array.close();
 
     // test data write
-    NativeArray na1 = new NativeArray(ctx, new int[] {0, 1, 2, 10}, Datatype.TILEDB_INT32);
+    NativeArray na1 = new NativeArray(ctx, new int[] {0, 1, 2, 0}, Datatype.TILEDB_INT32);
     array = new Array(ctx, arrayURI, TILEDB_WRITE);
     Query query = new Query(array, TILEDB_WRITE);
 
@@ -178,7 +178,7 @@ public class DatatypeTest {
     query.submit();
 
     int[] a1Result = (int[]) query.getBuffer("a1");
-    Assert.assertArrayEquals(new int[] {0, 1, 2, 10}, a1Result);
+    Assert.assertArrayEquals(new int[] {0, 1, 2, 0}, a1Result);
 
     // test data read with QC
     query = new Query(array, TILEDB_READ);

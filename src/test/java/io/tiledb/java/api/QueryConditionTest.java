@@ -27,6 +27,7 @@ package io.tiledb.java.api;
 import static io.tiledb.java.api.ArrayType.*;
 import static io.tiledb.java.api.Datatype.TILEDB_FLOAT32;
 import static io.tiledb.java.api.Datatype.TILEDB_INT32;
+import static io.tiledb.java.api.Datatype.TILEDB_STRING_ASCII;
 import static io.tiledb.java.api.Datatype.TILEDB_UINT8;
 import static io.tiledb.java.api.Layout.*;
 import static io.tiledb.java.api.QueryType.*;
@@ -118,6 +119,8 @@ public class QueryConditionTest {
     Attribute a1 = new Attribute(ctx, "a1", TILEDB_INT32);
     a1.setNullable(true);
     Attribute a2 = new Attribute(ctx, "a2", TILEDB_FLOAT32);
+    Attribute a3 = new Attribute(ctx, "a3", TILEDB_STRING_ASCII);
+    a3.setCellVar();
 
     ArraySchema schema = new ArraySchema(ctx, TILEDB_DENSE);
     schema.setTileOrder(TILEDB_ROW_MAJOR);
@@ -125,6 +128,7 @@ public class QueryConditionTest {
     schema.setDomain(domain);
     schema.addAttribute(a1);
     schema.addAttribute(a2);
+    schema.addAttribute(a3);
 
     schema.check();
 
@@ -134,6 +138,10 @@ public class QueryConditionTest {
   public void arrayWrite() throws Exception {
 
     Array my_dense_array = new Array(ctx, arrayURI, TILEDB_WRITE);
+
+    NativeArray a3_offsets =
+        new NativeArray(ctx, new long[] {0, 2, 4, 6, 8, 10, 12, 14, 16}, Datatype.TILEDB_UINT64);
+    NativeArray a3_data = new NativeArray(ctx, "aabbccddeeffgghhii", Datatype.TILEDB_STRING_ASCII);
 
     // Prepare cell buffers
     NativeArray a1_data =
@@ -152,7 +160,9 @@ public class QueryConditionTest {
       query
           .setLayout(TILEDB_ROW_MAJOR)
           .setBufferNullable("a1", a1_data, a1Bytemap)
-          .setBuffer("a2", buffer_a2);
+          .setBuffer("a2", buffer_a2)
+          .setDataBuffer("a3", a3_data)
+          .setOffsetsBuffer("a3", a3_offsets);
       // Submit query
       query.submit();
       query.finalizeQuery();
@@ -187,7 +197,9 @@ public class QueryConditionTest {
       QueryCondition con3 = con1.combine(con2, TILEDB_AND);
       QueryCondition con4 = new QueryCondition(ctx, TILEDB_INT32, "a1", 9, TILEDB_EQ);
       QueryCondition con5 = con4.combine(con3, TILEDB_OR);
-      query.setCondition(con5);
+      QueryCondition con6 = new QueryCondition(ctx, TILEDB_STRING_ASCII, "a3", "aa", TILEDB_EQ);
+      QueryCondition con7 = con6.combine(con5, TILEDB_OR);
+      query.setCondition(con7);
 
       // Submit query
       query.submit();
@@ -205,17 +217,15 @@ public class QueryConditionTest {
       // to some bugs.
       // check a1
       Assert.assertArrayEquals(
-          a1_buff,
-          new int[] {
-            -2147483648, 9, -2147483648, -2147483648, -2147483648, 13, -2147483648, -2147483648, 16
-          });
+          new int[] {8, 9, -2147483648, -2147483648, -2147483648, 13, -2147483648, -2147483648, 16},
+          a1_buff);
 
       // check a2
       Assert.assertArrayEquals(
-          a2_buff,
           new float[] {
-            Float.NaN, 14.1f, Float.NaN, Float.NaN, Float.NaN, 15.3f, Float.NaN, Float.NaN, 19.1f
+            13.2f, 14.1f, Float.NaN, Float.NaN, Float.NaN, 15.3f, Float.NaN, Float.NaN, 19.1f
           },
+          a2_buff,
           0.1f);
     }
   }

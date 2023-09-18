@@ -125,7 +125,9 @@ public class QueryCondition implements AutoCloseable {
       if (value.getClass().isArray()) {
         array = new NativeArray(ctx, value, type);
       } else {
-        int byteSize = type.getNativeSize();
+        int byteSize;
+        if (value instanceof String) byteSize = ((String) value).length();
+        else byteSize = type.getNativeSize();
         array = new NativeArray(ctx, byteSize, type);
         array.setItem(0, value);
       }
