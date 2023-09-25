@@ -87,6 +87,50 @@ public class QueryCondition implements AutoCloseable {
   }
 
   /**
+   * Disable the use of enumerations on the given QueryCondition
+   *
+   * @param flag
+   */
+  public void setUseEnumeration(boolean flag) throws TileDBError {
+    int useEnum = 0;
+    if (flag) useEnum = 1;
+    ctx.handleError(
+        tiledb.tiledb_query_condition_set_use_enumeration(
+            this.ctx.getCtxp(), this.conditionp, useEnum));
+  }
+
+  /**
+   * Initializes a TileDB query condition set membership object.
+   *
+   * @param name The field name.
+   * @param data A pointer to the set member data.
+   * @param dataSize The length of the data buffer.
+   * @param offsets A pointer to the array of offsets of members.
+   * @param offsetsSize The length of the offsets array in bytes.
+   * @param OP The set membership operator to use.
+   * @throws TileDBError
+   */
+  public void allocSetMembership(
+      String name,
+      NativeArray data,
+      BigInteger dataSize,
+      NativeArray offsets,
+      BigInteger offsetsSize,
+      tiledb_query_condition_op_t OP)
+      throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_query_condition_alloc_set_membership(
+            this.ctx.getCtxp(),
+            name,
+            data.toVoidPointer(),
+            dataSize,
+            offsets.toVoidPointer(),
+            offsetsSize,
+            OP,
+            this.getConditionpp()));
+  }
+
+  /**
    * Constructor
    *
    * @param ctx The context
@@ -149,6 +193,10 @@ public class QueryCondition implements AutoCloseable {
 
   public SWIGTYPE_p_tiledb_query_condition_t getConditionp() {
     return this.conditionp;
+  }
+
+  public SWIGTYPE_p_p_tiledb_query_condition_t getConditionpp() {
+    return conditionpp;
   }
 
   protected Context getCtx() {
