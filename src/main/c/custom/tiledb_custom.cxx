@@ -706,7 +706,7 @@ extern "C" {
 
     (void)jenv;
     (void)jcls;
-    if (!SWIG_JavaArrayInLonglong(jenv, &jarr1, (long long **)&arg1, jarg1)) return 0;
+    if (!SWIG_JavaArrayInLonglong(jenv, &jarr1, (jlong**)&arg1, jarg1)) return 0;
     SWIG_JavaArrayArgoutLonglong(jenv, jarr1, arg1, jarg1);
     *(void **)&jresult = (void *)arg1;
     return jresult;

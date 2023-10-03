@@ -40,11 +40,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-11 ]
+        os: [ ubuntu-latest, macos-11, macos-13-xlarge ]
 
     steps:
       - name: checkout
         uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          check-latest: true
 
       - run: |
           unset SYSTEM
@@ -63,21 +70,6 @@ jobs:
           ./gradlew test
         shell: bash
         name: test
-
-      - run: |
-          set -e pipefail
-          # Display log files if the build failed
-          echo "Dumping log files for failed build"
-          echo "----------------------------------"
-          for f in $(find $BUILD_REPOSITORY_LOCALPATH -name *.dumpstream);
-            do echo "------"
-               echo $f
-               echo "======"
-               cat $f
-            done;
-        shell: bash
-        name: error_print
-        if: ${{ failure() }}
 
     env:
       ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
