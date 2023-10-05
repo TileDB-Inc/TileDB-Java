@@ -46,8 +46,19 @@ dependencies {
 }
 
 task cmakeTask(type: Exec) {
-    File jniLibs = new File(buildDir.path + "/tiledb_jni")
-    File tiledbLibs = new File(buildDir.path + "/install/lib")
+    def osName = System.getProperty('os.name').toLowerCase()
+    def arch = System.getProperty('os.arch').toLowerCase()
+
+    File jniLibs;
+    File tiledbLibs;
+
+    if (osName.contains("mac") && arch.equals("aarch64")) {
+        jniLibs = new File(buildDir.path + "/tiledb_jni/arm")
+        tiledbLibs = new File(buildDir.path + "/install/arm/lib")
+    }else{
+        jniLibs = new File(buildDir.path + "/tiledb_jni")
+        tiledbLibs = new File(buildDir.path + "/install/lib")
+    }
 
     onlyIf { !buildDir.exists() || !jniLibs.exists() || !tiledbLibs.exists() }
     doFirst {
@@ -83,8 +94,19 @@ task cmakeTask(type: Exec) {
 }
 
 task cmakeBuildTask(type: Exec) {
-    File jniLibs = new File(buildDir.path + "/tiledb_jni")
-    File tiledbLibs = new File(buildDir.path + "/install/lib")
+    def osName = System.getProperty('os.name').toLowerCase()
+    def arch = System.getProperty('os.arch').toLowerCase()
+
+    File jniLibs;
+    File tiledbLibs;
+
+    if (osName.contains("mac") && arch.equals("aarch64")) {
+        jniLibs = new File(buildDir.path + "/tiledb_jni/arm")
+        tiledbLibs = new File(buildDir.path + "/install/arm/lib")
+    }else{
+        jniLibs = new File(buildDir.path + "/tiledb_jni")
+        tiledbLibs = new File(buildDir.path + "/install/lib")
+    }
 
     onlyIf { !buildDir.exists() || !jniLibs.exists() || !tiledbLibs.exists() }
     doFirst {
@@ -116,7 +138,7 @@ test {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         systemProperty "java.library.path", "$buildDir\\install\\bin;$buildDir\\tiledb_jni\\Release"
     } else {
-        systemProperty "java.library.path", "$buildDir/install/lib:$buildDir/install/lib64:$buildDir/tiledb_jni"
+        systemProperty "java.library.path", "$buildDir/install/lib:$buildDir/install/lib64:$buildDir/tiledb_jni:$buildDir/install/arm/lib:$buildDir/tiledb_jni/arm"
     }
 
     testLogging {
@@ -125,12 +147,19 @@ test {
 }
 
 jar {
+    // macOS arm
+    into(new File('arm/lib').toString()) {
+        from file("$buildDir/install/arm/lib/libtiledb.dylib")
+        from file("$buildDir/tiledb_jni/arm/libtiledbjni.dylib")
+    }
+
     into(new File('lib').toString()) {
-        // Linux and macOS
+        // Linux
         from file("$buildDir/install/lib/libtiledb.so")
         from file("$buildDir/install/lib64/libtiledb.so")
         from file("$buildDir/tiledb_jni/libtiledbjni.so")
 
+        // macOS intel
         from file("$buildDir/install/lib/libtiledb.dylib")
         from file("$buildDir/install/lib64/libtiledb.dylib")
         from file("$buildDir/tiledb_jni/libtiledbjni.dylib")
@@ -140,6 +169,7 @@ jar {
         from file("$buildDir/install/bin/tiledb.dll")
         from file("$buildDir/tiledb_jni/Release/tiledbjni.dll")
     }
+
 
     manifest {
         attributes("Implementation-Title": "Gradle",

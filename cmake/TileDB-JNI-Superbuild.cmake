@@ -60,12 +60,38 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/FindTileDB_EP.cmake)
 # Set up the regular build (i.e. non-superbuild).
 ############################################################
 
-ExternalProject_Add(tiledb_jni
-  SOURCE_DIR ${PROJECT_SOURCE_DIR}
-  CMAKE_ARGS
-    -DTILEDB_JNI_SUPERBUILD=OFF
-    ${INHERITED_CMAKE_ARGS}
-  INSTALL_COMMAND ""
-  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tiledb_jni
-  DEPENDS ${TILEDB_JNI_EXTERNAL_PROJECTS}
-)
+
+if (APPLE) # macOS
+    if (CMAKE_OSX_ARCHITECTURES STREQUAL x86_64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64|amd64)|(^i.86$)")
+        ExternalProject_Add(tiledb_jni
+            SOURCE_DIR ${PROJECT_SOURCE_DIR}
+            CMAKE_ARGS
+                -DTILEDB_JNI_SUPERBUILD=OFF
+                ${INHERITED_CMAKE_ARGS}
+            INSTALL_COMMAND ""
+            BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tiledb_jni/
+            DEPENDS ${TILEDB_JNI_EXTERNAL_PROJECTS}
+        )
+    else()
+        ExternalProject_Add(tiledb_jni
+            SOURCE_DIR ${PROJECT_SOURCE_DIR}
+            CMAKE_ARGS
+                -DTILEDB_JNI_SUPERBUILD=OFF
+                ${INHERITED_CMAKE_ARGS}
+            INSTALL_COMMAND ""
+            BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tiledb_jni/arm
+            DEPENDS ${TILEDB_JNI_EXTERNAL_PROJECTS}
+        )
+    endif()
+else()
+    ExternalProject_Add(tiledb_jni
+        SOURCE_DIR ${PROJECT_SOURCE_DIR}
+        CMAKE_ARGS
+            -DTILEDB_JNI_SUPERBUILD=OFF
+            ${INHERITED_CMAKE_ARGS}
+        INSTALL_COMMAND ""
+        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tiledb_jni/
+        DEPENDS ${TILEDB_JNI_EXTERNAL_PROJECTS}
+    )
+endif()
+
