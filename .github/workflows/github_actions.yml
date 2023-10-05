@@ -41,7 +41,6 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-11, macos-13-xlarge ]
-
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -95,11 +94,11 @@ jobs:
           p=$(readlink -f *.jar)
           cd ../../src/main/java/examples/io/tiledb/java/api
           javac -cp $p *.java
-          for x in $(ls -1 *.java | sed 's/.java//'); 
-          do 
+          for x in $(ls -1 *.java | sed 's/.java//');
+          do
           echo $x;
-          class_name=examples.io.tiledb.java.api.$x; 
-          java -cp $p $class_name; 
+          class_name=examples.io.tiledb.java.api.$x;
+          java -cp $p $class_name;
           done
 
     env:
@@ -160,8 +159,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ macos-11, ubuntu-latest ]
+        os: [ macos-11, ubuntu-latest, macos-13-xlarge]
     steps:
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          check-latest: true
+
       - name: checkout
         uses: actions/checkout@v3
 
@@ -175,30 +182,30 @@ jobs:
             docker run -e "CFLAGS=$CFLAGS" -e "CPPFLAGS=$CPPFLAGS" -v $(pwd):/TileDB-Java -t lib_builder_2010 /TileDB-Java/ci/build.sh
             cp ./build/tiledb_jni/*.so ./build/install/lib/*.so ./build/install/lib64/*.so binaries_$RUNNER_OS/
           fi
-
-          if [[ ( "$RUNNER_OS" == "macOS" ) ]]; then
-            ./gradlew -PTILEDB_AZURE=ON assemble
-            cp ./build/tiledb_jni/*.dylib ./build/install/lib/*.dylib binaries_$RUNNER_OS/
+          
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            if [[ "$(uname -m)" == "arm64" ]]; then
+              mkdir -p binaries_apple_silicon/arm
+              ./gradlew -PTILEDB_AZURE=ON assemble
+              cp ./build/tiledb_jni/arm/*.dylib ./build/install/arm/lib/*.dylib binaries_apple_silicon/arm
+            else
+              ./gradlew -PTILEDB_AZURE=ON assemble
+              cp ./build/tiledb_jni/*.dylib ./build/install/lib/*.dylib binaries_$RUNNER_OS/
+            fi
           fi
 
         name: 'Build and Upload (Ubuntu and OSX)'
 
       - run: |
-          set -e pipefail
-          # Display log files if the build failed
-          echo "Dumping log files for failed build"
-          echo "----------------------------------"
-          for f in $(find $BUILD_REPOSITORY_LOCALPATH -name *.log);
-            do echo "------"
-               echo $f
-               echo "======"
-               cat $f
-            done;
-        if: ${{ failure() }}
-        name: "Print log files (failed build only)"
-
-      - run: |
-          tar cvf tiledb-$RUNNER_OS.gz.tar binaries_$RUNNER_OS/
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            if [[ "$(uname -m)" == "arm64" ]]; then
+              tar cvf tiledb-apple-silicon.gz.tar binaries_apple_silicon/
+            else
+              tar cvf tiledb-$RUNNER_OS.gz.tar binaries_$RUNNER_OS/
+            fi
+          else 
+            tar cvf tiledb-$RUNNER_OS.gz.tar binaries_$RUNNER_OS/
+          fi
         name: Archive_files
 
       - uses: actions/upload-artifact@v2
@@ -211,15 +218,21 @@ jobs:
         with:
           name: Upload-Artifact-Mac
           path: '*.gz.tar'
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && (runner.arch == 'X86' || runner.arch == 'X64')
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Upload-Artifact-Mac-Arm
+          path: '*.gz.tar'
+        if: runner.os == 'macOS' && (runner.arch == 'ARM' || runner.arch == 'arm64')
     env:
       ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
       ORG_GRADLE_PROJECT_TILEDB_S3: ON
 
-  Release:
+  Setup-Release:
     if: startsWith(github.ref, 'refs/tags/')
     needs: [Create_Artifacts_Ubuntu_MacOS, Create_Artifacts_Windows]
-    name: Create-Release
+    name: Setup-Release
     runs-on: ubuntu-latest
     steps:
 
@@ -242,8 +255,10 @@ jobs:
           mv Upload-*/* .
 
           mkdir -p ./build/install/lib
+          mkdir -p ./build/install/arm/lib
           mkdir ./build/install/lib64
           mkdir ./build/tiledb_jni/
+          mkdir ./build/tiledb_jni/arm
           mkdir ./build/tiledb_jni/Release
           mkdir ./build/install/bin
 
@@ -258,7 +273,9 @@ jobs:
           # OSX
           mv libtiledb.dylib ./build/install/lib
           mv libtiledbjni.dylib ./build/tiledb_jni
-
+          mv arm/libtiledb.dylib ./build/install/arm/lib
+          mv arm/libtiledbjni.dylib ./build/tiledb_jni/arm
+          
           # Linux
           cp libtiledb.so ./build/install/lib
           mv libtiledb.so ./build/install/lib64
@@ -273,6 +290,87 @@ jobs:
 
           mkdir jars
           cp ./build/libs/*.jar jars
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: jars
+          path: ./jars
+
+    env:
+      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
+      ORG_GRADLE_PROJECT_TILEDB_S3: ON
+
+
+  Test-Release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [ Setup-Release ]
+    name: Test-Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-11, ubuntu-latest, macos-13-xlarge, windows-2019 ]
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set-up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          check-latest: true
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: jars
+
+      - shell: bash
+        name: Run examples with release jar
+        run: |
+          
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+              brew install coreutils;
+          fi
+          
+          rm *javadoc* *sources*
+
+          p=$(realpath *.jar)
+          
+          # Change directory to the specified path
+          cd src/main/java/examples/io/tiledb/java/api
+          
+          # Compile all Java files in the current directory using the classpath obtained earlier
+          javac -cp "$p" *.java
+          
+          # Loop through all compiled Java files and run them
+          for x in $(ls -1 *.java | sed 's/.java//'); do
+            echo $x;
+            class_name=examples.io.tiledb.java.api.$x;
+            java -cp "$p" $class_name;
+          done
+    env:
+      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
+      ORG_GRADLE_PROJECT_TILEDB_S3: ON
+
+  Release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [ Test-Release ]
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: jars
+
+      - name: Package jars
+        run: |
+          mkdir jars;
+          mv *.jar ./jars;
 
       - name: Create Release
         id: create_release

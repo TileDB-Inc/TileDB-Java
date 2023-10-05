@@ -322,6 +322,12 @@ public class NativeLibLoader {
   private static Path findNativeLibrary(String libraryName, boolean mapLibraryName) {
     String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
     String libDir = LIB_RESOURCE_DIR;
+
+    if (System.getProperty("os.name").contains("mac")
+        && System.getProperty("os.arch").equals("aarch64")) {
+      libDir = "arm" + libDir;
+    }
+
     String libPath = libDir + "/" + mappedLibraryName;
 
     boolean hasNativeLib = hasResource(libPath);
