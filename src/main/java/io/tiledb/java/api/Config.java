@@ -75,6 +75,7 @@ public class Config implements AutoCloseable {
       tiledb.delete_tiledb_error_tpp(_errorpp);
       throw err;
     }
+
     tiledb.delete_tiledb_error_tpp(_errorpp);
     this.configpp = _configpp;
     this.configp = tiledb.tiledb_config_tpp_value(_configpp);
@@ -357,6 +358,7 @@ public class Config implements AutoCloseable {
   public void close() {
     if (configp != null) {
       tiledb.tiledb_config_free(configpp);
+      tiledb.delete_tiledb_config_tpp(configpp);
       configp = null;
       configpp = null;
     }

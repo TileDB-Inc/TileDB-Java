@@ -41,6 +41,7 @@ public class ArraySchemaEvolution implements AutoCloseable {
   public void close() {
     if (evolutionp != null && evolutionpp != null) {
       tiledb.tiledb_array_schema_evolution_free(evolutionpp);
+      tiledb.delete_tiledb_array_schema_evolution_tpp(evolutionpp);
       evolutionpp = null;
       evolutionp = null;
     }

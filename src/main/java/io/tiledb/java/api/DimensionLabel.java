@@ -12,7 +12,7 @@ import io.tiledb.libtiledb.tiledb_datatype_t;
 import jdk.jfr.Experimental;
 
 @Experimental
-public class DimensionLabel {
+public class DimensionLabel implements AutoCloseable {
   private Context ctx;
   private SWIGTYPE_p_tiledb_dimension_label_handle_t dimlabelp;
   private SWIGTYPE_p_p_tiledb_dimension_label_handle_t dimlabelpp;
@@ -166,13 +166,11 @@ public class DimensionLabel {
     try {
       ctx.handleError(
           tiledb.tiledb_dimension_label_get_label_order(ctx.getCtxp(), this.dimlabelp, orderp));
-    } catch (TileDBError err) {
+      tiledb_data_order_t type = tiledb.tiledb_data_order_tp_value(orderp);
+      return type;
+    } finally {
       tiledb.delete_tiledb_data_order_tp(orderp);
-      throw err;
     }
-    tiledb_data_order_t type = tiledb.tiledb_data_order_tp_value(orderp);
-    tiledb.delete_tiledb_data_order_tp(orderp);
-    return type;
   }
 
   /**
@@ -187,13 +185,11 @@ public class DimensionLabel {
     try {
       ctx.handleError(
           tiledb.tiledb_dimension_label_get_label_type(ctx.getCtxp(), this.dimlabelp, typep));
-    } catch (TileDBError err) {
+      tiledb_datatype_t type = tiledb.tiledb_datatype_tp_value(typep);
+      return Datatype.fromSwigEnum(type);
+    } finally {
       tiledb.delete_tiledb_datatype_tp(typep);
-      throw err;
     }
-    tiledb_datatype_t type = tiledb.tiledb_datatype_tp_value(typep);
-    tiledb.delete_tiledb_datatype_tp(typep);
-    return Datatype.fromSwigEnum(type);
   }
 
   public void close() {

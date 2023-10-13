@@ -79,6 +79,8 @@ public class QueryCondition implements AutoCloseable {
                 BigInteger.valueOf(array.getSize()),
                 OP));
       }
+
+      array.close();
     } catch (TileDBError err) {
       tiledb.delete_tiledb_query_condition_tpp(conditionpp);
       throw err;
@@ -185,6 +187,8 @@ public class QueryCondition implements AutoCloseable {
               BigInteger.valueOf(array.getSize()),
               OP));
 
+      array.close();
+
     } catch (TileDBError err) {
       tiledb.delete_tiledb_query_condition_tpp(conditionpp);
       throw err;
@@ -206,6 +210,7 @@ public class QueryCondition implements AutoCloseable {
   public void close() {
     if (conditionp != null && conditionpp != null) {
       tiledb.tiledb_query_condition_free(conditionpp);
+      tiledb.delete_tiledb_query_condition_tpp(conditionpp);
       conditionpp = null;
       conditionp = null;
     }
@@ -221,9 +226,10 @@ public class QueryCondition implements AutoCloseable {
    */
   public QueryCondition combine(QueryCondition rhs, tiledb_query_condition_combination_op_t OP)
       throws TileDBError {
-    SWIGTYPE_p_p_tiledb_query_condition_t combinedCondition;
+    SWIGTYPE_p_p_tiledb_query_condition_t combinedCondition =
+        tiledb.new_tiledb_query_condition_tpp();
+
     try {
-      combinedCondition = tiledb.new_tiledb_query_condition_tpp();
       ctx.handleError(tiledb.tiledb_query_condition_alloc(ctx.getCtxp(), conditionpp));
       ctx.handleError(
           tiledb.tiledb_query_condition_combine(
@@ -244,9 +250,9 @@ public class QueryCondition implements AutoCloseable {
    * @throws TileDBError
    */
   public QueryCondition negate() throws TileDBError {
-    SWIGTYPE_p_p_tiledb_query_condition_t negatedCondition;
+    SWIGTYPE_p_p_tiledb_query_condition_t negatedCondition =
+        tiledb.new_tiledb_query_condition_tpp();
     try {
-      negatedCondition = tiledb.new_tiledb_query_condition_tpp();
       ctx.handleError(tiledb.tiledb_query_condition_alloc(ctx.getCtxp(), conditionpp));
       ctx.handleError(
           tiledb.tiledb_query_condition_negate(ctx.getCtxp(), conditionp, negatedCondition));

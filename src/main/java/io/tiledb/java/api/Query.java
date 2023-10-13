@@ -52,7 +52,6 @@ public class Query implements AutoCloseable {
   private Context ctx;
   private Array array;
   private QueryType type;
-
   private SWIGTYPE_p_p_tiledb_query_t querypp;
   private SWIGTYPE_p_tiledb_query_t queryp;
 
@@ -214,9 +213,6 @@ public class Query implements AutoCloseable {
   public synchronized Query setSubarray(SubArray subarray) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_query_set_subarray_t(ctx.getCtxp(), queryp, subarray.getSubArrayp()));
-    if (this.subarray != null) {
-      this.subarray.close();
-    }
     return this;
   }
 
@@ -260,9 +256,12 @@ public class Query implements AutoCloseable {
   public synchronized long getEstResultSize(Context ctx, String column) throws TileDBError {
     SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
 
-    ctx.handleError(tiledb.tiledb_query_get_est_result_size(ctx.getCtxp(), queryp, column, size));
-
-    return tiledb.ullp_value(size).longValue();
+    try {
+      ctx.handleError(tiledb.tiledb_query_get_est_result_size(ctx.getCtxp(), queryp, column, size));
+      return tiledb.ullp_value(size).longValue();
+    } finally {
+      tiledb.delete_ullp(size);
+    }
   }
 
   /**
@@ -275,9 +274,12 @@ public class Query implements AutoCloseable {
   public long getRelevantFragmentNum() throws TileDBError {
     SWIGTYPE_p_unsigned_long_long num = tiledb.new_ullp();
 
-    ctx.handleError(tiledb.tiledb_query_get_relevant_fragment_num(ctx.getCtxp(), queryp, num));
-
-    return tiledb.ullp_value(num).longValue();
+    try {
+      ctx.handleError(tiledb.tiledb_query_get_relevant_fragment_num(ctx.getCtxp(), queryp, num));
+      return tiledb.ullp_value(num).longValue();
+    } finally {
+      tiledb.delete_ullp(num);
+    }
   }
 
   /**
@@ -293,12 +295,16 @@ public class Query implements AutoCloseable {
     SWIGTYPE_p_unsigned_long_long offsetsSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long dataSize = tiledb.new_ullp();
 
-    ctx.handleError(
-        tiledb.tiledb_query_get_est_result_size_var(
-            ctx.getCtxp(), queryp, column, offsetsSize, dataSize));
-
-    return new Pair(
-        tiledb.ullp_value(offsetsSize).longValue(), tiledb.ullp_value(dataSize).longValue());
+    try {
+      ctx.handleError(
+          tiledb.tiledb_query_get_est_result_size_var(
+              ctx.getCtxp(), queryp, column, offsetsSize, dataSize));
+      return new Pair(
+          tiledb.ullp_value(offsetsSize).longValue(), tiledb.ullp_value(dataSize).longValue());
+    } finally {
+      tiledb.delete_ullp(offsetsSize);
+      tiledb.delete_ullp(dataSize);
+    }
   }
 
   /**
@@ -316,13 +322,19 @@ public class Query implements AutoCloseable {
     SWIGTYPE_p_unsigned_long_long offsets = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long validity = tiledb.new_ullp();
 
-    ctx.handleError(
-        tiledb.tiledb_query_get_est_result_size_var_nullable(
-            ctx.getCtxp(), queryp, column, offsets, size, validity));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_query_get_est_result_size_var_nullable(
+              ctx.getCtxp(), queryp, column, offsets, size, validity));
 
-    return new Pair(
-        new Pair(tiledb.ullp_value(offsets).longValue(), tiledb.ullp_value(size).longValue()),
-        tiledb.ullp_value(validity).longValue());
+      return new Pair(
+          new Pair(tiledb.ullp_value(offsets).longValue(), tiledb.ullp_value(size).longValue()),
+          tiledb.ullp_value(validity).longValue());
+    } finally {
+      tiledb.delete_ullp(size);
+      tiledb.delete_ullp(offsets);
+      tiledb.delete_ullp(validity);
+    }
   }
 
   /**
@@ -338,11 +350,16 @@ public class Query implements AutoCloseable {
     SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long validity = tiledb.new_ullp();
 
-    ctx.handleError(
-        tiledb.tiledb_query_get_est_result_size_nullable(
-            ctx.getCtxp(), queryp, column, size, validity));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_query_get_est_result_size_nullable(
+              ctx.getCtxp(), queryp, column, size, validity));
 
-    return new Pair(tiledb.ullp_value(size).longValue(), tiledb.ullp_value(validity).longValue());
+      return new Pair(tiledb.ullp_value(size).longValue(), tiledb.ullp_value(validity).longValue());
+    } finally {
+      tiledb.delete_ullp(size);
+      tiledb.delete_ullp(validity);
+    }
   }
 
   /**
@@ -440,7 +457,9 @@ public class Query implements AutoCloseable {
     try (ArraySchema schema = array.getSchema()) {
       try (Domain domain = schema.getDomain()) {
         if (domain.hasDimension(attr)) {
-          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
+          Dimension dim = domain.getDimension(attr);
+          Types.typeCheck(dim.getType(), buffer.getNativeType());
+          dim.close();
         } else {
           try (Attribute attribute = schema.getAttribute(attr)) {
             Types.typeCheck(attribute.getType(), buffer.getNativeType());
@@ -503,7 +522,9 @@ public class Query implements AutoCloseable {
     try (ArraySchema schema = array.getSchema()) {
       try (Domain domain = schema.getDomain()) {
         if (domain.hasDimension(attr)) {
-          Types.typeCheck(domain.getDimension(attr).getType(), buffer.getNativeType());
+          Dimension dim = domain.getDimension(attr);
+          Types.typeCheck(dim.getType(), buffer.getNativeType());
+          dim.close();
         } else {
           try (Attribute attribute = schema.getAttribute(attr)) {
             Types.typeCheck(attribute.getType(), buffer.getNativeType());
@@ -1350,9 +1371,15 @@ public class Query implements AutoCloseable {
    */
   public String getPlan() throws TileDBError {
     SWIGTYPE_p_p_tiledb_string_handle_t plan = tiledb.new_tiledb_string_handle_tpp();
+    TileDBString ts = null;
 
-    ctx.handleError(tiledb.tiledb_query_get_plan(ctx.getCtxp(), queryp, plan));
-    return new TileDBString(ctx, plan).getView().getFirst();
+    try {
+      ctx.handleError(tiledb.tiledb_query_get_plan(ctx.getCtxp(), queryp, plan));
+      ts = new TileDBString(ctx, plan);
+      return ts.getView().getFirst();
+    } finally {
+      if (ts != null) ts.close();
+    }
   }
 
   /**
@@ -1409,6 +1436,7 @@ public class Query implements AutoCloseable {
         } else {
           estimations.put(name, new Pair<>(null, this.getEstResultSize(ctx, name)));
         }
+        dimension.close();
       }
 
       for (Attribute attribute : schema.getAttributes().values()) {
@@ -1444,9 +1472,13 @@ public class Query implements AutoCloseable {
    */
   public long getFragmentNum() throws TileDBError {
     SWIGTYPE_p_unsigned_int fragmentNum = tiledb.new_uintp();
-    ctx.handleError(tiledb.tiledb_query_get_fragment_num(ctx.getCtxp(), queryp, fragmentNum));
 
-    return tiledb.uintp_value(fragmentNum);
+    try {
+      ctx.handleError(tiledb.tiledb_query_get_fragment_num(ctx.getCtxp(), queryp, fragmentNum));
+      return tiledb.uintp_value(fragmentNum);
+    } finally {
+      tiledb.delete_uintp(fragmentNum);
+    }
   }
 
   /**
@@ -1458,18 +1490,27 @@ public class Query implements AutoCloseable {
    */
   public String getFragmentURI(BigInteger idx) throws TileDBError {
     SWIGTYPE_p_p_char uri = tiledb.new_charpp();
-    ctx.handleError(tiledb.tiledb_query_get_fragment_uri(ctx.getCtxp(), queryp, idx, uri));
 
-    return tiledb.charpp_value(uri);
+    try {
+      ctx.handleError(tiledb.tiledb_query_get_fragment_uri(ctx.getCtxp(), queryp, idx, uri));
+      return tiledb.charpp_value(uri);
+    } finally {
+      tiledb.delete_charpp(uri);
+    }
   }
 
   public Pair<Long, Long> getFragmentTimestampRange(BigInteger idx) throws TileDBError {
     SWIGTYPE_p_unsigned_long_long t1 = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long t2 = tiledb.new_ullp();
-    ctx.handleError(
-        tiledb.tiledb_query_get_fragment_timestamp_range(ctx.getCtxp(), queryp, idx, t1, t2));
 
-    return new Pair(tiledb.ullp_value(t1), tiledb.ullp_value(t2));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_query_get_fragment_timestamp_range(ctx.getCtxp(), queryp, idx, t1, t2));
+      return new Pair(tiledb.ullp_value(t1), tiledb.ullp_value(t2));
+    } finally {
+      tiledb.delete_ullp(t1);
+      tiledb.delete_ullp(t2);
+    }
   }
 
   @Override
@@ -1511,12 +1552,9 @@ public class Query implements AutoCloseable {
    * @throws TileDBError
    */
   public void setCondition(QueryCondition queryCondition) throws TileDBError {
-    SWIGTYPE_p_tiledb_query_condition_t condition_t = queryCondition.getConditionp();
-    try {
-      ctx.handleError(tiledb.tiledb_query_set_condition(ctx.getCtxp(), getQueryp(), condition_t));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_query_set_condition(
+            ctx.getCtxp(), getQueryp(), queryCondition.getConditionp()));
   }
 
   /**
@@ -1525,15 +1563,13 @@ public class Query implements AutoCloseable {
    */
   public Config getConfig() throws TileDBError {
     SWIGTYPE_p_p_tiledb_config_t configpp = tiledb.new_tiledb_config_tpp();
-    Config config;
     try {
       ctx.handleError(tiledb.tiledb_query_get_config(ctx.getCtxp(), this.queryp, configpp));
-      config = new Config(configpp);
-    } finally {
+      return new Config(configpp);
+    } catch (TileDBError e) {
       tiledb.delete_tiledb_config_tpp(configpp);
+      throw e;
     }
-
-    return config;
   }
 
   /** Free's native TileDB resources associated with the Query object */
@@ -1545,6 +1581,7 @@ public class Query implements AutoCloseable {
         subarray.close();
       }
       tiledb.tiledb_query_free(querypp);
+      tiledb.delete_tiledb_query_tpp(querypp);
       queryp = null;
     }
   }

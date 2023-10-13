@@ -75,12 +75,8 @@ public class Group implements AutoCloseable {
    * @throws TileDBError
    */
   public void setConfig(Config config) throws TileDBError {
-    try {
-      ctx.handleError(
-          tiledb.tiledb_group_set_config(ctx.getCtxp(), getGroupp(), config.getConfigp()));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_group_set_config(ctx.getCtxp(), getGroupp(), config.getConfigp()));
   }
 
   /**
@@ -122,19 +118,21 @@ public class Group implements AutoCloseable {
             ? tiledb.new_tiledb_datatype_tp()
             : tiledb.copy_tiledb_datatype_tp(nativeType.toSwigEnum());
 
-    ctx.handleError(
-        tiledb.tiledb_group_get_metadata(
-            ctx.getCtxp(), getGroupp(), key, value_type, value_num, resultArrpp));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_group_get_metadata(
+              ctx.getCtxp(), getGroupp(), key, value_type, value_num, resultArrpp));
 
-    Datatype derivedNativeType = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
+      Datatype derivedNativeType =
+          Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
 
-    long value = tiledb.uintp_value(value_num);
-    NativeArray result = new NativeArray(ctx, derivedNativeType, resultArrpp, (int) value);
-
-    tiledb.delete_uintp(value_num);
-    tiledb.delete_tiledb_datatype_tp(value_type);
-
-    return result;
+      long value = tiledb.uintp_value(value_num);
+      return new NativeArray(ctx, derivedNativeType, resultArrpp, (int) value);
+    } finally {
+      tiledb.delete_voidpArray(resultArrpp);
+      tiledb.delete_uintp(value_num);
+      tiledb.delete_tiledb_datatype_tp(value_type);
+    }
   }
 
   /**
@@ -163,11 +161,13 @@ public class Group implements AutoCloseable {
   public BigInteger getMetadataNum() throws TileDBError {
     if (!isOpen()) throw new TileDBError("Group with URI: " + uri + " is closed");
     SWIGTYPE_p_unsigned_long_long value_num = tiledb.new_ullp();
-    ctx.handleError(tiledb.tiledb_group_get_metadata_num(ctx.getCtxp(), getGroupp(), value_num));
-    BigInteger value = tiledb.ullp_value(value_num);
-    tiledb.delete_ullp(value_num);
 
-    return value;
+    try {
+      ctx.handleError(tiledb.tiledb_group_get_metadata_num(ctx.getCtxp(), getGroupp(), value_num));
+      return tiledb.ullp_value(value_num);
+    } finally {
+      tiledb.delete_ullp(value_num);
+    }
   }
 
   /**
@@ -178,15 +178,13 @@ public class Group implements AutoCloseable {
    */
   public long getMemberCount() throws TileDBError {
     SWIGTYPE_p_unsigned_long_long mc = tiledb.new_ullp();
+
     try {
       ctx.handleError(tiledb.tiledb_group_get_member_count(ctx.getCtxp(), getGroupp(), mc));
-    } catch (TileDBError err) {
+      return tiledb.ullp_value(mc).longValue();
+    } finally {
       tiledb.delete_ullp(mc);
-      throw err;
     }
-    long memberCount = tiledb.ullp_value(mc).longValue();
-    tiledb.delete_ullp(mc);
-    return memberCount;
   }
 
   /**
@@ -200,11 +198,16 @@ public class Group implements AutoCloseable {
     Util.checkBigIntegerRange(index);
     SWIGTYPE_p_tiledb_object_t objtypep = tiledb.new_tiledb_object_tp();
     SWIGTYPE_p_p_char uripp = tiledb.new_charpp();
-    SWIGTYPE_p_p_char namepp = tiledb.new_charpp(); // useless in this method
-    ctx.handleError(
-        tiledb.tiledb_group_get_member_by_index(
-            ctx.getCtxp(), getGroupp(), index, uripp, objtypep, uripp));
-    return tiledb.charpp_value(uripp);
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_group_get_member_by_index(
+              ctx.getCtxp(), getGroupp(), index, uripp, objtypep, uripp));
+      return tiledb.charpp_value(uripp);
+    } finally {
+      tiledb.delete_charpp(uripp);
+      tiledb.delete_tiledb_object_tp(objtypep);
+    }
   }
 
   /**
@@ -217,9 +220,16 @@ public class Group implements AutoCloseable {
   public String getMemberURIByName(String name) throws TileDBError {
     SWIGTYPE_p_tiledb_object_t objtypep = tiledb.new_tiledb_object_tp();
     SWIGTYPE_p_p_char uripp = tiledb.new_charpp();
-    ctx.handleError(
-        tiledb.tiledb_group_get_member_by_name(ctx.getCtxp(), getGroupp(), name, uripp, objtypep));
-    return tiledb.charpp_value(uripp);
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_group_get_member_by_name(
+              ctx.getCtxp(), getGroupp(), name, uripp, objtypep));
+      return tiledb.charpp_value(uripp);
+    } finally {
+      tiledb.delete_charpp(uripp);
+      tiledb.delete_tiledb_object_tp(objtypep);
+    }
   }
 
   /**
@@ -232,12 +242,19 @@ public class Group implements AutoCloseable {
   public String getMemberNameByIndex(BigInteger index) throws TileDBError {
     Util.checkBigIntegerRange(index);
     SWIGTYPE_p_tiledb_object_t objtypep = tiledb.new_tiledb_object_tp();
-    SWIGTYPE_p_p_char uripp = tiledb.new_charpp(); // useless in this method
+    SWIGTYPE_p_p_char uripp = tiledb.new_charpp();
     SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
-    ctx.handleError(
-        tiledb.tiledb_group_get_member_by_index(
-            ctx.getCtxp(), getGroupp(), index, uripp, objtypep, namepp));
-    return tiledb.charpp_value(namepp);
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_group_get_member_by_index(
+              ctx.getCtxp(), getGroupp(), index, uripp, objtypep, namepp));
+      return tiledb.charpp_value(namepp);
+    } finally {
+      tiledb.delete_charpp(uripp);
+      tiledb.delete_charpp(namepp);
+      tiledb.delete_tiledb_object_tp(objtypep);
+    }
   }
 
   /**
@@ -274,9 +291,14 @@ public class Group implements AutoCloseable {
    */
   public void dumpStr(String string, boolean flag) throws TileDBError {
     SWIGTYPE_p_p_char valuepp = tiledb.new_charpp();
-    ctx.handleError(
-        tiledb.tiledb_group_dump_str(
-            ctx.getCtxp(), getGroupp(), valuepp, flag ? (short) 1 : (short) 0));
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_group_dump_str(
+              ctx.getCtxp(), getGroupp(), valuepp, flag ? (short) 1 : (short) 0));
+    } finally {
+      tiledb.delete_charpp(valuepp);
+    }
   }
 
   /**
@@ -296,22 +318,23 @@ public class Group implements AutoCloseable {
     SWIGTYPE_p_unsigned_int value_num = tiledb.new_uintp();
     SWIGTYPE_p_p_void value = tiledb.new_voidpArray(0);
 
-    ctx.handleError(
-        tiledb.tiledb_group_get_metadata_from_index(
-            ctx.getCtxp(), getGroupp(), index, key, key_len, value_type, value_num, value));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_group_get_metadata_from_index(
+              ctx.getCtxp(), getGroupp(), index, key, key_len, value_type, value_num, value));
 
-    String keyString = tiledb.charpp_value(key);
-    long valueLength = tiledb.uintp_value(value_num);
-    Datatype nativeType = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
+      String keyString = tiledb.charpp_value(key);
+      long valueLength = tiledb.uintp_value(value_num);
+      Datatype nativeType = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
 
-    NativeArray result = new NativeArray(ctx, nativeType, value, (int) valueLength);
-
-    tiledb.delete_uintp(value_num);
-    tiledb.delete_uintp(key_len);
-    tiledb.delete_charpp(key);
-    tiledb.delete_tiledb_datatype_tp(value_type);
-
-    return new Pair<String, NativeArray>(keyString, result);
+      NativeArray result = new NativeArray(ctx, nativeType, value, (int) valueLength);
+      return new Pair<String, NativeArray>(keyString, result);
+    } finally {
+      tiledb.delete_uintp(value_num);
+      tiledb.delete_uintp(key_len);
+      tiledb.delete_charpp(key);
+      tiledb.delete_tiledb_datatype_tp(value_type);
+    }
   }
 
   /**
@@ -327,15 +350,15 @@ public class Group implements AutoCloseable {
     SWIGTYPE_p_tiledb_datatype_t value_type = tiledb.new_tiledb_datatype_tp();
     SWIGTYPE_p_int has_key = tiledb.new_intp();
 
-    ctx.handleError(
-        tiledb.tiledb_group_has_metadata_key(ctx.getCtxp(), getGroupp(), key, value_type, has_key));
-
-    Boolean result = tiledb.intp_value(has_key) > 0;
-
-    tiledb.delete_intp(has_key);
-    tiledb.delete_tiledb_datatype_tp(value_type);
-
-    return result;
+    try {
+      ctx.handleError(
+          tiledb.tiledb_group_has_metadata_key(
+              ctx.getCtxp(), getGroupp(), key, value_type, has_key));
+      return tiledb.intp_value(has_key) > 0;
+    } finally {
+      tiledb.delete_intp(has_key);
+      tiledb.delete_tiledb_datatype_tp(value_type);
+    }
   }
 
   /**
@@ -345,15 +368,13 @@ public class Group implements AutoCloseable {
    * @throws TileDBError
    */
   public boolean isOpen() throws TileDBError {
-    boolean isOpen;
     SWIGTYPE_p_int ret = tiledb.new_intp();
     try {
       ctx.handleError(tiledb.tiledb_group_is_open(ctx.getCtxp(), getGroupp(), ret));
-      isOpen = tiledb.intp_value(ret) != 0;
+      return tiledb.intp_value(ret) != 0;
     } finally {
       tiledb.delete_intp(ret);
     }
-    return isOpen;
   }
 
   /**
@@ -384,15 +405,15 @@ public class Group implements AutoCloseable {
    * @throws TileDBError
    */
   public boolean getIsRelativeURIByName(String name) throws TileDBError {
+    NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT8);
+    SWIGTYPE_p_unsigned_char relative = arr.getUint8_tArray().cast();
+
     try {
-      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT8);
-      SWIGTYPE_p_unsigned_char relative = arr.getUint8_tArray().cast();
       ctx.handleError(
           tiledb.tiledb_group_get_is_relative_uri_by_name(ctx.getCtxp(), groupp, name, relative));
-
       return ((short) arr.getItem(0) == 1);
-    } catch (TileDBError err) {
-      throw err;
+    } finally {
+      arr.close();
     }
   }
 
@@ -405,13 +426,8 @@ public class Group implements AutoCloseable {
    * @throws TileDBError
    */
   public void vacuumMetadata(Config config) throws TileDBError {
-    SWIGTYPE_p_tiledb_config_t configp = null;
-    try {
-      configp = config.getConfigp();
-    } catch (NullPointerException e) {
-      // using null/default
-    }
-    ctx.handleError(tiledb.tiledb_group_vacuum_metadata(ctx.getCtxp(), uri, configp));
+    if (config == null) throw new TileDBError("The Config can not be null");
+    ctx.handleError(tiledb.tiledb_group_vacuum_metadata(ctx.getCtxp(), uri, config.getConfigp()));
   }
 
   /**
@@ -422,13 +438,9 @@ public class Group implements AutoCloseable {
    * @throws TileDBError
    */
   public void consolidateMetadata(Config config) throws TileDBError {
-    SWIGTYPE_p_tiledb_config_t configp = null;
-    try {
-      configp = config.getConfigp();
-    } catch (NullPointerException e) {
-      // using null/default
-    }
-    ctx.handleError(tiledb.tiledb_group_consolidate_metadata(ctx.getCtxp(), uri, configp));
+    if (config == null) throw new TileDBError("The Config can not be null");
+    ctx.handleError(
+        tiledb.tiledb_group_consolidate_metadata(ctx.getCtxp(), uri, config.getConfigp()));
   }
 
   /** Close resources */
@@ -436,6 +448,7 @@ public class Group implements AutoCloseable {
     if (groupp != null && grouppp != null) {
       tiledb.tiledb_group_close(ctx.getCtxp(), groupp);
       tiledb.tiledb_group_free(grouppp);
+      tiledb.delete_tiledb_group_tpp(grouppp);
       grouppp = null;
       groupp = null;
     }

@@ -3,7 +3,7 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.*;
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_fragment_info_t;
 
-public class FragmentInfo {
+public class FragmentInfo implements AutoCloseable {
   private SWIGTYPE_p_tiledb_fragment_info_t fragmentInfop;
   private SWIGTYPE_p_p_tiledb_fragment_info_t fragmentInfopp;
   private Context ctx;
@@ -19,9 +19,15 @@ public class FragmentInfo {
     this.uri = uri;
 
     this.fragmentInfopp = tiledb.new_tiledb_fragment_info_tpp();
-    ctx.handleError(tiledb.tiledb_fragment_info_alloc(ctx.getCtxp(), uri, fragmentInfopp));
-    fragmentInfop = tiledb.tiledb_fragment_info_tpp_value(this.fragmentInfopp);
-    ctx.handleError(tiledb.tiledb_fragment_info_load(ctx.getCtxp(), fragmentInfop));
+
+    try {
+      ctx.handleError(tiledb.tiledb_fragment_info_alloc(ctx.getCtxp(), uri, fragmentInfopp));
+      this.fragmentInfop = tiledb.tiledb_fragment_info_tpp_value(this.fragmentInfopp);
+      ctx.handleError(tiledb.tiledb_fragment_info_load(ctx.getCtxp(), fragmentInfop));
+    } catch (TileDBError e) {
+      tiledb.delete_tiledb_fragment_info_tpp(fragmentInfopp);
+      throw e;
+    }
   }
 
   /**
@@ -35,10 +41,16 @@ public class FragmentInfo {
     this.uri = uri;
 
     this.fragmentInfopp = tiledb.new_tiledb_fragment_info_tpp();
-    ctx.handleError(tiledb.tiledb_fragment_info_alloc(ctx.getCtxp(), uri, fragmentInfopp));
-    fragmentInfop = tiledb.tiledb_fragment_info_tpp_value(this.fragmentInfopp);
-    this.setConfig(config);
-    ctx.handleError(tiledb.tiledb_fragment_info_load(ctx.getCtxp(), fragmentInfop));
+
+    try {
+      ctx.handleError(tiledb.tiledb_fragment_info_alloc(ctx.getCtxp(), uri, fragmentInfopp));
+      fragmentInfop = tiledb.tiledb_fragment_info_tpp_value(this.fragmentInfopp);
+      this.setConfig(config);
+      ctx.handleError(tiledb.tiledb_fragment_info_load(ctx.getCtxp(), fragmentInfop));
+    } catch (TileDBError e) {
+      tiledb.delete_tiledb_fragment_info_tpp(fragmentInfopp);
+      throw e;
+    }
   }
 
   /**
@@ -49,13 +61,9 @@ public class FragmentInfo {
    * @throws TileDBError
    */
   public void setConfig(Config config) throws TileDBError {
-    try {
-      ctx.handleError(
-          tiledb.tiledb_fragment_info_set_config(
-              ctx.getCtxp(), this.fragmentInfop, config.getConfigp()));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_fragment_info_set_config(
+            ctx.getCtxp(), this.fragmentInfop, config.getConfigp()));
   }
 
   /**
@@ -72,11 +80,16 @@ public class FragmentInfo {
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_index(
-            ctx.getCtxp(), fragmentInfop, fragmentID, dimensionID, startSize, endSize));
-    return new Pair(
-        tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_index(
+              ctx.getCtxp(), fragmentInfop, fragmentID, dimensionID, startSize, endSize));
+      return new Pair(
+          tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+    } finally {
+      tiledb.delete_ullp(startSize);
+      tiledb.delete_ullp(endSize);
+    }
   }
 
   /**
@@ -93,11 +106,16 @@ public class FragmentInfo {
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_name(
-            ctx.getCtxp(), fragmentInfop, fragmentID, dimensionName, startSize, endSize));
-    return new Pair(
-        tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_name(
+              ctx.getCtxp(), fragmentInfop, fragmentID, dimensionName, startSize, endSize));
+      return new Pair(
+          tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+    } finally {
+      tiledb.delete_ullp(startSize);
+      tiledb.delete_ullp(endSize);
+    }
   }
 
   /**
@@ -109,10 +127,13 @@ public class FragmentInfo {
   public long getFragmentNum() throws TileDBError {
     SWIGTYPE_p_unsigned_int num = tiledb.new_uintp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_fragment_num(ctx.getCtxp(), this.fragmentInfop, num));
-
-    return tiledb.uintp_value(num);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_fragment_num(ctx.getCtxp(), this.fragmentInfop, num));
+      return tiledb.uintp_value(num);
+    } finally {
+      tiledb.delete_uintp(num);
+    }
   }
 
   /**
@@ -124,9 +145,15 @@ public class FragmentInfo {
    */
   public String getFragmentURI(long fragmentID) throws TileDBError {
     SWIGTYPE_p_p_char uri = tiledb.new_charpp();
-    tiledb.tiledb_fragment_info_get_fragment_uri(ctx.getCtxp(), fragmentInfop, fragmentID, uri);
 
-    return tiledb.charpp_value(uri);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_fragment_uri(
+              ctx.getCtxp(), fragmentInfop, fragmentID, uri));
+      return tiledb.charpp_value(uri);
+    } finally {
+      tiledb.delete_charpp(uri);
+    }
   }
 
   /**
@@ -138,9 +165,15 @@ public class FragmentInfo {
    */
   public long getFragmentSize(long fragmentID) throws TileDBError {
     SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
-    tiledb.tiledb_fragment_info_get_fragment_size(ctx.getCtxp(), fragmentInfop, fragmentID, size);
 
-    return tiledb.ullp_value(size).longValue();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_fragment_size(
+              ctx.getCtxp(), fragmentInfop, fragmentID, size));
+      return tiledb.ullp_value(size).longValue();
+    } finally {
+      tiledb.delete_ullp(size);
+    }
   }
 
   /**
@@ -163,9 +196,14 @@ public class FragmentInfo {
    */
   public long getTotalCellNum() throws TileDBError {
     SWIGTYPE_p_unsigned_long_long cellNum = tiledb.new_ullp();
-    tiledb.tiledb_fragment_info_get_total_cell_num(ctx.getCtxp(), fragmentInfop, cellNum);
 
-    return tiledb.ullp_value(cellNum).longValue();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_total_cell_num(ctx.getCtxp(), fragmentInfop, cellNum));
+      return tiledb.ullp_value(cellNum).longValue();
+    } finally {
+      tiledb.delete_ullp(cellNum);
+    }
   }
 
   /**
@@ -176,10 +214,15 @@ public class FragmentInfo {
    * @throws TileDBError
    */
   public boolean getDense(long fragmentID) throws TileDBError {
-    SWIGTYPE_p_int size = tiledb.new_intp();
-    tiledb.tiledb_fragment_info_get_dense(ctx.getCtxp(), fragmentInfop, fragmentID, size);
+    SWIGTYPE_p_int flag = tiledb.new_intp();
 
-    return tiledb.intp_value(size) == 1;
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_dense(ctx.getCtxp(), fragmentInfop, fragmentID, flag));
+      return tiledb.intp_value(flag) == 1;
+    } finally {
+      tiledb.delete_intp(flag);
+    }
   }
 
   /**
@@ -190,10 +233,15 @@ public class FragmentInfo {
    * @throws TileDBError
    */
   public boolean getSparse(long fragmentID) throws TileDBError {
-    SWIGTYPE_p_int size = tiledb.new_intp();
-    tiledb.tiledb_fragment_info_get_sparse(ctx.getCtxp(), fragmentInfop, fragmentID, size);
+    SWIGTYPE_p_int flag = tiledb.new_intp();
 
-    return tiledb.intp_value(size) == 1;
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_sparse(ctx.getCtxp(), fragmentInfop, fragmentID, flag));
+      return tiledb.intp_value(flag) == 1;
+    } finally {
+      tiledb.delete_intp(flag);
+    }
   }
 
   /**
@@ -206,11 +254,17 @@ public class FragmentInfo {
   public Pair<Long, Long> getTimestampRange(long fragmentID) throws TileDBError {
     SWIGTYPE_p_unsigned_long_long start = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long end = tiledb.new_ullp();
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_timestamp_range(
-            ctx.getCtxp(), fragmentInfop, fragmentID, start, end));
 
-    return new Pair(tiledb.ullp_value(start).longValue(), tiledb.ullp_value(end).longValue());
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_timestamp_range(
+              ctx.getCtxp(), fragmentInfop, fragmentID, start, end));
+
+      return new Pair(tiledb.ullp_value(start).longValue(), tiledb.ullp_value(end).longValue());
+    } finally {
+      tiledb.delete_ullp(start);
+      tiledb.delete_ullp(end);
+    }
   }
 
   /**
@@ -222,8 +276,11 @@ public class FragmentInfo {
    * @throws TileDBError
    */
   public Pair getNonEmptyDomainFromIndex(long fragmentID, long dimensionID) throws TileDBError {
-    try (Array arr = new Array(ctx, uri)) {
-      Datatype type = arr.getSchema().getDomain().getDimension(dimensionID).getType();
+    try (Array arr = new Array(ctx, uri);
+        ArraySchema arraySchema = arr.getSchema();
+        Domain domain = arraySchema.getDomain();
+        Dimension dim = domain.getDimension(dimensionID)) {
+      Datatype type = dim.getType();
 
       try (NativeArray array = new NativeArray(ctx, 2, type)) {
         ctx.handleError(
@@ -244,8 +301,11 @@ public class FragmentInfo {
    * @throws TileDBError
    */
   public Pair getNonEmptyDomainFromName(long fragmentID, String dimensionName) throws TileDBError {
-    try (Array arr = new Array(ctx, uri)) {
-      Datatype type = arr.getSchema().getDomain().getDimension(dimensionName).getType();
+    try (Array arr = new Array(ctx, uri);
+        ArraySchema arraySchema = arr.getSchema();
+        Domain domain = arraySchema.getDomain();
+        Dimension dim = domain.getDimension(dimensionName)) {
+      Datatype type = dim.getType();
 
       try (NativeArray array = new NativeArray(ctx, 2, type)) {
         ctx.handleError(
@@ -284,33 +344,37 @@ public class FragmentInfo {
    * @throws TileDBError
    */
   public Pair getNonEmptyDomainVarFromIndex(long fragmentID, long dimensionID) throws TileDBError {
-    try (Array arr = new Array(ctx, uri)) {
-      try (Dimension dimension = arr.getSchema().getDomain().getDimension(dimensionID)) {
-        Datatype type = dimension.getType();
+    try (Array arr = new Array(ctx, uri);
+        ArraySchema arraySchema = arr.getSchema();
+        Domain domain = arraySchema.getDomain();
+        Dimension dim = domain.getDimension(dimensionID)) {
+      Datatype type = dim.getType();
 
-        SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
-        SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+      SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
+      SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_index(
+              ctx.getCtxp(), fragmentInfop, fragmentID, dimensionID, startSize, endSize));
+
+      try (NativeArray startRange =
+              new NativeArray(ctx, tiledb.ullp_value(startSize).intValue(), type);
+          NativeArray endRange =
+              new NativeArray(ctx, tiledb.ullp_value(endSize).intValue(), type)) {
 
         ctx.handleError(
-            tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_index(
-                ctx.getCtxp(), fragmentInfop, fragmentID, dimensionID, startSize, endSize));
+            tiledb.tiledb_fragment_info_get_non_empty_domain_var_from_index(
+                ctx.getCtxp(),
+                fragmentInfop,
+                fragmentID,
+                dimensionID,
+                startRange.toVoidPointer(),
+                endRange.toVoidPointer()));
 
-        try (NativeArray startRange =
-                new NativeArray(ctx, tiledb.ullp_value(startSize).intValue(), type);
-            NativeArray endRange =
-                new NativeArray(ctx, tiledb.ullp_value(endSize).intValue(), type)) {
-
-          ctx.handleError(
-              tiledb.tiledb_fragment_info_get_non_empty_domain_var_from_index(
-                  ctx.getCtxp(),
-                  fragmentInfop,
-                  fragmentID,
-                  dimensionID,
-                  startRange.toVoidPointer(),
-                  endRange.toVoidPointer()));
-
-          return new Pair(startRange.toJavaArray(), endRange.toJavaArray());
-        }
+        return new Pair(startRange.toJavaArray(), endRange.toJavaArray());
+      } finally {
+        tiledb.delete_ullp(startSize);
+        tiledb.delete_ullp(endSize);
       }
     }
   }
@@ -326,33 +390,37 @@ public class FragmentInfo {
    */
   public Pair getNonEmptyDomainVarFromName(long fragmentID, String dimensionName)
       throws TileDBError {
-    SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
-    SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+    try (Array arr = new Array(ctx, uri);
+        ArraySchema arraySchema = arr.getSchema();
+        Domain domain = arraySchema.getDomain();
+        Dimension dim = domain.getDimension(dimensionName)) {
+      Datatype type = dim.getType();
 
-    try (Array arr = new Array(ctx, uri)) {
-      try (Dimension dimension = arr.getSchema().getDomain().getDimension(dimensionName)) {
-        Datatype type = dimension.getType();
+      SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
+      SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_name(
+              ctx.getCtxp(), fragmentInfop, fragmentID, dimensionName, startSize, endSize));
+
+      try (NativeArray startRange =
+              new NativeArray(ctx, tiledb.ullp_value(startSize).intValue(), type);
+          NativeArray endRange =
+              new NativeArray(ctx, tiledb.ullp_value(endSize).intValue(), type)) {
 
         ctx.handleError(
-            tiledb.tiledb_fragment_info_get_non_empty_domain_var_size_from_name(
-                ctx.getCtxp(), fragmentInfop, fragmentID, dimensionName, startSize, endSize));
+            tiledb.tiledb_fragment_info_get_non_empty_domain_var_from_name(
+                ctx.getCtxp(),
+                fragmentInfop,
+                fragmentID,
+                dimensionName,
+                startRange.toVoidPointer(),
+                endRange.toVoidPointer()));
 
-        try (NativeArray startRange =
-                new NativeArray(ctx, tiledb.ullp_value(startSize).intValue(), type);
-            NativeArray endRange =
-                new NativeArray(ctx, tiledb.ullp_value(endSize).intValue(), type)) {
-
-          ctx.handleError(
-              tiledb.tiledb_fragment_info_get_non_empty_domain_var_from_name(
-                  ctx.getCtxp(),
-                  fragmentInfop,
-                  fragmentID,
-                  dimensionName,
-                  startRange.toVoidPointer(),
-                  endRange.toVoidPointer()));
-
-          return new Pair(startRange.toJavaArray(), endRange.toJavaArray());
-        }
+        return new Pair(startRange.toJavaArray(), endRange.toJavaArray());
+      } finally {
+        tiledb.delete_ullp(startSize);
+        tiledb.delete_ullp(endSize);
       }
     }
   }
@@ -371,11 +439,14 @@ public class FragmentInfo {
   public long getCellNum(long fragmentID) throws TileDBError {
     SWIGTYPE_p_unsigned_long_long cellNum = tiledb.new_ullp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_cell_num(
-            ctx.getCtxp(), fragmentInfop, fragmentID, cellNum));
-
-    return tiledb.ullp_value(cellNum).longValue();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_cell_num(
+              ctx.getCtxp(), fragmentInfop, fragmentID, cellNum));
+      return tiledb.ullp_value(cellNum).longValue();
+    } finally {
+      tiledb.delete_ullp(cellNum);
+    }
   }
 
   /**
@@ -388,10 +459,14 @@ public class FragmentInfo {
   public long getVersion(long fragmentID) throws TileDBError {
     SWIGTYPE_p_unsigned_int version = tiledb.new_uintp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_version(ctx.getCtxp(), fragmentInfop, fragmentID, version));
-
-    return tiledb.uintp_value(version);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_version(
+              ctx.getCtxp(), fragmentInfop, fragmentID, version));
+      return tiledb.uintp_value(version);
+    } finally {
+      tiledb.delete_uintp(version);
+    }
   }
 
   /**
@@ -404,11 +479,14 @@ public class FragmentInfo {
   public boolean hasConsolidatedMetadata(long fragmentID) throws TileDBError {
     SWIGTYPE_p_int has = tiledb.new_intp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_has_consolidated_metadata(
-            ctx.getCtxp(), fragmentInfop, fragmentID, has));
-
-    return tiledb.intp_value(has) == 1;
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_has_consolidated_metadata(
+              ctx.getCtxp(), fragmentInfop, fragmentID, has));
+      return tiledb.intp_value(has) == 1;
+    } finally {
+      tiledb.delete_intp(has);
+    }
   }
 
   /**
@@ -420,11 +498,14 @@ public class FragmentInfo {
   public long getUnconsolidatedMetadataNum() throws TileDBError {
     SWIGTYPE_p_unsigned_int unconsolidated = tiledb.new_uintp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_unconsolidated_metadata_num(
-            ctx.getCtxp(), fragmentInfop, unconsolidated));
-
-    return tiledb.uintp_value(unconsolidated);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_unconsolidated_metadata_num(
+              ctx.getCtxp(), fragmentInfop, unconsolidated));
+      return tiledb.uintp_value(unconsolidated);
+    } finally {
+      tiledb.delete_uintp(unconsolidated);
+    }
   }
 
   /**
@@ -436,10 +517,13 @@ public class FragmentInfo {
   public long getToVacuumNum() throws TileDBError {
     SWIGTYPE_p_unsigned_int toVacuumNum = tiledb.new_uintp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_to_vacuum_num(ctx.getCtxp(), fragmentInfop, toVacuumNum));
-
-    return tiledb.uintp_value(toVacuumNum);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_to_vacuum_num(ctx.getCtxp(), fragmentInfop, toVacuumNum));
+      return tiledb.uintp_value(toVacuumNum);
+    } finally {
+      tiledb.delete_uintp(toVacuumNum);
+    }
   }
 
   /**
@@ -452,11 +536,14 @@ public class FragmentInfo {
   public String getToVacuumUri(long fragmentID) throws TileDBError {
     SWIGTYPE_p_p_char uri = tiledb.new_charpp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_to_vacuum_uri(
-            ctx.getCtxp(), fragmentInfop, fragmentID, uri));
-
-    return tiledb.charpp_value(uri);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_to_vacuum_uri(
+              ctx.getCtxp(), fragmentInfop, fragmentID, uri));
+      return tiledb.charpp_value(uri);
+    } finally {
+      tiledb.delete_charpp(uri);
+    }
   }
 
   /**
@@ -468,9 +555,12 @@ public class FragmentInfo {
   public String dump() throws TileDBError {
     SWIGTYPE_p_p_char uri = tiledb.new_charpp();
 
-    ctx.handleError(tiledb.tiledb_fragment_info_dump_stdout(ctx.getCtxp(), fragmentInfop));
-
-    return tiledb.charpp_value(uri);
+    try {
+      ctx.handleError(tiledb.tiledb_fragment_info_dump_stdout(ctx.getCtxp(), fragmentInfop));
+      return tiledb.charpp_value(uri);
+    } finally {
+      tiledb.delete_charpp(uri);
+    }
   }
 
   /**
@@ -486,10 +576,15 @@ public class FragmentInfo {
    */
   public long getMBRNum(long fragmentID) throws TileDBError {
     SWIGTYPE_p_unsigned_long_long numFrags = tiledb.new_ullp();
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_mbr_num(
-            ctx.getCtxp(), this.fragmentInfop, fragmentID, numFrags));
-    return tiledb.ullp_value(numFrags).longValue();
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_mbr_num(
+              ctx.getCtxp(), this.fragmentInfop, fragmentID, numFrags));
+      return tiledb.ullp_value(numFrags).longValue();
+    } finally {
+      tiledb.delete_ullp(numFrags);
+    }
   }
 
   /**
@@ -555,11 +650,17 @@ public class FragmentInfo {
       throws TileDBError {
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_mbr_var_size_from_index(
-            ctx.getCtxp(), this.fragmentInfop, fragmentID, mid, dimId, startSize, endSize));
-    return new Pair<>(
-        tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_mbr_var_size_from_index(
+              ctx.getCtxp(), this.fragmentInfop, fragmentID, mid, dimId, startSize, endSize));
+      return new Pair<>(
+          tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+    } finally {
+      tiledb.delete_ullp(startSize);
+      tiledb.delete_ullp(endSize);
+    }
   }
 
   /**
@@ -575,11 +676,17 @@ public class FragmentInfo {
       throws TileDBError {
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_mbr_var_size_from_name(
-            ctx.getCtxp(), this.fragmentInfop, fragmentID, mid, dimName, startSize, endSize));
-    return new Pair<>(
-        tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_mbr_var_size_from_name(
+              ctx.getCtxp(), this.fragmentInfop, fragmentID, mid, dimName, startSize, endSize));
+      return new Pair<>(
+          tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
+    } finally {
+      tiledb.delete_ullp(startSize);
+      tiledb.delete_ullp(endSize);
+    }
   }
 
   /**
@@ -653,11 +760,14 @@ public class FragmentInfo {
   public String getArraySchemaName(long fragmentID) throws TileDBError {
     SWIGTYPE_p_p_char name = tiledb.new_charpp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_array_schema_name(
-            ctx.getCtxp(), fragmentInfop, fragmentID, name));
-
-    return tiledb.charpp_value(name);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_array_schema_name(
+              ctx.getCtxp(), fragmentInfop, fragmentID, name));
+      return tiledb.charpp_value(name);
+    } finally {
+      tiledb.delete_charpp(name);
+    }
   }
 
   /**
@@ -672,11 +782,14 @@ public class FragmentInfo {
   public String getFragmentName(long fragmentID) throws TileDBError {
     SWIGTYPE_p_p_char name = tiledb.new_charpp();
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_fragment_name(
-            ctx.getCtxp(), fragmentInfop, fragmentID, name));
-
-    return tiledb.charpp_value(name);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_fragment_name(
+              ctx.getCtxp(), fragmentInfop, fragmentID, name));
+      return tiledb.charpp_value(name);
+    } finally {
+      tiledb.delete_charpp(name);
+    }
   }
 
   /**
@@ -688,10 +801,26 @@ public class FragmentInfo {
    */
   public TileDBString getFragmentNameV2(long fragmentID) throws TileDBError {
     SWIGTYPE_p_p_tiledb_string_handle_t name = tiledb.new_tiledb_string_handle_tpp();
+    TileDBString ts = null;
 
-    ctx.handleError(
-        tiledb.tiledb_fragment_info_get_fragment_name_v2(
-            ctx.getCtxp(), fragmentInfop, fragmentID, name));
-    return new TileDBString(ctx, name);
+    try {
+      ctx.handleError(
+          tiledb.tiledb_fragment_info_get_fragment_name_v2(
+              ctx.getCtxp(), fragmentInfop, fragmentID, name));
+      ts = new TileDBString(ctx, name);
+      return ts;
+    } finally {
+      if (ts != null) ts.close();
+    }
+  }
+
+  @Override
+  public void close() throws Exception {
+    if (fragmentInfop != null) {
+      tiledb.tiledb_fragment_info_free(fragmentInfopp);
+      tiledb.delete_tiledb_fragment_info_tpp(fragmentInfopp);
+      fragmentInfop = null;
+      fragmentInfopp = null;
+    }
   }
 }

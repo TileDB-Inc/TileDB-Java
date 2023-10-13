@@ -586,6 +586,7 @@ public class VFS implements AutoCloseable {
   public void close() {
     if (vfsp != null) {
       tiledb.tiledb_vfs_free(vfspp);
+      tiledb.delete_tiledb_vfs_tpp(vfspp);
       vfsp = null;
       vfspp = null;
     }

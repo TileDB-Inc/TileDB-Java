@@ -38,6 +38,7 @@ public class Filter implements AutoCloseable {
   public void close() {
     if (filterp != null && filterpp != null) {
       tiledb.tiledb_filter_free(filterpp);
+      tiledb.delete_tiledb_filter_tpp(filterpp);
       filterpp = null;
       filterp = null;
     }

@@ -10,23 +10,22 @@ public class CompressionFilter extends Filter {
   protected CompressionFilter(Context ctx, tiledb_filter_type_t filter_type, int level)
       throws TileDBError {
     super(ctx, filter_type);
-    try (NativeArray levelArray =
+    NativeArray levelArray =
         new NativeArray(
             ctx,
             new int[] {
               level,
             },
-            Integer.class)) {
-      ctx.handleError(
-          tiledb.tiledb_filter_set_option(
-              ctx.getCtxp(),
-              getFilterp(),
-              tiledb_filter_option_t.TILEDB_COMPRESSION_LEVEL,
-              levelArray.toVoidPointer()));
-    } catch (TileDBError err) {
-      super.close();
-      throw err;
-    }
+            Integer.class);
+
+    ctx.handleError(
+        tiledb.tiledb_filter_set_option(
+            ctx.getCtxp(),
+            getFilterp(),
+            tiledb_filter_option_t.TILEDB_COMPRESSION_LEVEL,
+            levelArray.toVoidPointer()));
+
+    levelArray.close();
   }
 
   protected CompressionFilter(Context ctx, SWIGTYPE_p_p_tiledb_filter_t filterpp) {
@@ -40,15 +39,17 @@ public class CompressionFilter extends Filter {
   public int getLevel() throws TileDBError {
     Context ctx = getCtx();
     int level;
-    try (NativeArray levelArray = new NativeArray(ctx, 1, Integer.class)) {
-      ctx.handleError(
-          tiledb.tiledb_filter_get_option(
-              ctx.getCtxp(),
-              getFilterp(),
-              tiledb_filter_option_t.TILEDB_COMPRESSION_LEVEL,
-              levelArray.toVoidPointer()));
-      level = (int) levelArray.getItem(0);
-    }
+    NativeArray levelArray = new NativeArray(ctx, 1, Integer.class);
+
+    ctx.handleError(
+        tiledb.tiledb_filter_get_option(
+            ctx.getCtxp(),
+            getFilterp(),
+            tiledb_filter_option_t.TILEDB_COMPRESSION_LEVEL,
+            levelArray.toVoidPointer()));
+    level = (int) levelArray.getItem(0);
+    levelArray.close();
+
     return level;
   }
 }

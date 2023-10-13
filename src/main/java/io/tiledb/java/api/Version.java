@@ -40,12 +40,16 @@ public class Version {
     SWIGTYPE_p_int minorp = tiledb.new_intp();
     SWIGTYPE_p_int revp = tiledb.new_intp();
     tiledb.tiledb_version(majorp, minorp, revp);
-    this.major = tiledb.intp_value(majorp);
-    this.minor = tiledb.intp_value(minorp);
-    this.rev = tiledb.intp_value(revp);
-    tiledb.delete_intp(majorp);
-    tiledb.delete_intp(minorp);
-    tiledb.delete_intp(revp);
+
+    try {
+      this.major = tiledb.intp_value(majorp);
+      this.minor = tiledb.intp_value(minorp);
+      this.rev = tiledb.intp_value(revp);
+    } finally {
+      tiledb.delete_intp(majorp);
+      tiledb.delete_intp(minorp);
+      tiledb.delete_intp(revp);
+    }
   }
 
   /** @return The major number. */

@@ -50,6 +50,7 @@ public class TileDBString {
   public void close() {
     if (stringp != null && stringpp != null) {
       tiledb.tiledb_string_free(stringpp);
+      tiledb.delete_tiledb_string_handle_tpp(stringpp);
       stringpp = null;
       stringp = null;
     }
