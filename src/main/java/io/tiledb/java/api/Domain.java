@@ -129,18 +129,17 @@ public class Domain implements AutoCloseable {
     SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
     try {
       ctx.handleError(tiledb.tiledb_domain_get_type(ctx.getCtxp(), domainp, typep));
-    } catch (TileDBError err) {
+      tiledb_datatype_t type = tiledb.tiledb_datatype_tp_value(typep);
+      return Datatype.fromSwigEnum(type);
+    } finally {
       tiledb.delete_tiledb_datatype_tp(typep);
-      throw err;
     }
-    tiledb_datatype_t type = tiledb.tiledb_datatype_tp_value(typep);
-    tiledb.delete_tiledb_datatype_tp(typep);
-    return Datatype.fromSwigEnum(type);
   }
 
+  @Deprecated
   /**
    * @return The rank of the domain (number of dimensions)
-   * @exception TileDBError A TileDB exception
+   * @exception TileDBError A TileDB exception @Note is replaced by getNDim();
    */
   public long getRank() throws TileDBError {
     SWIGTYPE_p_unsigned_int np = tiledb.new_uintp();
@@ -160,7 +159,13 @@ public class Domain implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public long getNDim() throws TileDBError {
-    return getRank();
+    SWIGTYPE_p_unsigned_int np = tiledb.new_uintp();
+    try {
+      ctx.handleError(tiledb.tiledb_domain_get_ndim(ctx.getCtxp(), domainp, np));
+      return tiledb.uintp_value(np);
+    } finally {
+      tiledb.delete_uintp(np);
+    }
   }
 
   /**
@@ -197,11 +202,13 @@ public class Domain implements AutoCloseable {
    */
   public boolean hasDimension(String name) throws TileDBError {
     SWIGTYPE_p_int hasDimension = tiledb.new_intp();
-    ctx.handleError(
-        tiledb.tiledb_domain_has_dimension(ctx.getCtxp(), getDomainp(), name, hasDimension));
-    boolean result = tiledb.intp_value(hasDimension) > 0;
-    tiledb.delete_intp(hasDimension);
-    return result;
+    try {
+      ctx.handleError(
+          tiledb.tiledb_domain_has_dimension(ctx.getCtxp(), getDomainp(), name, hasDimension));
+      return tiledb.intp_value(hasDimension) > 0;
+    } finally {
+      tiledb.delete_intp(hasDimension);
+    }
   }
 
   /**
@@ -289,11 +296,7 @@ public class Domain implements AutoCloseable {
   public void close() {
     if (domainp != null) {
       tiledb.tiledb_domain_free(domainpp);
-    }
-    if (dimensions != null) {
-      for (Dimension d : dimensions) {
-        d.close();
-      }
+      tiledb.delete_tiledb_domain_tpp(domainpp);
     }
   }
 }

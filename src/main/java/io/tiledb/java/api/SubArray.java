@@ -52,12 +52,8 @@ public class SubArray implements AutoCloseable {
    * @param config The input configuration
    */
   public synchronized void setConfig(Config config) throws TileDBError {
-    try {
-      ctx.handleError(
-          tiledb.tiledb_subarray_set_config(ctx.getCtxp(), this.subArrayp, config.getConfigp()));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_subarray_set_config(ctx.getCtxp(), this.subArrayp, config.getConfigp()));
   }
 
   /**
@@ -156,8 +152,9 @@ public class SubArray implements AutoCloseable {
       throws TileDBError {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(name).getType();
+        Domain domain = schema.getDomain();
+        Dimension dim = domain.getDimension(name)) {
+      dimType = dim.getType();
     }
 
     // We use java type check here because we can not tell the difference between unsigned and
@@ -198,8 +195,9 @@ public class SubArray implements AutoCloseable {
       throws TileDBError {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(dimIdx).getType();
+        Domain domain = schema.getDomain();
+        Dimension dim = domain.getDimension(dimIdx)) {
+      dimType = dim.getType();
     }
 
     Types.javaTypeCheck(start.getClass(), dimType.javaClass());
@@ -238,8 +236,9 @@ public class SubArray implements AutoCloseable {
       throws TileDBError {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(name).getType();
+        Domain domain = schema.getDomain();
+        Dimension dim = domain.getDimension(name)) {
+      dimType = dim.getType();
     }
 
     Types.javaTypeCheck(start.getClass(), dimType.javaClass());
@@ -277,8 +276,8 @@ public class SubArray implements AutoCloseable {
       ctx.handleError(
           tiledb.tiledb_subarray_get_range_num(ctx.getCtxp(), subArrayp, dimIdx, resultArr.cast()));
       return resultArr.getitem(0).longValue();
-    } catch (TileDBError err) {
-      throw err;
+    } finally {
+      resultArr.delete();
     }
   }
 
@@ -296,8 +295,8 @@ public class SubArray implements AutoCloseable {
           tiledb.tiledb_subarray_get_range_num_from_name(
               ctx.getCtxp(), subArrayp, name, resultArr.cast()));
       return resultArr.getitem(0).longValue();
-    } catch (TileDBError err) {
-      throw err;
+    } finally {
+      resultArr.delete();
     }
   }
 
@@ -312,8 +311,9 @@ public class SubArray implements AutoCloseable {
   public synchronized Pair<Object, Object> getRange(int dimIdx, long rangeIdx) throws TileDBError {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(dimIdx).getType();
+        Domain domain = schema.getDomain();
+        Dimension dim = domain.getDimension(dimIdx)) {
+      dimType = dim.getType();
     }
 
     SWIGTYPE_p_p_void startArrpp = tiledb.new_voidpArray(1);
@@ -357,8 +357,9 @@ public class SubArray implements AutoCloseable {
       throws TileDBError {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(name).getType();
+        Domain domain = schema.getDomain();
+        Dimension dim = domain.getDimension(name)) {
+      dimType = dim.getType();
     }
 
     SWIGTYPE_p_p_void startArrpp = tiledb.new_voidpArray(1);
@@ -408,8 +409,9 @@ public class SubArray implements AutoCloseable {
 
       return new Pair(
           tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
-    } catch (TileDBError error) {
-      throw error;
+    } finally {
+      tiledb.delete_ullp(startSize);
+      tiledb.delete_ullp(endSize);
     }
   }
 
@@ -432,8 +434,9 @@ public class SubArray implements AutoCloseable {
 
       return new Pair(
           tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
-    } catch (TileDBError error) {
-      throw error;
+    } finally {
+      tiledb.delete_ullp(startSize);
+      tiledb.delete_ullp(endSize);
     }
   }
 
@@ -449,8 +452,9 @@ public class SubArray implements AutoCloseable {
       throws TileDBError {
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(dimIdx).getType();
+        Domain domain = schema.getDomain();
+        Dimension dim = domain.getDimension(dimIdx)) {
+      dimType = dim.getType();
     }
 
     Pair<Long, Long> size = this.getRangeVarSize(dimIdx, rangeIdx);
@@ -486,8 +490,9 @@ public class SubArray implements AutoCloseable {
     Util.checkBigIntegerRange(rangeIdx);
     Datatype dimType;
     try (ArraySchema schema = array.getSchema();
-        Domain domain = schema.getDomain()) {
-      dimType = domain.getDimension(name).getType();
+        Domain domain = schema.getDomain();
+        Dimension dim = domain.getDimension(name)) {
+      dimType = dim.getType();
     }
 
     Pair<Long, Long> size = this.getRangeVarSizeByName(name, rangeIdx);
@@ -520,13 +525,8 @@ public class SubArray implements AutoCloseable {
    */
   public synchronized void setCoalesceRanges(boolean flag) throws TileDBError {
     short coalesce = flag ? (short) 1 : (short) 0;
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_subarray_set_coalesce_ranges(ctx.getCtxp(), this.subArrayp, coalesce));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_subarray_set_coalesce_ranges(ctx.getCtxp(), this.subArrayp, coalesce));
   }
 
   /**
@@ -536,13 +536,12 @@ public class SubArray implements AutoCloseable {
    * @exception TileDBError A TileDB exception
    */
   public synchronized SubArray setSubarray(NativeArray subarray) throws TileDBError {
-    Types.typeCheck(subarray.getNativeType(), array.getSchema().getDomain().getType());
-    try {
+    try (ArraySchema schema = array.getSchema();
+        Domain domain = schema.getDomain()) {
+      Types.typeCheck(subarray.getNativeType(), domain.getType());
       ctx.handleError(
           tiledb.tiledb_subarray_set_subarray(ctx.getCtxp(), subArrayp, subarray.toVoidPointer()));
       return this;
-    } catch (TileDBError err) {
-      throw err;
     }
   }
 
@@ -572,8 +571,9 @@ public class SubArray implements AutoCloseable {
   public synchronized Pair<Object, Object> getLabelRange(String name, long rangeIndex)
       throws TileDBError {
     Datatype dimType;
-    try (ArraySchema schema = array.getSchema()) {
-      dimType = schema.getDimensionLabelFromName(name).getLabelType();
+    try (ArraySchema schema = array.getSchema();
+        DimensionLabel dimensionLabel = schema.getDimensionLabelFromName(name)) {
+      dimType = dimensionLabel.getLabelType();
     }
 
     SWIGTYPE_p_p_void startArrpp = tiledb.new_voidpArray(1);
@@ -612,18 +612,14 @@ public class SubArray implements AutoCloseable {
    * @return The label name
    */
   public synchronized String getLabelName(long dimIndex) throws TileDBError {
-    String name;
     SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
     try {
       ctx.handleError(
           tiledb.tiledb_subarray_get_label_name(ctx.getCtxp(), subArrayp, dimIndex, namepp));
-    } catch (TileDBError err) {
+      return tiledb.charpp_value(namepp);
+    } finally {
       tiledb.delete_charpp(namepp);
-      throw err;
     }
-    name = tiledb.charpp_value(namepp);
-    tiledb.delete_charpp(namepp);
-    return name;
   }
 
   /**
@@ -639,8 +635,9 @@ public class SubArray implements AutoCloseable {
   public synchronized void addLabelRange(String name, Object start, Object end, Object stride)
       throws TileDBError {
     Datatype type;
-    try (ArraySchema schema = array.getSchema()) {
-      type = schema.getDimensionLabelFromName(name).getLabelType();
+    try (ArraySchema schema = array.getSchema();
+        DimensionLabel dimensionLabel = schema.getDimensionLabelFromName(name)) {
+      type = dimensionLabel.getLabelType();
     }
 
     // We use java type check here because we can not tell the difference between unsigned and
@@ -679,8 +676,8 @@ public class SubArray implements AutoCloseable {
           tiledb.tiledb_subarray_get_label_range_num(
               ctx.getCtxp(), subArrayp, name, resultArr.cast()));
       return resultArr.getitem(0).longValue();
-    } catch (TileDBError err) {
-      throw err;
+    } finally {
+      resultArr.delete();
     }
   }
 
@@ -698,8 +695,9 @@ public class SubArray implements AutoCloseable {
       String name, String start, long startSize, String end, long endSize) throws TileDBError {
 
     Datatype dimType;
-    try (ArraySchema schema = array.getSchema()) {
-      dimType = schema.getDimensionLabelFromName(name).getLabelType();
+    try (ArraySchema schema = array.getSchema();
+        DimensionLabel dimensionLabel = schema.getDimensionLabelFromName(name)) {
+      dimType = dimensionLabel.getLabelType();
     }
 
     Types.javaTypeCheck(start.getClass(), dimType.javaClass());
@@ -733,8 +731,9 @@ public class SubArray implements AutoCloseable {
   public synchronized Pair<String, String> getLabelRangeVar(String name, long rangeIdx)
       throws TileDBError {
     Datatype dimType;
-    try (ArraySchema schema = array.getSchema()) {
-      dimType = schema.getDimensionLabelFromName(name).getLabelType();
+    try (ArraySchema schema = array.getSchema();
+        DimensionLabel dimensionLabel = schema.getDimensionLabelFromName(name)) {
+      dimType = dimensionLabel.getLabelType();
     }
 
     Pair<Long, Long> size = this.getLabelRangeVarSize(name, rangeIdx);
@@ -769,15 +768,16 @@ public class SubArray implements AutoCloseable {
       throws TileDBError {
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+
     try {
       ctx.handleError(
           tiledb.tiledb_subarray_get_label_range_var_size(
               ctx.getCtxp(), subArrayp, name, BigInteger.valueOf(rangeIdx), startSize, endSize));
-
       return new Pair(
           tiledb.ullp_value(startSize).longValue(), tiledb.ullp_value(endSize).longValue());
-    } catch (TileDBError error) {
-      throw error;
+    } finally {
+      tiledb.delete_ullp(startSize);
+      tiledb.delete_ullp(endSize);
     }
   }
 
@@ -789,18 +789,22 @@ public class SubArray implements AutoCloseable {
    */
   public synchronized boolean hasLabelRanges(long index) throws TileDBError {
     SWIGTYPE_p_int hasLabelRanges = tiledb.new_intp();
-    ctx.handleError(
-        tiledb.tiledb_subarray_has_label_ranges(
-            ctx.getCtxp(), getSubArrayp(), index, hasLabelRanges));
-    boolean result = tiledb.intp_value(hasLabelRanges) > 0;
-    tiledb.delete_intp(hasLabelRanges);
-    return result;
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_subarray_has_label_ranges(
+              ctx.getCtxp(), getSubArrayp(), index, hasLabelRanges));
+      return tiledb.intp_value(hasLabelRanges) > 0;
+    } finally {
+      tiledb.delete_intp(hasLabelRanges);
+    }
   }
 
   @Override
   public void close() {
     if (subArrayp != null && subArraypp != null) {
       tiledb.tiledb_subarray_free(subArraypp);
+      tiledb.delete_tiledb_subarray_tpp(subArraypp);
       subArrayp = null;
       subArraypp = null;
     }

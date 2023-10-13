@@ -373,19 +373,17 @@ public class ArraySchema implements AutoCloseable {
   public HashMap<String, Attribute> getAttributes() throws TileDBError {
     if (attributes == null) {
       attributes = new HashMap<String, Attribute>();
-      SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
       SWIGTYPE_p_unsigned_int nattrp = tiledb.new_uintp();
+      long nattr;
       try {
         ctx.handleError(
             tiledb.tiledb_array_schema_get_attribute_num(ctx.getCtxp(), schemap, nattrp));
-      } catch (TileDBError err) {
-        tiledb.delete_tiledb_attribute_tpp(attrpp);
+        nattr = tiledb.uintp_value(nattrp);
+      } finally {
         tiledb.delete_uintp(nattrp);
-        throw err;
       }
-      long nattr = tiledb.uintp_value(nattrp);
-      tiledb.delete_uintp(nattrp);
       for (long i = 0; i < nattr; ++i) {
+        SWIGTYPE_p_p_tiledb_attribute_t attrpp = tiledb.new_tiledb_attribute_tpp();
         try {
           ctx.handleError(
               tiledb.tiledb_array_schema_get_attribute_from_index(
@@ -427,11 +425,16 @@ public class ArraySchema implements AutoCloseable {
    */
   public boolean hasAttribute(String name) throws TileDBError {
     SWIGTYPE_p_int hasAttribute = tiledb.new_intp();
-    ctx.handleError(
-        tiledb.tiledb_array_schema_has_attribute(ctx.getCtxp(), getSchemap(), name, hasAttribute));
-    boolean result = tiledb.intp_value(hasAttribute) > 0;
-    tiledb.delete_intp(hasAttribute);
-    return result;
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_has_attribute(
+              ctx.getCtxp(), getSchemap(), name, hasAttribute));
+      boolean result = tiledb.intp_value(hasAttribute) > 0;
+      return result;
+    } finally {
+      tiledb.delete_intp(hasAttribute);
+    }
   }
 
   /**
@@ -577,10 +580,9 @@ public class ArraySchema implements AutoCloseable {
       ctx.handleError(
           tiledb.tiledb_array_schema_timestamp_range(ctx.getCtxp(), getSchemap(), t1, t2));
       return new Pair(tiledb.ullp_value(t1), tiledb.ullp_value(t2));
-    } catch (TileDBError err) {
+    } finally {
       tiledb.delete_ullp(t1);
       tiledb.delete_ullp(t2);
-      throw err;
     }
   }
 
@@ -614,14 +616,11 @@ public class ArraySchema implements AutoCloseable {
    * @throws TileDBError
    */
   public void setAllowDups(int allowsDups) throws TileDBError {
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_schema_set_allows_dups(ctx.getCtxp(), getSchemap(), allowsDups));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_array_schema_set_allows_dups(ctx.getCtxp(), getSchemap(), allowsDups));
   }
 
+  @Deprecated
   /**
    * Checks wether duplicate coordinates are allowed in the array schema
    *
@@ -635,9 +634,26 @@ public class ArraySchema implements AutoCloseable {
           tiledb.tiledb_array_schema_get_allows_dups(ctx.getCtxp(), getSchemap(), allowsDupsPtr));
 
       return tiledb.intp_value(allowsDupsPtr);
-    } catch (TileDBError err) {
+    } finally {
       tiledb.delete_intp(allowsDupsPtr);
-      throw err;
+    }
+  }
+
+  /**
+   * Checks wether duplicate coordinates are allowed in the array schema
+   *
+   * @return `1` if duplicate coordinates are allowed in that array schema
+   * @throws TileDBError
+   */
+  public boolean getAllowDuplicates() throws TileDBError {
+    SWIGTYPE_p_int allowsDupsPtr = tiledb.new_intp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_allows_dups(ctx.getCtxp(), getSchemap(), allowsDupsPtr));
+
+      return tiledb.intp_value(allowsDupsPtr) > 0;
+    } finally {
+      tiledb.delete_intp(allowsDupsPtr);
     }
   }
 
@@ -648,13 +664,9 @@ public class ArraySchema implements AutoCloseable {
    * @param filterList The filter_list to be set.
    */
   public void setDimensionLabelFilterList(String name, FilterList filterList) throws TileDBError {
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_schema_set_dimension_label_filter_list(
-              ctx.getCtxp(), getSchemap(), name, filterList.getFilterListp()));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_array_schema_set_dimension_label_filter_list(
+            ctx.getCtxp(), getSchemap(), name, filterList.getFilterListp()));
   }
 
   /**
@@ -668,15 +680,12 @@ public class ArraySchema implements AutoCloseable {
    */
   public void setDimensionLabelTileExtend(String name, long tileExtend, Datatype labelType)
       throws TileDBError {
-    try (NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT64)) {
-
-      arr.setItem(0, tileExtend);
-      ctx.handleError(
-          tiledb.tiledb_array_schema_set_dimension_label_tile_extent(
-              ctx.getCtxp(), getSchemap(), name, labelType.toSwigEnum(), arr.toVoidPointer()));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT64);
+    arr.setItem(0, tileExtend);
+    ctx.handleError(
+        tiledb.tiledb_array_schema_set_dimension_label_tile_extent(
+            ctx.getCtxp(), getSchemap(), name, labelType.toSwigEnum(), arr.toVoidPointer()));
+    arr.close();
   }
 
   /**
@@ -685,18 +694,14 @@ public class ArraySchema implements AutoCloseable {
    * @param dimensionLabel The dimension label object
    */
   public void addDimensionLabel(DimensionLabel dimensionLabel) throws TileDBError {
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_schema_add_dimension_label(
-              ctx.getCtxp(),
-              getSchemap(),
-              dimensionLabel.getDimensionIndex(),
-              dimensionLabel.getName(),
-              dimensionLabel.getLabelOrder(),
-              dimensionLabel.getLabelType().toSwigEnum()));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_array_schema_add_dimension_label(
+            ctx.getCtxp(),
+            getSchemap(),
+            dimensionLabel.getDimensionIndex(),
+            dimensionLabel.getName(),
+            dimensionLabel.getLabelOrder(),
+            dimensionLabel.getLabelType().toSwigEnum()));
   }
 
   /**
@@ -726,12 +731,14 @@ public class ArraySchema implements AutoCloseable {
    */
   public boolean hasDimensionLabel(String name) throws TileDBError {
     SWIGTYPE_p_int hasDimLabel = tiledb.new_intp();
-    ctx.handleError(
-        tiledb.tiledb_array_schema_has_dimension_label(
-            ctx.getCtxp(), getSchemap(), name, hasDimLabel));
-    boolean result = tiledb.intp_value(hasDimLabel) > 0;
-    tiledb.delete_intp(hasDimLabel);
-    return result;
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_has_dimension_label(
+              ctx.getCtxp(), getSchemap(), name, hasDimLabel));
+      return tiledb.intp_value(hasDimLabel) > 0;
+    } finally {
+      tiledb.delete_intp(hasDimLabel);
+    }
   }
 
   /**
@@ -759,9 +766,8 @@ public class ArraySchema implements AutoCloseable {
           tiledb.tiledb_array_schema_get_version(ctx.getCtxp(), getSchemap(), versionPtr));
 
       return tiledb.uintp_value(versionPtr);
-    } catch (TileDBError err) {
+    } finally {
       tiledb.delete_uintp(versionPtr);
-      throw err;
     }
   }
 
@@ -802,15 +808,9 @@ public class ArraySchema implements AutoCloseable {
   public void close() {
     if (schemap != null) {
       tiledb.tiledb_array_schema_free(schemapp);
+      tiledb.delete_tiledb_array_schema_tpp(schemapp);
       schemap = null;
       schemapp = null;
     }
-    // TODO: remove
-    if (attributes != null) {
-      for (Map.Entry<String, Attribute> e : attributes.entrySet()) {
-        e.getValue().close();
-      }
-    }
-    attributes = null;
   }
 }

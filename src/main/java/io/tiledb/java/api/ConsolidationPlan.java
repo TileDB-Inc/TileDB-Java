@@ -48,6 +48,32 @@ public class ConsolidationPlan implements AutoCloseable {
   }
 
   /**
+   * Constructor
+   *
+   * @param fragmentSize The desired fragment size
+   * @param ctx TileDB context
+   * @param array The array to create the plan for
+   * @throws TileDBError
+   */
+  public ConsolidationPlan(Context ctx, BigInteger fragmentSize, Array array) throws TileDBError {
+    this.fragmentSize = fragmentSize;
+    this.ctx = ctx;
+    this.arrayURI = array.getUri();
+    SWIGTYPE_p_p_tiledb_consolidation_plan_t _consp = tiledb.new_tiledb_consolidation_plan_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_consolidation_plan_create_with_mbr(
+              ctx.getCtxp(), array.getArrayp(), fragmentSize, _consp));
+    } catch (TileDBError e) {
+      tiledb.delete_tiledb_consolidation_plan_tpp(_consp);
+      throw e;
+    }
+
+    this.consp = tiledb.tiledb_consolidation_plan_tpp_value(_consp);
+    this.conspp = _consp;
+  }
+
+  /**
    * Get the number of fragments for a specific node of a consolidation plan object
    *
    * @param nodeIndex The node index
@@ -132,6 +158,7 @@ public class ConsolidationPlan implements AutoCloseable {
   public void close() throws Exception {
     if (consp != null) {
       tiledb.tiledb_consolidation_plan_free(conspp);
+      tiledb.delete_tiledb_consolidation_plan_tpp(conspp);
       consp = null;
       conspp = null;
     }

@@ -110,11 +110,13 @@ public class Enumeration implements AutoCloseable {
    */
   public boolean getOrdered() throws TileDBError {
     SWIGTYPE_p_int isOrdered = tiledb.new_intp();
-    ctx.handleError(
-        tiledb.tiledb_enumeration_get_ordered(ctx.getCtxp(), getEnumerationp(), isOrdered));
-    boolean result = tiledb.intp_value(isOrdered) > 0;
-    tiledb.delete_intp(isOrdered);
-    return result;
+    try {
+      ctx.handleError(
+          tiledb.tiledb_enumeration_get_ordered(ctx.getCtxp(), getEnumerationp(), isOrdered));
+      return tiledb.intp_value(isOrdered) > 0;
+    } finally {
+      tiledb.delete_intp(isOrdered);
+    }
   }
 
   /**
@@ -143,9 +145,15 @@ public class Enumeration implements AutoCloseable {
   public String getName() throws TileDBError {
     if (this.name != null) return this.name;
     SWIGTYPE_p_p_tiledb_string_handle_t name = tiledb.new_tiledb_string_handle_tpp();
+    TileDBString ts = null;
 
-    ctx.handleError(tiledb.tiledb_enumeration_get_name(ctx.getCtxp(), enumerationp, name));
-    return new TileDBString(ctx, name).getView().getFirst();
+    try {
+      ctx.handleError(tiledb.tiledb_enumeration_get_name(ctx.getCtxp(), enumerationp, name));
+      ts = new TileDBString(ctx, name);
+      return ts.getView().getFirst();
+    } finally {
+      if (ts != null) ts.close();
+    }
   }
 
   /**
@@ -157,13 +165,18 @@ public class Enumeration implements AutoCloseable {
   public Object getData() throws TileDBError {
     SWIGTYPE_p_p_void datapp = tiledb.new_voidpArray(0);
     SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
-    ctx.handleError(
-        tiledb.tiledb_enumeration_get_data(ctx.getCtxp(), getEnumerationp(), datapp, size));
-    // TODO revisit casting here, needs a warning. revisit throughout the API
-    int byteSize = tiledb.ullp_value(size).intValue();
-    Datatype type = this.getType();
-    int numElements = byteSize / type.getNativeSize();
-    return new NativeArray(ctx, type, datapp, numElements).toJavaArray();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_enumeration_get_data(ctx.getCtxp(), getEnumerationp(), datapp, size));
+      // TODO revisit casting here, needs a warning. revisit throughout the API
+      int byteSize = tiledb.ullp_value(size).intValue();
+      Datatype type = this.getType();
+      int numElements = byteSize / type.getNativeSize();
+      return new NativeArray(ctx, type, datapp, numElements).toJavaArray();
+    } finally {
+      tiledb.delete_ullp(size);
+      tiledb.delete_voidpArray(datapp);
+    }
   }
 
   /**
@@ -175,19 +188,26 @@ public class Enumeration implements AutoCloseable {
   public Object getOffsets() throws TileDBError {
     SWIGTYPE_p_p_void datapp = tiledb.new_voidpArray(0);
     SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
-    ctx.handleError(
-        tiledb.tiledb_enumeration_get_offsets(ctx.getCtxp(), getEnumerationp(), datapp, size));
-    // TODO revisit casting here, needs a warning. revisit throughout the API
-    int byteSize = tiledb.ullp_value(size).intValue();
-    Datatype type = this.getType();
-    int numElements = byteSize / type.getNativeSize();
-    return new NativeArray(ctx, type, datapp, numElements).toJavaArray();
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_enumeration_get_offsets(ctx.getCtxp(), getEnumerationp(), datapp, size));
+      // TODO revisit casting here, needs a warning. revisit throughout the API
+      int byteSize = tiledb.ullp_value(size).intValue();
+      Datatype type = this.getType();
+      int numElements = byteSize / type.getNativeSize();
+      return new NativeArray(ctx, type, datapp, numElements).toJavaArray();
+    } finally {
+      tiledb.delete_voidpArray(datapp);
+      tiledb.delete_ullp(size);
+    }
   }
 
   /** Releases resources */
   public void close() {
     if (enumerationp != null && enumerationpp != null) {
       tiledb.tiledb_enumeration_free(enumerationpp);
+      tiledb.delete_tiledb_enumeration_tpp(enumerationpp);
       enumerationpp = null;
       enumerationp = null;
     }

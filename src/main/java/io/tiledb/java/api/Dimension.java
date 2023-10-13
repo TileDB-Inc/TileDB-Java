@@ -139,18 +139,15 @@ public class Dimension<T> implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public String getName() throws TileDBError {
-    if (name == null) {
-      SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
-      try {
-        ctx.handleError(tiledb.tiledb_dimension_get_name(ctx.getCtxp(), dimensionp, namepp));
-      } catch (TileDBError err) {
-        tiledb.delete_charpp(namepp);
-        throw err;
-      }
+    if (name != null) return name;
+    SWIGTYPE_p_p_char namepp = tiledb.new_charpp();
+    try {
+      ctx.handleError(tiledb.tiledb_dimension_get_name(ctx.getCtxp(), dimensionp, namepp));
       name = tiledb.charpp_value(namepp);
+      return name;
+    } finally {
       tiledb.delete_charpp(namepp);
     }
-    return name;
   }
 
   /**
@@ -158,18 +155,15 @@ public class Dimension<T> implements AutoCloseable {
    * @throws TileDBError A TileDB exception
    */
   public Datatype getType() throws TileDBError {
-    if (type == null) {
-      SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
-      try {
-        ctx.handleError(tiledb.tiledb_dimension_get_type(ctx.getCtxp(), dimensionp, typep));
-      } catch (TileDBError err) {
-        tiledb.delete_tiledb_datatype_tp(typep);
-        throw err;
-      }
+    if (type != null) return type;
+    SWIGTYPE_p_tiledb_datatype_t typep = tiledb.new_tiledb_datatype_tp();
+    try {
+      ctx.handleError(tiledb.tiledb_dimension_get_type(ctx.getCtxp(), dimensionp, typep));
       type = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(typep));
+      return type;
+    } finally {
       tiledb.delete_tiledb_datatype_tp(typep);
     }
-    return type;
   }
 
   /**
@@ -263,12 +257,8 @@ public class Dimension<T> implements AutoCloseable {
    * @throws TileDBError TileDBError A TileDB error
    */
   public void setCellValNum(long cellValNum) throws TileDBError {
-    try {
-      ctx.handleError(
-          tiledb.tiledb_dimension_set_cell_val_num(ctx.getCtxp(), dimensionp, cellValNum));
-    } catch (TileDBError error) {
-      throw error;
-    }
+    ctx.handleError(
+        tiledb.tiledb_dimension_set_cell_val_num(ctx.getCtxp(), dimensionp, cellValNum));
   }
 
   /**
@@ -281,10 +271,9 @@ public class Dimension<T> implements AutoCloseable {
     SWIGTYPE_p_unsigned_int uint = tiledb.new_uintp();
     try {
       ctx.handleError(tiledb.tiledb_dimension_get_cell_val_num(ctx.getCtxp(), dimensionp, uint));
-
       return tiledb.uintp_value(uint);
-    } catch (TileDBError error) {
-      throw error;
+    } finally {
+      tiledb.delete_uintp(uint);
     }
   }
 
@@ -310,6 +299,7 @@ public class Dimension<T> implements AutoCloseable {
   public void close() {
     if (dimensionp != null) {
       tiledb.tiledb_dimension_free(dimensionpp);
+      tiledb.delete_tiledb_dimension_tpp(dimensionpp);
       dimensionp = null;
       dimensionpp = null;
     }

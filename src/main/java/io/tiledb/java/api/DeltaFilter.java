@@ -11,32 +11,32 @@ public class DeltaFilter extends CompressionFilter {
   public DeltaFilter(Context ctx, int level, tiledb_datatype_t type) throws TileDBError {
     super(ctx, tiledb_filter_type_t.TILEDB_FILTER_DELTA, level);
 
-    try (NativeArray reint = new NativeArray(ctx, new int[] {type.swigValue()}, Integer.class); ) {
+    NativeArray reint = new NativeArray(ctx, new int[] {type.swigValue()}, Integer.class);
 
-      ctx.handleError(
-          tiledb.tiledb_filter_set_option(
-              ctx.getCtxp(),
-              getFilterp(),
-              tiledb_filter_option_t.TILEDB_COMPRESSION_REINTERPRET_DATATYPE,
-              reint.toVoidPointer()));
+    ctx.handleError(
+        tiledb.tiledb_filter_set_option(
+            ctx.getCtxp(),
+            getFilterp(),
+            tiledb_filter_option_t.TILEDB_COMPRESSION_REINTERPRET_DATATYPE,
+            reint.toVoidPointer()));
 
-    } catch (TileDBError e) {
-      throw e;
-    }
+    reint.close();
   }
 
   public tiledb_datatype_t getCompressionReinterpretDatatype() throws TileDBError {
     Context ctx = getCtx();
     int datatype;
-    try (NativeArray datatypetArray = new NativeArray(ctx, 1, Integer.class)) {
-      ctx.handleError(
-          tiledb.tiledb_filter_get_option(
-              ctx.getCtxp(),
-              getFilterp(),
-              tiledb_filter_option_t.TILEDB_COMPRESSION_REINTERPRET_DATATYPE,
-              datatypetArray.toVoidPointer()));
-      datatype = (int) datatypetArray.getItem(0);
-    }
+    NativeArray datatypetArray = new NativeArray(ctx, 1, Integer.class);
+    ctx.handleError(
+        tiledb.tiledb_filter_get_option(
+            ctx.getCtxp(),
+            getFilterp(),
+            tiledb_filter_option_t.TILEDB_COMPRESSION_REINTERPRET_DATATYPE,
+            datatypetArray.toVoidPointer()));
+    datatype = (int) datatypetArray.getItem(0);
+
+    datatypetArray.close();
+
     return tiledb_datatype_t.swigToEnum(datatype);
   }
 

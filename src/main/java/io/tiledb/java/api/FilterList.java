@@ -143,6 +143,7 @@ public class FilterList implements AutoCloseable {
   public void close() {
     if (filter_listp != null && filter_listpp != null) {
       tiledb.tiledb_filter_list_free(filter_listpp);
+      tiledb.delete_tiledb_filter_list_tpp(filter_listpp);
       filter_listp = null;
       filter_listpp = null;
     }

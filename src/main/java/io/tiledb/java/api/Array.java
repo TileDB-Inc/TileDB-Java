@@ -53,6 +53,7 @@ public class Array implements AutoCloseable {
   private Context ctx;
   private String uri;
   private ArraySchema schema;
+  private Domain domain;
   private QueryType query_type;
 
   private SWIGTYPE_p_tiledb_array_t arrayp;
@@ -171,37 +172,29 @@ public class Array implements AutoCloseable {
 
     if (timestamp_start != null) {
       Util.checkBigIntegerRange(timestamp_start);
-      try {
-        ctx.handleError(
-            tiledb.tiledb_array_set_open_timestamp_start(ctx.getCtxp(), _arrayp, timestamp_start));
-      } catch (TileDBError err) {
-        throw err;
-      }
+      ctx.handleError(
+          tiledb.tiledb_array_set_open_timestamp_start(ctx.getCtxp(), _arrayp, timestamp_start));
     }
 
     if (timestamp_end != null) {
       Util.checkBigIntegerRange(timestamp_end);
-      try {
-        ctx.handleError(
-            tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), _arrayp, timestamp_end));
-      } catch (TileDBError err) {
-        throw err;
-      }
+      ctx.handleError(
+          tiledb.tiledb_array_set_open_timestamp_end(ctx.getCtxp(), _arrayp, timestamp_end));
     }
 
-    ArraySchema _schema;
     try {
       ctx.handleError(tiledb.tiledb_array_open(ctx.getCtxp(), _arrayp, query_type.toSwigEnum()));
     } catch (TileDBError err) {
       tiledb.delete_tiledb_array_tpp(_arraypp);
       throw err;
     }
-    _schema = new ArraySchema(ctx, uri);
+    ArraySchema _schema = new ArraySchema(ctx, uri);
 
     this.ctx = ctx;
     this.uri = uri;
     this.query_type = query_type;
     this.schema = _schema;
+    this.domain = this.schema.getDomain();
     this.arraypp = _arraypp;
     this.arrayp = _arrayp;
   }
@@ -425,17 +418,15 @@ public class Array implements AutoCloseable {
   public HashMap<String, Pair> nonEmptyDomain() throws TileDBError {
     checkIsOpen();
     HashMap<String, Pair> ret = new HashMap<>();
-    try {
-      Domain domain = schema.getDomain();
-      long numDims = domain.getNDim();
-      for (long dimIdx = 0; dimIdx < numDims; ++dimIdx) {
-        Dimension dimension = domain.getDimension(dimIdx);
-        Pair p = getNonEmptyDomainFromIndex(dimIdx);
-        ret.put(dimension.getName(), p);
-      }
-    } catch (TileDBError error) {
-      throw error;
+
+    long numDims = domain.getNDim();
+    for (long dimIdx = 0; dimIdx < numDims; ++dimIdx) {
+      Dimension dimension = domain.getDimension(dimIdx);
+      Pair p = getNonEmptyDomainFromIndex(dimIdx);
+      ret.put(dimension.getName(), p);
+      dimension.close();
     }
+
     return ret;
   }
 
@@ -449,10 +440,10 @@ public class Array implements AutoCloseable {
    */
   public Pair getNonEmptyDomainFromIndex(long index) throws TileDBError {
     checkIsOpen();
-    try (Domain domain = schema.getDomain();
-        NativeArray domainArray = new NativeArray(ctx, 2, domain.getDimension(index).getType())) {
+    try (Dimension dim = domain.getDimension(index);
+        NativeArray domainArray = new NativeArray(ctx, 2, dim.getType())) {
 
-      if (domain.getDimension(index).isVar()) return getNonEmptyDomainVarFromIndex(index);
+      if (dim.isVar()) return getNonEmptyDomainVarFromIndex(index);
 
       SWIGTYPE_p_int emptyp = tiledb.new_intp();
       try {
@@ -480,10 +471,10 @@ public class Array implements AutoCloseable {
    */
   public Pair getNonEmptyDomainFromName(String name) throws TileDBError {
     checkIsOpen();
-    try (Domain domain = schema.getDomain();
-        NativeArray domainArray = new NativeArray(ctx, 2, domain.getDimension(name).getType())) {
+    try (Dimension dim = domain.getDimension(name);
+        NativeArray domainArray = new NativeArray(ctx, 2, dim.getType())) {
 
-      if (domain.getDimension(name).isVar()) return this.getNonEmptyDomainVarFromName(name);
+      if (dim.isVar()) return this.getNonEmptyDomainVarFromName(name);
 
       SWIGTYPE_p_int emptyp = tiledb.new_intp();
       try {
@@ -514,12 +505,17 @@ public class Array implements AutoCloseable {
     SWIGTYPE_p_int emptyp = tiledb.new_intp();
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_get_non_empty_domain_var_size_from_index(
+              ctx.getCtxp(), arrayp, index, startSize, endSize, emptyp));
 
-    ctx.handleError(
-        tiledb.tiledb_array_get_non_empty_domain_var_size_from_index(
-            ctx.getCtxp(), arrayp, index, startSize, endSize, emptyp));
-
-    return new Pair(tiledb.ullp_value(startSize), tiledb.ullp_value(endSize));
+      return new Pair(tiledb.ullp_value(startSize), tiledb.ullp_value(endSize));
+    } finally {
+      tiledb.delete_ullp(startSize);
+      tiledb.delete_ullp(endSize);
+      tiledb.delete_intp(emptyp);
+    }
   }
 
   /**
@@ -558,11 +554,17 @@ public class Array implements AutoCloseable {
     SWIGTYPE_p_unsigned_long_long startSize = tiledb.new_ullp();
     SWIGTYPE_p_unsigned_long_long endSize = tiledb.new_ullp();
 
-    ctx.handleError(
-        tiledb.tiledb_array_get_non_empty_domain_var_size_from_name(
-            ctx.getCtxp(), arrayp, name, startSize, endSize, emptyp));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_get_non_empty_domain_var_size_from_name(
+              ctx.getCtxp(), arrayp, name, startSize, endSize, emptyp));
 
-    return new Pair(tiledb.ullp_value(startSize), tiledb.ullp_value(endSize));
+      return new Pair(tiledb.ullp_value(startSize), tiledb.ullp_value(endSize));
+    } finally {
+      tiledb.delete_ullp(startSize);
+      tiledb.delete_ullp(endSize);
+      tiledb.delete_intp(emptyp);
+    }
   }
 
   /**
@@ -577,22 +579,24 @@ public class Array implements AutoCloseable {
   public Pair<String, String> getNonEmptyDomainVarFromIndex(long index) throws TileDBError {
     SWIGTYPE_p_int emptyp = tiledb.new_intp();
 
-    Dimension dim = this.schema.getDomain().getDimension(index);
+    Dimension dim = domain.getDimension(index);
     Pair<BigInteger, BigInteger> size = this.getNonEmptyDomainVarSizeFromIndex(index);
 
     Datatype dimType = dim.getType();
     int startSize = size.getFirst().intValue();
     int endSize = size.getSecond().intValue();
+    try (NativeArray start = new NativeArray(ctx, startSize, dimType);
+        NativeArray end = new NativeArray(ctx, endSize, dimType)) {
+      ctx.handleError(
+          tiledb.tiledb_array_get_non_empty_domain_var_from_index(
+              ctx.getCtxp(), arrayp, index, start.toVoidPointer(), end.toVoidPointer(), emptyp));
 
-    NativeArray start = new NativeArray(ctx, startSize, dimType);
-    NativeArray end = new NativeArray(ctx, endSize, dimType);
-
-    ctx.handleError(
-        tiledb.tiledb_array_get_non_empty_domain_var_from_index(
-            ctx.getCtxp(), arrayp, index, start.toVoidPointer(), end.toVoidPointer(), emptyp));
-
-    return new Pair(
-        new String((byte[]) start.toJavaArray()), new String((byte[]) end.toJavaArray()));
+      return new Pair(
+          new String((byte[]) start.toJavaArray()), new String((byte[]) end.toJavaArray()));
+    } finally {
+      tiledb.delete_intp(emptyp);
+      dim.close();
+    }
   }
 
   /**
@@ -607,7 +611,7 @@ public class Array implements AutoCloseable {
   public Pair<String, String> getNonEmptyDomainVarFromName(String name) throws TileDBError {
     SWIGTYPE_p_int emptyp = tiledb.new_intp();
 
-    Dimension dim = this.schema.getDomain().getDimension(name);
+    Dimension dim = domain.getDimension(name);
 
     Pair<BigInteger, BigInteger> size = this.getNonEmptyDomainVarSizeFromName(name);
 
@@ -615,15 +619,18 @@ public class Array implements AutoCloseable {
     int startSize = size.getFirst().intValue();
     int endSize = size.getSecond().intValue();
 
-    NativeArray start = new NativeArray(ctx, startSize, dimType);
-    NativeArray end = new NativeArray(ctx, endSize, dimType);
+    try (NativeArray start = new NativeArray(ctx, startSize, dimType);
+        NativeArray end = new NativeArray(ctx, endSize, dimType); ) {
+      ctx.handleError(
+          tiledb.tiledb_array_get_non_empty_domain_var_from_name(
+              ctx.getCtxp(), arrayp, name, start.toVoidPointer(), end.toVoidPointer(), emptyp));
 
-    ctx.handleError(
-        tiledb.tiledb_array_get_non_empty_domain_var_from_name(
-            ctx.getCtxp(), arrayp, name, start.toVoidPointer(), end.toVoidPointer(), emptyp));
-
-    return new Pair(
-        new String((byte[]) start.toJavaArray()), new String((byte[]) end.toJavaArray()));
+      return new Pair(
+          new String((byte[]) start.toJavaArray()), new String((byte[]) end.toJavaArray()));
+    } finally {
+      tiledb.delete_intp(emptyp);
+      dim.close();
+    }
   }
 
   /**
@@ -657,19 +664,22 @@ public class Array implements AutoCloseable {
             ? tiledb.new_tiledb_datatype_tp()
             : tiledb.copy_tiledb_datatype_tp(nativeType.toSwigEnum());
 
-    ctx.handleError(
-        tiledb.tiledb_array_get_metadata(
-            ctx.getCtxp(), arrayp, key, value_type, value_num, resultArrpp));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_get_metadata(
+              ctx.getCtxp(), arrayp, key, value_type, value_num, resultArrpp));
 
-    Datatype derivedNativeType = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
+      Datatype derivedNativeType =
+          Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
 
-    long value = tiledb.uintp_value(value_num);
-    NativeArray result = new NativeArray(ctx, derivedNativeType, resultArrpp, (int) value);
-
-    tiledb.delete_uintp(value_num);
-    tiledb.delete_tiledb_datatype_tp(value_type);
-
-    return result;
+      long value = tiledb.uintp_value(value_num);
+      NativeArray result = new NativeArray(ctx, derivedNativeType, resultArrpp, (int) value);
+      return result;
+    } finally {
+      tiledb.delete_uintp(value_num);
+      tiledb.delete_tiledb_datatype_tp(value_type);
+      tiledb.delete_voidpArray(resultArrpp);
+    }
   }
 
   /**
@@ -697,13 +707,13 @@ public class Array implements AutoCloseable {
 
     SWIGTYPE_p_unsigned_long_long value_num = tiledb.new_ullp();
 
-    ctx.handleError(tiledb.tiledb_array_get_metadata_num(ctx.getCtxp(), arrayp, value_num));
-
-    BigInteger value = tiledb.ullp_value(value_num);
-
-    tiledb.delete_ullp(value_num);
-
-    return value;
+    try {
+      ctx.handleError(tiledb.tiledb_array_get_metadata_num(ctx.getCtxp(), arrayp, value_num));
+      BigInteger value = tiledb.ullp_value(value_num);
+      return value;
+    } finally {
+      tiledb.delete_ullp(value_num);
+    }
   }
 
   /**
@@ -735,22 +745,25 @@ public class Array implements AutoCloseable {
     SWIGTYPE_p_unsigned_int value_num = tiledb.new_uintp();
     SWIGTYPE_p_p_void value = tiledb.new_voidpArray(0);
 
-    ctx.handleError(
-        tiledb.tiledb_array_get_metadata_from_index(
-            ctx.getCtxp(), arrayp, index, key, key_len, value_type, value_num, value));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_get_metadata_from_index(
+              ctx.getCtxp(), arrayp, index, key, key_len, value_type, value_num, value));
 
-    String keyString = tiledb.charpp_value(key);
-    long valueLength = tiledb.uintp_value(value_num);
-    Datatype nativeType = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
+      String keyString = tiledb.charpp_value(key);
+      long valueLength = tiledb.uintp_value(value_num);
+      Datatype nativeType = Datatype.fromSwigEnum(tiledb.tiledb_datatype_tp_value(value_type));
 
-    NativeArray result = new NativeArray(ctx, nativeType, value, (int) valueLength);
+      NativeArray result = new NativeArray(ctx, nativeType, value, (int) valueLength);
+      return new Pair<String, NativeArray>(keyString, result);
 
-    tiledb.delete_uintp(value_num);
-    tiledb.delete_uintp(key_len);
-    tiledb.delete_charpp(key);
-    tiledb.delete_tiledb_datatype_tp(value_type);
-
-    return new Pair<String, NativeArray>(keyString, result);
+    } finally {
+      tiledb.delete_uintp(value_num);
+      tiledb.delete_uintp(key_len);
+      tiledb.delete_charpp(key);
+      tiledb.delete_tiledb_datatype_tp(value_type);
+      tiledb.delete_voidpArray(value);
+    }
   }
 
   /**
@@ -765,13 +778,9 @@ public class Array implements AutoCloseable {
       throws TileDBError {
     Util.checkBigIntegerRange(timestampStart);
     Util.checkBigIntegerRange(timestampEnd);
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_delete_fragments(
-              ctx.getCtxp(), getArrayp(), uri, timestampStart, timestampEnd));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_array_delete_fragments(
+            ctx.getCtxp(), getArrayp(), uri, timestampStart, timestampEnd));
   }
 
   /**
@@ -808,15 +817,16 @@ public class Array implements AutoCloseable {
     SWIGTYPE_p_tiledb_datatype_t value_type = tiledb.new_tiledb_datatype_tp();
     SWIGTYPE_p_int has_key = tiledb.new_intp();
 
-    ctx.handleError(
-        tiledb.tiledb_array_has_metadata_key(ctx.getCtxp(), arrayp, key, value_type, has_key));
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_has_metadata_key(ctx.getCtxp(), arrayp, key, value_type, has_key));
 
-    Boolean result = tiledb.intp_value(has_key) > 0;
-
-    tiledb.delete_intp(has_key);
-    tiledb.delete_tiledb_datatype_tp(value_type);
-
-    return result;
+      Boolean result = tiledb.intp_value(has_key) > 0;
+      return result;
+    } finally {
+      tiledb.delete_intp(has_key);
+      tiledb.delete_tiledb_datatype_tp(value_type);
+    }
   }
 
   /**
@@ -887,11 +897,10 @@ public class Array implements AutoCloseable {
     try {
       ctx.handleError(
           tiledb.tiledb_array_get_open_timestamp_start(ctx.getCtxp(), getArrayp(), start_t));
-    } catch (TileDBError err) {
+      return tiledb.ullp_value(start_t).longValue();
+    } finally {
       tiledb.delete_ullp(start_t);
-      throw err;
     }
-    return tiledb.ullp_value(start_t).longValue();
   }
 
   /**
@@ -904,21 +913,16 @@ public class Array implements AutoCloseable {
     try {
       ctx.handleError(
           tiledb.tiledb_array_get_open_timestamp_end(ctx.getCtxp(), getArrayp(), end_t));
-    } catch (TileDBError err) {
+      return tiledb.ullp_value(end_t).longValue();
+    } finally {
       tiledb.delete_ullp(end_t);
-      throw err;
     }
-    return tiledb.ullp_value(end_t).longValue();
   }
 
   /** Sets the array config. */
   public void setConfig(Config config) throws TileDBError {
-    try {
-      ctx.handleError(
-          tiledb.tiledb_array_set_config(ctx.getCtxp(), getArrayp(), config.getConfigp()));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_array_set_config(ctx.getCtxp(), getArrayp(), config.getConfigp()));
   }
 
   /**
@@ -963,14 +967,18 @@ public class Array implements AutoCloseable {
 
   /** Free's the native objects and closes the Array. */
   public synchronized void close() {
+    if (schema != null) {
+      schema.close();
+    }
+    if (this.domain != null) {
+      domain.close();
+    }
     if (arrayp != null && arraypp != null) {
       tiledb.tiledb_array_close(ctx.getCtxp(), arrayp);
       tiledb.tiledb_array_free(arraypp);
+      tiledb.delete_tiledb_array_tpp(arraypp);
       arrayp = null;
       arraypp = null;
-      if (schema != null) {
-        schema.close();
-      }
     }
   }
 }

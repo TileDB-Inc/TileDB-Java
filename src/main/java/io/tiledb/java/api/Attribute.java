@@ -276,13 +276,9 @@ public class Attribute implements AutoCloseable {
    */
   public void setFillValue(NativeArray value, BigInteger size) throws TileDBError {
     Util.checkBigIntegerRange(size);
-    try {
-      ctx.handleError(
-          tiledb.tiledb_attribute_set_fill_value(
-              ctx.getCtxp(), attributep, value.toVoidPointer(), size));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_attribute_set_fill_value(
+            ctx.getCtxp(), attributep, value.toVoidPointer(), size));
   }
 
   /**
@@ -310,13 +306,10 @@ public class Attribute implements AutoCloseable {
       array.setItem(0, value);
     }
 
-    try {
-      ctx.handleError(
-          tiledb.tiledb_attribute_set_fill_value(
-              ctx.getCtxp(), attributep, array.toVoidPointer(), BigInteger.valueOf(byteSize)));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_attribute_set_fill_value(
+            ctx.getCtxp(), attributep, array.toVoidPointer(), BigInteger.valueOf(byteSize)));
+    array.close();
   }
 
   /**
@@ -331,26 +324,26 @@ public class Attribute implements AutoCloseable {
    * @throws TileDBError
    */
   public Pair<Object, Integer> getFillValue() throws TileDBError {
+    SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
+    SWIGTYPE_p_p_void v = tiledb.new_voidpArray(1);
 
-    try (NativeArray value = new NativeArray(ctx, this.type.getNativeSize(), this.type)) {
-      SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
-      SWIGTYPE_p_p_void v = tiledb.new_voidpArray(1);
-
+    try {
       ctx.handleError(tiledb.tiledb_attribute_get_fill_value(ctx.getCtxp(), attributep, v, size));
       int byteSize = tiledb.ullp_value(size).intValue();
       int numElements = byteSize / this.type.getNativeSize();
 
       Object fillValue;
-      try (NativeArray fillValueArray = new NativeArray(ctx, getType(), v, numElements)) {
-        if (this.isVar() || this.getCellValNum() > 1)
-          fillValue = fillValueArray.toJavaArray(numElements);
-        else fillValue = fillValueArray.getItem(0);
-      }
+      NativeArray fillValueArray = new NativeArray(ctx, getType(), v, numElements);
+      if (this.isVar() || this.getCellValNum() > 1)
+        fillValue = fillValueArray.toJavaArray(numElements);
+      else fillValue = fillValueArray.getItem(0);
+      fillValueArray.close();
 
       return new Pair(fillValue, byteSize);
 
-    } catch (TileDBError err) {
-      throw err;
+    } finally {
+      tiledb.delete_ullp(size);
+      tiledb.delete_voidpArray(v);
     }
   }
 
@@ -368,17 +361,9 @@ public class Attribute implements AutoCloseable {
   public void setFillValueNullable(NativeArray value, BigInteger size, boolean valid)
       throws TileDBError {
     Util.checkBigIntegerRange(size);
-    try {
-      ctx.handleError(
-          tiledb.tiledb_attribute_set_fill_value_nullable(
-              ctx.getCtxp(),
-              attributep,
-              value.toVoidPointer(),
-              size,
-              valid ? (short) 1 : (short) 0));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_attribute_set_fill_value_nullable(
+            ctx.getCtxp(), attributep, value.toVoidPointer(), size, valid ? (short) 1 : (short) 0));
   }
 
   /**
@@ -401,10 +386,16 @@ public class Attribute implements AutoCloseable {
   public String getEnumerationName() throws TileDBError {
     if (this.name != null) return this.name;
     SWIGTYPE_p_p_tiledb_string_handle_t name = tiledb.new_tiledb_string_handle_tpp();
+    TileDBString ts = null;
 
-    ctx.handleError(
-        tiledb.tiledb_attribute_get_enumeration_name(ctx.getCtxp(), getAttributep(), name));
-    return new TileDBString(ctx, name).getView().getFirst();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_attribute_get_enumeration_name(ctx.getCtxp(), getAttributep(), name));
+      ts = new TileDBString(ctx, name);
+      return ts.getView().getFirst();
+    } finally {
+      if (ts != null) ts.close();
+    }
   }
 
   /**
@@ -431,17 +422,14 @@ public class Attribute implements AutoCloseable {
       array.setItem(0, value);
     }
 
-    try {
-      ctx.handleError(
-          tiledb.tiledb_attribute_set_fill_value_nullable(
-              ctx.getCtxp(),
-              attributep,
-              array.toVoidPointer(),
-              BigInteger.valueOf(byteSize),
-              valid ? (short) 1 : (short) 0));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(
+        tiledb.tiledb_attribute_set_fill_value_nullable(
+            ctx.getCtxp(),
+            attributep,
+            array.toVoidPointer(),
+            BigInteger.valueOf(byteSize),
+            valid ? (short) 1 : (short) 0));
+    array.close();
   }
 
   /**
@@ -457,13 +445,12 @@ public class Attribute implements AutoCloseable {
    * @throws TileDBError
    */
   public Pair<Object, Pair<Integer, Boolean>> getFillValueNullable() throws TileDBError {
+    NativeArray validArr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT8);
+    SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
+    SWIGTYPE_p_p_void v = tiledb.new_voidpArray(1);
+    SWIGTYPE_p_unsigned_char valid = validArr.getUint8_tArray().cast();
 
-    try (NativeArray value = new NativeArray(ctx, this.type.getNativeSize(), this.type)) {
-      NativeArray validArr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT8);
-      SWIGTYPE_p_unsigned_long_long size = tiledb.new_ullp();
-      SWIGTYPE_p_p_void v = tiledb.new_voidpArray(1);
-      SWIGTYPE_p_unsigned_char valid = validArr.getUint8_tArray().cast();
-
+    try {
       ctx.handleError(
           tiledb.tiledb_attribute_get_fill_value_nullable(
               ctx.getCtxp(), attributep, v, size, valid));
@@ -472,17 +459,19 @@ public class Attribute implements AutoCloseable {
       int numElements = byteSize / this.type.getNativeSize();
 
       Object fillValue;
-      try (NativeArray fillValueArray = new NativeArray(ctx, getType(), v, numElements)) {
-        if (this.isVar() || this.getCellValNum() > 1)
-          fillValue = fillValueArray.toJavaArray(numElements);
-        else fillValue = fillValueArray.getItem(0);
-      }
+      NativeArray fillValueArray = new NativeArray(ctx, getType(), v, numElements);
+      if (this.isVar() || this.getCellValNum() > 1)
+        fillValue = fillValueArray.toJavaArray(numElements);
+      else fillValue = fillValueArray.getItem(0);
+      fillValueArray.close();
 
       boolean validBoolean = validArr.getUint8_tArray().getitem(0) == 0 ? false : true;
 
       return new Pair(fillValue, new Pair(byteSize, validBoolean));
-    } catch (TileDBError err) {
-      throw err;
+    } finally {
+      tiledb.delete_ullp(size);
+      tiledb.delete_voidpArray(v);
+      validArr.close();
     }
   }
 
@@ -493,15 +482,9 @@ public class Attribute implements AutoCloseable {
    * @throws TileDBError
    */
   public void setNullable(boolean isNullable) throws TileDBError {
-
     short nullable = isNullable ? (short) 1 : (short) 0;
 
-    try {
-      ctx.handleError(
-          tiledb.tiledb_attribute_set_nullable(ctx.getCtxp(), this.attributep, nullable));
-    } catch (TileDBError err) {
-      throw err;
-    }
+    ctx.handleError(tiledb.tiledb_attribute_set_nullable(ctx.getCtxp(), this.attributep, nullable));
   }
 
   /**
@@ -511,18 +494,14 @@ public class Attribute implements AutoCloseable {
    * @throws TileDBError
    */
   public boolean getNullable() throws TileDBError {
-    try {
+    NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT8);
+    SWIGTYPE_p_unsigned_char nullable = arr.getUint8_tArray().cast();
 
-      NativeArray arr = new NativeArray(ctx, 1, Datatype.TILEDB_UINT8);
-      SWIGTYPE_p_unsigned_char nullable = arr.getUint8_tArray().cast();
+    ctx.handleError(tiledb.tiledb_attribute_get_nullable(ctx.getCtxp(), this.attributep, nullable));
 
-      ctx.handleError(
-          tiledb.tiledb_attribute_get_nullable(ctx.getCtxp(), this.attributep, nullable));
-
-      return ((short) arr.getItem(0) == 1);
-    } catch (TileDBError err) {
-      throw err;
-    }
+    boolean result = ((short) arr.getItem(0) == 1);
+    arr.close();
+    return result;
   }
 
   /** @return A String representation for the Attribute. */
@@ -546,6 +525,7 @@ public class Attribute implements AutoCloseable {
   public void close() {
     if (attributep != null) {
       tiledb.tiledb_attribute_free(attributepp);
+      tiledb.delete_tiledb_attribute_tpp(attributepp);
       attributep = null;
       attributepp = null;
     }

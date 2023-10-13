@@ -66,7 +66,9 @@ public class Util {
     try (ArraySchema schema = array.getSchema()) {
       try (Domain domain = schema.getDomain()) {
         if (domain.hasDimension(fieldName)) {
-          dt = domain.getDimension(fieldName).getType();
+          Dimension dim = domain.getDimension(fieldName);
+          dt = dim.getType();
+          dim.close();
         } else {
           try (Attribute attribute = schema.getAttribute(fieldName)) {
             dt = attribute.getType();
