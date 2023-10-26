@@ -116,36 +116,10 @@ target_link_libraries(tiledbjni
     ${JAVA_JVM_LIBRARY}
 )
 
-if (WIN32)
-  get_target_property(LIBMAGIC_LIB libmagic IMPORTED_LOCATION)
-  get_filename_component(LIBMAGIC_LIB_PATH ${LIBMAGIC_LIB} DIRECTORY)
-  find_library(PCRE2_POSIX pcre2-posix REQUIRED PATHS ${LIBMAGIC_LIB_PATH})
-  find_library(PCRE2_8 pcre2-8 REQUIRED PATHS ${LIBMAGIC_LIB_PATH})
-  target_link_libraries(tiledbjni
-    PRIVATE
-      ${PCRE2_POSIX}
-      ${PCRE2_8}
-      WebServices
-      Winhttp
-      Wininet
-      Userenv
-      Version
-      Secur32
-      Ncrypt
-  )
-endif()
-
-if (TARGET TileDB::tiledb_static)
-  target_link_libraries(tiledbjni
-    PRIVATE
-      TileDB::tiledb_static
-  )
-else()
-  target_link_libraries(tiledbjni
-    PRIVATE
-      TileDB::tiledb_shared
-  )
-endif()
+target_link_libraries(tiledbjni
+  PRIVATE
+    TileDB::tiledb_shared
+)
 
 # Set rpath to be relative to the .so.
 if (APPLE)
