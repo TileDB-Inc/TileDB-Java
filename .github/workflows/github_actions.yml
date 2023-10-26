@@ -106,6 +106,7 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_S3: OFF
 
   Create_Artifacts_Windows:
+    if: startsWith(github.ref, 'refs/tags/') || contains(github.ref, 'test')
     needs: [Test_Windows, Examples]
     name: Create_Artifacts_Windows
     runs-on: windows-2019
@@ -152,6 +153,7 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_S3: ON
 
   Create_Artifacts_Ubuntu_MacOS:
+    if: startsWith(github.ref, 'refs/tags/') || contains(github.ref, 'test')
     needs: [Test_Ubuntu_macOS, Examples]
     name: Create_Artifacts_Ubuntu_MacOS
     runs-on: ${{ matrix.os }}
@@ -228,6 +230,7 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_S3: ON
 
   Mock-Release:
+    if: startsWith(github.ref, 'refs/tags/')
     needs: [Create_Artifacts_Ubuntu_MacOS, Create_Artifacts_Windows]
     name: Mock-Release
     runs-on: ubuntu-latest
@@ -261,6 +264,7 @@ jobs:
 
 
   Test-Mock-Release:
+    if: startsWith(github.ref, 'refs/tags/')
     needs: [ Mock-Release ]
     name: Test-Mock-Release
     runs-on: ${{ matrix.os }}
@@ -337,20 +341,20 @@ jobs:
           tag_name: ${{ github.event.release.tag_name }}
           name: ${{ github.event.release.tag_name }}
           body: ${{steps.github_release.outputs.changelog}}
-          draft: true
+          draft: false
           prerelease: false
 
-#      - name: Upload to maven
-#        run: |
-#          chmod +x ./ci/upload_to_maven.sh
-#          ./ci/upload_to_maven.sh
-#        shell: bash
-#        env:
-#          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-#          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-#          GPG_SECRET_KEYS_ENC: ${{ secrets.GPG_SECRET_KEYS_ENC }}
-#          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-#          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+      - name: Upload to maven
+        run: |
+          chmod +x ./ci/upload_to_maven.sh
+          ./ci/upload_to_maven.sh
+        shell: bash
+        env:
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_SECRET_KEYS_ENC: ${{ secrets.GPG_SECRET_KEYS_ENC }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
     env:
       ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
       ORG_GRADLE_PROJECT_TILEDB_S3: ON
