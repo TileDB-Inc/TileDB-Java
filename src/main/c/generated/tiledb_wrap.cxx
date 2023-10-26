@@ -12831,6 +12831,82 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1enumeration_
 }
 
 
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1enumeration_1extend(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jobject jarg4, jlong jarg5, jobject jarg6, jlong jarg7) {
+  jlong jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_enumeration_t *arg2 = (tiledb_enumeration_t *) 0 ;
+  void *arg3 = (void *) 0 ;
+  uint64_t arg4 ;
+  void *arg5 = (void *) 0 ;
+  uint64_t arg6 ;
+  tiledb_enumeration_t **arg7 = (tiledb_enumeration_t **) 0 ;
+  SwigValueWrapper< capi_return_t > result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_enumeration_t **)&jarg2; 
+  arg3 = *(void **)&jarg3; 
+  {
+    jclass clazz;
+    jmethodID mid;
+    jbyteArray ba;
+    jbyte* bae;
+    jsize sz;
+    int i;
+    
+    if (!jarg4) {
+      SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "BigInteger null");
+      return 0;
+    }
+    clazz = jenv->GetObjectClass(jarg4);
+    mid = jenv->GetMethodID(clazz, "toByteArray", "()[B");
+    ba = (jbyteArray)jenv->CallObjectMethod(jarg4, mid);
+    bae = jenv->GetByteArrayElements(ba, 0);
+    sz = jenv->GetArrayLength(ba);
+    arg4 = 0;
+    if (sz > 0) {
+      arg4 = (uint64_t)(signed char)bae[0];
+      for(i=1; i<sz; i++) {
+        arg4 = (arg4 << 8) | (uint64_t)(unsigned char)bae[i];
+      }
+    }
+    jenv->ReleaseByteArrayElements(ba, bae, 0);
+  }
+  arg5 = *(void **)&jarg5; 
+  {
+    jclass clazz;
+    jmethodID mid;
+    jbyteArray ba;
+    jbyte* bae;
+    jsize sz;
+    int i;
+    
+    if (!jarg6) {
+      SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "BigInteger null");
+      return 0;
+    }
+    clazz = jenv->GetObjectClass(jarg6);
+    mid = jenv->GetMethodID(clazz, "toByteArray", "()[B");
+    ba = (jbyteArray)jenv->CallObjectMethod(jarg6, mid);
+    bae = jenv->GetByteArrayElements(ba, 0);
+    sz = jenv->GetArrayLength(ba);
+    arg6 = 0;
+    if (sz > 0) {
+      arg6 = (uint64_t)(signed char)bae[0];
+      for(i=1; i<sz; i++) {
+        arg6 = (arg6 << 8) | (uint64_t)(unsigned char)bae[i];
+      }
+    }
+    jenv->ReleaseByteArrayElements(ba, bae, 0);
+  }
+  arg7 = *(tiledb_enumeration_t ***)&jarg7; 
+  result = tiledb_enumeration_extend(arg1,arg2,(void const *)arg3,arg4,(void const *)arg5,arg6,arg7);
+  *(capi_return_t **)&jresult = new capi_return_t((const capi_return_t &)result); 
+  return jresult;
+}
+
+
 SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1enumeration_1free(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   tiledb_enumeration_t **arg1 = (tiledb_enumeration_t **) 0 ;
   
@@ -14374,6 +14450,24 @@ SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1array_1schem
   arg2 = *(tiledb_array_schema_evolution_t **)&jarg2; 
   arg3 = *(tiledb_enumeration_t **)&jarg3; 
   result = tiledb_array_schema_evolution_add_enumeration(arg1,arg2,arg3);
+  *(capi_return_t **)&jresult = new capi_return_t((const capi_return_t &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1array_1schema_1evolution_1extend_1enumeration(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3) {
+  jlong jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_array_schema_evolution_t *arg2 = (tiledb_array_schema_evolution_t *) 0 ;
+  tiledb_enumeration_t *arg3 = (tiledb_enumeration_t *) 0 ;
+  SwigValueWrapper< capi_return_t > result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_array_schema_evolution_t **)&jarg2; 
+  arg3 = *(tiledb_enumeration_t **)&jarg3; 
+  result = tiledb_array_schema_evolution_extend_enumeration(arg1,arg2,arg3);
   *(capi_return_t **)&jresult = new capi_return_t((const capi_return_t &)result); 
   return jresult;
 }

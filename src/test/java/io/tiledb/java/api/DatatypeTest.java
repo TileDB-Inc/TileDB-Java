@@ -147,6 +147,7 @@ public class DatatypeTest {
     NativeArray enumsOffsets =
         new NativeArray(ctx, new long[] {0, 2, 4, 6}, Datatype.TILEDB_UINT64);
     NativeArray enums = new NativeArray(ctx, "aabbccdd", Datatype.TILEDB_STRING_ASCII);
+    NativeArray enums2 = new NativeArray(ctx, "eeffgghh", Datatype.TILEDB_STRING_ASCII);
 
     Enumeration en =
         new Enumeration(
@@ -294,7 +295,7 @@ public class DatatypeTest {
             ctx,
             "test_enum2",
             TILEDB_VAR_NUM,
-            Datatype.TILEDB_INT32,
+            Datatype.TILEDB_STRING_ASCII,
             false,
             enums,
             BigInteger.valueOf(enums.getSize() * Datatype.TILEDB_STRING_ASCII.getNativeSize()),
@@ -303,10 +304,24 @@ public class DatatypeTest {
     evolution.addEnumeration(en2);
     evolution.evolveArray(arrayURI);
 
-    // reopen array
+    // test extend
     array = new Array(ctx, arrayURI);
     e = array.getEnumeration("test_enum2");
     Assert.assertEquals(e.getName(), "test_enum2");
+    Enumeration newEnum =
+        e.extend(
+            enums2,
+            BigInteger.valueOf(enums.getSize() * Datatype.TILEDB_STRING_ASCII.getNativeSize()),
+            enumsOffsets,
+            BigInteger.valueOf(enumsOffsets.getSize() * Datatype.TILEDB_UINT64.getNativeSize()));
+    ArraySchemaEvolution extendEvolution = new ArraySchemaEvolution(ctx);
+    extendEvolution.extendEnumeration(newEnum);
+    extendEvolution.evolveArray(arrayURI);
+
+    // reopen array
+    array = new Array(ctx, arrayURI);
+    Enumeration extendedEnum = array.getEnumeration("test_enum2");
+    Assert.assertEquals("aabbccddeeffgghh", new String((byte[]) extendedEnum.getData()));
   }
 
   public void arrayCreate() throws Exception {

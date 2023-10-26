@@ -120,6 +120,34 @@ public class Enumeration implements AutoCloseable {
   }
 
   /**
+   * Extend an Enumeration.
+   *
+   * @param data A pointer to the enumeration value data to add.
+   * @param dataSize The length of the data buffer provided.
+   * @param offsets A pointer to the offsets buffer if enumeration is var sized.
+   * @param offsetsSize The length of the offsets buffer, zero if no offsets.
+   */
+  public Enumeration extend(
+      NativeArray data, BigInteger dataSize, NativeArray offsets, BigInteger offsetsSize) {
+    SWIGTYPE_p_p_tiledb_enumeration_t enumeration_t = tiledb.new_tiledb_enumeration_tpp();
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_enumeration_extend(
+              ctx.getCtxp(),
+              this.getEnumerationp(),
+              data.toVoidPointer(),
+              dataSize,
+              offsets.toVoidPointer(),
+              offsetsSize,
+              enumeration_t));
+    } catch (TileDBError e) {
+      tiledb.delete_tiledb_enumeration_tpp(enumeration_t);
+    }
+    return new Enumeration(ctx, enumeration_t);
+  }
+
+  /**
    * Return the datatype of the enumeration values
    *
    * @return The datatype of the enumeration values

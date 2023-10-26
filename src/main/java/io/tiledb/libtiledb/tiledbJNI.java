@@ -1586,6 +1586,15 @@ public class tiledbJNI {
       java.math.BigInteger jarg9,
       long jarg10);
 
+  public static final native long tiledb_enumeration_extend(
+      long jarg1,
+      long jarg2,
+      long jarg3,
+      java.math.BigInteger jarg4,
+      long jarg5,
+      java.math.BigInteger jarg6,
+      long jarg7);
+
   public static final native void tiledb_enumeration_free(long jarg1);
 
   public static final native long tiledb_enumeration_get_name(long jarg1, long jarg2, long jarg3);
@@ -1773,6 +1782,9 @@ public class tiledbJNI {
       long jarg1, long jarg2, String jarg3);
 
   public static final native long tiledb_array_schema_evolution_add_enumeration(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_array_schema_evolution_extend_enumeration(
       long jarg1, long jarg2, long jarg3);
 
   public static final native long tiledb_array_schema_evolution_drop_enumeration(

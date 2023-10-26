@@ -4663,6 +4663,26 @@ public class tiledb implements tiledbConstants {
         true);
   }
 
+  public static capi_return_t tiledb_enumeration_extend(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_enumeration_t old_enumeration,
+      SWIGTYPE_p_void data,
+      java.math.BigInteger data_size,
+      SWIGTYPE_p_void offsets,
+      java.math.BigInteger offsets_size,
+      SWIGTYPE_p_p_tiledb_enumeration_t new_enumeration) {
+    return new capi_return_t(
+        tiledbJNI.tiledb_enumeration_extend(
+            SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+            SWIGTYPE_p_tiledb_enumeration_t.getCPtr(old_enumeration),
+            SWIGTYPE_p_void.getCPtr(data),
+            data_size,
+            SWIGTYPE_p_void.getCPtr(offsets),
+            offsets_size,
+            SWIGTYPE_p_p_tiledb_enumeration_t.getCPtr(new_enumeration)),
+        true);
+  }
+
   public static void tiledb_enumeration_free(SWIGTYPE_p_p_tiledb_enumeration_t enumeration) {
     tiledbJNI.tiledb_enumeration_free(SWIGTYPE_p_p_tiledb_enumeration_t.getCPtr(enumeration));
   }
@@ -5463,6 +5483,18 @@ public class tiledb implements tiledbConstants {
       SWIGTYPE_p_tiledb_enumeration_t enumeration) {
     return new capi_return_t(
         tiledbJNI.tiledb_array_schema_evolution_add_enumeration(
+            SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+            SWIGTYPE_p_tiledb_array_schema_evolution_t.getCPtr(array_schema_evolution),
+            SWIGTYPE_p_tiledb_enumeration_t.getCPtr(enumeration)),
+        true);
+  }
+
+  public static capi_return_t tiledb_array_schema_evolution_extend_enumeration(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_array_schema_evolution_t array_schema_evolution,
+      SWIGTYPE_p_tiledb_enumeration_t enumeration) {
+    return new capi_return_t(
+        tiledbJNI.tiledb_array_schema_evolution_extend_enumeration(
             SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
             SWIGTYPE_p_tiledb_array_schema_evolution_t.getCPtr(array_schema_evolution),
             SWIGTYPE_p_tiledb_enumeration_t.getCPtr(enumeration)),
