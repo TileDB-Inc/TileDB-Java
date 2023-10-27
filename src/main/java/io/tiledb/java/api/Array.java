@@ -53,7 +53,6 @@ public class Array implements AutoCloseable {
   private Context ctx;
   private String uri;
   private ArraySchema schema;
-  private Domain domain;
   private QueryType query_type;
 
   private SWIGTYPE_p_tiledb_array_t arrayp;
@@ -194,7 +193,6 @@ public class Array implements AutoCloseable {
     this.uri = uri;
     this.query_type = query_type;
     this.schema = _schema;
-    this.domain = this.schema.getDomain();
     this.arraypp = _arraypp;
     this.arrayp = _arrayp;
   }
@@ -419,6 +417,7 @@ public class Array implements AutoCloseable {
     checkIsOpen();
     HashMap<String, Pair> ret = new HashMap<>();
 
+    Domain domain = schema.getDomain();
     long numDims = domain.getNDim();
     for (long dimIdx = 0; dimIdx < numDims; ++dimIdx) {
       Dimension dimension = domain.getDimension(dimIdx);
@@ -427,6 +426,7 @@ public class Array implements AutoCloseable {
       dimension.close();
     }
 
+    domain.close();
     return ret;
   }
 
@@ -440,7 +440,8 @@ public class Array implements AutoCloseable {
    */
   public Pair getNonEmptyDomainFromIndex(long index) throws TileDBError {
     checkIsOpen();
-    try (Dimension dim = domain.getDimension(index);
+    try (Domain domain = schema.getDomain();
+        Dimension dim = domain.getDimension(index);
         NativeArray domainArray = new NativeArray(ctx, 2, dim.getType())) {
 
       if (dim.isVar()) return getNonEmptyDomainVarFromIndex(index);
@@ -471,7 +472,8 @@ public class Array implements AutoCloseable {
    */
   public Pair getNonEmptyDomainFromName(String name) throws TileDBError {
     checkIsOpen();
-    try (Dimension dim = domain.getDimension(name);
+    try (Domain domain = schema.getDomain();
+        Dimension dim = domain.getDimension(name);
         NativeArray domainArray = new NativeArray(ctx, 2, dim.getType())) {
 
       if (dim.isVar()) return this.getNonEmptyDomainVarFromName(name);
@@ -579,6 +581,7 @@ public class Array implements AutoCloseable {
   public Pair<String, String> getNonEmptyDomainVarFromIndex(long index) throws TileDBError {
     SWIGTYPE_p_int emptyp = tiledb.new_intp();
 
+    Domain domain = schema.getDomain();
     Dimension dim = domain.getDimension(index);
     Pair<BigInteger, BigInteger> size = this.getNonEmptyDomainVarSizeFromIndex(index);
 
@@ -596,6 +599,7 @@ public class Array implements AutoCloseable {
     } finally {
       tiledb.delete_intp(emptyp);
       dim.close();
+      domain.close();
     }
   }
 
@@ -611,6 +615,7 @@ public class Array implements AutoCloseable {
   public Pair<String, String> getNonEmptyDomainVarFromName(String name) throws TileDBError {
     SWIGTYPE_p_int emptyp = tiledb.new_intp();
 
+    Domain domain = schema.getDomain();
     Dimension dim = domain.getDimension(name);
 
     Pair<BigInteger, BigInteger> size = this.getNonEmptyDomainVarSizeFromName(name);
@@ -630,6 +635,7 @@ public class Array implements AutoCloseable {
     } finally {
       tiledb.delete_intp(emptyp);
       dim.close();
+      domain.close();
     }
   }
 
@@ -969,9 +975,6 @@ public class Array implements AutoCloseable {
   public synchronized void close() {
     if (schema != null) {
       schema.close();
-    }
-    if (this.domain != null) {
-      domain.close();
     }
     if (arrayp != null && arraypp != null) {
       tiledb.tiledb_array_close(ctx.getCtxp(), arrayp);
