@@ -133,27 +133,35 @@ public class Query implements AutoCloseable {
     // Set the actual number of bytes received to each ByteBuffer
     for (String attribute : byteBuffers_.keySet()) {
       boolean isVar;
+      boolean isNullable = false;
+      Datatype datatype;
 
       try (ArraySchema arraySchema = array.getSchema()) {
         if (arraySchema.hasAttribute(attribute)) {
           try (Attribute attr = arraySchema.getAttribute(attribute)) {
             isVar = attr.isVar();
+            isNullable = attr.getNullable();
+            datatype = attr.getType();
           }
         } else {
           try (Dimension dim = arraySchema.getDomain().getDimension(attribute)) {
             isVar = dim.isVar();
+            datatype = dim.getType();
           }
         }
       }
 
+      int nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
+      this.byteBuffers_.get(attribute).getSecond().limit(nbytes);
+
       if (isVar) {
         int offset_nbytes = this.buffer_sizes_.get(attribute).getFirst().getitem(0).intValue();
-        int data_nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
         this.byteBuffers_.get(attribute).getFirst().limit(offset_nbytes);
-        this.byteBuffers_.get(attribute).getSecond().limit(data_nbytes);
-      } else {
-        int nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
-        this.byteBuffers_.get(attribute).getSecond().limit(nbytes);
+      }
+
+      if (isNullable) {
+        int validity_nbytes = nbytes / datatype.getNativeSize();
+        this.validityByteMapsByteBuffers_.get(attribute).limit(validity_nbytes);
       }
     }
 
@@ -177,27 +185,35 @@ public class Query implements AutoCloseable {
     // Set the actual number of bytes received to each ByteBuffer
     for (String attribute : byteBuffers_.keySet()) {
       boolean isVar;
+      boolean isNullable = false;
+      Datatype datatype;
 
       try (ArraySchema arraySchema = array.getSchema()) {
         if (arraySchema.hasAttribute(attribute)) {
           try (Attribute attr = arraySchema.getAttribute(attribute)) {
             isVar = attr.isVar();
+            isNullable = attr.getNullable();
+            datatype = attr.getType();
           }
         } else {
           try (Dimension dim = arraySchema.getDomain().getDimension(attribute)) {
             isVar = dim.isVar();
+            datatype = dim.getType();
           }
         }
       }
 
+      int nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
+      this.byteBuffers_.get(attribute).getSecond().limit(nbytes);
+
       if (isVar) {
         int offset_nbytes = this.buffer_sizes_.get(attribute).getFirst().getitem(0).intValue();
-        int data_nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
         this.byteBuffers_.get(attribute).getFirst().limit(offset_nbytes);
-        this.byteBuffers_.get(attribute).getSecond().limit(data_nbytes);
-      } else {
-        int nbytes = this.buffer_sizes_.get(attribute).getSecond().getitem(0).intValue();
-        this.byteBuffers_.get(attribute).getSecond().limit(nbytes);
+      }
+
+      if (isNullable) {
+        int validity_nbytes = nbytes / datatype.getNativeSize();
+        this.validityByteMapsByteBuffers_.get(attribute).limit(validity_nbytes);
       }
     }
 

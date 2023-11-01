@@ -1238,6 +1238,15 @@ public class QueryTest {
         // Submit query
         query.submit();
 
+        Assert.assertEquals(4, a1byteMap.limit());
+
+        try {
+          a1byteMap.get(5);
+          Assert.fail();
+        } catch (IndexOutOfBoundsException e) {
+          // do nothing. This is expected
+        }
+
         int[] dim1 = new int[4];
         int[] dim2 = new int[4];
         byte[] a1 = new byte[4];
@@ -1401,6 +1410,24 @@ public class QueryTest {
         // Submit query
         query.submit();
 
+        Assert.assertEquals(5, a1byteMap.limit());
+
+        try {
+          a1byteMap.get(6);
+          Assert.fail();
+        } catch (IndexOutOfBoundsException e) {
+          // do nothing. This is expected
+        }
+
+        Assert.assertEquals(10, a2byteMapBuffer.limit());
+
+        try {
+          a2byteMapBuffer.get(11);
+          Assert.fail();
+        } catch (IndexOutOfBoundsException e) {
+          // do nothing. This is expected
+        }
+
         Assert.assertEquals(
             5L,
             (long)
@@ -1436,6 +1463,7 @@ public class QueryTest {
 
         int idx = 0;
         int bytesIdx = 0;
+
         while (a1Buffer.hasRemaining()) {
           a1Values[idx] = a1Buffer.getInt();
           a1ByteMapValues[idx] = a1byteMap.get();
