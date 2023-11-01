@@ -297,6 +297,8 @@ public class Domain implements AutoCloseable {
     if (domainp != null) {
       tiledb.tiledb_domain_free(domainpp);
       tiledb.delete_tiledb_domain_tpp(domainpp);
+      domainpp = null;
+      domainp = null;
     }
   }
 }

@@ -59,6 +59,7 @@ public class Context implements AutoCloseable {
   private SWIGTYPE_p_p_tiledb_ctx_t ctxpp;
   private SWIGTYPE_p_tiledb_ctx_t ctxp;
   private ContextCallback errorHandler;
+  private Config config;
 
   /**
    * Constructor. Creates a TileDB Context with default configuration.
@@ -181,6 +182,7 @@ public class Context implements AutoCloseable {
       tiledb.delete_tiledb_ctx_tpp(_ctxpp);
       throw new TileDBError("[TileDB::JavaAPI] Error: Failed to create context");
     }
+    this.config = config;
     this.ctxpp = _ctxpp;
     this.ctxp = tiledb.tiledb_ctx_tpp_value(_ctxpp);
     this.errorHandler = new ContextCallback();
@@ -258,8 +260,8 @@ public class Context implements AutoCloseable {
   /**
    * Close the context and delete all native objects. Should be called always to cleanup the context
    */
-  public void close() throws TileDBError {
-    this.getConfig().close();
+  public void close() {
+    config.close();
     if (ctxp != null) {
       tiledb.tiledb_ctx_free(ctxpp);
       tiledb.delete_tiledb_ctx_tpp(ctxpp);
