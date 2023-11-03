@@ -62,10 +62,16 @@ if (NOT TILEDB_FOUND)
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.17.4/tiledb-macos-arm64-2.17.4-a1f648e.tar.gz")
             SET(DOWNLOAD_SHA1 "e6ec0634f665943ff9879041ab122bdaa96349df")
           endif()
-
         else() # Linux
-          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.17.4/tiledb-linux-x86_64-2.17.4-a1f648e.tar.gz")
-          SET(DOWNLOAD_SHA1 "7849cbbf19f5f9252e4be5350328754b01938aaa")
+          if (USE_AVX2)
+            message(STATUS "Using Linux binaries with AVX2")
+            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.17.4/tiledb-linux-x86_64-2.17.4-a1f648e.tar.gz")
+            SET(DOWNLOAD_SHA1 "7849cbbf19f5f9252e4be5350328754b01938aaa")
+          else()
+            message(STATUS "Using Linux binaries without AVX2")
+            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.17.4/tiledb-linux-x86_64-noavx2-2.17.4-a1f648e.tar.gz")
+            SET(DOWNLOAD_SHA1 "f7b959ec521fd0ebd82b266549c454bef20d0a40")
+          endif()
         endif()
 
         ExternalProject_Add(ep_tiledb
