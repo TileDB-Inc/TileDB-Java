@@ -55,6 +55,7 @@ option(TILEDB_GIT_TAG "Git tag to use for building" "")
 option(FORCE_BUILD_TILEDB "Force building TileDB and don't check for system installation" OFF)
 option(DOWNLOAD_TILEDB_PREBUILT "If tiledb is being super built, this controls downloading prebuilt artifacts or building from source" ON)
 option(TILEDB_SKIP_S3AWSSDK_DIR_LENGTH_CHECK "If true, skip check needed path length for awssdk (TILEDB_S3) dependent builds" OFF)
+option(USE_AVX2 "If true TileDB-Java will use the precompiled Linux binaries with AVX2. if we build from source the architecture will match the current CPU" OFF)
 
 ############################################################
 # Superbuild setup
