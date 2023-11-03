@@ -131,7 +131,7 @@ public class GroupTest {
 
     // remove a member
     group.reopen(ctx, TILEDB_WRITE);
-    group.removeMember("array2");
+    group.removeMember("array2Name");
 
     // check if member is removed
     group.reopen(ctx, QueryType.TILEDB_READ);

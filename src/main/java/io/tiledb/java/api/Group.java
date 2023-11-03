@@ -275,11 +275,11 @@ public class Group implements AutoCloseable {
   /**
    * Remove a member from a group.
    *
-   * @param uri The URI of the member to remove.
+   * @param name The name of the member to remove
    * @throws TileDBError
    */
-  public void removeMember(String uri) throws TileDBError {
-    ctx.handleError(tiledb.tiledb_group_remove_member(ctx.getCtxp(), getGroupp(), uri));
+  public void removeMember(String name) throws TileDBError {
+    ctx.handleError(tiledb.tiledb_group_remove_member(ctx.getCtxp(), getGroupp(), name));
   }
 
   /**

@@ -260,7 +260,6 @@ public class FilterTest {
 
     // Create array and query
     try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
-        ArraySchema schema = array.getSchema();
         Query query = new Query(array, TILEDB_READ)) {
 
       SubArray subArray = new SubArray(ctx, array);

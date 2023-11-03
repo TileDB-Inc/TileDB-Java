@@ -37,6 +37,10 @@ typedef struct tiledb_dimension_t tiledb_dimension_t;
 typedef struct tiledb_domain_t tiledb_domain_t;
 typedef struct tiledb_attribute_t tiledb_attribute_t;
 typedef struct tiledb_enumeration_t tiledb_enumeration_t;
+typedef struct tiledb_channel_operator_t tiledb_channel_operator_t;
+typedef struct tiledb_channel_operation_t tiledb_channel_operation_t;
+typedef struct tiledb_query_channel_t tiledb_query_channel_t;
+typedef struct tiledb_query_field_t tiledb_query_field_t;
 
 %{
 #include <string>
@@ -71,7 +75,6 @@ typedef struct tiledb_enumeration_t tiledb_enumeration_t;
 %ignore tiledb_array_delete_array;
 %ignore tiledb_query_add_point_ranges;
 
-// %include "stdint.i"
 %include "carrays.i"
 %array_class(int32_t, int32_tArray);
 %array_class(capi_return_t, capi_return_t);
@@ -119,6 +122,8 @@ typedef struct tiledb_enumeration_t tiledb_enumeration_t;
 %pointer_functions(tiledb_vfs_mode_t, tiledb_vfs_mode_tp);
 %pointer_functions(tiledb_encryption_type_t, tiledb_encryption_type_tp);
 %pointer_functions(capi_status_t, capi_status_tp);
+%pointer_functions(tiledb_field_origin_t, tiledb_field_origin_tp);
+
 
 %pointer_functions(tiledb_array_t*, tiledb_array_tpp);
 %pointer_functions(tiledb_subarray_t*, tiledb_subarray_tpp);
@@ -143,6 +148,10 @@ typedef struct tiledb_enumeration_t tiledb_enumeration_t;
 %pointer_functions(tiledb_dimension_label_t*, tiledb_dimension_label_tpp);
 %pointer_functions(tiledb_string_handle_t*, tiledb_string_handle_tpp);
 %pointer_functions(tiledb_enumeration_t*, tiledb_enumeration_tpp);
+%pointer_functions(tiledb_channel_operator_t*, tiledb_channel_operator_tpp);
+%pointer_functions(tiledb_channel_operation_t*, tiledb_channel_operation_tpp);
+%pointer_functions(tiledb_query_field_t*, tiledb_query_field_tpp);
+%pointer_functions(tiledb_query_channel_t*, tiledb_query_channel_tpp);
 
 %native (sizeOfInt32) int sizeOfInt32();
 %native (sizeOfInt64) int sizeOfInt64();
