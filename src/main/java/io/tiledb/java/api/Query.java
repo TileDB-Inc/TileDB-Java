@@ -299,6 +299,26 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Gets the default channel of the query. The default channel consists of all the rows the query
+   * would return as if executed standalone.
+   *
+   * @return The default channel
+   * @throws TileDBError
+   */
+  public QueryChannel getDefaultChannel() throws TileDBError {
+    SWIGTYPE_p_p_tiledb_query_channel_t queryChannelpp = tiledb.new_tiledb_query_channel_tpp();
+
+    try {
+      ctx.handleError(
+          tiledb.tiledb_query_get_default_channel(this.ctx.getCtxp(), this.queryp, queryChannelpp));
+      return new QueryChannel(this.ctx, queryChannelpp);
+    } catch (TileDBError error) {
+      tiledb.delete_tiledb_query_channel_tpp(queryChannelpp);
+      throw error;
+    }
+  }
+
+  /**
    * Retrieves the estimated result size for a var-sized attribute/dimension.
    *
    * @param ctx The TileDB Context

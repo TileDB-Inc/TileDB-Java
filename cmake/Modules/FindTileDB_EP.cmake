@@ -48,19 +48,19 @@ if (NOT TILEDB_FOUND)
     # Try to download prebuilt artifacts unless the user specifies to build from source
     if(DOWNLOAD_TILEDB_PREBUILT)
         if (WIN32) # Windows
-          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.18.0-rc2/tiledb-windows-x86_64-2.18.0-rc2-3af8017.zip")
-          SET(DOWNLOAD_SHA1 "3ba44ff0ad6a758774f2d827e15dc0f841fb5e21")
+          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.18.0-rc3/tiledb-windows-x86_64-2.18.0-rc3-925dac8.zip")
+          SET(DOWNLOAD_SHA1 "9d4448751126762fab1ccb7540c30cdaec297f16")
         elseif(APPLE) # macOS
 
           if (CMAKE_OSX_ARCHITECTURES STREQUAL x86_64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64|amd64)|(^i.86$)")
             message(STATUS "Building for intel mac")
-            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.18.0-rc2/tiledb-macos-x86_64-2.18.0-rc2-3af8017.tar.gz")
-            SET(DOWNLOAD_SHA1 "b6e2e5667c80158936033f0199c880992da5de4f")
+            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.18.0-rc3/tiledb-macos-x86_64-2.18.0-rc3-925dac8.tar.gz")
+            SET(DOWNLOAD_SHA1 "2a767197e8286560e1457cc223b5c0453c7b9711")
 
           elseif (CMAKE_OSX_ARCHITECTURES STREQUAL arm64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
             message(STATUS "Building for apple silicon mac")
-            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.18.0-rc2/tiledb-macos-arm64-2.18.0-rc2-3af8017.tar.gz")
-            SET(DOWNLOAD_SHA1 "7e058b50693c065dd1875c0ff8e47f6f36a54420")
+            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.18.0-rc3/tiledb-macos-arm64-2.18.0-rc3-925dac8.tar.gz")
+            SET(DOWNLOAD_SHA1 "92eee3a48335ba9dd72bb79915a9d3f8def387dc")
           endif()
         else() # Linux
           if (USE_AVX2)

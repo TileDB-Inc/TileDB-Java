@@ -61,7 +61,6 @@ jobs:
 
       - run: |
           unset SYSTEM
-          set +e;
           ./gradlew test
         shell: bash
         name: test
