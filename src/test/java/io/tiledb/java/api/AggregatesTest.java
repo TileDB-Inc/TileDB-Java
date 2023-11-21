@@ -200,7 +200,32 @@ public class AggregatesTest {
   }
 
   @Test
-  public void testCOUNT() {
-    // TODO
+  public void testCOUNT() throws TileDBError {
+    try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
+        Query query = new Query(array, TILEDB_READ)) {
+
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, 1, 4, null);
+      subArray.addRange(1, 1, 4, null);
+
+      query.setSubarray(subArray);
+      query.setLayout(TILEDB_ROW_MAJOR);
+
+      ByteBuffer a2Array = ByteBuffer.allocateDirect(8);
+      a2Array.order(ByteOrder.nativeOrder());
+
+      ChannelOperator operator =
+          new ChannelOperator(ctx, ChannelOperator.AggregationOperator.TILEDB_COUNT);
+      ChannelOperation operation = new ChannelOperation(ctx, operator, query, "a2");
+      QueryChannel queryChannel = query.getDefaultChannel();
+      queryChannel.applyAggregate("a2", operation);
+
+      query.setDataBuffer("a2", a2Array);
+
+      // Submit query
+      query.submit();
+
+      Assert.assertEquals(16, a2Array.getLong(0), 0);
+    }
   }
 }

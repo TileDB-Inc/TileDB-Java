@@ -22,13 +22,19 @@ public class ChannelOperation {
       throws TileDBError {
     this.ctx = ctx;
     this.operationpp = tiledb.new_tiledb_channel_operation_tpp();
-    ctx.handleError(
-        tiledb.tiledb_create_unary_aggregate(
-            ctx.getCtxp(),
-            query.getQueryp(),
-            operator.getOperatorp(),
-            fieldName,
-            this.operationpp));
+
+    if (operator.isCount()) {
+      tiledb.tiledb_aggregate_count_get(ctx.getCtxp(), this.operationpp);
+    } else {
+      ctx.handleError(
+          tiledb.tiledb_create_unary_aggregate(
+              ctx.getCtxp(),
+              query.getQueryp(),
+              operator.getOperatorp(),
+              fieldName,
+              this.operationpp));
+    }
+
     this.operationp = tiledb.tiledb_channel_operation_tpp_value(operationpp);
   }
 
