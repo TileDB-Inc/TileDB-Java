@@ -4,7 +4,7 @@ import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_channel_operator_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_channel_operator_t;
 import io.tiledb.libtiledb.tiledb;
 
-public class ChannelOperator {
+public class ChannelOperator implements AutoCloseable {
   public enum AggregationOperator {
     TILEDB_MIN,
     TILEDB_SUM,
@@ -25,30 +25,35 @@ public class ChannelOperator {
    * @param ctx The context
    * @param op The aggregation operator
    */
-  public ChannelOperator(Context ctx, AggregationOperator op) {
+  public ChannelOperator(Context ctx, AggregationOperator op) throws TileDBError {
     this.aggregationOperator = op;
     operatorpp = tiledb.new_tiledb_channel_operator_tpp();
-    switch (op) {
-      case TILEDB_MIN:
-        tiledb.tiledb_channel_operator_min_get(ctx.getCtxp(), operatorpp);
-        break;
-      case TILEDB_MAX:
-        tiledb.tiledb_channel_operator_max_get(ctx.getCtxp(), operatorpp);
-        break;
-      case TILEDB_SUM:
-        tiledb.tiledb_channel_operator_sum_get(ctx.getCtxp(), operatorpp);
-        break;
-      case TILEDB_MEAN:
-        tiledb.tiledb_channel_operator_mean_get(ctx.getCtxp(), operatorpp);
-        break;
-      case TILEDB_NULL_COUNT:
-        tiledb.tiledb_channel_operator_null_count_get(ctx.getCtxp(), operatorpp);
-        break;
-      case TILEDB_COUNT:
-        isCount = true;
-        break;
-    }
 
+    try {
+      switch (op) {
+        case TILEDB_MIN:
+          ctx.handleError(tiledb.tiledb_channel_operator_min_get(ctx.getCtxp(), operatorpp));
+          break;
+        case TILEDB_MAX:
+          ctx.handleError(tiledb.tiledb_channel_operator_max_get(ctx.getCtxp(), operatorpp));
+          break;
+        case TILEDB_SUM:
+          ctx.handleError(tiledb.tiledb_channel_operator_sum_get(ctx.getCtxp(), operatorpp));
+          break;
+        case TILEDB_MEAN:
+          ctx.handleError(tiledb.tiledb_channel_operator_mean_get(ctx.getCtxp(), operatorpp));
+          break;
+        case TILEDB_NULL_COUNT:
+          ctx.handleError(tiledb.tiledb_channel_operator_null_count_get(ctx.getCtxp(), operatorpp));
+          break;
+        case TILEDB_COUNT:
+          isCount = true;
+          break;
+      }
+    } catch (TileDBError error) {
+      tiledb.delete_tiledb_channel_operator_tpp(operatorpp);
+      throw error;
+    }
     operatorp = tiledb.tiledb_channel_operator_tpp_value(operatorpp);
   }
 
@@ -58,5 +63,14 @@ public class ChannelOperator {
 
   public SWIGTYPE_p_tiledb_channel_operator_t getOperatorp() {
     return operatorp;
+  }
+
+  @Override
+  public void close() throws Exception {
+    if (operatorp != null) {
+      tiledb.delete_tiledb_channel_operator_tpp(operatorpp);
+      operatorp = null;
+      operatorpp = null;
+    }
   }
 }
