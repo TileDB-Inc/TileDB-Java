@@ -17,8 +17,8 @@ public class QueryChannel implements AutoCloseable {
   }
 
   /**
-   * Apply an aggregate operation on this channel which will
-   * produce the results on the output field passed as argument
+   * Apply an aggregate operation on this channel which will produce the results on the output field
+   * passed as argument
    *
    * @param fieldName The field name
    * @param channelOperation the aggregate operation to be applied on the channel

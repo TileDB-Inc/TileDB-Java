@@ -11,11 +11,13 @@ public class ChannelOperator {
     TILEDB_MEAN,
     TILEDB_MAX,
     TILEDB_NULL_COUNT,
+    TILEDB_COUNT
   }
 
   private SWIGTYPE_p_tiledb_channel_operator_t operatorp;
   private SWIGTYPE_p_p_tiledb_channel_operator_t operatorpp;
   private AggregationOperator aggregationOperator;
+  private boolean isCount = false;
 
   /**
    * Constructor
@@ -42,9 +44,16 @@ public class ChannelOperator {
       case TILEDB_NULL_COUNT:
         tiledb.tiledb_channel_operator_null_count_get(ctx.getCtxp(), operatorpp);
         break;
+      case TILEDB_COUNT:
+        isCount = true;
+        break;
     }
 
     operatorp = tiledb.tiledb_channel_operator_tpp_value(operatorpp);
+  }
+
+  public boolean isCount() {
+    return isCount;
   }
 
   public SWIGTYPE_p_tiledb_channel_operator_t getOperatorp() {
