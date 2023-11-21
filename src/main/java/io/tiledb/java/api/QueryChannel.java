@@ -17,8 +17,11 @@ public class QueryChannel implements AutoCloseable {
   }
 
   /**
-   * @param fieldName
-   * @param channelOperation
+   * Apply an aggregate operation on this channel which will
+   * produce the results on the output field passed as argument
+   *
+   * @param fieldName The field name
+   * @param channelOperation the aggregate operation to be applied on the channel
    * @throws TileDBError
    */
   public void applyAggregate(String fieldName, ChannelOperation channelOperation)
