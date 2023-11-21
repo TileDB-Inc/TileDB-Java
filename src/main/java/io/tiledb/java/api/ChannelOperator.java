@@ -17,6 +17,12 @@ public class ChannelOperator {
   private SWIGTYPE_p_p_tiledb_channel_operator_t operatorpp;
   private AggregationOperator aggregationOperator;
 
+  /**
+   * Constructor
+   *
+   * @param ctx The context
+   * @param op The aggregation operator
+   */
   public ChannelOperator(Context ctx, AggregationOperator op) {
     this.aggregationOperator = op;
     operatorpp = tiledb.new_tiledb_channel_operator_tpp();

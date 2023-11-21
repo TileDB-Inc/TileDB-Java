@@ -9,6 +9,15 @@ public class ChannelOperation {
   private SWIGTYPE_p_tiledb_channel_operation_t operationp;
   private SWIGTYPE_p_p_tiledb_channel_operation_t operationpp;
 
+  /**
+   * Constructor
+   *
+   * @param ctx the context
+   * @param operator The channel operator
+   * @param query The query
+   * @param fieldName The field name to apply the operation to
+   * @throws TileDBError
+   */
   public ChannelOperation(Context ctx, ChannelOperator operator, Query query, String fieldName)
       throws TileDBError {
     this.ctx = ctx;
