@@ -33,6 +33,8 @@ import io.tiledb.java.api.*;
 public class ArrayDenseCreate {
   public static void main(String[] args) throws Exception {
 
+    Version version = new Version();
+    System.out.println(version);
     // Create TileDB context
     System.out.println("context before");
 
