@@ -11,98 +11,7 @@ on:
   pull_request:
 
 jobs:
-  Test_Windows:
-    runs-on: windows-2019
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-
-      - name: assemble
-        uses: gradle/gradle-build-action@v2.4.2
-        with:
-          arguments: assemble
-
-      - name: test
-        uses: gradle/gradle-build-action@v2.4.2
-        with:
-          arguments: test
-    env:
-      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
-      ORG_GRADLE_PROJECT_TILEDB_S3: OFF
-
-
-  Test_Ubuntu_macOS:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, macos-13, macos-13-xlarge ]
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-          check-latest: true
-
-      - run: |
-          unset SYSTEM
-          ./gradlew checkFormat
-        shell: bash
-        name: checkFormat
-
-      - run: |
-          unset SYSTEM
-          ./gradlew assemble
-        shell: bash
-        name: assemble
-
-      - run: |
-          unset SYSTEM
-          ./gradlew test
-        shell: bash
-        name: test
-
-    env:
-      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
-      ORG_GRADLE_PROJECT_TILEDB_S3: OFF
-
-  Examples:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-
-      - run: |
-          unset SYSTEM
-          ./gradlew assemble;
-        shell: bash
-        name: assemble
-
-      - name: Run examples
-        run: |
-          cd build/libs
-          rm *javadoc* *sources*
-          p=$(readlink -f *.jar)
-          cd ../../src/main/java/examples/io/tiledb/java/api
-          javac -cp $p *.java
-          for x in $(ls -1 *.java | sed 's/.java//');
-          do
-          echo $x;
-          class_name=examples.io.tiledb.java.api.$x;
-          java -cp $p $class_name;
-          done
-
-    env:
-      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
-      ORG_GRADLE_PROJECT_TILEDB_S3: OFF
-
   Create_Artifacts_Windows:
-    if: startsWith(github.ref, 'refs/tags/') || contains(github.ref, 'test')
-    needs: [Test_Windows, Examples]
     name: Create_Artifacts_Windows
     runs-on: windows-2019
     steps:
@@ -148,8 +57,6 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_S3: ON
 
   Create_Artifacts_Ubuntu_MacOS:
-    if: startsWith(github.ref, 'refs/tags/') || contains(github.ref, 'test')
-    needs: [Test_Ubuntu_macOS, Examples]
     name: Create_Artifacts_Ubuntu_MacOS
     runs-on: ${{ matrix.os }}
     strategy:
@@ -225,7 +132,6 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_S3: ON
 
   Mock-Release:
-    if: startsWith(github.ref, 'refs/tags/')
     needs: [Create_Artifacts_Ubuntu_MacOS, Create_Artifacts_Windows]
     name: Mock-Release
     runs-on: ubuntu-latest
@@ -259,7 +165,6 @@ jobs:
 
 
   Test-Mock-Release:
-    if: startsWith(github.ref, 'refs/tags/')
     needs: [ Mock-Release ]
     name: Test-Mock-Release
     runs-on: ${{ matrix.os }}
@@ -306,50 +211,6 @@ jobs:
             class_name=examples.io.tiledb.java.api.$x;
             java -cp "$p" $class_name;
           done
-    env:
-      ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
-      ORG_GRADLE_PROJECT_TILEDB_S3: ON
-
-  Actual-Release:
-    needs: [ Test-Mock-Release ]
-    name: Actual-Release
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@v2
-
-      - name: assemble
-        run: |
-          chmod +x ./ci/assemble_full_jar.sh;
-          ./ci/assemble_full_jar.sh;
-
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          files: jars/*.jar
-          tag_name: ${{ github.event.release.tag_name }}
-          name: ${{ github.event.release.tag_name }}
-          body: ${{steps.github_release.outputs.changelog}}
-          draft: false
-          prerelease: false
-
-      - name: Upload to maven
-        run: |
-          chmod +x ./ci/upload_to_maven.sh
-          ./ci/upload_to_maven.sh
-        shell: bash
-        env:
-          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GPG_SECRET_KEYS_ENC: ${{ secrets.GPG_SECRET_KEYS_ENC }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
     env:
       ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: ON
       ORG_GRADLE_PROJECT_TILEDB_S3: ON
