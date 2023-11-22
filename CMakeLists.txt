@@ -40,8 +40,8 @@ endif()
 # Default builds the superbuild.
 option(TILEDB_JNI_SUPERBUILD "If true, perform a superbuild (builds all missing dependencies)." ON)
 
-# Set C++20 as required standard for all C++ targets.
-set(CMAKE_CXX_STANDARD 20)
+# Set C++11 as required standard for all C++ targets.
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # Don't use GNU extensions
 
