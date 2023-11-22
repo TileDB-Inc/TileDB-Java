@@ -68,7 +68,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: '17'
           check-latest: true
 
       - name: checkout
@@ -144,7 +144,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: '17'
           check-latest: true
 
       - uses: actions/download-artifact@v2
@@ -180,7 +180,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: '17'
           check-latest: true
 
       - uses: actions/download-artifact@v2
