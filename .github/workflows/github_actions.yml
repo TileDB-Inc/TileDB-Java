@@ -190,7 +190,7 @@ jobs:
       - shell: bash
         name: Run examples with release jar
         run: |
-          
+          set +e;
           if [[ "$RUNNER_OS" == "macOS" ]]; then
               brew install coreutils;
           fi
