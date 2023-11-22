@@ -323,6 +323,8 @@ public class NativeLibLoader {
     String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
     String libDir = LIB_RESOURCE_DIR;
 
+    System.out.println(System.getProperty("os.name") + " one");
+    System.out.println(System.getProperty("os.arch") + " two");
     if (System.getProperty("os.name").contains("mac")
         && System.getProperty("os.arch").equals("aarch64")) {
       System.out.println("arm mac <<<<<<<<<<<<<<<");
