@@ -325,11 +325,12 @@ public class NativeLibLoader {
 
     if (System.getProperty("os.name").contains("mac")
         && System.getProperty("os.arch").equals("aarch64")) {
+      System.out.println("arm mac <<<<<<<<<<<<<<<");
       libDir = "arm" + libDir;
     }
 
     String libPath = libDir + "/" + mappedLibraryName;
-
+    System.out.println(libPath + " ///////////////////");
     boolean hasNativeLib = hasResource(libPath);
     if (!hasNativeLib) {
       return null;
@@ -348,10 +349,12 @@ public class NativeLibLoader {
   private static void loadNativeLib(String libraryName, boolean mapLibraryName) {
     Path nativeLibFile = findNativeLibrary(libraryName, mapLibraryName);
     if (nativeLibFile != null) {
+      System.out.println("native null");
       // Load extracted or specified native library.
       System.load(nativeLibFile.toString());
     } else {
       // Try loading preinstalled library (in the path -Djava.library.path)
+      System.out.println("load library ");
       System.loadLibrary(libraryName);
     }
   }
