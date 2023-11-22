@@ -325,8 +325,7 @@ public class NativeLibLoader {
 
     System.out.println(System.getProperty("os.name") + " one");
     System.out.println(System.getProperty("os.arch") + " two");
-    if (System.getProperty("os.name").contains("mac")
-        && System.getProperty("os.arch").equals("aarch64")) {
+    if (System.getProperty("os.name").contains("Mac")) {
       System.out.println("arm mac <<<<<<<<<<<<<<<");
       libDir = "arm" + libDir;
     }
