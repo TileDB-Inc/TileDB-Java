@@ -5122,12 +5122,12 @@ public class tiledb implements tiledbConstants {
   }
 
   public static capi_return_t tiledb_group_remove_member(
-      SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_group_handle_t group, String name) {
+      SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_group_handle_t group, String name_or_uri) {
     return new capi_return_t(
         tiledbJNI.tiledb_group_remove_member(
             SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
             SWIGTYPE_p_tiledb_group_handle_t.getCPtr(group),
-            name),
+            name_or_uri),
         true);
   }
 
