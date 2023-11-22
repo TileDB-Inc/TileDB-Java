@@ -258,7 +258,6 @@ public class NativeLibLoader {
     String nativeLibraryFilePath = libraryDir + "/" + libraryFileName;
     Path extractedLibFile = tempDir.resolve(libraryFileName);
 
-    System.out.println("extracting lib ");
     try {
       // Extract a native library file into the target directory
       try (InputStream reader = NativeLibLoader.class.getResourceAsStream(nativeLibraryFilePath);
@@ -331,14 +330,10 @@ public class NativeLibLoader {
 
     String libPath = libDir + "/" + mappedLibraryName;
 
-    System.out.println(libPath + " <<<<<<<<<<<<<<<");
-
     boolean hasNativeLib = hasResource(libPath);
     if (!hasNativeLib) {
       return null;
     }
-
-    System.out.println("here");
 
     // Extract and load a native library inside the jar file
     return extractLibraryFile(libDir, libraryName, mapLibraryName);
