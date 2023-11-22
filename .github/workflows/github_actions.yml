@@ -190,7 +190,6 @@ jobs:
       - shell: bash
         name: Run examples with release jar
         run: |
-          set +e;
           if [[ "$RUNNER_OS" == "macOS" ]]; then
               brew install coreutils;
           fi
@@ -214,6 +213,7 @@ jobs:
 
       - shell: bash
         name: print_logs
+        if: always()
         run: cat /Users/runner/work/TileDB-Java/TileDB-Java/src/main/java/examples/io/tiledb/java/api/hs*
 
     env:
