@@ -149,6 +149,7 @@ test {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     // macOS arm
     into(new File('arm/lib').toString()) {
         from file("$buildDir/install/arm/lib/libtiledb.dylib")
