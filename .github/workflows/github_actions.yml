@@ -43,7 +43,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'oracle'
+          distribution: 'adopt'
           java-version: '11'
           check-latest: true
 
@@ -158,7 +158,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'oracle'
+          distribution: 'adopt'
           java-version: '11'
           check-latest: true
 
@@ -234,7 +234,7 @@ jobs:
       - name: Set-up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'oracle'
+          distribution: 'adopt'
           java-version: '11'
           check-latest: true
 
@@ -270,7 +270,7 @@ jobs:
       - name: Set-up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'oracle'
+          distribution: 'adopt'
           java-version: '11'
           check-latest: true
 
