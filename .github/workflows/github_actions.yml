@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'oracle'
-          java-version: '17'
+          java-version: '11'
           check-latest: true
 
       - run: |
@@ -159,7 +159,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'oracle'
-          java-version: '17'
+          java-version: '11'
           check-latest: true
 
       - name: checkout
@@ -235,7 +235,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'oracle'
-          java-version: '17'
+          java-version: '11'
           check-latest: true
 
       - uses: actions/download-artifact@v2
@@ -271,7 +271,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'oracle'
-          java-version: '17'
+          java-version: '11'
           check-latest: true
 
       - uses: actions/download-artifact@v2
