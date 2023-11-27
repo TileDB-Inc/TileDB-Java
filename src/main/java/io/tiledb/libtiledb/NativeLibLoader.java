@@ -332,7 +332,7 @@ public class NativeLibLoader {
 
     String libPath = libDir + "/" + mappedLibraryName;
     System.out.println(libPath + " ///////////////////");
-    boolean hasNativeLib = hasResource(libPath);
+    boolean hasNativeLib = true;
     if (!hasNativeLib) {
       return null;
     }
@@ -350,7 +350,7 @@ public class NativeLibLoader {
   private static void loadNativeLib(String libraryName, boolean mapLibraryName) {
     Path nativeLibFile = findNativeLibrary(libraryName, mapLibraryName);
     if (nativeLibFile != null) {
-      System.out.println("native null");
+      System.out.println("native not null");
       // Load extracted or specified native library.
       System.load(nativeLibFile.toString());
     } else {
