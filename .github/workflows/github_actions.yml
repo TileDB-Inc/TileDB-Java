@@ -196,6 +196,10 @@ jobs:
           fi
           
           rm *javadoc* *sources*
+          
+          ls -l;
+          
+          jar tf *.jar;
 
           p=$(realpath *.jar)
           
