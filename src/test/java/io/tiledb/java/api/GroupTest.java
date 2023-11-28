@@ -132,10 +132,11 @@ public class GroupTest {
     // remove a member
     group.reopen(ctx, TILEDB_WRITE);
     group.removeMember("array2");
+    group.removeMember("array3Name");
 
     // check if member is removed
     group.reopen(ctx, QueryType.TILEDB_READ);
-    Assert.assertEquals(2, group.getMemberCount());
+    Assert.assertEquals(1, group.getMemberCount());
   }
 
   @Test
