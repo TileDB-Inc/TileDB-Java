@@ -258,7 +258,6 @@ public class NativeLibLoader {
     String libraryFileName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
     String nativeLibraryFilePath = libraryDir + "/" + libraryFileName;
     Path extractedLibFile = tempDir.resolve(libraryFileName);
-    System.out.println("extract from: " + nativeLibraryFilePath);
 
     try {
       // Extract a native library file into the target directory
@@ -325,16 +324,12 @@ public class NativeLibLoader {
     String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
     String libDir = LIB_RESOURCE_DIR;
 
-    System.out.println(System.getProperty("os.name") + " one");
-    System.out.println(System.getProperty("os.arch") + " two");
     if (System.getProperty("os.name").contains("Mac")
         && System.getProperty("os.arch").equals("aarch64")) {
-      System.out.println("arm mac <<<<<<<<<<<<<<<");
       libDir = "/arm" + libDir;
     }
 
     String libPath = libDir + "/" + mappedLibraryName;
-    System.out.println(libPath + " ///////////////////");
     boolean hasNativeLib = hasResource(libPath);
     if (!hasNativeLib) {
       return null;
@@ -353,12 +348,10 @@ public class NativeLibLoader {
   private static void loadNativeLib(String libraryName, boolean mapLibraryName) {
     Path nativeLibFile = findNativeLibrary(libraryName, mapLibraryName);
     if (nativeLibFile != null) {
-      System.out.println("native not null");
       // Load extracted or specified native library.
       System.load(nativeLibFile.toString());
     } else {
       // Try loading preinstalled library (in the path -Djava.library.path)
-      System.out.println("load library ");
       System.loadLibrary(libraryName);
     }
   }

@@ -33,28 +33,18 @@ import io.tiledb.java.api.*;
 public class ArrayDenseCreate {
   public static void main(String[] args) throws Exception {
 
-    Version version = new Version();
-    System.out.println(version);
     // Create TileDB context
-    System.out.println("context before");
-
     Context ctx = new Context();
-    System.out.println("context done");
     // Create getDimensions
     Dimension<Long> d1 =
         new Dimension<Long>(ctx, "d1", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
     Dimension<Long> d2 =
         new Dimension<Long>(ctx, "d2", Long.class, new Pair<Long, Long>(1l, 4l), 2l);
 
-    System.out.println("dim done");
-
     // Create getDomain
     Domain domain = new Domain(ctx);
-    System.out.println("domain done");
     domain.addDimension(d1);
     domain.addDimension(d2);
-
-    System.out.println("added dims");
 
     // Create and add getAttributes
     Attribute a1 = new Attribute(ctx, "a1", Integer.class);
