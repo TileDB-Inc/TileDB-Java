@@ -140,7 +140,7 @@ jobs:
             ./binaries_Windows
           outPath: tiledb-Win.gz.tar
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Upload-Artifact-Windows
           path: tiledb-Win.gz.tar
@@ -203,19 +203,19 @@ jobs:
           fi
         name: Archive_files
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Upload-Artifact-Linux
           path: '*.gz.tar'
         if: runner.os == 'Linux'
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Upload-Artifact-Mac
           path: '*.gz.tar'
         if: runner.os == 'macOS' && (runner.arch == 'X86' || runner.arch == 'X64')
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Upload-Artifact-Mac-Arm
           path: '*.gz.tar'
