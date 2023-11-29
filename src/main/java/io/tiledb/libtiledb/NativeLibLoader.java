@@ -99,6 +99,7 @@ public class NativeLibLoader {
     try {
       loadNativeLib("tiledbjni", true);
     } catch (java.lang.UnsatisfiedLinkError e) {
+      LOGGER.warning("Could not load Native TileDB JNI");
       // If a native library fails to link, we fall back to depending on the system
       // dynamic linker to satisfy the requirement. Therefore, we do nothing here
       // (if the library is not available via the system linker, a runtime error
@@ -323,13 +324,12 @@ public class NativeLibLoader {
     String mappedLibraryName = mapLibraryName ? System.mapLibraryName(libraryName) : libraryName;
     String libDir = LIB_RESOURCE_DIR;
 
-    if (System.getProperty("os.name").contains("mac")
+    if (System.getProperty("os.name").contains("Mac")
         && System.getProperty("os.arch").equals("aarch64")) {
-      libDir = "arm" + libDir;
+      libDir = "/arm" + libDir;
     }
 
     String libPath = libDir + "/" + mappedLibraryName;
-
     boolean hasNativeLib = hasResource(libPath);
     if (!hasNativeLib) {
       return null;

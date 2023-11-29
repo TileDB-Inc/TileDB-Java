@@ -144,10 +144,12 @@ test {
 
     testLogging {
         showStandardStreams = true
+        exceptionFormat = 'full'
     }
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     // macOS arm
     into(new File('arm/lib').toString()) {
         from file("$buildDir/install/arm/lib/libtiledb.dylib")

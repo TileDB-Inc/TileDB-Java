@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set +e
-
 mv Upload-*/* .
 
 mkdir -p ./build/install/lib
