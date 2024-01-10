@@ -1717,7 +1717,13 @@ public class tiledbJNI {
   public static final native long tiledb_group_get_member_by_index(
       long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5, long jarg6);
 
+  public static final native long tiledb_group_get_member_by_index_v2(
+      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5, long jarg6);
+
   public static final native long tiledb_group_get_member_by_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
+  public static final native long tiledb_group_get_member_by_name_v2(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
   public static final native long tiledb_group_get_is_relative_uri_by_name(
