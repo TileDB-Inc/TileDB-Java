@@ -54,6 +54,7 @@ if (NOT TILEDB_FOUND)
 
           if (CMAKE_OSX_ARCHITECTURES STREQUAL x86_64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64|amd64)|(^i.86$)")
             message(STATUS "Building for intel mac")
+
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.19.0/tiledb-macos-x86_64-2.19.0-fa30a88a.tar.gz")
             SET(DOWNLOAD_SHA1 "089b3aa8a92df0bd5a8f7515ed8e5b6bacb5ab47")
 

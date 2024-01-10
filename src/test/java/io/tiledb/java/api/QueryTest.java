@@ -58,6 +58,7 @@ public class QueryTest {
       Attribute a1 = new Attribute(ctx, "a1", String.class);
       Attribute a2 = new Attribute(ctx, "a2", Float.class);
       Attribute a3 = new Attribute(ctx, "a3", Boolean.class);
+      Attribute a4 = new Attribute(ctx, "a4", Datatype.TILEDB_STRING_UTF8);
       a1.setFilterList(
           new FilterList(ctx)
               .addFilter(new CheckSumMD5Filter(ctx))
@@ -76,6 +77,7 @@ public class QueryTest {
       schema.addAttribute(a1);
       schema.addAttribute(a2);
       schema.addAttribute(a3);
+      schema.addAttribute(a4);
 
       Array.create(arrayURI, schema);
     }
@@ -101,6 +103,7 @@ public class QueryTest {
               },
               Datatype.TILEDB_BOOL);
 
+      NativeArray a4 = new NativeArray(ctx, "aBCDefghijklmnop", Datatype.TILEDB_STRING_UTF8);
       // Create query
       try (Array array = new Array(ctx, arrayURI, TILEDB_WRITE);
           Query query = new Query(array)) {
@@ -108,6 +111,7 @@ public class QueryTest {
         query.setDataBuffer("a1", a1);
         query.setDataBuffer("a2", a2);
         query.setDataBuffer("a3", a3);
+        query.setDataBuffer("a4", a4);
         // Submit query
         query.submit();
 
@@ -184,12 +188,14 @@ public class QueryTest {
         NativeArray a1Array = new NativeArray(ctx, 12, String.class);
         NativeArray a2Array = new NativeArray(ctx, 6, Float.class);
         NativeArray a3Array = new NativeArray(ctx, 6, Boolean.class);
+        NativeArray a4Array = new NativeArray(ctx, 6, Datatype.TILEDB_STRING_UTF8);
 
         query.setDataBuffer("rows", dim1Array);
         query.setDataBuffer("cols", dim2Array);
         query.setDataBuffer("a1", a1Array);
         query.setDataBuffer("a2", a2Array);
         query.setDataBuffer("a3", a3Array);
+        query.setDataBuffer("a4", a4Array);
 
         // Submit query
         query.submit();
@@ -210,12 +216,14 @@ public class QueryTest {
         byte[] a1 = (byte[]) query.getBuffer("a1");
         float[] a2 = (float[]) query.getBuffer("a2");
         short[] a3 = (short[]) query.getBuffer("a3");
+        byte[] a4 = (byte[]) query.getBuffer("a4");
 
         Assert.assertArrayEquals(new int[] {1, 1, 1}, dim1);
         Assert.assertArrayEquals(new int[] {2, 3, 4}, dim2);
         Assert.assertArrayEquals(new byte[] {'b', 'c', 'd'}, a1);
         Assert.assertArrayEquals(new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f}, a2, 0.01f);
         Assert.assertArrayEquals(new short[] {0, 1, 0}, a3);
+        Assert.assertArrayEquals(new byte[] {'B', 'C', 'D'}, a4);
       }
     }
 

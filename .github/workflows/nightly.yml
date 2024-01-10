@@ -39,11 +39,11 @@ jobs:
           (Get-Content gradle.properties) | ForEach-Object { $_ -replace 'TILEDB_GIT_TAG=.*', 'TILEDB_GIT_TAG=dev' } | Set-Content gradle.properties
           (Get-Content gradle.properties) | ForEach-Object { $_ -replace 'DOWNLOAD_TILEDB_PREBUILT=.*', 'DOWNLOAD_TILEDB_PREBUILT=OFF' } | Set-Content gradle.properties
       - name: assemble
-        uses: gradle/gradle-build-action@v2.10.0
+        uses: gradle/gradle-build-action@v2.11.1
         with:
           arguments: assemble
 
       - name: test
-        uses: gradle/gradle-build-action@v2.10.0
+        uses: gradle/gradle-build-action@v2.11.1
         with:
           arguments: test
