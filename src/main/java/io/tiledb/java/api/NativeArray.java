@@ -386,6 +386,7 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_STRING_ASCII:
       case TILEDB_CHAR:
+      case TILEDB_STRING_UTF8:
         {
           int8_tArray = new int8_tArray(size);
           break;
