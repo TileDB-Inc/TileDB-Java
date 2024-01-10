@@ -5161,6 +5161,24 @@ public class tiledb implements tiledbConstants {
         true);
   }
 
+  public static capi_return_t tiledb_group_get_member_by_index_v2(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_group_handle_t group,
+      java.math.BigInteger index,
+      SWIGTYPE_p_p_tiledb_string_handle_t uri,
+      SWIGTYPE_p_tiledb_object_t type,
+      SWIGTYPE_p_p_tiledb_string_handle_t name) {
+    return new capi_return_t(
+        tiledbJNI.tiledb_group_get_member_by_index_v2(
+            SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+            SWIGTYPE_p_tiledb_group_handle_t.getCPtr(group),
+            index,
+            SWIGTYPE_p_p_tiledb_string_handle_t.getCPtr(uri),
+            SWIGTYPE_p_tiledb_object_t.getCPtr(type),
+            SWIGTYPE_p_p_tiledb_string_handle_t.getCPtr(name)),
+        true);
+  }
+
   public static capi_return_t tiledb_group_get_member_by_name(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_group_handle_t group,
@@ -5173,6 +5191,22 @@ public class tiledb implements tiledbConstants {
             SWIGTYPE_p_tiledb_group_handle_t.getCPtr(group),
             name,
             SWIGTYPE_p_p_char.getCPtr(uri),
+            SWIGTYPE_p_tiledb_object_t.getCPtr(type)),
+        true);
+  }
+
+  public static capi_return_t tiledb_group_get_member_by_name_v2(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_group_handle_t group,
+      String name,
+      SWIGTYPE_p_p_tiledb_string_handle_t uri,
+      SWIGTYPE_p_tiledb_object_t type) {
+    return new capi_return_t(
+        tiledbJNI.tiledb_group_get_member_by_name_v2(
+            SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+            SWIGTYPE_p_tiledb_group_handle_t.getCPtr(group),
+            name,
+            SWIGTYPE_p_p_tiledb_string_handle_t.getCPtr(uri),
             SWIGTYPE_p_tiledb_object_t.getCPtr(type)),
         true);
   }
