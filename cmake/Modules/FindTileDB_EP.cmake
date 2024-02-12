@@ -48,30 +48,30 @@ if (NOT TILEDB_FOUND)
     # Try to download prebuilt artifacts unless the user specifies to build from source
     if(DOWNLOAD_TILEDB_PREBUILT)
         if (WIN32) # Windows
-          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc1/tiledb-windows-x86_64-2.20.0-rc1-9a3c2dc.zip")
-          SET(DOWNLOAD_SHA1 "9e5a67f75312e11c1bf3ebc9b0e142c30062585c")
+          SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc2/tiledb-windows-x86_64-2.20.0-rc2-40552aa.zip")
+          SET(DOWNLOAD_SHA1 "c5fc5c2eeb021bad62a9bebe5910fc0d8b297b0a")
         elseif(APPLE) # macOS
 
           if (CMAKE_OSX_ARCHITECTURES STREQUAL x86_64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64|amd64)|(^i.86$)")
             message(STATUS "Building for intel mac")
 
-            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc1/tiledb-macos-x86_64-2.20.0-rc1-9a3c2dc.tar.gz")
-            SET(DOWNLOAD_SHA1 "94ec0974b59dcd8b7fd5fd3c073d1586d41510da")
+            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc2/tiledb-macos-x86_64-2.20.0-rc2-40552aa.tar.gz")
+            SET(DOWNLOAD_SHA1 "8014a327a151b64b38811e0d712d6cfe38b663d9")
 
           elseif (CMAKE_OSX_ARCHITECTURES STREQUAL arm64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
             message(STATUS "Building for apple silicon mac")
-            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc1/tiledb-macos-arm64-2.20.0-rc1-9a3c2dc.tar.gz")
-            SET(DOWNLOAD_SHA1 "ae38050b92399f91032165af14d4211c8c1707ac")
+            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc2/tiledb-macos-arm64-2.20.0-rc2-40552aa.tar.gz")
+            SET(DOWNLOAD_SHA1 "d09d25e64580cdfd74c41d4dbbd9b00ad5b9f4b8")
           endif()
         else() # Linux
           if (USE_AVX2)
             message(STATUS "Using Linux binaries with AVX2")
-            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc1/tiledb-linux-x86_64-2.20.0-rc1-9a3c2dc.tar.gz")
-            SET(DOWNLOAD_SHA1 "5f5b8954b34ca7d4f46c342ebdb190aaac9bb50c")
+            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc2/tiledb-linux-x86_64-2.20.0-rc2-40552aa.tar.gz")
+            SET(DOWNLOAD_SHA1 "13efc1bfbd07a6fb26e2f13cd1fa449f85b06839")
           else()
             message(STATUS "Using Linux binaries without AVX2")
-            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc1/tiledb-linux-x86_64-noavx2-2.20.0-rc1-9a3c2dc.tar.gz")
-            SET(DOWNLOAD_SHA1 "a4ee66fc8484fa6340e757750b7e2a959117933c")
+            SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0-rc2/tiledb-linux-x86_64-noavx2-2.20.0-rc2-40552aa.tar.gz")
+            SET(DOWNLOAD_SHA1 "f5018779c0b6522b86266f72b07425207e8b19c8")
           endif()
         endif()
 
