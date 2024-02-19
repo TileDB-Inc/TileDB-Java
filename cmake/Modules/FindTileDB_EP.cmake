@@ -49,29 +49,29 @@ if (NOT TILEDB_FOUND)
     if(DOWNLOAD_TILEDB_PREBUILT)
         if (WIN32) # Windows
           SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0/tiledb-windows-x86_64-2.20.0-40552aa.zip")
-          SET(DOWNLOAD_SHA1 "c5fc5c2eeb021bad62a9bebe5910fc0d8b297b0a")
+          SET(DOWNLOAD_SHA1 "cb7df1c80c7034d2d8d16cea5114fdca7306e87d")
         elseif(APPLE) # macOS
 
           if (CMAKE_OSX_ARCHITECTURES STREQUAL x86_64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64|amd64)|(^i.86$)")
             message(STATUS "Building for intel mac")
 
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0/tiledb-macos-x86_64-2.20.0-40552aa.tar.gz")
-            SET(DOWNLOAD_SHA1 "8014a327a151b64b38811e0d712d6cfe38b663d9")
+            SET(DOWNLOAD_SHA1 "83af0a52e6756129472073393c28ec15d6265e0c")
 
           elseif (CMAKE_OSX_ARCHITECTURES STREQUAL arm64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
             message(STATUS "Building for apple silicon mac")
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0/tiledb-macos-arm64-2.20.0-40552aa.tar.gz")
-            SET(DOWNLOAD_SHA1 "d09d25e64580cdfd74c41d4dbbd9b00ad5b9f4b8")
+            SET(DOWNLOAD_SHA1 "78ea78b0d7ffe4edb5bc6f98a8b620cc6f7d0e85")
           endif()
         else() # Linux
           if (USE_AVX2)
             message(STATUS "Using Linux binaries with AVX2")
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0/tiledb-linux-x86_64-2.20.0-40552aa.tar.gz")
-            SET(DOWNLOAD_SHA1 "13efc1bfbd07a6fb26e2f13cd1fa449f85b06839")
+            SET(DOWNLOAD_SHA1 "9104da8d6979c3b96e63b9e28fd41a403d412079")
           else()
             message(STATUS "Using Linux binaries without AVX2")
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.20.0/tiledb-linux-x86_64-noavx2-2.20.0-40552aa.tar.gz")
-            SET(DOWNLOAD_SHA1 "f5018779c0b6522b86266f72b07425207e8b19c8")
+            SET(DOWNLOAD_SHA1 "e546891dffd5ab7e5ae846870233468e4f1eea9d")
           endif()
         endif()
 
