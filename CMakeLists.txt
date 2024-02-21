@@ -104,7 +104,7 @@ add_library(tiledbjni SHARED
     src/main/c/custom/tiledb_custom.cxx
 )
 
-target_compile_definitions(tiledbjni PRIVATE -DTILEDB_CORE_OBJECTS_EXPORTS)
+target_compile_definitions(tiledbjni PRIVATE -Dtiledb_EXPORTS)
 target_include_directories(tiledbjni
   PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/swig"
