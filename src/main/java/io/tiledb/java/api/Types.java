@@ -81,6 +81,8 @@ public class Types {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           return Byte.class;
         }

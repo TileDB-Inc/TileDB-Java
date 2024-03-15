@@ -167,6 +167,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           return ((byte[]) buffer).length;
         }
@@ -244,6 +246,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           int8_tArray = Utils.newInt8_tArray((byte[]) buffer);
           break;
@@ -344,6 +348,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           int8_tArray = new int8_tArray(size);
           break;
@@ -446,6 +452,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           return int8_tArray.getitem(index);
         }
@@ -539,6 +547,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           int8_tArray.setitem(index, (byte) value);
           break;
@@ -643,6 +653,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           return PointerUtils.toVoid(int8_tArray);
         }
@@ -724,6 +736,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           return PointerUtils.toCPtr(int8_tArray);
         }
@@ -837,6 +851,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           return Utils.int8ArrayGet(int8_tArray, position, elements);
         }
@@ -920,6 +936,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
           break;
@@ -1013,6 +1031,8 @@ public class NativeArray implements AutoCloseable {
         }
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         {
           int8_tArray = PointerUtils.int8_tArrayFromVoid(pointer);
           break;

@@ -47,7 +47,9 @@ public enum Datatype {
   TILEDB_TIME_FS,
   TILEDB_TIME_AS,
   TILEDB_BLOB,
-  TILEDB_BOOL;
+  TILEDB_BOOL,
+  TILEDB_GEOM_WKB,
+  TILEDB_GEOM_WKT;
 
   /** @return Returns the TileDB Datatype size in Bytes * */
   public int getNativeSize() throws TileDBError {
@@ -159,6 +161,8 @@ public enum Datatype {
         return Byte.class;
       case TILEDB_INT8:
       case TILEDB_BLOB:
+      case TILEDB_GEOM_WKB:
+      case TILEDB_GEOM_WKT:
         return Byte.class;
       case TILEDB_UINT8:
       case TILEDB_BOOL:
@@ -294,6 +298,10 @@ public enum Datatype {
         return tiledb_datatype_t.TILEDB_TIME_FS;
       case TILEDB_TIME_AS:
         return tiledb_datatype_t.TILEDB_TIME_AS;
+      case TILEDB_GEOM_WKB:
+        return tiledb_datatype_t.TILEDB_GEOM_WKB;
+      case TILEDB_GEOM_WKT:
+        return tiledb_datatype_t.TILEDB_GEOM_WKT;
       case TILEDB_BLOB:
         return tiledb_datatype_t.TILEDB_BLOB;
       case TILEDB_BOOL:
@@ -389,6 +397,10 @@ public enum Datatype {
         return TILEDB_BLOB;
       case TILEDB_BOOL:
         return TILEDB_BOOL;
+      case TILEDB_GEOM_WKB:
+        return TILEDB_GEOM_WKB;
+      case TILEDB_GEOM_WKT:
+        return TILEDB_GEOM_WKT;
       default:
         throw new TileDBError("No such enum value " + e.name());
     }
