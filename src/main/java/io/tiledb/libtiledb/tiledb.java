@@ -5464,6 +5464,23 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_p_tiledb_string_handle_t.getCPtr(plan));
   }
 
+  public static capi_return_t tiledb_vfs_ls_recursive(
+      SWIGTYPE_p_tiledb_ctx_t ctx,
+      SWIGTYPE_p_tiledb_vfs_handle_t vfs,
+      String path,
+      SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_p_void__int callback,
+      SWIGTYPE_p_void data) {
+    return new capi_return_t(
+        tiledbJNI.tiledb_vfs_ls_recursive(
+            SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
+            SWIGTYPE_p_tiledb_vfs_handle_t.getCPtr(vfs),
+            path,
+            SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_p_void__int.getCPtr(
+                callback),
+            SWIGTYPE_p_void.getCPtr(data)),
+        true);
+  }
+
   public static void tiledb_dimension_label_free(
       SWIGTYPE_p_p_tiledb_dimension_label_handle_t dim_label) {
     tiledbJNI.tiledb_dimension_label_free(

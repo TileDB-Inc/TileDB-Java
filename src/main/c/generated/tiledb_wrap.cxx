@@ -14551,6 +14551,33 @@ SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1get_1p
 }
 
 
+SWIGEXPORT jlong JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1vfs_1ls_1recursive(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jlong jarg4, jlong jarg5) {
+  jlong jresult = 0 ;
+  tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
+  tiledb_vfs_t *arg2 = (tiledb_vfs_t *) 0 ;
+  char *arg3 = (char *) 0 ;
+  tiledb_ls_callback_t arg4 = (tiledb_ls_callback_t) 0 ;
+  void *arg5 = (void *) 0 ;
+  SwigValueWrapper< capi_return_t > result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(tiledb_ctx_t **)&jarg1; 
+  arg2 = *(tiledb_vfs_t **)&jarg2; 
+  arg3 = 0;
+  if (jarg3) {
+    arg3 = (char *)jenv->GetStringUTFChars(jarg3, 0);
+    if (!arg3) return 0;
+  }
+  arg4 = *(tiledb_ls_callback_t *)&jarg4; 
+  arg5 = *(void **)&jarg5; 
+  result = tiledb_vfs_ls_recursive(arg1,arg2,(char const *)arg3,arg4,arg5);
+  *(capi_return_t **)&jresult = new capi_return_t(result); 
+  if (arg3) jenv->ReleaseStringUTFChars(jarg3, (const char *)arg3);
+  return jresult;
+}
+
+
 SWIGEXPORT void JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1dimension_1label_1free(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   tiledb_dimension_label_t **arg1 = (tiledb_dimension_label_t **) 0 ;
   
