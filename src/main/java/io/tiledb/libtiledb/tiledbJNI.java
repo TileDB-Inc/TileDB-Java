@@ -1784,6 +1784,9 @@ public class tiledbJNI {
 
   public static final native int tiledb_query_get_plan(long jarg1, long jarg2, long jarg3);
 
+  public static final native long tiledb_vfs_ls_recursive(
+      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
+
   public static final native void tiledb_dimension_label_free(long jarg1);
 
   public static final native long tiledb_dimension_label_get_dimension_index(
