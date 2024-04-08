@@ -18,12 +18,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: assemble
-        uses: gradle/gradle-build-action@v3.1.0
+        uses: gradle/gradle-build-action@v3.2.0
         with:
           arguments: assemble
 
       - name: test
-        uses: gradle/gradle-build-action@v3.1.0
+        uses: gradle/gradle-build-action@v3.2.0
         with:
           arguments: test
     env:
