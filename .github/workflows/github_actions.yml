@@ -131,7 +131,7 @@ jobs:
         name: "Print log files (failed build only)"
 
       - name: Archive files
-        uses: master-atul/tar-action@v1.1.3
+        uses: master-atul/tar-action@v1.2.0
         id: compress
         with:
           command: c
