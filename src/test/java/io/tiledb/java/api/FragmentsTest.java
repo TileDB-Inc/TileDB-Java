@@ -224,9 +224,7 @@ public class FragmentsTest {
 
   @Test
   public void testDeleteFragments() throws Exception {
-    Array array = new Array(ctx, arrayURI, TILEDB_MODIFY_EXCLUSIVE);
-
-    array.deleteFragments(BigInteger.valueOf(10L), BigInteger.valueOf(20L));
+    Array.deleteFragments(ctx, arrayURI, BigInteger.valueOf(10L), BigInteger.valueOf(20L));
 
     File f = new File(arrayURI);
     int nFiles = 0;
@@ -239,6 +237,5 @@ public class FragmentsTest {
     }
     Assert.assertEquals(1, nFiles);
     Assert.assertTrue(frag.getName().startsWith("__30_30_"));
-    array.close();
   }
 }

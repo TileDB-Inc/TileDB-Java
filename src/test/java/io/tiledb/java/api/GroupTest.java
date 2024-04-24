@@ -130,10 +130,10 @@ public class GroupTest {
     Assert.assertEquals(3, group.getMemberCount());
 
     // test getters
-    String[] uri = group.getMemberByNameV2("array3Name").split("/");
+    String[] uri = group.getMemberByName("array3Name").split("/");
     Assert.assertEquals("TileDB-Java/array3", uri[uri.length - 2] + "/" + uri[uri.length - 1]);
 
-    Assert.assertEquals("array2Name", group.getMemberByIndexV2(new BigInteger("1")));
+    Assert.assertEquals("array2Name", group.getMemberByIndex(new BigInteger("1")));
 
     // remove a member
     group.reopen(ctx, TILEDB_WRITE);
