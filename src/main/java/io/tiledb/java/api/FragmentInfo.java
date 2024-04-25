@@ -778,17 +778,18 @@ public class FragmentInfo implements AutoCloseable {
    * @deprecated use getFragmentNameV2(long fragmentID) instead
    * @throws TileDBError
    */
-  @Deprecated
   public String getFragmentName(long fragmentID) throws TileDBError {
-    SWIGTYPE_p_p_char name = tiledb.new_charpp();
+    SWIGTYPE_p_p_tiledb_string_handle_t name = tiledb.new_tiledb_string_handle_tpp();
+    TileDBString ts = null;
 
     try {
       ctx.handleError(
-          tiledb.tiledb_fragment_info_get_fragment_name(
+          tiledb.tiledb_fragment_info_get_fragment_name_v2(
               ctx.getCtxp(), fragmentInfop, fragmentID, name));
-      return tiledb.charpp_value(name);
+      ts = new TileDBString(ctx, name);
+      return ts.getView().getFirst();
     } finally {
-      tiledb.delete_charpp(name);
+      if (ts != null) ts.close();
     }
   }
 
@@ -799,6 +800,7 @@ public class FragmentInfo implements AutoCloseable {
    * @return The fragment name.
    * @throws TileDBError
    */
+  @Deprecated
   public TileDBString getFragmentNameV2(long fragmentID) throws TileDBError {
     SWIGTYPE_p_p_tiledb_string_handle_t name = tiledb.new_tiledb_string_handle_tpp();
     TileDBString ts = null;
