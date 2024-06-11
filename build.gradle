@@ -3,7 +3,7 @@ plugins {
    id 'idea'
    id 'maven-publish'
    id 'signing'
-   id 'com.github.sherter.google-java-format' version '0.8'
+   id 'com.github.sherter.google-java-format' version '0.9'
    id 'io.codearte.nexus-staging' version '0.30.0'
    id 'com.google.osdetector' version '1.6.0'
 }
@@ -180,12 +180,12 @@ jar {
 }
 
 task sourceJar(type: Jar) {
-    classifier "sources"
+    archiveClassifier.set("sources")
     from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier "javadoc"
+    archiveClassifier.set("javadoc")
     from javadoc.destinationDir
 }
 
@@ -267,6 +267,10 @@ import com.github.sherter.googlejavaformatgradleplugin.GoogleJavaFormat
 import com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat
 
 import java.nio.file.Files
+
+googleJavaFormat {
+    toolVersion = '1.7'
+}
 
 task format(type: GoogleJavaFormat) {
     source = sourceSets*.allJava
