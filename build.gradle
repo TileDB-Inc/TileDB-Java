@@ -12,7 +12,6 @@ group 'io.tiledb'
 version '0.26.0-SNAPSHOT'
 
 repositories {
-    jcenter()
     mavenCentral()
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
@@ -24,8 +23,10 @@ nexusStaging {
     password = System.getenv('SONATYPE_PASSWORD')
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
 
 sourceSets {
     main {
