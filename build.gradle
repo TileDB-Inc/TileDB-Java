@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'io.tiledb'
-version '0.26.1-SNAPSHOT'
+version '0.26.2-SNAPSHOT'
 
 repositories {
     mavenCentral()
