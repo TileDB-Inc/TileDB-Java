@@ -1354,7 +1354,7 @@ public class QueryTest {
         Pair<Pair<Long, Long>, Long> estimated = query.getEstResultSizeVarNullable(ctx, "a2");
         Assert.assertEquals(40, (long) estimated.getFirst().getFirst());
         Assert.assertEquals(40, (long) estimated.getFirst().getFirst());
-        Assert.assertEquals(10, (long) estimated.getSecond());
+        Assert.assertEquals(5, (long) estimated.getSecond());
 
         // Submit query
         query.submit();

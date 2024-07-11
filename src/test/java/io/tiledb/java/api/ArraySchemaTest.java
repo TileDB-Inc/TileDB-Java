@@ -154,7 +154,7 @@ public class ArraySchemaTest {
   public void testArraySchemaVersion() throws Exception {
     try (Context ctx = new Context();
         ArraySchema schema = schemaCreate(ctx, ArrayType.TILEDB_SPARSE, layout)) {
-      Assert.assertEquals(21, schema.getVersion());
+      Assert.assertEquals(22, schema.getVersion());
     }
   }
 
