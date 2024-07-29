@@ -41,6 +41,8 @@ typedef struct tiledb_channel_operator_t tiledb_channel_operator_t;
 typedef struct tiledb_channel_operation_t tiledb_channel_operation_t;
 typedef struct tiledb_query_channel_t tiledb_query_channel_t;
 typedef struct tiledb_query_field_t tiledb_query_field_t;
+typedef struct tiledb_ndrectangle_t tiledb_ndrectangle_t;
+typedef struct tiledb_current_domain_t tiledb_current_domain_t;
 
 %{
 #include <string>
@@ -123,7 +125,7 @@ typedef struct tiledb_query_field_t tiledb_query_field_t;
 %pointer_functions(tiledb_encryption_type_t, tiledb_encryption_type_tp);
 %pointer_functions(capi_status_t, capi_status_tp);
 %pointer_functions(tiledb_field_origin_t, tiledb_field_origin_tp);
-
+%pointer_functions(tiledb_current_domain_type_t, tiledb_current_domain_type_tp);
 
 %pointer_functions(tiledb_array_t*, tiledb_array_tpp);
 %pointer_functions(tiledb_subarray_t*, tiledb_subarray_tpp);
@@ -152,6 +154,9 @@ typedef struct tiledb_query_field_t tiledb_query_field_t;
 %pointer_functions(tiledb_channel_operation_t*, tiledb_channel_operation_tpp);
 %pointer_functions(tiledb_query_field_t*, tiledb_query_field_tpp);
 %pointer_functions(tiledb_query_channel_t*, tiledb_query_channel_tpp);
+%pointer_functions(tiledb_ndrectangle_t*, tiledb_ndrectangle_tpp);
+%pointer_functions(tiledb_current_domain_t*, tiledb_current_domain_tpp);
+%pointer_functions(tiledb_range_t*, tiledb_range_tpp);
 
 %native (sizeOfInt32) int sizeOfInt32();
 %native (sizeOfInt64) int sizeOfInt64();
