@@ -314,6 +314,23 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
+   * @return
+   * @throws TileDBError
+   */
+  public CurrentDomain getCurrentDomain() throws TileDBError {
+    SWIGTYPE_p_p_tiledb_current_domain_t currentDomainpp = tiledb.new_tiledb_current_domain_tpp();
+    try {
+      ctx.handleError(
+          tiledb.tiledb_array_schema_get_current_domain(
+              ctx.getCtxp(), getSchemap(), currentDomainpp));
+    } catch (TileDBError err) {
+      tiledb.delete_tiledb_current_domain_tpp(currentDomainpp);
+      throw err;
+    }
+    return new CurrentDomain(ctx, getDomain(), currentDomainpp);
+  }
+
+  /**
    * Sets the array Domain.
    *
    * <pre><b>Example:</b>
@@ -332,6 +349,17 @@ public class ArraySchema implements AutoCloseable {
   public void setDomain(Domain domain) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_array_schema_set_domain(ctx.getCtxp(), getSchemap(), domain.getDomainp()));
+    domainIsSet = true;
+  }
+
+  /**
+   * @param currentDomain
+   * @throws TileDBError
+   */
+  public void setCurrentDomain(CurrentDomain currentDomain) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_array_schema_set_current_domain(
+            ctx.getCtxp(), getSchemap(), currentDomain.getCurrentDomainp()));
     domainIsSet = true;
   }
 

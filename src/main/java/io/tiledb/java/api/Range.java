@@ -1,27 +1,34 @@
 package io.tiledb.java.api;
 
-import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_range_t;
-import io.tiledb.libtiledb.tiledb;
-import io.tiledb.libtiledb.tiledb_range_t;
+import io.tiledb.libtiledb.*;
+import java.math.BigInteger;
 
-public class Range {
-  private SWIGTYPE_p_p_tiledb_range_t rangepp;
-  protected boolean swigCMemOwn;
+public class Range implements AutoCloseable {
   private tiledb_range_t range;
-
-  private long swigCPtr;
   private Domain domain;
   private Context ctx;
+  private Long dimIdx;
+  private NativeArray min, max;
 
-  public Range(Context cxt, Domain domain) throws TileDBError {
+  public Range(Context cxt, Domain domain, long dimIdx) {
     this.domain = domain;
     this.ctx = cxt;
-    this.rangepp = tiledb.new_tiledb_range_tpp();
-    this.swigCPtr = SWIGTYPE_p_p_tiledb_range_t.getCPtr(rangepp);
-    this.range = new tiledb_range_t(swigCPtr, true);
+    this.range = new tiledb_range_t();
+    this.dimIdx = dimIdx;
   }
 
-  public void setMin(long dimIdx, Object min) throws TileDBError {
+  public Range(Context ctx, tiledb_range_t range, Domain domain, long dimIdx) {
+    this.ctx = ctx;
+    this.range = range;
+    this.domain = domain;
+    this.dimIdx = dimIdx;
+  }
+
+  /**
+   * @param min
+   * @throws TileDBError
+   */
+  public synchronized void setMin(Object min) throws TileDBError {
     Datatype dimType;
 
     dimType = domain.getDimension(dimIdx).getType();
@@ -31,16 +38,37 @@ public class Range {
     // values coming from java, i.e. A UINT16 and INT32 are both Integer classes in java.
     Types.javaTypeCheck(min.getClass(), dimType.javaClass());
 
-    try (NativeArray minArr = new NativeArray(ctx, 1, dimType)) {
-      minArr.setItem(0, min);
-
-      range.setMin(minArr.toVoidPointer());
-      //      range.setMin_size(BigInteger.valueOf(dimType.getNativeSize()));
-
-    }
+    NativeArray minArr = new NativeArray(ctx, 1, dimType);
+    minArr.setItem(0, min);
+    range.setMin_size(BigInteger.valueOf(dimType.getNativeSize()));
+    range.setMin(minArr.toVoidPointer());
   }
 
-  public void setMax(long dimIdx, Object max) throws TileDBError {
+  /** @param size */
+  public synchronized void setMinSize(long size) {
+    range.setMin_size(BigInteger.valueOf(size));
+  }
+
+  /** @param size */
+  public synchronized void setMinSize(BigInteger size) { // change to bigint
+    range.setMin_size(size);
+  }
+
+  /** @return */
+  public synchronized long getMinSize() {
+    return range.getMin_size().longValue();
+  }
+
+  /** @return */
+  public synchronized BigInteger getMinSizeBI() {
+    return range.getMin_size();
+  }
+
+  /**
+   * @param max
+   * @throws TileDBError
+   */
+  public synchronized void setMax(Object max) throws TileDBError {
     Datatype dimType;
 
     dimType = domain.getDimension(dimIdx).getType();
@@ -50,12 +78,72 @@ public class Range {
     // values coming from java, i.e. A UINT16 and INT32 are both Integer classes in java.
     Types.javaTypeCheck(max.getClass(), dimType.javaClass());
 
-    try (NativeArray minArr = new NativeArray(ctx, 1, dimType)) {
-      minArr.setItem(0, max);
+    NativeArray maxArr = new NativeArray(ctx, 1, dimType);
+    maxArr.setItem(0, max);
 
-      range.setMin(minArr.toVoidPointer());
-      //      range.setMin_size(BigInteger.valueOf(dimType.getNativeSize()));
+    range.setMax_size(BigInteger.valueOf(dimType.getNativeSize()));
+    range.setMax(maxArr.toVoidPointer());
+  }
 
+  /** @param size */
+  public synchronized void setMaxSize(long size) {
+    range.setMax_size(BigInteger.valueOf(size));
+  }
+
+  /** @param size */
+  public synchronized void setMaxSize(BigInteger size) {
+    range.setMax_size(size);
+  }
+
+  /** @return */
+  public synchronized long getMaxSize() {
+    return range.getMax_size().longValue();
+  }
+
+  /** @return */
+  public synchronized BigInteger getMaxSizeBI() {
+    return range.getMax_size();
+  }
+
+  /**
+   * @return
+   * @throws TileDBError
+   */
+  public synchronized Object getMin() throws TileDBError {
+    Datatype dimType;
+    try (Dimension dim = domain.getDimension(dimIdx)) {
+      dimType = dim.getType();
+      SWIGTYPE_p_void minp = range.getMin();
+      Object ret;
+      min = new NativeArray(ctx, dimType, minp, 1);
+      ret = min.getItem(0);
+      return ret;
     }
+  }
+
+  /**
+   * @return
+   * @throws TileDBError
+   */
+  public synchronized Object getMax() throws TileDBError {
+    Datatype dimType;
+    try (Dimension dim = domain.getDimension(dimIdx)) {
+      dimType = dim.getType();
+      SWIGTYPE_p_void maxp = range.getMax();
+      Object ret;
+      max = new NativeArray(ctx, dimType, maxp, 1);
+      ret = max.getItem(0);
+      return ret;
+    }
+  }
+
+  /** @return */
+  public tiledb_range_t getRange_t() {
+    return range;
+  }
+
+  @Override
+  public void close() {
+    range.delete();
   }
 }

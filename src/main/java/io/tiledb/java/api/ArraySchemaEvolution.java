@@ -150,6 +150,16 @@ public class ArraySchemaEvolution implements AutoCloseable {
   }
 
   /**
+   * @param currentDomain
+   * @throws TileDBError
+   */
+  public void expandCurrentDomain(CurrentDomain currentDomain) throws TileDBError {
+    ctx.handleError(
+        tiledb.tiledb_array_schema_evolution_expand_current_domain(
+            ctx.getCtxp(), getEvolutionp(), currentDomain.getCurrentDomainp()));
+  }
+
+  /**
    * Extends an Enumeration during array schema evolution.
    *
    * @param enumeration The Enumeration to extend.
