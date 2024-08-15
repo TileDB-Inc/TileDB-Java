@@ -26,16 +26,25 @@ public class TestCurrentDomain {
     schema = new ArraySchema(ctx, ArrayType.TILEDB_SPARSE);
     Dimension<Long> d1 =
         new Dimension<Long>(ctx, "d1", Datatype.TILEDB_INT64, new Pair<Long, Long>(1l, 4l), 1l);
+    Dimension<Integer> d2 = new Dimension<>(ctx, "d2", Datatype.TILEDB_STRING_ASCII, null, null);
     domain = new Domain(ctx);
     domain.addDimension(d1);
+    domain.addDimension(d2);
     schema.setDomain(domain);
 
     Range range = new Range(ctx, domain, 0);
     range.setMin(1L);
     range.setMax(3L);
 
+    Range rangeVar = new Range(ctx, domain, 1);
+    rangeVar.setMin("aa");
+    rangeVar.setMinSize(2);
+    rangeVar.setMax("bbb");
+    rangeVar.setMaxSize(3);
+
     NDRectangle ndRectangle = new NDRectangle(ctx, domain);
     ndRectangle.setRange(0, range);
+    ndRectangle.setRange(1, rangeVar);
 
     CurrentDomain currentDomain = new CurrentDomain(ctx, domain);
     currentDomain.setNDRectangle(ndRectangle);
@@ -80,15 +89,32 @@ public class TestCurrentDomain {
 
     // Evolution test
     ArraySchemaEvolution schemaEvolution = new ArraySchemaEvolution(ctx);
+
     Range newRange = new Range(ctx, domain, 0);
     newRange.setMin(1L);
     newRange.setMax(4L);
+    Range newRangeVar = new Range(ctx, domain, 1);
+    newRangeVar.setMin("aa");
+    newRangeVar.setMinSize(2);
+    newRangeVar.setMax("bbb");
+    newRangeVar.setMaxSize(3);
+
     CurrentDomain newCurrentDomain = new CurrentDomain(ctx, domain);
     NDRectangle newND = new NDRectangle(ctx, domain);
     newND.setRange(0, newRange);
+    newND.setRange(1, newRangeVar);
     newCurrentDomain.setNDRectangle(newND);
     schemaEvolution.expandCurrentDomain(newCurrentDomain);
     schemaEvolution.evolveArray(arrayUri);
+
+    Assert.assertEquals(
+        4L,
+        new Array(ctx, arrayUri, TILEDB_READ)
+            .getSchema()
+            .getCurrentDomain()
+            .getNDRectangle()
+            .getRange(0)
+            .getMax());
 
     // clean up
     newRange.close();
@@ -96,5 +122,22 @@ public class TestCurrentDomain {
     schemaEvolution.close();
     newND.close();
     newCurrentDomain.close();
+  }
+
+  @Test
+  public void currentDomainVarTest() throws TileDBError {
+    Array array = new Array(ctx, arrayUri, TILEDB_READ);
+    ArraySchema schema = array.getSchema();
+
+    CurrentDomain cd = schema.getCurrentDomain();
+    Assert.assertFalse(cd.isEmpty());
+
+    Assert.assertEquals(TILEDB_NDRECTANGLE, cd.getType());
+
+    NDRectangle nd = cd.getNDRectangle();
+    Range range = nd.getRange(1);
+
+    Assert.assertEquals("aa", range.getMinVar());
+    Assert.assertEquals("bbb", range.getMaxVar());
   }
 }

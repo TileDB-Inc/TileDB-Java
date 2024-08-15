@@ -9,9 +9,11 @@ public class CurrentDomain implements AutoCloseable {
   private SWIGTYPE_p_tiledb_current_domain_t currentDomainp;
 
   /**
-   * @param ctx
-   * @param domain
-   * @param currentDomainpp
+   * Constructor
+   *
+   * @param ctx The context
+   * @param domain The array domain
+   * @param currentDomainpp The current domain c pointer
    */
   protected CurrentDomain(
       Context ctx, Domain domain, SWIGTYPE_p_p_tiledb_current_domain_t currentDomainpp) {
@@ -22,8 +24,10 @@ public class CurrentDomain implements AutoCloseable {
   }
 
   /**
-   * @param ctx
-   * @param domain
+   * Constructor
+   *
+   * @param ctx The context
+   * @param domain The array domain
    * @throws TileDBError
    */
   public CurrentDomain(Context ctx, Domain domain) throws TileDBError {
@@ -40,13 +44,19 @@ public class CurrentDomain implements AutoCloseable {
     this.domain = domain;
   }
 
-  /** @return */
+  /**
+   * Returns the c pointer for this current domain object
+   *
+   * @return
+   */
   protected SWIGTYPE_p_tiledb_current_domain_t getCurrentDomainp() {
     return currentDomainp;
   }
 
   /**
-   * @param ndRectangle
+   * Set a N-dimensional rectangle representation on a current domain
+   *
+   * @param ndRectangle The ndrectangle
    * @throws TileDBError
    */
   public void setNDRectangle(NDRectangle ndRectangle) throws TileDBError {
@@ -56,7 +66,9 @@ public class CurrentDomain implements AutoCloseable {
   }
 
   /**
-   * @return
+   * Returns the currentDomain type.
+   *
+   * @return The type
    * @throws TileDBError
    */
   public CurrentDomainType getType() throws TileDBError {
@@ -73,7 +85,10 @@ public class CurrentDomain implements AutoCloseable {
   }
 
   /**
-   * @return
+   * Get the N-dimensional rectangle associated with the current domain object, error if the current
+   * domain is empty or a different representation is set.
+   *
+   * @return The ndrectangle
    * @throws TileDBError
    */
   public NDRectangle getNDRectangle() throws TileDBError {
@@ -90,7 +105,9 @@ public class CurrentDomain implements AutoCloseable {
   }
 
   /**
-   * @return
+   * Return true if the current domain is empty
+   *
+   * @return True if empty
    * @throws TileDBError
    */
   public boolean isEmpty() throws TileDBError {

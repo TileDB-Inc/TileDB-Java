@@ -9,8 +9,10 @@ public class NDRectangle implements AutoCloseable {
   private Domain domain;
 
   /**
-   * @param ctx
-   * @param domain
+   * Constructor
+   *
+   * @param ctx The TileDB context
+   * @param domain The array domain
    * @throws TileDBError
    */
   public NDRectangle(Context ctx, Domain domain) throws TileDBError {
@@ -28,9 +30,11 @@ public class NDRectangle implements AutoCloseable {
   }
 
   /**
-   * @param ctx
-   * @param domain
-   * @param ndpp
+   * Constructor
+   *
+   * @param ctx The TileDB context
+   * @param domain The array domain
+   * @param ndpp The c pointer to the ndrectangle object
    */
   protected NDRectangle(Context ctx, Domain domain, SWIGTYPE_p_p_tiledb_ndrectangle_t ndpp) {
     this.ctx = ctx;
@@ -39,27 +43,36 @@ public class NDRectangle implements AutoCloseable {
     this.domain = domain;
   }
 
+  /**
+   * Getter for the c pointer
+   *
+   * @return The c pointer
+   */
   public SWIGTYPE_p_tiledb_ndrectangle_t getndrectanglep() {
     return ndrectanglep;
   }
 
   /**
-   * @param dimIdx
-   * @param range
+   * Adds an 1D range along a dimension name, in the form (start, end).
+   *
+   * @param dimIdx The index of the dimension to add the range to
+   * @param range The range
    * @throws TileDBError
    */
-  public void setRange(long dimIdx, Range range) throws TileDBError { // todo + name
+  public void setRange(long dimIdx, Range range) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_ndrectangle_set_range(
             ctx.getCtxp(), this.ndrectanglep, dimIdx, range.getRange_t()));
   }
 
   /**
-   * @param dimIdx
-   * @return
+   * Retrieves a range for a given dimension index.
+   *
+   * @param dimIdx The dimension index
+   * @return The range
    * @throws TileDBError
    */
-  public Range getRange(long dimIdx) throws TileDBError { // todo + name
+  public Range getRange(long dimIdx) throws TileDBError {
     tiledb_range_t range = new tiledb_range_t();
 
     ctx.handleError(

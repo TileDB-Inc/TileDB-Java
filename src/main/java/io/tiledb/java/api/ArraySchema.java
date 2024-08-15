@@ -314,7 +314,10 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
-   * @return
+   * Returns a copy of the schema's array currentDomain. To change the currentDomain, use
+   * `set_current_domain()`
+   *
+   * @return The current domain
    * @throws TileDBError
    */
   public CurrentDomain getCurrentDomain() throws TileDBError {
@@ -353,7 +356,9 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
-   * @param currentDomain
+   * Sets the currentDomain.
+   *
+   * @param currentDomain The current domain to set
    * @throws TileDBError
    */
   public void setCurrentDomain(CurrentDomain currentDomain) throws TileDBError {
