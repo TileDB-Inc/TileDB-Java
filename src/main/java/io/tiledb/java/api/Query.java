@@ -233,6 +233,17 @@ public class Query implements AutoCloseable {
   }
 
   /**
+   * Sets a subarray, defined in the order dimensions were added. Coordinates are inclusive.
+   *
+   * @param subarray The targeted subarray.
+   * @exception TileDBError A TileDB exception
+   */
+  public synchronized Query setSubarray(ByteBuffer subarray) throws TileDBError {
+    ctx.handleError(Utils.tiledb_query_set_subarray_nio(ctx.getCtxp(), queryp, subarray));
+    return this;
+  }
+
+  /**
    * Sets the update value.
    *
    * <p>Note that more than one update value may be set on a query.

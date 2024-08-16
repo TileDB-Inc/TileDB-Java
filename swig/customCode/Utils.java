@@ -172,6 +172,12 @@ public class Utils {
         SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), ctx, path, order.swigValue(), callback);
   }
 
+  public static int tiledb_query_set_subarray_nio(
+      SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_query_t query, ByteBuffer subarray) {
+    return tiledbJNI.tiledb_query_set_subarray_nio(
+        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_query_t.getCPtr(query), subarray);
+  }
+
   public static int tiledb_query_set_data_buffer_nio(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_query_t query,
