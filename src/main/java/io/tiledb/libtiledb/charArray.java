@@ -33,7 +33,7 @@ public class charArray {
     return ptr;
   }
 
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings({"deprecation", "removal"})
   protected void finalize() {
     delete();
   }
@@ -48,15 +48,15 @@ public class charArray {
     }
   }
 
-  public charArray(int nelements) {
+  public charArray(long nelements) {
     this(tiledbJNI.new_charArray(nelements), true);
   }
 
-  public char getitem(int index) {
+  public char getitem(long index) {
     return tiledbJNI.charArray_getitem(swigCPtr, this, index);
   }
 
-  public void setitem(int index, char value) {
+  public void setitem(long index, char value) {
     tiledbJNI.charArray_setitem(swigCPtr, this, index, value);
   }
 

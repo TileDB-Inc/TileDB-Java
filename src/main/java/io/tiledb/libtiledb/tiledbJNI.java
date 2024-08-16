@@ -24,9 +24,6 @@ public class tiledbJNI {
     }
   }
 
-  public static final native int tiledb_query_set_subarray_nio(
-      long jarg1, long jarg2, ByteBuffer jarg3);
-
   public static final native int tiledb_query_set_data_buffer_nio(
       long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
 
@@ -46,180 +43,183 @@ public class tiledbJNI {
 
   public static final native long java_callback();
 
-  public static final native long new_int32_tArray(int jarg1);
+  public static final native long new_int32_tArray(long jarg1);
 
   public static final native void delete_int32_tArray(long jarg1);
 
-  public static final native int int32_tArray_getitem(long jarg1, int32_tArray jarg1_, int jarg2);
+  public static final native int int32_tArray_getitem(long jarg1, int32_tArray jarg1_, long jarg2);
 
   public static final native void int32_tArray_setitem(
-      long jarg1, int32_tArray jarg1_, int jarg2, int jarg3);
+      long jarg1, int32_tArray jarg1_, long jarg2, int jarg3);
 
   public static final native long int32_tArray_cast(long jarg1, int32_tArray jarg1_);
 
   public static final native long int32_tArray_frompointer(long jarg1);
 
-  public static final native long new_capi_return_t(int jarg1);
+  public static final native long new_capi_return_t(long jarg1);
 
   public static final native void delete_capi_return_t(long jarg1);
 
   public static final native long capi_return_t_getitem(
-      long jarg1, capi_return_t jarg1_, int jarg2);
+      long jarg1, capi_return_t jarg1_, long jarg2);
 
   public static final native void capi_return_t_setitem(
-      long jarg1, capi_return_t jarg1_, int jarg2, long jarg3, capi_return_t jarg3_);
+      long jarg1, capi_return_t jarg1_, long jarg2, long jarg3, capi_return_t jarg3_);
 
   public static final native long capi_return_t_cast(long jarg1, capi_return_t jarg1_);
 
   public static final native long capi_return_t_frompointer(long jarg1, capi_return_t jarg1_);
 
-  public static final native long new_int64_tArray(int jarg1);
+  public static final native long new_int64_tArray(long jarg1);
 
   public static final native void delete_int64_tArray(long jarg1);
 
-  public static final native long int64_tArray_getitem(long jarg1, int64_tArray jarg1_, int jarg2);
+  public static final native long int64_tArray_getitem(long jarg1, int64_tArray jarg1_, long jarg2);
 
   public static final native void int64_tArray_setitem(
-      long jarg1, int64_tArray jarg1_, int jarg2, long jarg3);
+      long jarg1, int64_tArray jarg1_, long jarg2, long jarg3);
 
   public static final native long int64_tArray_cast(long jarg1, int64_tArray jarg1_);
 
   public static final native long int64_tArray_frompointer(long jarg1);
 
-  public static final native long new_charArray(int jarg1);
+  public static final native long new_charArray(long jarg1);
 
   public static final native void delete_charArray(long jarg1);
 
-  public static final native char charArray_getitem(long jarg1, charArray jarg1_, int jarg2);
+  public static final native char charArray_getitem(long jarg1, charArray jarg1_, long jarg2);
 
   public static final native void charArray_setitem(
-      long jarg1, charArray jarg1_, int jarg2, char jarg3);
+      long jarg1, charArray jarg1_, long jarg2, char jarg3);
 
   public static final native String charArray_cast(long jarg1, charArray jarg1_);
 
   public static final native long charArray_frompointer(String jarg1);
 
-  public static final native long new_floatArray(int jarg1);
+  public static final native long new_floatArray(long jarg1);
 
   public static final native void delete_floatArray(long jarg1);
 
-  public static final native float floatArray_getitem(long jarg1, floatArray jarg1_, int jarg2);
+  public static final native float floatArray_getitem(long jarg1, floatArray jarg1_, long jarg2);
 
   public static final native void floatArray_setitem(
-      long jarg1, floatArray jarg1_, int jarg2, float jarg3);
+      long jarg1, floatArray jarg1_, long jarg2, float jarg3);
 
   public static final native long floatArray_cast(long jarg1, floatArray jarg1_);
 
   public static final native long floatArray_frompointer(long jarg1);
 
-  public static final native long new_doubleArray(int jarg1);
+  public static final native long new_doubleArray(long jarg1);
 
   public static final native void delete_doubleArray(long jarg1);
 
-  public static final native double doubleArray_getitem(long jarg1, doubleArray jarg1_, int jarg2);
+  public static final native double doubleArray_getitem(long jarg1, doubleArray jarg1_, long jarg2);
 
   public static final native void doubleArray_setitem(
-      long jarg1, doubleArray jarg1_, int jarg2, double jarg3);
+      long jarg1, doubleArray jarg1_, long jarg2, double jarg3);
 
   public static final native long doubleArray_cast(long jarg1, doubleArray jarg1_);
 
   public static final native long doubleArray_frompointer(long jarg1);
 
-  public static final native long new_int8_tArray(int jarg1);
+  public static final native long new_int8_tArray(long jarg1);
 
   public static final native void delete_int8_tArray(long jarg1);
 
-  public static final native byte int8_tArray_getitem(long jarg1, int8_tArray jarg1_, int jarg2);
+  public static final native byte int8_tArray_getitem(long jarg1, int8_tArray jarg1_, long jarg2);
 
   public static final native void int8_tArray_setitem(
-      long jarg1, int8_tArray jarg1_, int jarg2, byte jarg3);
+      long jarg1, int8_tArray jarg1_, long jarg2, byte jarg3);
 
   public static final native long int8_tArray_cast(long jarg1, int8_tArray jarg1_);
 
   public static final native long int8_tArray_frompointer(long jarg1);
 
-  public static final native long new_uint8_tArray(int jarg1);
+  public static final native long new_uint8_tArray(long jarg1);
 
   public static final native void delete_uint8_tArray(long jarg1);
 
-  public static final native short uint8_tArray_getitem(long jarg1, uint8_tArray jarg1_, int jarg2);
+  public static final native short uint8_tArray_getitem(
+      long jarg1, uint8_tArray jarg1_, long jarg2);
 
   public static final native void uint8_tArray_setitem(
-      long jarg1, uint8_tArray jarg1_, int jarg2, short jarg3);
+      long jarg1, uint8_tArray jarg1_, long jarg2, short jarg3);
 
   public static final native long uint8_tArray_cast(long jarg1, uint8_tArray jarg1_);
 
   public static final native long uint8_tArray_frompointer(long jarg1);
 
-  public static final native long new_int16_tArray(int jarg1);
+  public static final native long new_int16_tArray(long jarg1);
 
   public static final native void delete_int16_tArray(long jarg1);
 
-  public static final native short int16_tArray_getitem(long jarg1, int16_tArray jarg1_, int jarg2);
+  public static final native short int16_tArray_getitem(
+      long jarg1, int16_tArray jarg1_, long jarg2);
 
   public static final native void int16_tArray_setitem(
-      long jarg1, int16_tArray jarg1_, int jarg2, short jarg3);
+      long jarg1, int16_tArray jarg1_, long jarg2, short jarg3);
 
   public static final native long int16_tArray_cast(long jarg1, int16_tArray jarg1_);
 
   public static final native long int16_tArray_frompointer(long jarg1);
 
-  public static final native long new_uint16_tArray(int jarg1);
+  public static final native long new_uint16_tArray(long jarg1);
 
   public static final native void delete_uint16_tArray(long jarg1);
 
-  public static final native int uint16_tArray_getitem(long jarg1, uint16_tArray jarg1_, int jarg2);
+  public static final native int uint16_tArray_getitem(
+      long jarg1, uint16_tArray jarg1_, long jarg2);
 
   public static final native void uint16_tArray_setitem(
-      long jarg1, uint16_tArray jarg1_, int jarg2, int jarg3);
+      long jarg1, uint16_tArray jarg1_, long jarg2, int jarg3);
 
   public static final native long uint16_tArray_cast(long jarg1, uint16_tArray jarg1_);
 
   public static final native long uint16_tArray_frompointer(long jarg1);
 
-  public static final native long new_uint32_tArray(int jarg1);
+  public static final native long new_uint32_tArray(long jarg1);
 
   public static final native void delete_uint32_tArray(long jarg1);
 
   public static final native long uint32_tArray_getitem(
-      long jarg1, uint32_tArray jarg1_, int jarg2);
+      long jarg1, uint32_tArray jarg1_, long jarg2);
 
   public static final native void uint32_tArray_setitem(
-      long jarg1, uint32_tArray jarg1_, int jarg2, long jarg3);
+      long jarg1, uint32_tArray jarg1_, long jarg2, long jarg3);
 
   public static final native long uint32_tArray_cast(long jarg1, uint32_tArray jarg1_);
 
   public static final native long uint32_tArray_frompointer(long jarg1);
 
-  public static final native long new_uint64_tArray(int jarg1);
+  public static final native long new_uint64_tArray(long jarg1);
 
   public static final native void delete_uint64_tArray(long jarg1);
 
   public static final native java.math.BigInteger uint64_tArray_getitem(
-      long jarg1, uint64_tArray jarg1_, int jarg2);
+      long jarg1, uint64_tArray jarg1_, long jarg2);
 
   public static final native void uint64_tArray_setitem(
-      long jarg1, uint64_tArray jarg1_, int jarg2, java.math.BigInteger jarg3);
+      long jarg1, uint64_tArray jarg1_, long jarg2, java.math.BigInteger jarg3);
 
   public static final native long uint64_tArray_cast(long jarg1, uint64_tArray jarg1_);
 
   public static final native long uint64_tArray_frompointer(long jarg1);
 
-  public static final native long new_charpArray(int jarg1);
+  public static final native long new_charpArray(long jarg1);
 
   public static final native void delete_charpArray(long jarg1);
 
-  public static final native String charpArray_getitem(long jarg1, int jarg2);
+  public static final native String charpArray_getitem(long jarg1, long jarg2);
 
-  public static final native void charpArray_setitem(long jarg1, int jarg2, String jarg3);
+  public static final native void charpArray_setitem(long jarg1, long jarg2, String jarg3);
 
-  public static final native long new_voidpArray(int jarg1);
+  public static final native long new_voidpArray(long jarg1);
 
   public static final native void delete_voidpArray(long jarg1);
 
-  public static final native long voidpArray_getitem(long jarg1, int jarg2);
+  public static final native long voidpArray_getitem(long jarg1, long jarg2);
 
-  public static final native void voidpArray_setitem(long jarg1, int jarg2, long jarg3);
+  public static final native void voidpArray_setitem(long jarg1, long jarg2, long jarg3);
 
   public static final native long new_intp();
 
@@ -947,6 +947,8 @@ public class tiledbJNI {
 
   public static final native int tiledb_attribute_dump(long jarg1, long jarg2, long jarg3);
 
+  public static final native int tiledb_attribute_dump_str(long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_attribute_set_fill_value(
       long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4);
 
@@ -1020,6 +1022,8 @@ public class tiledbJNI {
 
   public static final native int tiledb_dimension_dump(long jarg1, long jarg2, long jarg3);
 
+  public static final native int tiledb_dimension_dump_str(long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_domain_alloc(long jarg1, long jarg2);
 
   public static final native void tiledb_domain_free(long jarg1);
@@ -1040,6 +1044,8 @@ public class tiledbJNI {
       long jarg1, long jarg2, String jarg3, long jarg4);
 
   public static final native int tiledb_domain_dump(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_domain_dump_str(long jarg1, long jarg2, long jarg3);
 
   public static final native long tiledb_object_type_to_str(int jarg1, long jarg2);
 
@@ -1101,14 +1107,8 @@ public class tiledbJNI {
 
   public static final native long tiledb_group_get_member_count(long jarg1, long jarg2, long jarg3);
 
-  public static final native long tiledb_group_get_member_by_index(
-      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5, long jarg6);
-
   public static final native long tiledb_group_get_member_by_index_v2(
       long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5, long jarg6);
-
-  public static final native long tiledb_group_get_member_by_name(
-      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
   public static final native long tiledb_group_get_member_by_name_v2(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
@@ -1308,7 +1308,7 @@ public class tiledbJNI {
   public static final native int tiledb_array_schema_has_attribute(
       long jarg1, long jarg2, String jarg3, long jarg4);
 
-  public static final native int tiledb_array_schema_dump(long jarg1, long jarg2, long jarg3);
+  public static final native int tiledb_array_schema_dump_str(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_query_alloc(long jarg1, long jarg2, int jarg3, long jarg4);
 
@@ -1695,13 +1695,79 @@ public class tiledbJNI {
 
   public static final native int tiledb_fragment_info_dump(long jarg1, long jarg2, long jarg3);
 
-  public static final native int tiledb_fragment_info_get_fragment_name(
-      long jarg1, long jarg2, long jarg3, long jarg4);
+  public static final native int tiledb_array_schema_dump(long jarg1, long jarg2, long jarg3);
 
   public static final native long tiledb_attribute_set_enumeration_name(
       long jarg1, long jarg2, String jarg3);
 
   public static final native long tiledb_attribute_get_enumeration_name(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native void tiledb_range_t_min_set(
+      long jarg1, tiledb_range_t jarg1_, long jarg2);
+
+  public static final native long tiledb_range_t_min_get(long jarg1, tiledb_range_t jarg1_);
+
+  public static final native void tiledb_range_t_min_size_set(
+      long jarg1, tiledb_range_t jarg1_, java.math.BigInteger jarg2);
+
+  public static final native java.math.BigInteger tiledb_range_t_min_size_get(
+      long jarg1, tiledb_range_t jarg1_);
+
+  public static final native void tiledb_range_t_max_set(
+      long jarg1, tiledb_range_t jarg1_, long jarg2);
+
+  public static final native long tiledb_range_t_max_get(long jarg1, tiledb_range_t jarg1_);
+
+  public static final native void tiledb_range_t_max_size_set(
+      long jarg1, tiledb_range_t jarg1_, java.math.BigInteger jarg2);
+
+  public static final native java.math.BigInteger tiledb_range_t_max_size_get(
+      long jarg1, tiledb_range_t jarg1_);
+
+  public static final native long new_tiledb_range_t();
+
+  public static final native void delete_tiledb_range_t(long jarg1);
+
+  public static final native long tiledb_ndrectangle_alloc(long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_ndrectangle_free(long jarg1);
+
+  public static final native long tiledb_ndrectangle_get_range_from_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, tiledb_range_t jarg4_);
+
+  public static final native long tiledb_ndrectangle_get_range(
+      long jarg1, long jarg2, long jarg3, long jarg4, tiledb_range_t jarg4_);
+
+  public static final native long tiledb_ndrectangle_set_range_for_name(
+      long jarg1, long jarg2, String jarg3, long jarg4, tiledb_range_t jarg4_);
+
+  public static final native long tiledb_ndrectangle_set_range(
+      long jarg1, long jarg2, long jarg3, long jarg4, tiledb_range_t jarg4_);
+
+  public static final native long tiledb_ndrectangle_get_dtype(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native long tiledb_ndrectangle_get_dtype_from_name(
+      long jarg1, long jarg2, String jarg3, long jarg4);
+
+  public static final native long tiledb_ndrectangle_get_dim_num(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_current_domain_create(long jarg1, long jarg2);
+
+  public static final native long tiledb_current_domain_free(long jarg1);
+
+  public static final native long tiledb_current_domain_set_ndrectangle(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_current_domain_get_ndrectangle(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_current_domain_get_is_empty(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native long tiledb_current_domain_get_type(
       long jarg1, long jarg2, long jarg3);
 
   public static final native long tiledb_enumeration_alloc(
@@ -1744,6 +1810,8 @@ public class tiledbJNI {
       long jarg1, long jarg2, long jarg3, long jarg4);
 
   public static final native long tiledb_enumeration_dump(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_enumeration_dump_str(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_channel_operator_sum_get(long jarg1, long jarg2);
 
@@ -1894,10 +1962,19 @@ public class tiledbJNI {
   public static final native int tiledb_array_schema_evolution_set_timestamp_range(
       long jarg1, long jarg2, java.math.BigInteger jarg3, java.math.BigInteger jarg4);
 
+  public static final native long tiledb_array_schema_evolution_expand_current_domain(
+      long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_array_schema_timestamp_range(
       long jarg1, long jarg2, long jarg3, long jarg4);
 
   public static final native int tiledb_array_schema_add_enumeration(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_array_schema_set_current_domain(
+      long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_array_schema_get_current_domain(
       long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_array_evolve(long jarg1, String jarg2, long jarg3);

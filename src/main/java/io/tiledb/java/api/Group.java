@@ -260,55 +260,6 @@ public class Group implements AutoCloseable {
     }
   }
 
-  @Deprecated
-  /**
-   * Get the URI of a member of a group by name
-   *
-   * @param name the name of the member
-   * @return the URI of the member with the given name
-   * @throws TileDBError
-   * @deprecated is replaced by getMemberByNameV2(String name);
-   */
-  public String getMemberURIByName(String name) throws TileDBError {
-    SWIGTYPE_p_tiledb_object_t objtypep = tiledb.new_tiledb_object_tp();
-    SWIGTYPE_p_p_char uripp = tiledb.new_charpp();
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_group_get_member_by_name(
-              ctx.getCtxp(), getGroupp(), name, uripp, objtypep));
-      return tiledb.charpp_value(uripp);
-    } finally {
-      tiledb.delete_charpp(uripp);
-      tiledb.delete_tiledb_object_tp(objtypep);
-    }
-  }
-
-  @Deprecated
-  /**
-   * Get the URI of a member of a group by index and details of group
-   *
-   * @param index the index of the member.
-   * @return the corresponding member in the group.
-   * @throws TileDBError
-   * @deprecated is replaced by getMemberByIndexV2(BigInteger index)
-   */
-  public String getMemberURIByIndex(BigInteger index) throws TileDBError {
-    Util.checkBigIntegerRange(index);
-    SWIGTYPE_p_tiledb_object_t objtypep = tiledb.new_tiledb_object_tp();
-    SWIGTYPE_p_p_char uripp = tiledb.new_charpp();
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_group_get_member_by_index(
-              ctx.getCtxp(), getGroupp(), index, uripp, objtypep, uripp));
-      return tiledb.charpp_value(uripp);
-    } finally {
-      tiledb.delete_charpp(uripp);
-      tiledb.delete_tiledb_object_tp(objtypep);
-    }
-  }
-
   /**
    * Add a member to a group.
    *

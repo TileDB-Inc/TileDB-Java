@@ -17,7 +17,6 @@ import java.nio.ByteBuffer;
     }
   }
 
-  public final static native int tiledb_query_set_subarray_nio(long jarg1, long jarg2, ByteBuffer jarg3);
   public final static native int tiledb_query_set_data_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
   public final static native int tiledb_query_set_offsets_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
   public final static native int tiledb_query_set_validity_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
@@ -57,7 +56,6 @@ typedef struct tiledb_query_field_t tiledb_query_field_t;
 // ignore some deprecated methods
 %ignore tiledb_query_submit_async;
 %ignore tiledb_array_schema_load_with_key;
-%ignore tiledb_query_set_subarray;
 %ignore tiledb_query_add_range;
 %ignore tiledb_query_add_range_by_name;
 %ignore tiledb_query_add_range_var;

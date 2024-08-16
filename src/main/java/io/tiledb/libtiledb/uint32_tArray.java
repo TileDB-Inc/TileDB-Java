@@ -33,7 +33,7 @@ public class uint32_tArray {
     return ptr;
   }
 
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings({"deprecation", "removal"})
   protected void finalize() {
     delete();
   }
@@ -48,15 +48,15 @@ public class uint32_tArray {
     }
   }
 
-  public uint32_tArray(int nelements) {
+  public uint32_tArray(long nelements) {
     this(tiledbJNI.new_uint32_tArray(nelements), true);
   }
 
-  public long getitem(int index) {
+  public long getitem(long index) {
     return tiledbJNI.uint32_tArray_getitem(swigCPtr, this, index);
   }
 
-  public void setitem(int index, long value) {
+  public void setitem(long index, long value) {
     tiledbJNI.uint32_tArray_setitem(swigCPtr, this, index, value);
   }
 

@@ -33,7 +33,7 @@ public class doubleArray {
     return ptr;
   }
 
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings({"deprecation", "removal"})
   protected void finalize() {
     delete();
   }
@@ -48,15 +48,15 @@ public class doubleArray {
     }
   }
 
-  public doubleArray(int nelements) {
+  public doubleArray(long nelements) {
     this(tiledbJNI.new_doubleArray(nelements), true);
   }
 
-  public double getitem(int index) {
+  public double getitem(long index) {
     return tiledbJNI.doubleArray_getitem(swigCPtr, this, index);
   }
 
-  public void setitem(int index, double value) {
+  public void setitem(long index, double value) {
     tiledbJNI.doubleArray_setitem(swigCPtr, this, index, value);
   }
 
