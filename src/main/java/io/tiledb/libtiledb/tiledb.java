@@ -5119,20 +5119,6 @@ public class tiledb implements tiledbConstants {
         SWIGTYPE_p_FILE.getCPtr(out));
   }
 
-  public static int tiledb_array_delete_fragments(
-      SWIGTYPE_p_tiledb_ctx_t ctx,
-      SWIGTYPE_p_tiledb_array_t array,
-      String uri,
-      java.math.BigInteger timestamp_start,
-      java.math.BigInteger timestamp_end) {
-    return tiledbJNI.tiledb_array_delete_fragments(
-        SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx),
-        SWIGTYPE_p_tiledb_array_t.getCPtr(array),
-        uri,
-        timestamp_start,
-        timestamp_end);
-  }
-
   public static int tiledb_fragment_info_get_fragment_name(
       SWIGTYPE_p_tiledb_ctx_t ctx,
       SWIGTYPE_p_tiledb_fragment_info_t fragment_info,

@@ -1695,9 +1695,6 @@ public class tiledbJNI {
 
   public static final native int tiledb_fragment_info_dump(long jarg1, long jarg2, long jarg3);
 
-  public static final native int tiledb_array_delete_fragments(
-      long jarg1, long jarg2, String jarg3, java.math.BigInteger jarg4, java.math.BigInteger jarg5);
-
   public static final native int tiledb_fragment_info_get_fragment_name(
       long jarg1, long jarg2, long jarg3, long jarg4);
 
