@@ -45,7 +45,7 @@ public class Range implements AutoCloseable {
    * @param min The min value
    * @throws TileDBError
    */
-  public synchronized void setMin(Object min) throws TileDBError {
+  public void setMin(Object min) throws TileDBError {
     Datatype dimType;
 
     dimType = domain.getDimension(dimIdx).getType();
@@ -68,7 +68,7 @@ public class Range implements AutoCloseable {
    *
    * @param size The size
    */
-  public synchronized void setMinSize(long size) {
+  public void setMinSize(long size) {
     range.setMin_size(BigInteger.valueOf(size));
   }
 
@@ -77,7 +77,7 @@ public class Range implements AutoCloseable {
    *
    * @param size The size
    */
-  public synchronized void setMinSize(BigInteger size) {
+  public void setMinSize(BigInteger size) {
     range.setMin_size(size);
   }
 
@@ -86,7 +86,7 @@ public class Range implements AutoCloseable {
    *
    * @return The size as a long
    */
-  public synchronized long getMinSize() {
+  public long getMinSize() {
     return range.getMin_size().longValue();
   }
 
@@ -95,7 +95,7 @@ public class Range implements AutoCloseable {
    *
    * @return The size as a BigInteger
    */
-  public synchronized BigInteger getMinSizeBI() {
+  public BigInteger getMinSizeBI() {
     return range.getMin_size();
   }
 
@@ -105,7 +105,7 @@ public class Range implements AutoCloseable {
    * @param max The max value
    * @throws TileDBError
    */
-  public synchronized void setMax(Object max) throws TileDBError {
+  public void setMax(Object max) throws TileDBError {
     Datatype dimType;
 
     dimType = domain.getDimension(dimIdx).getType();
@@ -129,7 +129,7 @@ public class Range implements AutoCloseable {
    *
    * @param size The size
    */
-  public synchronized void setMaxSize(long size) {
+  public void setMaxSize(long size) {
     range.setMax_size(BigInteger.valueOf(size));
   }
 
@@ -138,7 +138,7 @@ public class Range implements AutoCloseable {
    *
    * @param size The size
    */
-  public synchronized void setMaxSize(BigInteger size) {
+  public void setMaxSize(BigInteger size) {
     range.setMax_size(size);
   }
 
@@ -147,7 +147,7 @@ public class Range implements AutoCloseable {
    *
    * @return The size as a long
    */
-  public synchronized long getMaxSize() {
+  public long getMaxSize() {
     return range.getMax_size().longValue();
   }
 
@@ -156,7 +156,7 @@ public class Range implements AutoCloseable {
    *
    * @return The size as a BigInteger
    */
-  public synchronized BigInteger getMaxSizeBI() {
+  public BigInteger getMaxSizeBI() {
     return range.getMax_size();
   }
 
@@ -166,7 +166,7 @@ public class Range implements AutoCloseable {
    * @return the value
    * @throws TileDBError
    */
-  public synchronized Object getMin() throws TileDBError {
+  public Object getMin() throws TileDBError {
     Datatype dimType;
     try (Dimension dim = domain.getDimension(dimIdx)) {
       dimType = dim.getType();
@@ -184,7 +184,7 @@ public class Range implements AutoCloseable {
    * @return The value
    * @throws TileDBError
    */
-  public synchronized String getMinVar() throws TileDBError {
+  public String getMinVar() throws TileDBError {
     SWIGTYPE_p_void minp = range.getMin();
     min = new NativeArray(ctx, Datatype.TILEDB_BLOB, minp, (int) getMinSize());
     return new String((byte[]) min.toJavaArray());
@@ -196,7 +196,7 @@ public class Range implements AutoCloseable {
    * @return the max value
    * @throws TileDBError
    */
-  public synchronized Object getMax() throws TileDBError {
+  public Object getMax() throws TileDBError {
     Datatype dimType;
     try (Dimension dim = domain.getDimension(dimIdx)) {
       dimType = dim.getType();
@@ -214,7 +214,7 @@ public class Range implements AutoCloseable {
    * @return The max value
    * @throws TileDBError
    */
-  public synchronized String getMaxVar() throws TileDBError {
+  public String getMaxVar() throws TileDBError {
     SWIGTYPE_p_void maxp = range.getMax();
     max = new NativeArray(ctx, Datatype.TILEDB_BLOB, maxp, (int) getMaxSize());
     return new String((byte[]) max.toJavaArray());
