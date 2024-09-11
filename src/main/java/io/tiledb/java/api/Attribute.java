@@ -507,18 +507,18 @@ public class Attribute implements AutoCloseable {
   /** @return A String representation for the Attribute. */
   @Override
   public String toString() {
+    SWIGTYPE_p_p_tiledb_string_handle_t dump = tiledb.new_tiledb_string_handle_tpp();
+    TileDBString ts = null;
+
     try {
-      return "Attr<"
-          + getName()
-          + ','
-          + getType()
-          + ','
-          + ((getCellValNum() == TILEDB_VAR_NUM) ? "VAR" : getCellValNum())
-          + '>';
-    } catch (TileDBError err) {
-      err.printStackTrace();
+      ctx.handleError(tiledb.tiledb_attribute_dump_str(ctx.getCtxp(), attributep, dump));
+      ts = new TileDBString(ctx, dump);
+      return ts.getView().getFirst();
+    } catch (TileDBError error) {
+      return "Dump not available";
+    } finally {
+      if (ts != null) ts.close();
     }
-    return "";
   }
 
   /** Free's native TileDB resources associated with the Attribute object */

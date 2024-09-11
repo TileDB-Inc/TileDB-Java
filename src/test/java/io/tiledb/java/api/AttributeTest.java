@@ -49,6 +49,7 @@ public class AttributeTest {
           Assert.assertEquals(((GzipFilter) filter).getLevel(), 1L);
         }
       }
+      System.out.println(a);
     }
   }
 
