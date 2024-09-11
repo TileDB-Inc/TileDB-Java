@@ -10,4 +10,4 @@ The `tiledb_wrap.cxx` file under this directory contains the auto-generated JNI 
 The `tiledb_custom.cxx` file under this directory contains custom methods defined by the developer that are  not
 auto-generated. Any custom method that needs to be added should be put in this file. Also, the signature of the
 new custom method should be also put in the `tiledb.i` file under the `TileDB-Java/swig` dir. For implementation details,
-all `*_nio` methods (e.g. `tiledb_query_set_subarray_nio`) are good examples.
+all `*_nio` methods (e.g. `tiledb_query_set_offsets_buffer_nio`) are good examples.

@@ -17,7 +17,6 @@ import java.nio.ByteBuffer;
     }
   }
 
-  public final static native int tiledb_query_set_subarray_nio(long jarg1, long jarg2, ByteBuffer jarg3);
   public final static native int tiledb_query_set_data_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
   public final static native int tiledb_query_set_offsets_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
   public final static native int tiledb_query_set_validity_buffer_nio(long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
@@ -32,6 +31,7 @@ import java.nio.ByteBuffer;
 // Any typedef struct for a handle derivative must be defined here
 typedef struct tiledb_ctx_t tiledb_ctx_t;
 typedef struct tiledb_filter_t tiledb_filter_t;
+typedef struct tiledb_array_schema_t tiledb_array_schema_t;
 typedef struct tiledb_config_t tiledb_config_t;
 typedef struct tiledb_dimension_t tiledb_dimension_t;
 typedef struct tiledb_domain_t tiledb_domain_t;

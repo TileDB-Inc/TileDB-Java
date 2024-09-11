@@ -769,24 +769,6 @@ public class Array implements AutoCloseable {
   /**
    * Deletes array fragments written between the input timestamps.
    *
-   * @param timestampStart The epoch timestamp in milliseconds.
-   * @param timestampEnd The epoch timestamp in milliseconds. Use UINT64_MAX for the current
-   *     timestamp.
-   * @throws TileDBError
-   */
-  @Deprecated
-  public void deleteFragments(BigInteger timestampStart, BigInteger timestampEnd)
-      throws TileDBError {
-    Util.checkBigIntegerRange(timestampStart);
-    Util.checkBigIntegerRange(timestampEnd);
-    ctx.handleError(
-        tiledb.tiledb_array_delete_fragments(
-            ctx.getCtxp(), getArrayp(), uri, timestampStart, timestampEnd));
-  }
-
-  /**
-   * Deletes array fragments written between the input timestamps.
-   *
    * @param ctx The Context
    * @param uri The array URI
    * @param timestampStart The epoch timestamp in milliseconds.

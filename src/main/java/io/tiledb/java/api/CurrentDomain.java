@@ -62,7 +62,7 @@ public class CurrentDomain implements AutoCloseable {
   public void setNDRectangle(NDRectangle ndRectangle) throws TileDBError {
     ctx.handleError(
         tiledb.tiledb_current_domain_set_ndrectangle(
-            currentDomainp, ndRectangle.getndrectanglep()));
+            ctx.getCtxp(), currentDomainp, ndRectangle.getndrectanglep()));
   }
 
   /**
@@ -75,7 +75,8 @@ public class CurrentDomain implements AutoCloseable {
     SWIGTYPE_p_tiledb_current_domain_type_t typep = tiledb.new_tiledb_current_domain_type_tp();
     CurrentDomainType currentDomainType;
     try {
-      ctx.handleError(tiledb.tiledb_current_domain_get_type(getCurrentDomainp(), typep));
+      ctx.handleError(
+          tiledb.tiledb_current_domain_get_type(ctx.getCtxp(), getCurrentDomainp(), typep));
       currentDomainType =
           CurrentDomainType.fromSwigEnum(tiledb.tiledb_current_domain_type_tp_value(typep));
     } finally {
@@ -95,7 +96,8 @@ public class CurrentDomain implements AutoCloseable {
     NDRectangle nd;
     SWIGTYPE_p_p_tiledb_ndrectangle_t ndpp = tiledb.new_tiledb_ndrectangle_tpp();
     try {
-      ctx.handleError(tiledb.tiledb_current_domain_get_ndrectangle(currentDomainp, ndpp));
+      ctx.handleError(
+          tiledb.tiledb_current_domain_get_ndrectangle(ctx.getCtxp(), currentDomainp, ndpp));
       nd = new NDRectangle(ctx, domain, ndpp);
     } catch (TileDBError err) {
       tiledb.delete_tiledb_ndrectangle_tpp(ndpp);
@@ -114,7 +116,8 @@ public class CurrentDomain implements AutoCloseable {
     boolean isEmpty;
     SWIGTYPE_p_unsigned_int retp = tiledb.new_uintp();
     try {
-      ctx.handleError(tiledb.tiledb_current_domain_get_is_empty(currentDomainp, retp));
+      ctx.handleError(
+          tiledb.tiledb_current_domain_get_is_empty(ctx.getCtxp(), currentDomainp, retp));
       isEmpty = tiledb.uintp_value(retp) != 0;
     } finally {
       tiledb.delete_uintp(retp);

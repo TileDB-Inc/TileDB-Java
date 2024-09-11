@@ -1110,25 +1110,6 @@ extern "C" {
     return jresult;
   }
 
-  SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1set_1subarray_1nio(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jobject jarg3) {
-    void* buffer = (void *)jenv->GetDirectBufferAddress(jarg3);
-
-    jint jresult = 0 ;
-    tiledb_ctx_t *arg1 = (tiledb_ctx_t *) 0 ;
-    tiledb_query_t *arg2 = (tiledb_query_t *) 0 ;
-    void *arg3 = (void *) 0 ;
-    int32_t result;
-
-    (void)jenv;
-    (void)jcls;
-    arg1 = *(tiledb_ctx_t **)&jarg1;
-    arg2 = *(tiledb_query_t **)&jarg2;
-    arg3 = *(void **)&jarg3;
-    result = (int32_t)tiledb_query_set_subarray(arg1,arg2,buffer);
-    jresult = (jint)result;
-    return jresult;
-  }
-
   SWIGEXPORT jint JNICALL Java_io_tiledb_libtiledb_tiledbJNI_tiledb_1query_1set_1data_1buffer_1nio(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jstring jarg3, jobject jarg4, jlong jarg5) {
     void* buffer = (void *)jenv->GetDirectBufferAddress(jarg4);
 

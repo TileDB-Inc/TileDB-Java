@@ -455,11 +455,11 @@ public class QueryTest {
       ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
       ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
-      ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, (int) 1, (int) 4, null);
+      subArray.addRange(1, (int) 1, (int) 4, null);
 
-      subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(4).putInt(1).putInt(4);
-
-      query.setSubarray(subarray);
+      query.setSubarray(subArray);
 
       query.setLayout(TILEDB_ROW_MAJOR);
 
@@ -483,6 +483,8 @@ public class QueryTest {
           new int[] {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4}, d1_result);
       Assert.assertArrayEquals(
           new int[] {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4}, d2_result);
+
+      subArray.close();
     }
 
     @Test
@@ -500,9 +502,10 @@ public class QueryTest {
       ByteBuffer d1 = query.getByteBuffer("rows").getSecond();
       ByteBuffer d2 = query.getByteBuffer("cols").getSecond();
 
-      ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
-      subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(4).putInt(1).putInt(4);
-      query.setSubarray(subarray);
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, (int) 1, (int) 4, null);
+      subArray.addRange(1, (int) 1, (int) 4, null);
+      query.setSubarray(subArray);
 
       query.setLayout(TILEDB_ROW_MAJOR);
 
@@ -526,6 +529,8 @@ public class QueryTest {
           new int[] {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4}, d1_result);
       Assert.assertArrayEquals(
           new int[] {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4}, d2_result);
+
+      subArray.close();
     }
 
     @Test
@@ -537,9 +542,10 @@ public class QueryTest {
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
           Query query = new Query(array, TILEDB_READ)) {
 
-        ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
-        subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(2).putInt(2).putInt(4);
-        query.setSubarray(subarray);
+        SubArray subArray = new SubArray(ctx, array);
+        subArray.addRange(0, (int) 1, (int) 2, null);
+        subArray.addRange(1, (int) 2, (int) 4, null);
+        query.setSubarray(subArray);
         query.setLayout(TILEDB_ROW_MAJOR);
 
         query
@@ -585,6 +591,8 @@ public class QueryTest {
         Assert.assertArrayEquals(new int[] {2, 3, 4}, dim2);
         Assert.assertArrayEquals(new byte[] {'b', 'c', 'd'}, a1);
         Assert.assertArrayEquals(new float[] {1.1f, 1.2f, 2.1f, 2.2f, 3.1f, 3.2f}, a2, 0.01f);
+
+        subArray.close();
       }
     }
 
@@ -597,9 +605,10 @@ public class QueryTest {
       try (Array array = new Array(ctx, arrayURI, TILEDB_READ);
           Query query = new Query(array, TILEDB_READ)) {
 
-        ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
-        subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(2).putInt(2).putInt(4);
-        query.setSubarray(subarray);
+        SubArray subArray = new SubArray(ctx, array);
+        subArray.addRange(0, (int) 1, (int) 2, null);
+        subArray.addRange(1, (int) 2, (int) 4, null);
+        query.setSubarray(subArray);
         query.setLayout(TILEDB_ROW_MAJOR);
 
         // Set the opposite byte order from the native system
@@ -609,6 +618,7 @@ public class QueryTest {
                 : ByteOrder.BIG_ENDIAN;
 
         query.setDataBuffer("rows", ByteBuffer.allocateDirect(3 * 4).order(order));
+        subArray.close();
       }
     }
 
@@ -669,10 +679,11 @@ public class QueryTest {
       offsetsBuffer.order(ByteOrder.nativeOrder());
       dataBuffer.order(ByteOrder.nativeOrder());
 
-      Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ);
-      ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
-      subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(8);
-      q.setSubarray(subarray);
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+      Query q = new Query(array, TILEDB_READ);
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, (int) 1, (int) 8, null);
+      q.setSubarray(subArray);
       q.setDataBuffer("a1", dataBuffer);
       q.setOffsetsBuffer("a1", offsetsBuffer);
       q.submit();
@@ -691,6 +702,9 @@ public class QueryTest {
 
       Assert.assertArrayEquals(new long[] {0, 2, 4, 6, 8, 10, 12, 14}, offsets);
       Assert.assertEquals("aabbccddeeffgghh", new String(data));
+
+      array.close();
+      subArray.close();
     }
 
     @Test()
@@ -706,12 +720,12 @@ public class QueryTest {
       cols.order(ByteOrder.nativeOrder());
       a2.order(ByteOrder.nativeOrder());
 
-      Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ);
-      ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
-
-      subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(4).putInt(1).putInt(4);
-
-      q.setSubarray(subarray);
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+      Query q = new Query(array, TILEDB_READ);
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, (int) 1, (int) 4, null);
+      subArray.addRange(1, (int) 1, (int) 4, null);
+      q.setSubarray(subArray);
 
       q.setDataBuffer("rows", rows);
       q.setDataBuffer("cols", cols);
@@ -746,6 +760,8 @@ public class QueryTest {
       while (r.hasRemaining()) {
         Assert.assertEquals(a2Expected[idx++], r.get(), 0);
       }
+      array.close();
+      subArray.close();
     }
 
     @Test()
@@ -757,12 +773,12 @@ public class QueryTest {
 
       a1.order(ByteOrder.nativeOrder());
 
-      Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ);
-      ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
-
-      subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(4).putInt(1).putInt(4);
-
-      q.setSubarray(subarray);
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+      Query q = new Query(array, TILEDB_READ);
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, (int) 1, (int) 4, null);
+      subArray.addRange(1, (int) 1, (int) 4, null);
+      q.setSubarray(subArray);
 
       q.setDataBuffer("a1", a1);
       q.submit();
@@ -774,6 +790,9 @@ public class QueryTest {
         Assert.assertEquals(c, charBuffer.get());
         c++;
       }
+
+      array.close();
+      subArray.close();
     }
 
     @Test()
@@ -789,12 +808,11 @@ public class QueryTest {
       a1.order(ByteOrder.nativeOrder());
       a1Off.order(ByteOrder.nativeOrder());
 
-      Query q = new Query(new Array(ctx, arrayURI), TILEDB_READ);
-      ByteBuffer subarray = ByteBuffer.allocateDirect(4 * Datatype.TILEDB_INT32.getNativeSize());
-
-      subarray.order(ByteOrder.nativeOrder()).putInt(1).putInt(8);
-
-      q.setSubarray(subarray);
+      Array array = new Array(ctx, arrayURI, TILEDB_READ);
+      Query q = new Query(array, TILEDB_READ);
+      SubArray subArray = new SubArray(ctx, array);
+      subArray.addRange(0, (int) 1, (int) 8, null);
+      q.setSubarray(subArray);
 
       q.setDataBuffer("rows", rows);
       q.setDataBuffer("a1", a1);
@@ -817,6 +835,9 @@ public class QueryTest {
       for (String str : Util.bytesToStrings(q.getOffsetArray("a1"), q.getByteArray("a1"))) {
         System.out.println(str);
       }
+
+      array.close();
+      subArray.close();
     }
   }
 
