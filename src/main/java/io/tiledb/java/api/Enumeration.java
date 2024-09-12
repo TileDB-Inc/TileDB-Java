@@ -231,6 +231,23 @@ public class Enumeration implements AutoCloseable {
     }
   }
 
+  /** @return A String representation for the Attribute. */
+  @Override
+  public String toString() {
+    SWIGTYPE_p_p_tiledb_string_handle_t dump = tiledb.new_tiledb_string_handle_tpp();
+    TileDBString ts = null;
+
+    try {
+      ctx.handleError(tiledb.tiledb_enumeration_dump_str(ctx.getCtxp(), enumerationp, dump));
+      ts = new TileDBString(ctx, dump);
+      return ts.getView().getFirst();
+    } catch (TileDBError error) {
+      return "Dump not available";
+    } finally {
+      if (ts != null) ts.close();
+    }
+  }
+
   /** Releases resources */
   public void close() {
     if (enumerationp != null && enumerationpp != null) {

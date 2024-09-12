@@ -95,7 +95,7 @@ public class PointerUtils {
   }
 
   public static int64_tArray int64_tArrayFromVoid(SWIGTYPE_p_void p) {
-    return new int64_tArray(SWIGTYPE_p_void.getCPtr(p), true);
+    return new int64_tArray(SWIGTYPE_p_void.getCPtr(p), false);
   }
 
   public static charArray charArrayFromVoid(SWIGTYPE_p_void p) {

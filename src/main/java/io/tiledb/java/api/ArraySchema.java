@@ -27,7 +27,6 @@ package io.tiledb.java.api;
 import io.tiledb.libtiledb.*;
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Array schema describing an array.
@@ -820,20 +819,17 @@ public class ArraySchema implements AutoCloseable {
   /** @return A String representation for the schema. */
   @Override
   public String toString() {
+    SWIGTYPE_p_p_tiledb_string_handle_t dump = tiledb.new_tiledb_string_handle_tpp();
+    TileDBString ts = null;
+
     try {
-      StringBuilder s = new StringBuilder("ArraySchema<");
-      s.append(getArrayType().name());
-      s.append(" ");
-      if (domainIsSet) s.append(getDomain());
-      for (Map.Entry e : getAttributes().entrySet()) {
-        s.append(" ");
-        s.append(e.getValue());
-      }
-      s.append(">");
-      return s.toString();
-    } catch (Exception e) {
-      e.printStackTrace();
-      return "";
+      ctx.handleError(tiledb.tiledb_array_schema_dump_str(ctx.getCtxp(), schemap, dump));
+      ts = new TileDBString(ctx, dump);
+      return ts.getView().getFirst();
+    } catch (TileDBError error) {
+      return "Dump not available";
+    } finally {
+      if (ts != null) ts.close();
     }
   }
 

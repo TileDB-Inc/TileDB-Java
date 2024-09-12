@@ -12,7 +12,7 @@ public class tiledb_range_t {
   private transient long swigCPtr;
   protected transient boolean swigCMemOwn;
 
-  public tiledb_range_t(long cPtr, boolean cMemoryOwn) { // todo
+  protected tiledb_range_t(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }

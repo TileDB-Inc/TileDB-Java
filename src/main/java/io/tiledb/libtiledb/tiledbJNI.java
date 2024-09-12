@@ -24,9 +24,6 @@ public class tiledbJNI {
     }
   }
 
-  public static final native int tiledb_query_set_subarray_nio(
-      long jarg1, long jarg2, ByteBuffer jarg3);
-
   public static final native int tiledb_query_set_data_buffer_nio(
       long jarg1, long jarg2, String jarg3, ByteBuffer jarg4, long jarg5);
 
@@ -988,6 +985,8 @@ public class tiledbJNI {
 
   public static final native int tiledb_attribute_dump(long jarg1, long jarg2, long jarg3);
 
+  public static final native int tiledb_attribute_dump_str(long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_attribute_set_fill_value(
       long jarg1, long jarg2, long jarg3, java.math.BigInteger jarg4);
 
@@ -1061,6 +1060,8 @@ public class tiledbJNI {
 
   public static final native int tiledb_dimension_dump(long jarg1, long jarg2, long jarg3);
 
+  public static final native int tiledb_dimension_dump_str(long jarg1, long jarg2, long jarg3);
+
   public static final native int tiledb_domain_alloc(long jarg1, long jarg2);
 
   public static final native void tiledb_domain_free(long jarg1);
@@ -1081,6 +1082,8 @@ public class tiledbJNI {
       long jarg1, long jarg2, String jarg3, long jarg4);
 
   public static final native int tiledb_domain_dump(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_domain_dump_str(long jarg1, long jarg2, long jarg3);
 
   public static final native long tiledb_object_type_to_str(int jarg1, long jarg2);
 
@@ -1142,14 +1145,8 @@ public class tiledbJNI {
 
   public static final native long tiledb_group_get_member_count(long jarg1, long jarg2, long jarg3);
 
-  public static final native long tiledb_group_get_member_by_index(
-      long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5, long jarg6);
-
   public static final native long tiledb_group_get_member_by_index_v2(
       long jarg1, long jarg2, java.math.BigInteger jarg3, long jarg4, long jarg5, long jarg6);
-
-  public static final native long tiledb_group_get_member_by_name(
-      long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
 
   public static final native long tiledb_group_get_member_by_name_v2(
       long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
@@ -1349,7 +1346,7 @@ public class tiledbJNI {
   public static final native int tiledb_array_schema_has_attribute(
       long jarg1, long jarg2, String jarg3, long jarg4);
 
-  public static final native int tiledb_array_schema_dump(long jarg1, long jarg2, long jarg3);
+  public static final native int tiledb_array_schema_dump_str(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_query_alloc(long jarg1, long jarg2, int jarg3, long jarg4);
 
@@ -1736,11 +1733,7 @@ public class tiledbJNI {
 
   public static final native int tiledb_fragment_info_dump(long jarg1, long jarg2, long jarg3);
 
-  public static final native int tiledb_array_delete_fragments(
-      long jarg1, long jarg2, String jarg3, java.math.BigInteger jarg4, java.math.BigInteger jarg5);
-
-  public static final native int tiledb_fragment_info_get_fragment_name(
-      long jarg1, long jarg2, long jarg3, long jarg4);
+  public static final native int tiledb_array_schema_dump(long jarg1, long jarg2, long jarg3);
 
   public static final native long tiledb_attribute_set_enumeration_name(
       long jarg1, long jarg2, String jarg3);
@@ -1790,17 +1783,30 @@ public class tiledbJNI {
   public static final native long tiledb_ndrectangle_set_range(
       long jarg1, long jarg2, long jarg3, long jarg4, tiledb_range_t jarg4_);
 
+  public static final native long tiledb_ndrectangle_get_dtype(
+      long jarg1, long jarg2, long jarg3, long jarg4);
+
+  public static final native long tiledb_ndrectangle_get_dtype_from_name(
+      long jarg1, long jarg2, String jarg3, long jarg4);
+
+  public static final native long tiledb_ndrectangle_get_dim_num(
+      long jarg1, long jarg2, long jarg3);
+
   public static final native long tiledb_current_domain_create(long jarg1, long jarg2);
 
   public static final native long tiledb_current_domain_free(long jarg1);
 
-  public static final native long tiledb_current_domain_set_ndrectangle(long jarg1, long jarg2);
+  public static final native long tiledb_current_domain_set_ndrectangle(
+      long jarg1, long jarg2, long jarg3);
 
-  public static final native long tiledb_current_domain_get_ndrectangle(long jarg1, long jarg2);
+  public static final native long tiledb_current_domain_get_ndrectangle(
+      long jarg1, long jarg2, long jarg3);
 
-  public static final native long tiledb_current_domain_get_is_empty(long jarg1, long jarg2);
+  public static final native long tiledb_current_domain_get_is_empty(
+      long jarg1, long jarg2, long jarg3);
 
-  public static final native long tiledb_current_domain_get_type(long jarg1, long jarg2);
+  public static final native long tiledb_current_domain_get_type(
+      long jarg1, long jarg2, long jarg3);
 
   public static final native long tiledb_enumeration_alloc(
       long jarg1,
@@ -1842,6 +1848,8 @@ public class tiledbJNI {
       long jarg1, long jarg2, long jarg3, long jarg4);
 
   public static final native long tiledb_enumeration_dump(long jarg1, long jarg2, long jarg3);
+
+  public static final native int tiledb_enumeration_dump_str(long jarg1, long jarg2, long jarg3);
 
   public static final native int tiledb_channel_operator_sum_get(long jarg1, long jarg2);
 
