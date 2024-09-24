@@ -49,36 +49,36 @@ if (NOT TILEDB_FOUND)
     if(DOWNLOAD_TILEDB_PREBUILT)
         if (WIN32) # Windows
           SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.26.1/tiledb-windows-x86_64-2.26.1-db1cee4.zip")
-          SET(DOWNLOAD_SHA1 "ee66c3f86d32aa1c88e233c25455141d764eff47")
+          SET(DOWNLOAD_SHA256 "c82f6175db770451358ef0a918c2e4921875de2e48c721aa02e729562c79ad2d")
         elseif(APPLE) # macOS
 
           if (CMAKE_OSX_ARCHITECTURES STREQUAL x86_64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64|amd64)|(^i.86$)")
             message(STATUS "Building for intel mac")
 
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.26.1/tiledb-macos-x86_64-2.26.1-db1cee4.tar.gz")
-            SET(DOWNLOAD_SHA1 "e218ef0c5c6bc7ce55e423f6ad63ca8dd0b7719e")
+            SET(DOWNLOAD_SHA256 "6a7a4017cdc5eb0a9adcc0cb1c8c1322ce2d166c684bf18c8a6f4c1aceb3cb74")
 
           elseif (CMAKE_OSX_ARCHITECTURES STREQUAL arm64 OR CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
             message(STATUS "Building for apple silicon mac")
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.26.1/tiledb-macos-arm64-2.26.1-db1cee4.tar.gz")
-            SET(DOWNLOAD_SHA1 "9372924a4e8945bdfddb5c9b1741233aa8ff504e")
+            SET(DOWNLOAD_SHA256 "9aa78d2cfb5d97f07969641c79500a386a14a9def375fe2d64ba150440466963")
           endif()
         else() # Linux
           if (USE_AVX2)
             message(STATUS "Using Linux binaries with AVX2")
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.26.1/tiledb-linux-x86_64-2.26.1-db1cee4.tar.gz")
-            SET(DOWNLOAD_SHA1 "b2abfc91285653050a4cb743a71d7c2f2f9a89c4")
+            SET(DOWNLOAD_SHA256 "139dc1da9b3c74f72bf1b12cc215023582715c2effeab12fdbf7e367fdff7297")
           else()
             message(STATUS "Using Linux binaries without AVX2")
             SET(DOWNLOAD_URL "https://github.com/TileDB-Inc/TileDB/releases/download/2.26.1/tiledb-linux-x86_64-noavx2-2.26.1-db1cee4.tar.gz")
-            SET(DOWNLOAD_SHA1 "337da10f222afe3727166d92de66e480304179bb")
+            SET(DOWNLOAD_SHA256 "f6e4fff4d4295157912bd5bdd2a241942adf086c4c818785fce4a17394d8aa7c")
           endif()
         endif()
 
         ExternalProject_Add(ep_tiledb
                 PREFIX "externals"
                 URL ${DOWNLOAD_URL}
-                URL_HASH SHA1=${DOWNLOAD_SHA1}
+                URL_HASH SHA256=${DOWNLOAD_SHA256}
                 CONFIGURE_COMMAND ""
                 BUILD_COMMAND ""
                 UPDATE_COMMAND ""
