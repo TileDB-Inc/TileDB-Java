@@ -35,7 +35,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-13, macos-14 ]
+        os: [ ubuntu-22.04, macos-13, macos-14 ]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -70,7 +70,7 @@ jobs:
       ORG_GRADLE_PROJECT_TILEDB_S3: OFF
 
   Examples:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: checkout
@@ -154,7 +154,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ macos-13, ubuntu-latest, macos-14]
+        os: [ macos-13, ubuntu-22.04, macos-14]
     steps:
 
       - name: Set up Java
@@ -228,7 +228,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     needs: [Create_Artifacts_Ubuntu_MacOS, Create_Artifacts_Windows]
     name: Mock-Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
 
       - name: Checkout
@@ -265,7 +265,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-13, macos-14, windows-2019 ]
+        os: [ ubuntu-22.04, macos-13, macos-14, windows-2019 ]
     steps:
 
       - name: Checkout
@@ -313,7 +313,7 @@ jobs:
   Actual-Release:
     needs: [ Test-Mock-Release ]
     name: Actual-Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
 
       - name: Checkout
