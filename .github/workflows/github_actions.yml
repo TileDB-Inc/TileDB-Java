@@ -12,7 +12,7 @@ on:
 
 jobs:
   Test_Windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -104,7 +104,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') || contains(github.ref, 'test')
     needs: [Test_Windows, Examples]
     name: Create_Artifacts_Windows
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -265,7 +265,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-22.04, macos-13, macos-14, windows-2019 ]
+        os: [ ubuntu-22.04, macos-13, macos-14, windows-2022 ]
     steps:
 
       - name: Checkout
