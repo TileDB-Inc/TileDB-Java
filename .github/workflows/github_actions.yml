@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-2022
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: assemble
         uses: gradle/gradle-build-action@v3.5.0
@@ -38,7 +38,7 @@ jobs:
         os: [ ubuntu-22.04, macos-13, macos-14 ]
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -74,7 +74,7 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - run: |
           unset SYSTEM
@@ -107,7 +107,7 @@ jobs:
     runs-on: windows-2022
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - run: |
           mkdir binaries_Windows
@@ -165,7 +165,7 @@ jobs:
           check-latest: true
 
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - run: |
           set +e
@@ -232,7 +232,7 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set-up Java
         uses: actions/setup-java@v4
@@ -269,7 +269,7 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set-up Java
         uses: actions/setup-java@v4
@@ -317,7 +317,7 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - uses: actions/download-artifact@v4
 
