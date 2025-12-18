@@ -17,11 +17,6 @@ repositories {
     }
 }
 
-nexusStaging {
-    username = System.getenv('SONATYPE_CENTRAL_USERNAME')
-    password = System.getenv('SONATYPE_CENTRAL_PASSWORD')
-}
-
 java {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
