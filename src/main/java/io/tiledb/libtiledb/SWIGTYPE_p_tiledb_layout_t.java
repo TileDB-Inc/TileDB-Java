@@ -27,4 +27,3 @@ public class SWIGTYPE_p_tiledb_layout_t {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

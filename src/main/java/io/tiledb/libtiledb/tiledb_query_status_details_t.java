@@ -49,15 +49,16 @@ public class tiledb_query_status_details_t {
   }
 
   public void setIncomplete_reason(tiledb_query_status_details_reason_t value) {
-    tiledbJNI.tiledb_query_status_details_t_incomplete_reason_set(swigCPtr, this, value.swigValue());
+    tiledbJNI.tiledb_query_status_details_t_incomplete_reason_set(
+        swigCPtr, this, value.swigValue());
   }
 
   public tiledb_query_status_details_reason_t getIncomplete_reason() {
-    return tiledb_query_status_details_reason_t.swigToEnum(tiledbJNI.tiledb_query_status_details_t_incomplete_reason_get(swigCPtr, this));
+    return tiledb_query_status_details_reason_t.swigToEnum(
+        tiledbJNI.tiledb_query_status_details_t_incomplete_reason_get(swigCPtr, this));
   }
 
   public tiledb_query_status_details_t() {
     this(tiledbJNI.new_tiledb_query_status_details_t(), true);
   }
-
 }

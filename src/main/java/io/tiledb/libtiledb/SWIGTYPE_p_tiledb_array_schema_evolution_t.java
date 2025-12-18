@@ -11,7 +11,8 @@ package io.tiledb.libtiledb;
 public class SWIGTYPE_p_tiledb_array_schema_evolution_t {
   private transient long swigCPtr;
 
-  protected SWIGTYPE_p_tiledb_array_schema_evolution_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+  protected SWIGTYPE_p_tiledb_array_schema_evolution_t(
+      long cPtr, @SuppressWarnings("unused") boolean futureUse) {
     swigCPtr = cPtr;
   }
 
@@ -27,4 +28,3 @@ public class SWIGTYPE_p_tiledb_array_schema_evolution_t {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

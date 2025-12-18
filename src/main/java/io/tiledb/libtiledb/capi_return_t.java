@@ -69,5 +69,4 @@ public class capi_return_t {
     long cPtr = tiledbJNI.capi_return_t_frompointer(capi_return_t.getCPtr(t), t);
     return (cPtr == 0) ? null : new capi_return_t(cPtr, false);
   }
-
 }

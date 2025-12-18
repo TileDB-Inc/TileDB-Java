@@ -8,23 +8,27 @@
 
 package io.tiledb.libtiledb;
 
-public class SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int {
+public
+class SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int {
   private transient long swigCPtr;
 
-  protected SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
+  protected SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int(
+      long cPtr, @SuppressWarnings("unused") boolean futureUse) {
     swigCPtr = cPtr;
   }
 
-  protected SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int() {
+  protected
+  SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int() {
     swigCPtr = 0;
   }
 
-  protected static long getCPtr(SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int obj) {
+  protected static long getCPtr(
+      SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
-  protected static long swigRelease(SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int obj) {
+  protected static long swigRelease(
+      SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_unsigned_char_p_void__int obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

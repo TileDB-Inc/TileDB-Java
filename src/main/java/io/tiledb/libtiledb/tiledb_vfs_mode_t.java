@@ -19,12 +19,13 @@ public enum tiledb_vfs_mode_t {
 
   public static tiledb_vfs_mode_t swigToEnum(int swigValue) {
     tiledb_vfs_mode_t[] swigValues = tiledb_vfs_mode_t.class.getEnumConstants();
-    if (swigValue < swigValues.length && swigValue >= 0 && swigValues[swigValue].swigValue == swigValue)
-      return swigValues[swigValue];
+    if (swigValue < swigValues.length
+        && swigValue >= 0
+        && swigValues[swigValue].swigValue == swigValue) return swigValues[swigValue];
     for (tiledb_vfs_mode_t swigEnum : swigValues)
-      if (swigEnum.swigValue == swigValue)
-        return swigEnum;
-    throw new IllegalArgumentException("No enum " + tiledb_vfs_mode_t.class + " with value " + swigValue);
+      if (swigEnum.swigValue == swigValue) return swigEnum;
+    throw new IllegalArgumentException(
+        "No enum " + tiledb_vfs_mode_t.class + " with value " + swigValue);
   }
 
   @SuppressWarnings("unused")
@@ -35,13 +36,13 @@ public enum tiledb_vfs_mode_t {
   @SuppressWarnings("unused")
   private tiledb_vfs_mode_t(int swigValue) {
     this.swigValue = swigValue;
-    SwigNext.next = swigValue+1;
+    SwigNext.next = swigValue + 1;
   }
 
   @SuppressWarnings("unused")
   private tiledb_vfs_mode_t(tiledb_vfs_mode_t swigEnum) {
     this.swigValue = swigEnum.swigValue;
-    SwigNext.next = this.swigValue+1;
+    SwigNext.next = this.swigValue + 1;
   }
 
   private final int swigValue;
@@ -50,4 +51,3 @@ public enum tiledb_vfs_mode_t {
     private static int next = 0;
   }
 }
-

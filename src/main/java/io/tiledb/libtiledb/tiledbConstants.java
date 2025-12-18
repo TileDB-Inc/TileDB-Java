@@ -9,13 +9,13 @@
 package io.tiledb.libtiledb;
 
 public interface tiledbConstants {
-  public final static int TILEDB_BUDGET_UNAVAILABLE = (-5);
-  public final static int TILEDB_ERR = (-1);
-  public final static int TILEDB_INVALID_CONTEXT = (-3);
-  public final static int TILEDB_INVALID_ERROR = (-4);
-  public final static int TILEDB_OK = (0);
-  public final static int TILEDB_OOM = (-2);
-  public final static int TILEDB_VERSION_MAJOR = 2;
-  public final static int TILEDB_VERSION_MINOR = 30;
-  public final static int TILEDB_VERSION_PATCH = 0;
+  public static final int TILEDB_BUDGET_UNAVAILABLE = (-5);
+  public static final int TILEDB_ERR = (-1);
+  public static final int TILEDB_INVALID_CONTEXT = (-3);
+  public static final int TILEDB_INVALID_ERROR = (-4);
+  public static final int TILEDB_OK = (0);
+  public static final int TILEDB_OOM = (-2);
+  public static final int TILEDB_VERSION_MAJOR = 2;
+  public static final int TILEDB_VERSION_MINOR = 30;
+  public static final int TILEDB_VERSION_PATCH = 0;
 }

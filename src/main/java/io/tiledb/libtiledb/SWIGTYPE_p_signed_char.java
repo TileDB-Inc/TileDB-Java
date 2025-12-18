@@ -27,4 +27,3 @@ public class SWIGTYPE_p_signed_char {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

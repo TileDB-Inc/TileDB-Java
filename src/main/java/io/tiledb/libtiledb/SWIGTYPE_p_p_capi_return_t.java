@@ -27,4 +27,3 @@ public class SWIGTYPE_p_p_capi_return_t {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

@@ -18,13 +18,15 @@ public enum tiledb_query_condition_combination_op_t {
   }
 
   public static tiledb_query_condition_combination_op_t swigToEnum(int swigValue) {
-    tiledb_query_condition_combination_op_t[] swigValues = tiledb_query_condition_combination_op_t.class.getEnumConstants();
-    if (swigValue < swigValues.length && swigValue >= 0 && swigValues[swigValue].swigValue == swigValue)
-      return swigValues[swigValue];
+    tiledb_query_condition_combination_op_t[] swigValues =
+        tiledb_query_condition_combination_op_t.class.getEnumConstants();
+    if (swigValue < swigValues.length
+        && swigValue >= 0
+        && swigValues[swigValue].swigValue == swigValue) return swigValues[swigValue];
     for (tiledb_query_condition_combination_op_t swigEnum : swigValues)
-      if (swigEnum.swigValue == swigValue)
-        return swigEnum;
-    throw new IllegalArgumentException("No enum " + tiledb_query_condition_combination_op_t.class + " with value " + swigValue);
+      if (swigEnum.swigValue == swigValue) return swigEnum;
+    throw new IllegalArgumentException(
+        "No enum " + tiledb_query_condition_combination_op_t.class + " with value " + swigValue);
   }
 
   @SuppressWarnings("unused")
@@ -35,13 +37,14 @@ public enum tiledb_query_condition_combination_op_t {
   @SuppressWarnings("unused")
   private tiledb_query_condition_combination_op_t(int swigValue) {
     this.swigValue = swigValue;
-    SwigNext.next = swigValue+1;
+    SwigNext.next = swigValue + 1;
   }
 
   @SuppressWarnings("unused")
-  private tiledb_query_condition_combination_op_t(tiledb_query_condition_combination_op_t swigEnum) {
+  private tiledb_query_condition_combination_op_t(
+      tiledb_query_condition_combination_op_t swigEnum) {
     this.swigValue = swigEnum.swigValue;
-    SwigNext.next = this.swigValue+1;
+    SwigNext.next = this.swigValue + 1;
   }
 
   private final int swigValue;
@@ -50,4 +53,3 @@ public enum tiledb_query_condition_combination_op_t {
     private static int next = 0;
   }
 }
-

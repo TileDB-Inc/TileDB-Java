@@ -85,5 +85,4 @@ public class tiledb_range_t {
   public tiledb_range_t() {
     this(tiledbJNI.new_tiledb_range_t(), true);
   }
-
 }
