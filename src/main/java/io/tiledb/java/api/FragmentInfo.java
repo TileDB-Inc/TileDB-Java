@@ -1,11 +1,11 @@
 package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.*;
-import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_fragment_info_t;
+import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_fragment_info_handle_t;
 
 public class FragmentInfo implements AutoCloseable {
-  private SWIGTYPE_p_tiledb_fragment_info_t fragmentInfop;
-  private SWIGTYPE_p_p_tiledb_fragment_info_t fragmentInfopp;
+  private SWIGTYPE_p_tiledb_fragment_info_handle_t fragmentInfop;
+  private SWIGTYPE_p_p_tiledb_fragment_info_handle_t fragmentInfopp;
   private Context ctx;
   private String uri;
 

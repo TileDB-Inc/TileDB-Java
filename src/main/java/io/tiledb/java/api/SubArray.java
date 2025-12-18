@@ -2,17 +2,17 @@ package io.tiledb.java.api;
 
 import io.tiledb.libtiledb.SWIGTYPE_p_int;
 import io.tiledb.libtiledb.SWIGTYPE_p_p_char;
-import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_subarray_t;
+import io.tiledb.libtiledb.SWIGTYPE_p_p_tiledb_subarray_handle_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_p_void;
-import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_subarray_t;
+import io.tiledb.libtiledb.SWIGTYPE_p_tiledb_subarray_handle_t;
 import io.tiledb.libtiledb.SWIGTYPE_p_unsigned_long_long;
 import io.tiledb.libtiledb.tiledb;
 import io.tiledb.libtiledb.uint64_tArray;
 import java.math.BigInteger;
 
 public class SubArray implements AutoCloseable {
-  private SWIGTYPE_p_tiledb_subarray_t subArrayp;
-  private SWIGTYPE_p_p_tiledb_subarray_t subArraypp;
+  private SWIGTYPE_p_tiledb_subarray_handle_t subArrayp;
+  private SWIGTYPE_p_p_tiledb_subarray_handle_t subArraypp;
 
   private Context ctx;
   private Array array;
@@ -35,7 +35,7 @@ public class SubArray implements AutoCloseable {
    *
    * @return the subarray pointer
    */
-  public SWIGTYPE_p_tiledb_subarray_t getSubArrayp() {
+  public SWIGTYPE_p_tiledb_subarray_handle_t getSubArrayp() {
     return subArrayp;
   }
 

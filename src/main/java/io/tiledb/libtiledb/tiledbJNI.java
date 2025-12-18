@@ -862,7 +862,6 @@ public class tiledbJNI {
   public final static native long tiledb_field_channel(long jarg1, long jarg2, long jarg3);
   public final static native int tiledb_query_get_plan(long jarg1, long jarg2, long jarg3);
   public final static native long tiledb_subarray_add_point_ranges(long jarg1, long jarg2, long jarg3, long jarg4, java.math.BigInteger jarg5);
-  public final static native long tiledb_subarray_add_point_ranges_var(long jarg1, long jarg2, long jarg3, long jarg4, java.math.BigInteger jarg5, long jarg6, java.math.BigInteger jarg7);
   public final static native long tiledb_vfs_ls_recursive(long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
   public final static native long tiledb_vfs_ls_recursive_v2(long jarg1, long jarg2, String jarg3, long jarg4, long jarg5);
   public final static native void tiledb_dimension_label_free(long jarg1);

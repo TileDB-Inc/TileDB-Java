@@ -3145,10 +3145,6 @@ public class tiledb implements tiledbConstants {
     return new capi_return_t(tiledbJNI.tiledb_subarray_add_point_ranges(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_subarray_handle_t.getCPtr(subarray), dim_idx, SWIGTYPE_p_void.getCPtr(start), count), true);
   }
 
-  public static capi_return_t tiledb_subarray_add_point_ranges_var(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_subarray_handle_t subarray, long dim_idx, SWIGTYPE_p_void start, java.math.BigInteger start_size, SWIGTYPE_p_unsigned_long_long start_offsets, java.math.BigInteger start_offsets_size) {
-    return new capi_return_t(tiledbJNI.tiledb_subarray_add_point_ranges_var(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_subarray_handle_t.getCPtr(subarray), dim_idx, SWIGTYPE_p_void.getCPtr(start), start_size, SWIGTYPE_p_unsigned_long_long.getCPtr(start_offsets), start_offsets_size), true);
-  }
-
   public static capi_return_t tiledb_vfs_ls_recursive(SWIGTYPE_p_tiledb_ctx_t ctx, SWIGTYPE_p_tiledb_vfs_handle_t vfs, String path, SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_p_void__int callback, SWIGTYPE_p_void data) {
     return new capi_return_t(tiledbJNI.tiledb_vfs_ls_recursive(SWIGTYPE_p_tiledb_ctx_t.getCPtr(ctx), SWIGTYPE_p_tiledb_vfs_handle_t.getCPtr(vfs), path, SWIGTYPE_p_f_p_q_const__char_unsigned_long_unsigned_long_long_p_void__int.getCPtr(callback), SWIGTYPE_p_void.getCPtr(data)), true);
   }

@@ -71,8 +71,6 @@ public class ArraySchemaExample {
       e.printStackTrace();
     }
 
-    schema.dump();
-
     // Print from getters
     System.out.println(
         "\nFrom getters:"
@@ -94,9 +92,6 @@ public class ArraySchemaExample {
     for (Map.Entry<String, Attribute> a : schema.getAttributes().entrySet()) {
       System.out.println("* " + a.getKey());
     }
-
-    // Print getDomain
-    schema.getDomain().dump();
 
     // Print the dimension names using getters
     System.out.println("\nArray schema dimension names: ");
