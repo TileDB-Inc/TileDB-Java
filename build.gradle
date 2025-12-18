@@ -4,12 +4,11 @@ plugins {
    id 'maven-publish'
    id 'signing'
    id 'com.github.sherter.google-java-format' version '0.9'
-   id 'io.codearte.nexus-staging' version '0.30.0'
    id 'com.google.osdetector' version '1.6.0'
 }
 
 group 'io.tiledb'
-version '0.30.0-SNAPSHOT'
+version '0.31.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
