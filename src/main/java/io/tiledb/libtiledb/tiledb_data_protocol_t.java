@@ -8,40 +8,37 @@
 
 package io.tiledb.libtiledb;
 
-public enum tiledb_layout_t {
-  TILEDB_ROW_MAJOR(0),
-  TILEDB_COL_MAJOR(1),
-  TILEDB_GLOBAL_ORDER(2),
-  TILEDB_UNORDERED(3),
-  TILEDB_HILBERT(4);
+public enum tiledb_data_protocol_t {
+  TILEDB_DATA_PROTOCOL_v2(0),
+  TILEDB_DATA_PROTOCOL_v3(1);
 
   public final int swigValue() {
     return swigValue;
   }
 
-  public static tiledb_layout_t swigToEnum(int swigValue) {
-    tiledb_layout_t[] swigValues = tiledb_layout_t.class.getEnumConstants();
+  public static tiledb_data_protocol_t swigToEnum(int swigValue) {
+    tiledb_data_protocol_t[] swigValues = tiledb_data_protocol_t.class.getEnumConstants();
     if (swigValue < swigValues.length && swigValue >= 0 && swigValues[swigValue].swigValue == swigValue)
       return swigValues[swigValue];
-    for (tiledb_layout_t swigEnum : swigValues)
+    for (tiledb_data_protocol_t swigEnum : swigValues)
       if (swigEnum.swigValue == swigValue)
         return swigEnum;
-    throw new IllegalArgumentException("No enum " + tiledb_layout_t.class + " with value " + swigValue);
+    throw new IllegalArgumentException("No enum " + tiledb_data_protocol_t.class + " with value " + swigValue);
   }
 
   @SuppressWarnings("unused")
-  private tiledb_layout_t() {
+  private tiledb_data_protocol_t() {
     this.swigValue = SwigNext.next++;
   }
 
   @SuppressWarnings("unused")
-  private tiledb_layout_t(int swigValue) {
+  private tiledb_data_protocol_t(int swigValue) {
     this.swigValue = swigValue;
     SwigNext.next = swigValue+1;
   }
 
   @SuppressWarnings("unused")
-  private tiledb_layout_t(tiledb_layout_t swigEnum) {
+  private tiledb_data_protocol_t(tiledb_data_protocol_t swigEnum) {
     this.swigValue = swigEnum.swigValue;
     SwigNext.next = this.swigValue+1;
   }
