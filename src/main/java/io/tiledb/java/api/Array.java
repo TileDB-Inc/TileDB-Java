@@ -56,8 +56,8 @@ public class Array implements AutoCloseable {
   private Domain domain;
   private QueryType query_type;
 
-  private SWIGTYPE_p_tiledb_array_t arrayp;
-  private SWIGTYPE_p_p_tiledb_array_t arraypp;
+  private SWIGTYPE_p_tiledb_array_handle_t arrayp;
+  private SWIGTYPE_p_p_tiledb_array_handle_t arraypp;
 
   /**
    * Constructs an Array object opening the array for reading.
@@ -161,14 +161,14 @@ public class Array implements AutoCloseable {
       BigInteger timestamp_start,
       BigInteger timestamp_end)
       throws TileDBError {
-    SWIGTYPE_p_p_tiledb_array_t _arraypp = tiledb.new_tiledb_array_tpp();
+    SWIGTYPE_p_p_tiledb_array_handle_t _arraypp = tiledb.new_tiledb_array_tpp();
     try {
       ctx.handleError(tiledb.tiledb_array_alloc(ctx.getCtxp(), uri, _arraypp));
     } catch (TileDBError err) {
       tiledb.delete_tiledb_array_tpp(_arraypp);
       throw err;
     }
-    SWIGTYPE_p_tiledb_array_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
+    SWIGTYPE_p_tiledb_array_handle_t _arrayp = tiledb.tiledb_array_tpp_value(_arraypp);
 
     if (timestamp_start != null) {
       Util.checkBigIntegerRange(timestamp_start);
@@ -963,7 +963,7 @@ public class Array implements AutoCloseable {
   }
 
   /** @return SWIG tiledb_array_t pointer wrapper object. */
-  protected SWIGTYPE_p_tiledb_array_t getArrayp() {
+  protected SWIGTYPE_p_tiledb_array_handle_t getArrayp() {
     return arrayp;
   }
 

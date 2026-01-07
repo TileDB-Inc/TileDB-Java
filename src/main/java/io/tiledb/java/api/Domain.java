@@ -103,25 +103,6 @@ public class Domain implements AutoCloseable {
   //  }
 
   /**
-   * Dumps the Domain in an ASCII representation to stdout.
-   *
-   * @exception TileDBError A TileDB exception
-   */
-  public void dump() throws TileDBError {
-    ctx.handleError(tiledb.tiledb_domain_dump_stdout(ctx.getCtxp(), domainp));
-  }
-
-  /**
-   * Dumps the Domain in an ASCII representation to stdout.
-   *
-   * @param filename A string filename
-   * @exception TileDBError A TileDB exception
-   */
-  public void dump(String filename) throws TileDBError {
-    ctx.handleError(tiledb.tiledb_domain_dump_file(ctx.getCtxp(), domainp, filename));
-  }
-
-  /**
    * @return The domain Enumerated type.
    * @exception TileDBError A TileDB exception
    */

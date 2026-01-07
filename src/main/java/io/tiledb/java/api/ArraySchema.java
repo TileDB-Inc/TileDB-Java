@@ -145,25 +145,6 @@ public class ArraySchema implements AutoCloseable {
   }
 
   /**
-   * Dumps the array schema in an ASCII representation to STDOUT.
-   *
-   * @exception TileDBError A TileDB exception
-   */
-  public void dump() throws TileDBError {
-    ctx.handleError(tiledb.tiledb_array_schema_dump_stdout(ctx.getCtxp(), getSchemap()));
-  }
-
-  /**
-   * Dumps the array schema text representation to a file.
-   *
-   * @param filename The local file path to save the schema text representation
-   * @exception TileDBError A TileDB exception
-   */
-  public void dump(String filename) throws TileDBError {
-    ctx.handleError(tiledb.tiledb_array_schema_dump_file(ctx.getCtxp(), getSchemap(), filename));
-  }
-
-  /**
    * Returns the type of the TileDB Array
    *
    * @return ArrayType enum value

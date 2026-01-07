@@ -274,25 +274,6 @@ public class Group implements AutoCloseable {
   }
 
   /**
-   * Dump a string representation of a group
-   *
-   * @param string The string.
-   * @param flag is recursive.
-   * @throws TileDBError
-   */
-  public void dumpStr(String string, boolean flag) throws TileDBError {
-    SWIGTYPE_p_p_char valuepp = tiledb.new_charpp();
-
-    try {
-      ctx.handleError(
-          tiledb.tiledb_group_dump_str(
-              ctx.getCtxp(), getGroupp(), valuepp, flag ? (short) 1 : (short) 0));
-    } finally {
-      tiledb.delete_charpp(valuepp);
-    }
-  }
-
-  /**
    * Gets a metadata item from an open group using an index. The array must be opened in READ mode,
    * otherwise the function will error out.
    *

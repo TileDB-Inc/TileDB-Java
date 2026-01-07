@@ -72,9 +72,6 @@ public class ArraySparseCreate {
     // Check array schema
     schema.check();
 
-    // Print array schema contents
-    schema.dump();
-
     Array.create("my_sparse_array", schema);
   }
 }

@@ -68,9 +68,6 @@ public class ArrayDenseCreate {
     // Check array schema
     schema.check();
 
-    // Print array schema contents
-    schema.dump();
-
     Array.create("my_dense_array", schema);
   }
 }
