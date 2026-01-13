@@ -35,7 +35,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-22.04, macos-14, macos-15-intel ]
+        os: [ ubuntu-22.04]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -54,10 +54,30 @@ jobs:
         name: checkFormat
 
       - run: |
-          unset SYSTEM
-          ./gradlew assemble
-        shell: bash
-        name: assemble
+          set +e
+
+          mkdir binaries_$RUNNER_OS
+
+          if [[ ( "$RUNNER_OS" == "Linux" ) ]]; then
+            docker build -f ci/Dockerfile2010 . -t lib_builder_2010
+            docker run -e "CFLAGS=$CFLAGS" -e "CPPFLAGS=$CPPFLAGS" -v $(pwd):/TileDB-Java -t lib_builder_2010 /TileDB-Java/ci/build.sh
+            ls -l ./build/install/lib
+            ls -l ./build/install/lib64
+            cp ./build/tiledb_jni/*.so ./build/install/lib/*.so ./build/install/lib64/*.so binaries_$RUNNER_OS/
+          fi
+          
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            if [[ "$(uname -m)" == "arm64" ]]; then
+              mkdir -p binaries_apple_silicon/arm
+              ./gradlew -PTILEDB_AZURE=ON assemble
+              cp ./build/tiledb_jni/arm/*.dylib ./build/install/arm/lib/*.dylib binaries_apple_silicon/arm
+            else
+              ./gradlew -PTILEDB_AZURE=ON assemble
+              cp ./build/tiledb_jni/*.dylib ./build/install/lib/*.dylib binaries_$RUNNER_OS/
+            fi
+          fi
+
+        name: 'Build and Upload (Ubuntu and OSX)'
 
       - run: |
           unset SYSTEM
