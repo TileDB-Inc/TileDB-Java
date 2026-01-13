@@ -1,7 +1,7 @@
 # Dockerfile for lowest common denominator Linux native artifact build
 # --------------------------------------------------------------------
-# Cribbed from TileDB-Py/misc/pypi_linux/Dockerfile2014
-FROM quay.io/pypa/manylinux2010_x86_64
+# Cribbed from TileDB-Py/misc/pypi_linux/Dockerfile2010
+FROM quay.io/pypa/manylinux2014_x86_64
 
 RUN yum install -y java-1.8.0-openjdk-devel
 RUN yum remove -y cmake
