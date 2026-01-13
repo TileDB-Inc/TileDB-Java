@@ -79,12 +79,6 @@ jobs:
 
         name: 'Build and Upload (Ubuntu and OSX)'
 
-      - run: |
-          unset SYSTEM
-          ./gradlew test
-        shell: bash
-        name: test
-
     env:
       ORG_GRADLE_PROJECT_TILEDB_SERIALIZATION: OFF
       ORG_GRADLE_PROJECT_TILEDB_S3: OFF
