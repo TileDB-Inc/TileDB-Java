@@ -173,8 +173,8 @@ jobs:
           mkdir binaries_$RUNNER_OS
 
           if [[ ( "$RUNNER_OS" == "Linux" ) ]]; then
-            docker build -f ci/Dockerfile2010 . -t lib_builder_2010
-            docker run -e "CFLAGS=$CFLAGS" -e "CPPFLAGS=$CPPFLAGS" -v $(pwd):/TileDB-Java -t lib_builder_2010 /TileDB-Java/ci/build.sh
+            docker build -f ci/Dockerfile2014 . -t lib_builder_2014
+            docker run -e "CFLAGS=$CFLAGS" -e "CPPFLAGS=$CPPFLAGS" -v $(pwd):/TileDB-Java -t lib_builder_2014 /TileDB-Java/ci/build.sh
             cp ./build/tiledb_jni/*.so ./build/install/lib/*.so ./build/install/lib64/*.so binaries_$RUNNER_OS/
           fi
           
